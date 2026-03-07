@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { StatePersistenceService } from '../persistence/state-persistence.service';
 import { XpService } from './xp.service';
+import { XpNotificationService } from '../notifications';
 import { ALL_STORY_MISSIONS } from '../curriculum/curriculum.data';
 import type { ChapterId, PhaseNumber, StoryMission } from '../curriculum/curriculum.types';
 import type { MinigameId } from '../minigame/minigame.types';
@@ -32,6 +33,7 @@ export class GameProgressionService {
 
   private readonly persistence = inject(StatePersistenceService);
   private readonly xpService = inject(XpService);
+  private readonly xpNotification = inject(XpNotificationService);
   private readonly destroyRef = inject(DestroyRef);
   private _saveTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -118,7 +120,15 @@ export class GameProgressionService {
       return next;
     });
 
-    this.xpService.addXp(this.xpService.calculateStoryXp());
+    const baseXp = this.xpService.calculateStoryXp();
+    const xpBreakdown = this.xpService.applyStreakBonus(baseXp);
+    this.xpService.addXp(xpBreakdown.totalXp);
+
+    const bonuses: string[] = ['Mission Complete'];
+    if (xpBreakdown.streakBonus > 0) {
+      bonuses.push(`+${xpBreakdown.streakBonus} Streak Bonus`);
+    }
+    this.xpNotification.show(xpBreakdown.totalXp, bonuses);
   }
 
   /** Returns the list of unlocked minigame IDs (deduplicated). */

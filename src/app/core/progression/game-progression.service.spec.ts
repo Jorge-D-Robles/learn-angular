@@ -3,6 +3,8 @@ import { GameProgressionService } from './game-progression.service';
 import { XpService } from './xp.service';
 import { ALL_STORY_MISSIONS } from '../curriculum/curriculum.data';
 import type { MinigameId } from '../minigame/minigame.types';
+import { StreakService } from './streak.service';
+import { XpNotificationService } from '../notifications';
 
 // --- Test helpers ---
 
@@ -299,6 +301,97 @@ describe('GameProgressionService', () => {
         (id) => id === 'module-assembly',
       ).length;
       expect(moduleAssemblyCount).toBe(1);
+    });
+  });
+
+  // --- 9. Streak bonus on story mission XP ---
+
+  describe('streak bonus on story mission XP', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    function buildStreak(days: number): void {
+      const streakService = TestBed.inject(StreakService);
+      for (let i = 0; i < days; i++) {
+        vi.setSystemTime(
+          new Date(`2026-03-${String(1 + i).padStart(2, '0')}T12:00:00`),
+        );
+        streakService.recordDailyPlay();
+      }
+    }
+
+    it('should apply streak bonus to story mission XP (3-day streak)', () => {
+      buildStreak(3); // 1.3x
+      service.completeMission(1);
+      // Base story XP = 50. With 1.3x: Math.round(50 * 1.3) = 65
+      expect(xpService.totalXp()).toBe(65);
+    });
+
+    it('should award base XP when no streak active', () => {
+      service.completeMission(1);
+      expect(xpService.totalXp()).toBe(50);
+    });
+
+    it('should cap streak bonus at 5-day max (1.5x)', () => {
+      buildStreak(7); // capped at 1.5x
+      service.completeMission(1);
+      // Base story XP = 50. With 1.5x: Math.round(50 * 1.5) = 75
+      expect(xpService.totalXp()).toBe(75);
+    });
+  });
+
+  // --- 10. Story mission XP notifications ---
+
+  describe('story mission XP notifications', () => {
+    it('should trigger XP notification on mission completion', () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeMission(1);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should pass correct XP amount to notification', () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeMission(1);
+      expect(spy).toHaveBeenCalledWith(50, expect.any(Array));
+    });
+
+    it("should include 'Mission Complete' in bonuses", () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeMission(1);
+      const bonuses = spy.mock.calls[0][1] as readonly string[];
+      expect(bonuses).toContain('Mission Complete');
+    });
+
+    it('should include streak bonus amount in notification when streak active', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-03-01T12:00:00'));
+      TestBed.inject(StreakService).recordDailyPlay();
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeMission(1);
+      const bonuses = spy.mock.calls[0][1] as readonly string[];
+      // Base = 50, 1.1x, total = 55, bonus = 5
+      expect(bonuses).toContain('+5 Streak Bonus');
+      vi.useRealTimers();
+    });
+
+    it('should not include streak bonus in notification when no streak', () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeMission(1);
+      const bonuses = spy.mock.calls[0][1] as readonly string[];
+      const hasStreak = bonuses.some((b) => b.includes('Streak'));
+      expect(hasStreak).toBe(false);
+    });
+
+    it('should not trigger notification for idempotent re-completion', () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeMission(1);
+      service.completeMission(1);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 });

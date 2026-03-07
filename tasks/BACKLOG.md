@@ -3538,8 +3538,8 @@ Acceptance criteria:
 
 ### T-2026-179
 - Title: Apply streak bonus to story mission XP in GameProgressionService
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -3555,6 +3555,7 @@ Acceptance criteria:
 - [ ] Story mission XP notifications show streak bonus breakdown (e.g., "+5 Streak Bonus")
 - [ ] Unit tests verify streak bonus is applied to story mission XP
 - [ ] Unit tests verify notification format with streak bonus
+- Started: 2026-03-07
 
 ### T-2026-180
 - Title: Add multiple-choice question support to RefresherChallengeService

@@ -11,6 +11,8 @@ Started: 2026-03-07
 
 ## Active
 
+- **T-2026-179**: Apply streak bonus to story mission XP in GameProgressionService (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -64,7 +66,6 @@ Started: 2026-03-07
 
 ## Queue
 
-- **T-2026-179**: Apply streak bonus to story mission XP in GameProgressionService (Priority: medium, Size: S)
 - **T-2026-183**: Create LevelFailedComponent for post-failure display (Priority: medium, Size: S)
 - **T-2026-160**: Create ExpressionBuilderComponent for condition/formula editing (Priority: medium, Size: M)
 - **T-2026-203**: Create SvgPortComponent for wire endpoint rendering (Priority: medium, Size: S)
