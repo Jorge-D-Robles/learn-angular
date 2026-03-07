@@ -32,11 +32,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-044**: Create HintService for minigame hint system (Priority: medium, Size: S)
 - **T-2026-054**: Create DragDropService for shared drag-and-drop mechanics (Priority: medium, Size: M)
 
 ---

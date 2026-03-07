@@ -36,3 +36,4 @@
 [2026-03-07] T-2026-027: Create StreakService for daily login streak tracking — created StreakService with two-counter design (display/multiplier), local date logic, gap detection, auto-save, 23 tests (claude)
 [2026-03-07] T-2026-030: Create LevelLoaderService for loading level data — created LevelLoaderService with registry Map, Observable API, LevelProgressionService integration, 13 tests (claude)
 [2026-03-07] T-2026-032: Create XP notification toast component — added XpNotificationService and XpNotificationComponent with auto-dismiss, stacking, slide-in animation, prefers-reduced-motion, 11 tests (claude)
+[2026-03-07] T-2026-044: Create HintService for minigame hint system — added HintService with hint registration, dispensing, penalty calculation, signals, 27 tests (claude)
