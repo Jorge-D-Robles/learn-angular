@@ -431,29 +431,6 @@ Acceptance criteria:
 - [ ] Verify build passes (no circular dependency issues)
 - [ ] Update at least one consumer file to use the core barrel import as a smoke test
 
-### T-2026-127
-- Title: Wire LevelCompletionService to XpNotificationService
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-113, T-2026-032
-- Blocked-by: —
-- Tags: integration, progression, notifications
-- Refs: src/app/core/minigame/level-completion.service.ts, src/app/core/notifications/xp-notification.service.ts
-
-LevelCompletionService orchestrates the score->progress->XP->mastery flow, and XpNotificationService shows XP toast notifications. These two services are not connected -- completing a level awards XP but does not trigger a visible notification. This ticket wires them together so players see XP gain feedback.
-
-Acceptance criteria:
-- [ ] LevelCompletionService injects XpNotificationService (or emits an event that the notification service listens to)
-- [ ] When `completeLevel()` awards XP, an XP notification is triggered with the amount awarded
-- [ ] Notification shows the XP amount and source (e.g., "Level Complete +20 XP")
-- [ ] If a rank-up occurs, the notification includes rank-up information
-- [ ] Unit tests for: notification triggered on level completion, correct XP amount in notification
-- [ ] Existing LevelCompletionService and XpNotificationService tests continue to pass
-- Started: 2026-03-07
-
 ### T-2026-128
 - Title: Create LoadingSpinnerComponent for async content states
 - Status: todo
