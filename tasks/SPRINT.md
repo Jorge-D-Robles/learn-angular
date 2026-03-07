@@ -15,7 +15,6 @@ Started: 2026-03-06
 ---
 
 ## Queue
-### T-2026-006 — Configure CI pipeline with GitHub Actions [medium, M] (dep: T-2026-002, T-2026-004, T-2026-005)
 
 ---
 
@@ -28,3 +27,4 @@ Started: 2026-03-06
 - T-2026-014: Create shared UI component library barrel exports
 - T-2026-013: Create placeholder page components for all routes
 - T-2026-010: Add side navigation for desktop layout
+- T-2026-011: Add bottom navigation for mobile layout

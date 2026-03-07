@@ -2,28 +2,6 @@
 
 ## P0 -- Setup & Design
 
-### T-2026-006
-- Title: Configure CI pipeline with GitHub Actions
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: M
-- Milestone: P0
-- Depends: T-2026-002, T-2026-004, T-2026-005
-- Blocked-by: —
-- Tags: ci, github-actions, tooling
-- Refs: docs/overview.md
-
-Create a GitHub Actions workflow that runs on PRs and pushes to main.
-
-Acceptance criteria:
-- [ ] `.github/workflows/ci.yml` exists
-- [ ] CI runs: lint, unit tests, build (in parallel where possible)
-- [ ] CI runs on `push` to `main` and on `pull_request`
-- [ ] CI uses Node.js LTS version
-- [ ] CI caches `node_modules` for faster runs
-- [ ] Workflow badge can be added to README (URL is valid)
-
 ### T-2026-037
 - Title: Investigate Angular 21 Vite dev server routing bug
 - Status: todo
