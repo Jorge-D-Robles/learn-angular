@@ -1,0 +1,91 @@
+.level-failed {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 14, 26, 0.85); // --nx-color-void at 85%
+  z-index: 100;
+}
+
+.level-failed__panel {
+  background: var(--nx-color-hull);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card);
+  padding: var(--nx-space-8);
+  min-width: 280px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(255, 59, 48, 0.2), 0 0 40px rgba(255, 59, 48, 0.1);
+}
+
+.level-failed__icon {
+  color: var(--nx-color-emergency-red);
+  margin-bottom: var(--nx-space-3);
+}
+
+.level-failed__title {
+  margin: 0 0 var(--nx-space-4);
+  font-size: var(--nx-text-section-heading-size);
+  font-weight: var(--nx-text-section-heading-weight);
+  color: var(--nx-color-beacon);
+}
+
+.level-failed__reason {
+  color: var(--nx-color-emergency-red);
+  font-weight: 700;
+  font-size: var(--nx-text-caption-size);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.level-failed__score-section {
+  margin: var(--nx-space-4) 0;
+  padding: var(--nx-space-3) 0;
+  border-top: 1px solid var(--nx-color-bulkhead);
+}
+
+.level-failed__score-label {
+  color: var(--nx-color-display);
+  font-size: var(--nx-text-caption-size);
+  margin-bottom: var(--nx-space-1);
+}
+
+.level-failed__score {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--nx-color-solar-gold);
+}
+
+.level-failed__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nx-space-2);
+  margin-top: var(--nx-space-4);
+}
+
+.level-failed__btn {
+  padding: var(--nx-space-3) var(--nx-space-4);
+  border-radius: var(--nx-radius-button);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity var(--nx-duration-fast) var(--nx-ease-out);
+
+  &--primary {
+    background: var(--nx-color-emergency-red);
+    color: white;
+  }
+
+  &--secondary {
+    background: transparent;
+    border: 1px solid var(--nx-color-reactor-blue);
+    color: var(--nx-color-reactor-blue);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .level-failed__btn {
+    transition: none;
+  }
+}

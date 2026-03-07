@@ -574,8 +574,8 @@ Acceptance criteria:
 
 ### T-2026-183
 - Title: Create LevelFailedComponent for post-failure display
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -595,6 +595,7 @@ Acceptance criteria:
 - [ ] Respects `prefers-reduced-motion`
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: reason display, retry event, hint button visibility, quit event
+- Started: 2026-03-07
 
 ### T-2026-184
 - Title: Integrate ComboTrackerService with MinigameEngine base class
