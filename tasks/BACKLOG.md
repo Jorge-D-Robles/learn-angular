@@ -22,27 +22,6 @@ Acceptance criteria:
 - [ ] ESLint and Prettier do not produce conflicting rules (use `eslint-config-prettier` or equivalent)
 - [ ] `.prettierignore` excludes `dist/`, `node_modules/`, `refs/`
 
-### T-2026-004
-- Title: Verify and configure Vitest test runner
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P0
-- Depends: T-2026-001
-- Blocked-by: —
-- Tags: testing, tooling, vitest
-- Refs: docs/overview.md, docs/architecture.md
-
-Angular 21 defaults to Vitest (not Karma/Jasmine). Vitest is already scaffolded and working. This ticket verifies the config, adds coverage reporting, and ensures the test setup is production-ready.
-
-Acceptance criteria:
-- [ ] `ng test` runs and passes all tests via Vitest
-- [ ] Coverage reporting is configured (output to `coverage/` directory)
-- [ ] `coverage/` is in `.gitignore`
-- [ ] Vitest config is documented (in `angular.json` or standalone config file)
-- [ ] A test utility file exists with common test helpers (e.g., `src/testing/test-utils.ts`)
-
 ### T-2026-005
 - Title: Set up Playwright for end-to-end testing
 - Status: todo
