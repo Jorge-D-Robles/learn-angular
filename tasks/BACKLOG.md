@@ -411,28 +411,6 @@ Acceptance criteria:
 - [ ] Unit tests for: rank text updates when XP changes, XP bar receives correct inputs
 - [ ] Build and all existing tests pass
 
-### T-2026-125
-- Title: Add XpNotificationComponent to app shell root
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-032
-- Blocked-by: —
-- Tags: ui, integration, notifications, xp
-- Refs: src/app/app.ts, src/app/app.html
-
-XpNotificationComponent and XpNotificationService were built (T-2026-032) but the notification component is not rendered anywhere in the app shell. It needs to be added at the root level so XP toast notifications appear globally when XP is awarded from any page.
-
-Acceptance criteria:
-- [ ] `XpNotificationComponent` added to App component imports
-- [ ] `<app-xp-notification />` (or equivalent selector) rendered in `app.html` at the root level (after the app-body div)
-- [ ] XP notifications display correctly when XP is awarded from any route
-- [ ] Notifications stack and auto-dismiss as designed
-- [ ] Unit test: verify XpNotificationComponent is present in app template
-- Started: 2026-03-07
-
 ### T-2026-126
 - Title: Create core module root barrel export
 - Status: todo

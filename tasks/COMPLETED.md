@@ -43,3 +43,4 @@
 [2026-03-07] T-2026-035: Create XP progress bar component — added XpProgressBarComponent with compact/full variants, gradient bar, ARIA progressbar, signal inputs, 19 tests (claude)
 [2026-03-07] T-2026-034: Create mastery star display component — added MasteryStarsComponent with 0-5 star display, glow colors, size variants, pulse animation, 23 tests (claude)
 [2026-03-07] T-2026-057: Create ConfirmDialogComponent for destructive actions — added ConfirmDialogComponent with native dialog, danger/warning variants, aria-labelledby, 15 tests (claude)
+[2026-03-07] T-2026-125: Add XpNotificationComponent to app shell root — wired XpNotificationComponent into app shell root for global XP toast notifications (claude)
