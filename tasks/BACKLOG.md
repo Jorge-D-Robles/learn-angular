@@ -78,8 +78,8 @@ Acceptance criteria:
 
 ### T-2026-019
 - Title: Define level data model and type-safe level schema
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P1
@@ -98,6 +98,7 @@ Acceptance criteria:
 - [ ] Perfect score multiplier constant: 2x
 - [ ] Types exported from `src/app/core/levels/level.types.ts`
 - [ ] Unit tests verify type compatibility (compile-time check via test file)
+- Started: 2026-03-07
 
 ### T-2026-020
 - Title: Create LevelProgressionService for tracking level completion
