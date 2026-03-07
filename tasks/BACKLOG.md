@@ -131,29 +131,6 @@ Acceptance criteria:
 - [ ] Streak data persisted via `StatePersistenceService`
 - [ ] Unit tests with mocked dates: streak increment, multiplier calculation, cap at 50%, reset behavior
 
-### T-2026-028
-- Title: Create ScoreCalculationService for level scoring
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-016, T-2026-019
-- Blocked-by: —
-- Tags: scoring, minigame-framework, service
-- Refs: docs/minigames/01-module-assembly.md, docs/minigames/02-wire-protocol.md, docs/progression.md
-
-Service that calculates level scores based on time, accuracy, and combo multipliers. Different minigames can weight these factors differently.
-
-Acceptance criteria:
-- [ ] `ScoreCalculationService` at `src/app/core/minigame/score-calculation.service.ts`
-- [ ] `ScoreConfig` interface: timeWeight, accuracyWeight, comboWeight, maxScore
-- [ ] `calculateScore(config, timeRemaining, accuracy, combo)`: returns numeric score
-- [ ] `isPerfect(score, maxScore)`: returns true if score equals max
-- [ ] `getStarRating(score, maxScore)`: returns 1-3 stars based on score thresholds (e.g., 60%=1, 80%=2, 95%=3)
-- [ ] Default score formula: `(timeRemaining * timeWeight) + (accuracy * accuracyWeight) + (combo * comboWeight)`
-- [ ] Unit tests for: score calculation with various inputs, perfect detection, star rating thresholds
-
 ### T-2026-029
 - Title: Create MinigameRegistryService for game registration and lookup
 - Status: todo

@@ -22,11 +22,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- T-2026-028: Create ScoreCalculationService for level scoring [MEDIUM, S]
 - T-2026-029: Create MinigameRegistryService for game registration and lookup [MEDIUM, S]
 - T-2026-039: Create SettingsService for user preferences [MEDIUM, S]
 - T-2026-040: Install and configure icon library [MEDIUM, S]

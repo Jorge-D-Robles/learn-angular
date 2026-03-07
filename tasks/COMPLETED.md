@@ -26,3 +26,4 @@
 [2026-03-07] T-2026-018: Create MinigameShell container component — created MinigameShellComponent with HUD (score, timer, lives), pause/completion/failure overlays, content projection, 22 tests (claude)
 [2026-03-07] T-2026-020: Create LevelProgressionService for tracking level completion — created LevelProgressionService with unlock logic, score tracking, star ratings, tier progression, added starRating to MinigameResult, 24 tests (claude)
 [2026-03-07] T-2026-021: Create XpService for XP calculation and rank tracking — created XpService with calculateLevelXp, calculateStoryXp, addXp, rank-derived signals (xpToNextRank, rankProgress), pure helpers, 38 tests (claude)
+[2026-03-07] T-2026-028: Create ScoreCalculationService for level scoring — created ScoreCalculationService with calculateScore (weighted formula, clamping), isPerfect, getStarRating (1-3 stars), STAR_THRESHOLDS, 23 tests (claude)
