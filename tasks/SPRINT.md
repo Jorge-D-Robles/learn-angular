@@ -1,8 +1,8 @@
 # Current Sprint
 
-Sprint: S00-setup
+Sprint: S01-scaffolding
 Milestone: P0
-Goal: Complete design research and project setup
+Goal: Scaffold the Angular project, configure tooling, and establish the app shell
 Started: 2026-03-06
 
 <!-- Velocity: (recorded at sprint close) -->
@@ -11,13 +11,24 @@ Started: 2026-03-06
 
 ## Active
 
-*(none — pick from Queue)*
 
 ---
 
 ## Queue
-
-*(populate after design research is complete)*
+### T-2026-002 — Configure ESLint with Angular-specific rules [high, S] (dep: T-2026-001)
+### T-2026-004 — Verify and configure Vitest test runner [high, S] (dep: T-2026-001)
+### T-2026-007 — Define design tokens as SCSS variables and CSS custom properties [high, M] (dep: T-2026-001)
+### T-2026-012 — Configure application routing with lazy-loaded route stubs [high, M] (dep: T-2026-001)
+### T-2026-015 — Set up state management foundation with Angular signals [high, M] (dep: T-2026-001)
+### T-2026-003 — Configure Prettier for code formatting [medium, S] (dep: T-2026-002)
+### T-2026-005 — Set up Playwright for end-to-end testing [medium, S] (dep: T-2026-001)
+### T-2026-008 — Create global base styles and CSS reset [medium, S] (dep: T-2026-007)
+### T-2026-014 — Create shared UI component library barrel exports [medium, S] (dep: T-2026-001)
+### T-2026-009 — Create app shell layout component with top bar [high, M] (dep: T-2026-007, T-2026-008)
+### T-2026-013 — Create placeholder page components for all routes [medium, S] (dep: T-2026-012)
+### T-2026-010 — Add side navigation for desktop layout [medium, S] (dep: T-2026-009)
+### T-2026-011 — Add bottom navigation for mobile layout [medium, S] (dep: T-2026-009)
+### T-2026-006 — Configure CI pipeline with GitHub Actions [medium, M] (dep: T-2026-002, T-2026-004, T-2026-005)
 
 ---
 
