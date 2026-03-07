@@ -6,7 +6,7 @@ import {
 } from './minigame.types';
 import type { LevelDefinition } from '../levels/level.types';
 import { LevelProgressionService } from '../levels/level-progression.service';
-import { GameStateService } from '../state/game-state.service';
+import { GameStateService } from '../state';
 import { MasteryService } from '../progression/mastery.service';
 import { LevelCompletionService } from './level-completion.service';
 import { XpNotificationService } from '../notifications';

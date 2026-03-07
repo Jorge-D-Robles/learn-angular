@@ -223,8 +223,8 @@ Acceptance criteria:
 
 ### T-2026-112
 - Title: Create barrel export for core/state module
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -241,6 +241,7 @@ Acceptance criteria:
 - [ ] Exports `RANK_THRESHOLDS`, `RankThreshold`, `getRankForXp` from `rank.constants`
 - [ ] Update existing imports in `xp.service.ts` and `game-state.service.spec.ts` to use barrel path
 - [ ] Verify build and all tests pass with updated imports
+- Started: 2026-03-07
 
 ### T-2026-126
 - Title: Create core module root barrel export
@@ -830,6 +831,196 @@ Acceptance criteria:
 - [ ] Computed signals for reactive UI binding
 - [ ] Exported from progression barrel
 - [ ] Unit tests for: stats aggregation, reactive updates when underlying services change
+
+### T-2026-223
+- Title: Wire MinigamePlayPage engine lifecycle to MinigameShell inputs and events
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P1
+- Depends: T-2026-042, T-2026-018, T-2026-017, T-2026-030
+- Blocked-by: —
+- Tags: integration, minigame-framework, minigame-play, critical-path
+- Refs: docs/ux/navigation.md, src/app/pages/minigame-play/minigame-play.ts, src/app/core/minigame/minigame-shell/minigame-shell.ts
+
+MinigamePlayPage (T-2026-042) renders the shell and dynamically loads the game component via NgComponentOutlet, but the engine lifecycle is not connected. The shell has inputs (score, timeRemaining, lives, status, xpEarned) and events (pauseGame, resumeGame, quit, nextLevel, replay) that must be driven by the active MinigameEngine instance. Currently, the shell renders with no data flowing in or out. This is the critical integration that makes any minigame actually playable.
+
+Acceptance criteria:
+- [ ] MinigamePlayPage loads level data via LevelLoaderService using gameId + levelId route params
+- [ ] MinigamePlayPage instantiates the appropriate MinigameEngine subclass from the registry
+- [ ] Engine signals (score, timeRemaining, lives, status) bound to MinigameShell inputs
+- [ ] Shell pauseGame event calls engine.pause()
+- [ ] Shell resumeGame event calls engine.resume()
+- [ ] Shell replay event calls engine.reset() with current level data
+- [ ] Shell quit event navigates to `/minigames/:gameId` (level select)
+- [ ] Shell nextLevel event loads next level via LevelNavigationService (or emits for future wiring)
+- [ ] Level completion triggers LevelCompletionService.completeLevel()
+- [ ] Unit tests for: data binding, event handling, level loading, completion flow
+
+### T-2026-224
+- Title: Create RankUpNotificationService to trigger rank-up overlay on rank change
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-033, T-2026-021
+- Blocked-by: —
+- Tags: integration, rank-up, notification, ui
+- Refs: docs/progression.md, docs/ux/visual-style.md
+
+T-2026-033 creates the RankUpOverlayComponent and T-2026-127 shows XP notifications with "Rank Up" text, but no ticket creates the service that detects when XpService's currentRank signal changes and triggers the full-screen RankUpOverlay display. The overlay needs to know the new rank name and badge to render.
+
+Acceptance criteria:
+- [ ] `RankUpNotificationService` at `src/app/core/notifications/rank-up-notification.service.ts`
+- [ ] Watches XpService.currentRank signal via effect() for rank changes
+- [ ] On rank change, emits a `rankUp` signal with { previousRank, newRank } data
+- [ ] `showRankUp` signal (boolean): indicates whether overlay should be visible
+- [ ] `dismiss()` method: hides the overlay
+- [ ] Does not trigger on initial load (only on actual rank transitions during gameplay)
+- [ ] Exported from notifications barrel
+- [ ] Unit tests for: rank change detection, no trigger on init, dismiss behavior
+
+### T-2026-225
+- Title: Wire RankUpOverlayComponent into app shell root
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-224, T-2026-033
+- Blocked-by: —
+- Tags: integration, rank-up, app-shell
+- Refs: docs/progression.md, src/app/app.ts, src/app/app.html
+
+T-2026-125 wired XpNotificationComponent into the app shell root. The RankUpOverlayComponent (T-2026-033) needs the same treatment: it must be rendered at the app root level so it can overlay any page when a rank-up occurs. RankUpNotificationService (T-2026-224) provides the trigger signal.
+
+Acceptance criteria:
+- [ ] RankUpOverlayComponent added to app shell template (app.html)
+- [ ] Visibility controlled by RankUpNotificationService.showRankUp signal
+- [ ] Overlay receives new rank data from RankUpNotificationService
+- [ ] Overlay dismiss event calls RankUpNotificationService.dismiss()
+- [ ] Unit tests for: overlay visibility on rank up, dismiss hides overlay
+
+### T-2026-226
+- Title: Integrate SvgWireRendererComponent with WireDrawService state
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-172, T-2026-158, T-2026-203
+- Blocked-by: —
+- Tags: integration, minigame-framework, wire-rendering, svg
+- Refs: docs/minigames/02-wire-protocol.md, docs/minigames/04-signal-corps.md
+
+SvgWireRendererComponent (T-2026-172) accepts wire data as inputs and WireDrawService (T-2026-158) manages wire state (active wires, port positions, drawing state). SvgPortComponent (T-2026-203) renders wire endpoints. These three pieces need an integration ticket to ensure the renderer consumes WireDrawService's wire state signal, and SvgPorts register their positions with WireDrawService so bezier curves connect to the correct coordinates.
+
+Acceptance criteria:
+- [ ] SvgWireRendererComponent reads wire data from WireDrawService.activeWires signal
+- [ ] SvgPortComponent registers its position with WireDrawService on init and on position change
+- [ ] Wire start/end coordinates derived from registered port positions
+- [ ] In-progress wire (being drawn) rendered as a dashed/semi-transparent bezier following pointer
+- [ ] Wire removal via WireDrawService.removeWire() updates the renderer reactively
+- [ ] Unit tests for: wire rendering from service state, port position registration, live drawing preview
+
+### T-2026-227
+- Title: Update side nav "Current Mission" link to use dynamic mission resolution
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-026, T-2026-010
+- Blocked-by: —
+- Tags: navigation, side-nav, dynamic-link, integration
+- Refs: docs/ux/navigation.md, src/app/side-nav/side-nav.ts
+
+The side nav's "Current Mission" link is hardcoded to `/mission/1` with a TODO comment referencing T-2026-026 (GameProgressionService). GameProgressionService (completed) provides campaign progress data including the next uncompleted mission. This ticket replaces the hardcoded link with dynamic resolution.
+
+Acceptance criteria:
+- [ ] SideNavComponent injects GameProgressionService
+- [ ] "Current Mission" link points to `/mission/:chapterId` where chapterId is the next uncompleted mission
+- [ ] If all missions complete, link shows "Campaign Complete" or points to `/campaign`
+- [ ] Link text updates reactively when missions are completed
+- [ ] Remove the TODO comment from side-nav.ts
+- [ ] Unit tests for: dynamic link resolution, completed state, reactivity
+
+### T-2026-228
+- Title: Update bottom nav "Mission" link to use dynamic mission resolution
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-026, T-2026-011
+- Blocked-by: —
+- Tags: navigation, bottom-nav, dynamic-link, integration
+- Refs: docs/ux/navigation.md, src/app/bottom-nav/
+
+The bottom nav (mobile) has a "Mission" tab that likely has the same hardcoded link issue as the side nav. This ticket updates it to use dynamic current mission resolution from GameProgressionService, matching the side nav behavior.
+
+Acceptance criteria:
+- [ ] BottomNavComponent injects GameProgressionService
+- [ ] "Mission" tab points to the next uncompleted mission via GameProgressionService
+- [ ] If all missions complete, tab points to `/campaign`
+- [ ] Unit tests for: dynamic link resolution, completed state
+
+### T-2026-229
+- Title: Add error module to core barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-126, T-2026-170
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/error/index.ts, src/app/core/index.ts
+
+T-2026-126 creates the core root barrel export and lists subdirectories to re-export: state, minigame, levels, progression, persistence, curriculum, settings, notifications. The `error/` subdirectory (containing GlobalErrorHandler from T-2026-170) is not listed. Per project conventions, all core subdirectories should be included in the root barrel.
+
+Acceptance criteria:
+- [ ] `src/app/core/index.ts` includes re-export from `./error`
+- [ ] Build passes with no circular dependencies
+- [ ] GlobalErrorHandler and ErrorInfo importable from core barrel
+
+### T-2026-230
+- Title: Add LifetimeStatsService to progression barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-212
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/progression/index.ts
+
+LifetimeStatsService (T-2026-212) states "Exported from progression barrel" in its acceptance criteria, but per conventions an explicit barrel ticket ensures the export is independently verifiable.
+
+Acceptance criteria:
+- [ ] `src/app/core/progression/index.ts` updated to export `LifetimeStatsService`
+- [ ] Build passes with updated barrel
+
+### T-2026-231
+- Title: Add RankUpNotificationService to notifications barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-224
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/notifications/index.ts
+
+RankUpNotificationService (T-2026-224) will create a new file in the notifications directory. Per conventions, all services should be exported from their directory barrel.
+
+Acceptance criteria:
+- [ ] `src/app/core/notifications/index.ts` updated to export `RankUpNotificationService`
+- [ ] Build passes with updated barrel
 
 ### T-2026-213
 - Title: Add OnboardingService to progression barrel export
@@ -1943,6 +2134,162 @@ Acceptance criteria:
 - [ ] Station-themed styling: Bulkhead border, Hull background
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: phase info rendering, progress display, collapse/expand toggle
+
+### T-2026-232
+- Title: Add refresher challenge route to app.routes.ts
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-012
+- Blocked-by: —
+- Tags: routing, refresher, infrastructure
+- Refs: docs/ux/navigation.md, docs/progression.md, src/app/app.routes.ts
+
+T-2026-217 (RefresherChallengePage) includes the route in its acceptance criteria, but navigation.md does not list `/refresher/:topicId` in its route structure -- it is implied by the spaced repetition design in progression.md. The route should be added before the page component is built, so the placeholder pattern (used for all other routes) applies here too.
+
+Acceptance criteria:
+- [ ] Route `/refresher/:topicId` added to `app.routes.ts` with lazy-loaded RefresherChallengePage
+- [ ] Placeholder `RefresherChallengePage` component at `src/app/pages/refresher/refresher.ts`
+- [ ] Placeholder displays "Refresher Challenge" heading with topicId from route params
+- [ ] Unit test for: route resolution, component creation, topicId param reading
+
+### T-2026-233
+- Title: Wire DegradationAlertComponent into DashboardPage for spaced repetition alerts
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-161, T-2026-078, T-2026-023
+- Blocked-by: —
+- Tags: integration, dashboard, spaced-repetition, degradation
+- Refs: docs/ux/navigation.md, docs/progression.md
+
+Navigation.md specifies the dashboard includes "Spaced repetition alerts (degrading topics)." DashboardPage (T-2026-078) lists this as an acceptance criterion, and DegradationAlertComponent (T-2026-161) provides the UI. But no ticket explicitly wires them together: the dashboard needs to query SpacedRepetitionService for degraded topics, render DegradationAlertComponent when topics are degrading, and handle the "Practice Now" click by navigating to `/refresher/:topicId`.
+
+Acceptance criteria:
+- [ ] DashboardPage queries SpacedRepetitionService.getDegradedTopics() on init
+- [ ] If degraded topics exist, renders DegradationAlertComponent with topic data
+- [ ] DegradationAlertComponent.practiceRequested event navigates to `/refresher/:topicId`
+- [ ] Alert updates reactively when degradation state changes
+- [ ] Alert hidden when no topics are degrading
+- [ ] Unit tests for: alert display when topics degrade, navigation on practice click, hidden when clean
+
+### T-2026-234
+- Title: Wire DailyChallenge notification into DashboardPage
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-041, T-2026-078
+- Blocked-by: —
+- Tags: integration, dashboard, daily-challenge, notification
+- Refs: docs/ux/navigation.md, docs/progression.md
+
+Navigation.md specifies the dashboard includes a "Daily challenge notification." DashboardPage (T-2026-078) lists this as an acceptance criterion. DailyChallengeService (T-2026-041, completed) provides today's challenge data and completion status. But no ticket creates the dashboard widget that shows today's challenge or wires the navigation to the daily challenge page.
+
+Acceptance criteria:
+- [ ] DashboardPage renders a daily challenge card when today's challenge is not completed
+- [ ] Card shows: game name, topic, "+50 XP" bonus indicator
+- [ ] "Accept Challenge" button navigates to `/minigames/:gameId/daily`
+- [ ] If already completed today, card shows "Completed" with checkmark and next challenge countdown
+- [ ] Data sourced from DailyChallengeService.getTodaysChallenge()
+- [ ] Unit tests for: card display, completed state, navigation, countdown
+
+### T-2026-235
+- Title: Wire active story mission prompt into DashboardPage
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-026, T-2026-078, T-2026-038
+- Blocked-by: —
+- Tags: integration, dashboard, story-missions, navigation
+- Refs: docs/ux/navigation.md
+
+Navigation.md specifies the dashboard includes an "Active story mission prompt." DashboardPage (T-2026-078) lists this as an acceptance criterion. GameProgressionService (T-2026-026, completed) tracks campaign progress. But no ticket creates the widget that shows the next uncompleted mission and provides a "Continue" button navigating to `/mission/:chapterId`.
+
+Acceptance criteria:
+- [ ] DashboardPage renders an active mission prompt card
+- [ ] Card shows: next uncompleted mission title, chapter number, Angular topic
+- [ ] "Continue" button navigates to `/mission/:chapterId`
+- [ ] If all missions complete, shows "Campaign Complete" message
+- [ ] Mission data sourced from CURRICULUM constant and GameProgressionService
+- [ ] Unit tests for: mission prompt display, navigation, campaign complete state
+
+### T-2026-236
+- Title: Wire quick-play minigame shortcuts into DashboardPage
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-029, T-2026-078, T-2026-187
+- Blocked-by: —
+- Tags: integration, dashboard, minigame, quick-play
+- Refs: docs/ux/navigation.md
+
+Navigation.md specifies the dashboard includes "Quick-play minigame shortcuts." DashboardPage (T-2026-078) lists this as an acceptance criterion. This widget shows 3-4 recently played or unlocked minigames as cards for quick access, using MinigameCardComponent (T-2026-187). No existing ticket creates this dashboard section.
+
+Acceptance criteria:
+- [ ] DashboardPage renders 3-4 MinigameCardComponents as quick-play shortcuts
+- [ ] Games selected by: most recently played (if available), or first unlocked games
+- [ ] Each card click navigates to `/minigames/:gameId` (level select)
+- [ ] Cards show mastery stars and level completion count
+- [ ] Hidden when no minigames are unlocked yet (first-time user)
+- [ ] Unit tests for: card rendering, game selection logic, navigation, empty state
+
+### T-2026-237
+- Title: Create MinigamePlayPage level data loading and engine initialization
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P2
+- Depends: T-2026-223, T-2026-137, T-2026-138, T-2026-139, T-2026-140
+- Blocked-by: —
+- Tags: integration, minigame-play, level-loading, critical-path
+- Refs: docs/ux/navigation.md, src/app/pages/minigame-play/minigame-play.ts
+
+T-2026-223 wires the engine lifecycle to the shell, but the level data loading pipeline is not complete for P2 minigames. This ticket ensures that when a player navigates to `/minigames/:gameId/level/:levelId`, the correct level data is loaded from the registered level pack, passed to the engine, and the engine is started. This is the final integration step that makes P2 minigames playable end-to-end.
+
+Acceptance criteria:
+- [ ] MinigamePlayPage loads level data from LevelLoaderService.loadLevel(gameId, levelId)
+- [ ] Level data passed to engine.loadLevel() on initialization
+- [ ] Loading state shown (LoadingSpinnerComponent) while level data loads
+- [ ] Error state shown (ErrorStateComponent) if level data fails to load or is not found
+- [ ] Engine auto-starts after level data is loaded
+- [ ] Works for all 4 P2 minigames: Module Assembly, Wire Protocol, Flow Commander, Signal Corps
+- [ ] Unit tests for: level loading flow, loading state, error state, engine start
+
+### T-2026-238
+- Title: Create LevelCardComponent for level select page level list
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-045, T-2026-055, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, level-select, shared
+- Refs: docs/ux/navigation.md
+
+LevelSelectPage (T-2026-077) displays levels grouped by tier with star ratings, best scores, and locked states. A dedicated LevelCardComponent encapsulates the individual level entry layout, preventing the LevelSelectPage from becoming monolithic. Each card shows level number, title, LevelStarsComponent, best score, and locked/unlocked state.
+
+Acceptance criteria:
+- [ ] `LevelCardComponent` at `src/app/shared/components/level-card/`
+- [ ] Selector: `nx-level-card`
+- [ ] Inputs: `levelNumber` (number), `levelTitle` (string), `starRating` (0-3), `bestScore` (number | null), `isLocked` (boolean), `isCurrent` (boolean)
+- [ ] Displays: level number badge, title, LevelStarsComponent, best score (or "--" if unplayed)
+- [ ] Locked state: dimmed with lock icon
+- [ ] Current level: highlighted border (Reactor Blue)
+- [ ] Output: `levelClicked` event with levelId
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: locked/unlocked rendering, star display, best score, click event
 
 ---
 

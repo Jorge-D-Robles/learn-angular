@@ -7,8 +7,8 @@ import {
 import {
   RANK_THRESHOLDS,
   type RankThreshold,
-} from '../state/rank.constants';
-import { GameStateService } from '../state/game-state.service';
+  GameStateService,
+} from '../state';
 import { StreakService } from './streak.service';
 
 /** XP awarded for completing a story mission. Source: docs/progression.md */

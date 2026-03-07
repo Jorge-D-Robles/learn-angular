@@ -5,7 +5,7 @@ import {
   type MinigameResult,
 } from '../minigame/minigame.types';
 import { LEVEL_TIER_CONFIGS, type LevelDefinition } from './level.types';
-import { GameStateService } from '../state/game-state.service';
+import { GameStateService } from '../state';
 
 /** Per-level progress tracking data. */
 export interface LevelProgress {

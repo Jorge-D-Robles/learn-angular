@@ -4,7 +4,7 @@ import {
   type MinigameId,
   type MinigameResult,
 } from '../minigame/minigame.types';
-import { GameStateService } from '../state/game-state.service';
+import { GameStateService } from '../state';
 import type { LevelDefinition } from './level.types';
 import { LevelProgressionService } from './level-progression.service';
 

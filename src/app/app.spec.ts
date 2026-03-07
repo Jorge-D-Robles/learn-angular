@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
-import { GameStateService } from './core/state/game-state.service';
+import { GameStateService } from './core/state';
 import { XpService } from './core/progression/xp.service';
 
 describe('App', () => {
