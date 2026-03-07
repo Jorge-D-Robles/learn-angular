@@ -28,30 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-018
-- Title: Create MinigameShell container component
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P1
-- Depends: T-2026-017
-- Blocked-by: —
-- Tags: minigame-framework, component, ui
-- Refs: docs/ux/navigation.md, docs/ux/visual-style.md, docs/minigames/TEMPLATE.md
-
-Create the shared container component that wraps all minigames. Provides the common UI chrome: score display, timer, lives indicator, pause menu, and level completion overlay.
-
-Acceptance criteria:
-- [ ] `MinigameShellComponent` at `src/app/core/minigame/minigame-shell/`
-- [ ] Displays: score (Solar Gold), timer (color transitions: green -> orange -> red), lives (heart/shield icons)
-- [ ] Pause button that overlays a pause menu (Resume, Quit)
-- [ ] Content projection slot (`<ng-content>`) for the game-specific UI
-- [ ] Level completion overlay: shows score, XP earned, star rating, Next Level / Replay buttons
-- [ ] Level failure overlay: shows score, Retry / Quit buttons
-- [ ] Uses design tokens for all styling
-- [ ] Unit tests for score display updates, timer color transitions, and overlay visibility states
-
 ### T-2026-020
 - Title: Create LevelProgressionService for tracking level completion
 - Status: todo

@@ -23,3 +23,4 @@
 [2026-03-07] T-2026-031: Create code editor component wrapper — created CodeEditorComponent with custom regex tokenizer, Token[] arrays with @for, dark theme, line highlighting, dual-layer textarea editing, 21 tests (claude)
 [2026-03-07] T-2026-025: Integrate persistence with GameStateService auto-save — wired StatePersistenceService into GameStateService with debounced auto-save, load on init, resetState clears persistence, 8 new tests (claude)
 [2026-03-07] T-2026-038: Define curriculum data model for 34 story missions — defined StoryMission, CurriculumPhase interfaces, CURRICULUM constant with all 34 chapters matching docs/curriculum.md, 24 tests (claude)
+[2026-03-07] T-2026-018: Create MinigameShell container component — created MinigameShellComponent with HUD (score, timer, lives), pause/completion/failure overlays, content projection, 22 tests (claude)
