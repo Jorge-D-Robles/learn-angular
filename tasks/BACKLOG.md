@@ -193,29 +193,6 @@ Acceptance criteria:
 - [ ] A sample shared component exists (e.g., `StationCardComponent`) using design tokens to verify the pattern works
 - [ ] Unit test for the sample component passes
 
-### T-2026-015
-- Title: Set up state management foundation with Angular signals
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P0
-- Depends: T-2026-001
-- Blocked-by: —
-- Tags: state-management, signals, architecture
-- Refs: docs/overview.md, docs/progression.md, docs/architecture.md
-
-Establish the state management pattern for the app using Angular signals. Define the core state service pattern and a simple proof-of-concept.
-
-Acceptance criteria:
-- [ ] `GameStateService` exists as a root-provided injectable service
-- [ ] Uses Angular `signal()` and `computed()` for reactive state
-- [ ] Holds a minimal state shape: `{ playerName: string, currentRank: string, totalXp: number }`
-- [ ] Exposes read-only signals (using `computed()` or `signal.asReadonly()`)
-- [ ] Exposes methods to mutate state (e.g., `addXp(amount: number)`)
-- [ ] Unit tests verify state initialization, mutation, and computed signal reactivity
-- [ ] Service pattern is documented in a code comment for future services to follow
-
 ---
 
 ## P1 -- Core Engine
