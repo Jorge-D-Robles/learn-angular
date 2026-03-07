@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-not-found',
   template: `
     <h1>Hull Breach</h1>
-    <p>Section not found. Return to the station dashboard.</p>
+    <p>Section Not Found</p>
   `,
 })
 export class NotFoundPage {}

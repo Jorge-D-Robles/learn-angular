@@ -12,3 +12,4 @@
 [2026-03-06] T-2026-008: Create global base styles and CSS reset — created global base styles with CSS reset, typography scale, and prefers-reduced-motion support (claude)
 [2026-03-06] T-2026-009: Create app shell layout component with top bar — created app shell layout with top bar (logo, rank badge, XP bar, settings), Flexbox layout, 9 unit tests (claude)
 [2026-03-06] T-2026-014: Create shared UI component library barrel exports — created shared UI library with barrel exports, StationCardComponent sample component, 6 unit tests (claude)
+[2026-03-06] T-2026-013: Create placeholder page components for all routes — added route param display to 3 parameterized pages, updated NotFoundPage text, 22 unit tests across 8 spec files (claude)

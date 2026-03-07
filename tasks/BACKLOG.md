@@ -68,27 +68,6 @@ Acceptance criteria:
 - [ ] Active tab is highlighted with accent color
 - [ ] Unit tests verify tab items render correctly
 
-### T-2026-013
-- Title: Create placeholder page components for all routes
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P0
-- Depends: T-2026-012
-- Blocked-by: —
-- Tags: components, routing, placeholder
-- Refs: docs/ux/navigation.md
-
-Create minimal placeholder components for each route so navigation works end-to-end. Each component displays its name and route parameters.
-
-Acceptance criteria:
-- [ ] Placeholder components exist for: DashboardPage, MissionPage, MinigameHubPage, LevelSelectPage, MinigamePlayPage, ProfilePage, SettingsPage, NotFoundPage
-- [ ] Each component displays its name as a heading (e.g., "Station Dashboard")
-- [ ] Route parameter components (MissionPage, LevelSelectPage, MinigamePlayPage) display their route params
-- [ ] NotFoundPage displays a "Hull Breach - Section Not Found" message
-- [ ] All components have basic unit tests
-
 ### T-2026-037
 - Title: Investigate Angular 21 Vite dev server routing bug
 - Status: todo
@@ -594,3 +573,221 @@ Acceptance criteria:
 - [ ] Bar gradient from Reactor Blue to Sensor Green (per visual style guide)
 - [ ] Accessible: role="progressbar", aria-valuenow, aria-valuemin, aria-valuemax
 - [ ] Unit tests for: percentage calculation, compact vs full rendering, accessibility attributes
+
+### T-2026-038
+- Title: Define curriculum data model for 34 story missions
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P1
+- Depends: T-2026-016
+- Blocked-by: —
+- Tags: curriculum, data-model, types
+- Refs: docs/curriculum.md, docs/overview.md
+
+Define the TypeScript data model for the 34-chapter story mission curriculum. This is the static data structure that GameProgressionService (T-2026-026) reads to determine mission availability, prerequisite chains, and minigame unlocks.
+
+Acceptance criteria:
+- [ ] `StoryMission` interface at `src/app/core/curriculum/curriculum.types.ts`: chapterId, title, angularTopic, narrative, unlocksMinigame (gameId or null), deps (chapterId[]), phase (1-6)
+- [ ] `CurriculumPhase` interface: phaseNumber, name, description, chapters (StoryMission[])
+- [ ] `CURRICULUM` constant at `src/app/core/curriculum/curriculum.data.ts`: all 34 chapters matching docs/curriculum.md exactly
+- [ ] Each chapter's `deps` field matches the Deps column from curriculum.md
+- [ ] Each chapter's `unlocksMinigame` maps to the correct minigame ID (or null for Ch 9, 10, 27, 33, 34)
+- [ ] All 6 phases populated with correct chapter groupings
+- [ ] Unit tests verify: total chapter count is 34, each chapter has valid deps, no circular dependencies, all minigame IDs are valid
+
+### T-2026-039
+- Title: Create SettingsService for user preferences
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-024
+- Blocked-by: —
+- Tags: settings, preferences, service
+- Refs: docs/ux/navigation.md
+
+Service that manages user preferences (sound, animation speed, theme, reduced motion). Persisted via StatePersistenceService.
+
+Acceptance criteria:
+- [ ] `SettingsService` at `src/app/core/settings/settings.service.ts`
+- [ ] `UserSettings` interface: soundEnabled (boolean), animationSpeed ('normal' | 'fast' | 'off'), theme ('dark' | 'station'), reducedMotion (boolean)
+- [ ] `settings` signal exposing current `UserSettings`
+- [ ] `updateSetting(key, value)`: updates a single setting
+- [ ] `resetSettings()`: restores all settings to defaults (sound on, animation normal, theme station, reducedMotion from prefers-reduced-motion)
+- [ ] Settings auto-persisted via `StatePersistenceService`
+- [ ] On init, loads saved settings or uses defaults
+- [ ] `resetProgress()`: delegates to `StatePersistenceService.clearAll()` and reloads the app
+- [ ] Unit tests for: default values, update persistence, reset behavior
+
+### T-2026-040
+- Title: Install and configure icon library
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-001
+- Blocked-by: —
+- Tags: icons, ui, tooling
+- Refs: docs/ux/visual-style.md
+
+Install a consistent icon library (Lucide or Phosphor as recommended by the visual style guide) and create an Angular wrapper for easy use across the app. Navigation components (side nav, bottom nav) and game UI elements all require icons.
+
+Acceptance criteria:
+- [ ] Icon library installed as a dependency (lucide-angular or phosphor-icons)
+- [ ] Icons render correctly in components via a consistent API (e.g., `<lucide-icon name="home">`)
+- [ ] Icon sizes match visual style guide: 16px (inline), 20px (buttons), 24px (navigation), 32px+ (decorative)
+- [ ] Icons inherit color from parent element (works with design token colors)
+- [ ] At least these icons are available: home, map, gamepad, user, settings, star, heart, pause, play, chevron, x-close
+- [ ] Unit test verifies icon component renders without errors
+
+### T-2026-041
+- Title: Create DailyChallengeService for daily challenge rotation
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P1
+- Depends: T-2026-015, T-2026-024, T-2026-023
+- Blocked-by: —
+- Tags: daily-challenge, progression, gamification, service
+- Refs: docs/progression.md, docs/research/gamification-patterns.md
+
+Service that manages daily challenges -- curated minigame levels that rotate daily, encourage breadth of practice, and award bonus XP. Integrates with spaced repetition to prioritize degrading topics.
+
+Acceptance criteria:
+- [ ] `DailyChallengeService` at `src/app/core/progression/daily-challenge.service.ts`
+- [ ] `DailyChallenge` interface: date (string YYYY-MM-DD), gameId, levelId, bonusXp (50), completed (boolean)
+- [ ] `todaysChallenge` computed signal: returns the daily challenge for today
+- [ ] `isCompleted()`: returns whether today's challenge has been completed
+- [ ] `completeChallenge()`: marks today's challenge done, awards 50 bonus XP
+- [ ] Challenge selection prioritizes degrading topics (from SpacedRepetitionService), falls back to random unlocked minigame
+- [ ] Uses date-based seed for deterministic daily selection (same challenge for all players on same day)
+- [ ] Completion state persisted via `StatePersistenceService`
+- [ ] Unit tests with mocked dates: challenge generation, completion, date rollover, degrading topic priority
+
+### T-2026-042
+- Title: Wire MinigameRegistryService to router for dynamic component loading
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P1
+- Depends: T-2026-029, T-2026-018, T-2026-012
+- Blocked-by: —
+- Tags: minigame-framework, routing, integration
+- Refs: docs/ux/navigation.md, docs/minigames/TEMPLATE.md
+
+Create the route resolver/guard that uses MinigameRegistryService to dynamically load the correct minigame component when navigating to `/minigames/:gameId/level/:levelId`. This is the glue between the routing system and the minigame framework.
+
+Acceptance criteria:
+- [ ] Route for `/minigames/:gameId/level/:levelId` uses a component that resolves the game from the registry
+- [ ] `MinigamePlayPage` reads `:gameId` and `:levelId` from route params
+- [ ] Uses `MinigameRegistryService.getComponent(gameId)` to get the component type
+- [ ] Renders the resolved component inside `MinigameShellComponent`
+- [ ] Shows an error state if gameId is not found in the registry
+- [ ] Shows a "locked" state if the minigame is not yet unlocked (via GameProgressionService)
+- [ ] Unit tests for: component resolution, unknown game error, locked state display
+
+### T-2026-043
+- Title: Populate architecture.md with P1 technical decisions
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-017, T-2026-024, T-2026-026
+- Blocked-by: —
+- Tags: documentation, architecture
+- Refs: docs/architecture.md
+
+Populate the architecture.md design doc with the actual technical decisions made during P1 implementation. This document is currently a stub that says "will be populated during P1."
+
+Acceptance criteria:
+- [ ] Angular app structure section: directory layout, feature module organization
+- [ ] Minigame framework architecture section: MinigameEngine base class, lifecycle, MinigameShell, registry pattern
+- [ ] State management section: signals-based approach, GameStateService, persistence strategy
+- [ ] Level/content data format section: LevelDefinition schema, level packs, static data files
+- [ ] Code editor integration section: chosen library, component API
+- [ ] Progression persistence section: localStorage strategy, auto-save, export/import
+- [ ] Testing strategy section: unit test patterns, TDD approach, coverage goals
+- [ ] Diagrams or ASCII art for key data flows (minigame lifecycle, state persistence, progression flow)
+
+### T-2026-044
+- Title: Create HintService for minigame hint system
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-017, T-2026-028
+- Blocked-by: —
+- Tags: minigame-framework, hints, service
+- Refs: docs/research/gamification-patterns.md, docs/minigames/06-terminal-hack.md, docs/minigames/11-system-certification.md
+
+Shared service for the hint system across all minigames. Hints provide scaffolding for stuck players but cost points, implementing the "desirable difficulty" pattern from the gamification research.
+
+Acceptance criteria:
+- [ ] `HintService` at `src/app/core/minigame/hint.service.ts`
+- [ ] `HintDefinition` interface: id, text, revealedElement (optional selector/identifier for UI highlighting)
+- [ ] `requestHint(levelId)`: returns next available hint for the current level, deducts score penalty
+- [ ] `getHintCount(levelId)`: returns number of hints available for a level
+- [ ] `getUsedHints()`: returns hints already used in the current session
+- [ ] `hintPenalty` configurable per minigame (default: 25% of max score per hint)
+- [ ] `hasUsedHints()`: returns boolean (used by scoring to determine perfect eligibility)
+- [ ] Integrates with `MinigameEngine` to apply score deductions
+- [ ] Unit tests for: hint retrieval, score penalty calculation, used hint tracking, perfect score disqualification
+
+### T-2026-045
+- Title: Create level star rating badge component
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-007, T-2026-028
+- Blocked-by: —
+- Tags: ui, levels, component
+- Refs: docs/ux/visual-style.md, docs/ux/navigation.md
+
+A reusable component displaying the 1-3 star rating for a completed level. Used in level select pages, completion overlays, and minigame hub cards. Different from the mastery stars component (T-2026-034) which shows 0-5 topic mastery.
+
+Acceptance criteria:
+- [ ] `LevelStarsComponent` at `src/app/shared/components/level-stars/`
+- [ ] Input: `stars` (number 0-3, where 0 = not completed), `size` ('sm' | 'md' | 'lg')
+- [ ] Renders 3 star icons: filled for earned, empty/outline for unearned
+- [ ] 0 stars (not completed): all empty/gray
+- [ ] 1 star: one filled (Corridor color), two empty
+- [ ] 2 stars: two filled (Alert Orange), one empty
+- [ ] 3 stars: all filled (Solar Gold)
+- [ ] Accessible: aria-label (e.g., "2 out of 3 stars")
+- [ ] Unit tests for: correct fill count, color per tier, accessibility label
+
+### T-2026-046
+- Title: Create difficulty tier badge component
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-007, T-2026-016
+- Blocked-by: —
+- Tags: ui, levels, component
+- Refs: docs/ux/visual-style.md, docs/minigames/TEMPLATE.md
+
+A small badge component that displays the difficulty tier of a level (Basic, Intermediate, Advanced, Boss). Used in level select pages and level completion overlays. Color-coded per tier.
+
+Acceptance criteria:
+- [ ] `TierBadgeComponent` at `src/app/shared/components/tier-badge/`
+- [ ] Input: `tier` (DifficultyTier enum value)
+- [ ] Displays tier name text with color-coded background:
+  - Basic: Reactor Blue background
+  - Intermediate: Alert Orange background
+  - Advanced: Emergency Red background
+  - Boss: Comm Purple background with glow effect
+- [ ] Input: `size` ('sm' | 'md') for compact vs standard display
+- [ ] Accessible: role and aria-label
+- [ ] Unit tests for: correct label text per tier, correct color class per tier
