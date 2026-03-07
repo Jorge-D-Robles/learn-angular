@@ -28,31 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-021
-- Title: Create XpService for XP calculation and rank tracking
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P1
-- Depends: T-2026-015, T-2026-019
-- Blocked-by: —
-- Tags: progression, xp, ranks, service
-- Refs: docs/progression.md
-
-Service that calculates XP rewards, tracks total XP, and determines the player's current rank based on XP thresholds.
-
-Acceptance criteria:
-- [ ] `XpService` at `src/app/core/progression/xp.service.ts`
-- [ ] `calculateLevelXp(tier, perfect)`: returns XP for a level completion (15/20/30/150 base, 2x if perfect)
-- [ ] `calculateStoryXp()`: returns 50 XP for story mission completion
-- [ ] `addXp(amount)`: adds XP to total, updates rank if threshold crossed
-- [ ] `currentRank` computed signal: derived from totalXp using rank thresholds table
-- [ ] `xpToNextRank` computed signal: XP remaining until next rank
-- [ ] `rankProgress` computed signal: percentage progress toward next rank (0-100)
-- [ ] Rank thresholds match docs/progression.md: Cadet(0), Ensign(500), Lieutenant(1500), Commander(3500), Captain(6500), Admiral(10000), Station Commander(15000), Fleet Admiral(25000)
-- [ ] Unit tests for: XP calculation per tier, perfect score multiplier, rank transitions at each threshold
-
 ### T-2026-022
 - Title: Create MasteryService for topic mastery tracking (0-5 stars)
 - Status: todo
