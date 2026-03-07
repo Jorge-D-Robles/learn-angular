@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-223**: Wire MinigamePlayPage engine lifecycle to MinigameShell inputs and events (Assigned: claude, Status: in-progress)
 
 
 
