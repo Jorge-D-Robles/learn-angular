@@ -44,5 +44,18 @@ module.exports = defineConfig([
     extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],
     rules: {},
   },
+  {
+    files: ['**/svg-port/svg-port.ts'],
+    rules: {
+      '@angular-eslint/component-selector': [
+        'error',
+        {
+          type: ['element', 'attribute'],
+          prefix: ['app', 'nx'],
+          style: 'kebab-case',
+        },
+      ],
+    },
+  },
   prettierConfig,
 ]);

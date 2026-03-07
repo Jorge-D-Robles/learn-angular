@@ -650,8 +650,8 @@ Acceptance criteria:
 
 ### T-2026-203
 - Title: Create SvgPortComponent for wire endpoint rendering
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -673,6 +673,7 @@ Acceptance criteria:
 - [ ] Keyboard accessible: focusable, Enter to activate
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: rendering, active state, connected state, hover, keyboard activation
+- Started: 2026-03-07
 
 ### T-2026-204
 - Title: Integrate HintService hint button with MinigameShell HUD
