@@ -310,28 +310,6 @@ Acceptance criteria:
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: rendering at each state, multiplier display, aria-label
 
-### T-2026-162
-- Title: Integrate PauseMenuComponent with MinigameShell pause state
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-135, T-2026-018
-- Blocked-by: —
-- Tags: integration, minigame-framework, pause
-- Refs: docs/ux/navigation.md, docs/minigames/TEMPLATE.md
-
-MinigameShell (T-2026-018) has a pause overlay and PauseMenuComponent (T-2026-135) provides the menu UI, but they are not connected. The shell's pause overlay needs to render PauseMenuComponent, and the menu's events (resume, restart, quit) need to drive the shell's state machine and engine lifecycle.
-
-Acceptance criteria:
-- [ ] MinigameShell's pause overlay replaced with `<nx-pause-menu>` component
-- [ ] PauseMenuComponent `resume` event calls engine.resume() and hides overlay
-- [ ] PauseMenuComponent `restart` event calls engine.reset() and restarts current level
-- [ ] PauseMenuComponent `quit` event navigates to level select page (`/minigames/:gameId`)
-- [ ] Escape key toggles pause state (already in shell, verify it triggers menu correctly)
-- [ ] Unit tests for: pause->menu display, resume restores game, restart resets level, quit navigates
-
 ### T-2026-163
 - Title: Create MinigameTutorialOverlayComponent for first-time play instructions
 - Status: todo
@@ -1080,6 +1058,26 @@ Acceptance criteria:
 - [ ] XpNotificationService shows "+50 Daily Challenge" notification on completion
 - [ ] Bonus XP only awarded once per day (completing same challenge again does not re-award)
 - [ ] Unit tests for: bonus XP award, notification display, no double-award
+
+### T-2026-239
+- Title: Add engine.reset() method to MinigameEngine base class
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: —
+- Blocked-by: —
+- Tags: engine, api, minigame
+- Refs: src/app/core/minigame/minigame-engine.ts
+
+MinigameEngine has no `reset()` method. The current workaround for restarting a level is calling `engine.initialize(levelData)` + `engine.start()` separately (used by MinigamePlayPage.onRetry()). Add a convenience `reset()` method that encapsulates this pattern for a cleaner API.
+
+AC:
+- [ ] Add `reset()` method to MinigameEngine that calls `initialize(currentLevelData) + start()`
+- [ ] Engine stores reference to last-used level data for reset
+- [ ] Unit tests for reset behavior
+- [ ] Update MinigamePlayPage.onRetry() to use `engine.reset()` instead of manual initialize+start
 
 ---
 

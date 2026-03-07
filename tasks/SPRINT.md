@@ -67,11 +67,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-162**: Integrate PauseMenuComponent with MinigameShell pause state (Priority: medium, Size: S)
 - **T-2026-182**: Create LevelNavigationService for next/previous level resolution (Priority: medium, Size: S)
 - **T-2026-186**: Integrate LevelFailedComponent with MinigameShell failure overlay (Priority: medium, Size: S)
 - **T-2026-172**: Create SvgWireRendererComponent for SVG bezier curve wire rendering (Priority: medium, Size: M)
