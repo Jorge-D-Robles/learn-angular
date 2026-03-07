@@ -1,0 +1,180 @@
+// =============================================================================
+// Design Tokens — Nexus Station
+// Source of truth: docs/ux/visual-style.md
+// SCSS variables ($nx-) are the source of truth.
+// CSS custom properties (--nx-) are mapped in the :root block at the bottom.
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Colors — Base
+// -----------------------------------------------------------------------------
+$nx-color-void: #0a0e1a;
+$nx-color-hull: #1a1f2e;
+$nx-color-bulkhead: #252b3d;
+$nx-color-corridor: #8b92a8;
+$nx-color-display: #e2e8f0;
+$nx-color-beacon: #ffffff;
+
+// -----------------------------------------------------------------------------
+// Colors — Accent (Station Systems)
+// -----------------------------------------------------------------------------
+$nx-color-reactor-blue: #3b82f6;
+$nx-color-sensor-green: #22c55e;
+$nx-color-alert-orange: #f97316;
+$nx-color-emergency-red: #ef4444;
+$nx-color-comm-purple: #a855f7;
+$nx-color-solar-gold: #eab308;
+
+// -----------------------------------------------------------------------------
+// Colors — Code Block
+// -----------------------------------------------------------------------------
+$nx-color-code-bg: #0d1117;
+
+// -----------------------------------------------------------------------------
+// Colors — Mastery Glow (0–5 stars)
+// -----------------------------------------------------------------------------
+$nx-mastery-0: transparent;
+$nx-mastery-1: rgba(255, 255, 255, 0.3);
+$nx-mastery-2: $nx-color-reactor-blue;
+$nx-mastery-3: $nx-color-sensor-green;
+$nx-mastery-4: $nx-color-solar-gold;
+// Same color as mastery-4; particle effect distinguishes this tier at runtime
+$nx-mastery-5: $nx-color-solar-gold;
+
+// -----------------------------------------------------------------------------
+// Typography — Font Stacks
+// -----------------------------------------------------------------------------
+$nx-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+  Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+$nx-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+// -----------------------------------------------------------------------------
+// Typography — Scale
+// -----------------------------------------------------------------------------
+$nx-text-page-title-size: 2rem;
+$nx-text-page-title-weight: 700;
+
+$nx-text-section-heading-size: 1.5rem;
+$nx-text-section-heading-weight: 600;
+
+$nx-text-card-title-size: 1.125rem;
+$nx-text-card-title-weight: 600;
+
+$nx-text-body-size: 1rem;
+$nx-text-body-weight: 400;
+
+$nx-text-caption-size: 0.875rem;
+$nx-text-caption-weight: 400;
+
+$nx-text-code-size: 0.875rem;
+$nx-text-code-weight: 400;
+
+// -----------------------------------------------------------------------------
+// Spacing — 4px Grid
+// Name follows multiplier convention: space-N = N * 4px
+// -----------------------------------------------------------------------------
+$nx-space-1: 4px;
+$nx-space-2: 8px;
+$nx-space-3: 12px;
+$nx-space-4: 16px;
+$nx-space-6: 24px;
+$nx-space-8: 32px;
+$nx-space-12: 48px;
+$nx-space-16: 64px;
+
+// -----------------------------------------------------------------------------
+// Animation — Durations
+// -----------------------------------------------------------------------------
+$nx-duration-fast: 150ms;
+$nx-duration-normal: 250ms;
+$nx-duration-slow: 300ms;
+$nx-duration-game: 500ms;
+
+// -----------------------------------------------------------------------------
+// Animation — Easings
+// -----------------------------------------------------------------------------
+$nx-ease-out: ease-out; // entrances
+$nx-ease-in: ease-in; // exits
+$nx-ease-in-out: ease-in-out; // general
+
+// -----------------------------------------------------------------------------
+// Component — Radii
+// -----------------------------------------------------------------------------
+$nx-radius-card: 8px;
+$nx-radius-button: 6px;
+
+// =============================================================================
+// :root — CSS Custom Properties
+// Maps every SCSS variable to a CSS custom property for runtime access.
+// =============================================================================
+:root {
+  // Colors — Base
+  --nx-color-void: #{$nx-color-void};
+  --nx-color-hull: #{$nx-color-hull};
+  --nx-color-bulkhead: #{$nx-color-bulkhead};
+  --nx-color-corridor: #{$nx-color-corridor};
+  --nx-color-display: #{$nx-color-display};
+  --nx-color-beacon: #{$nx-color-beacon};
+
+  // Colors — Accent
+  --nx-color-reactor-blue: #{$nx-color-reactor-blue};
+  --nx-color-sensor-green: #{$nx-color-sensor-green};
+  --nx-color-alert-orange: #{$nx-color-alert-orange};
+  --nx-color-emergency-red: #{$nx-color-emergency-red};
+  --nx-color-comm-purple: #{$nx-color-comm-purple};
+  --nx-color-solar-gold: #{$nx-color-solar-gold};
+
+  // Colors — Code Block
+  --nx-color-code-bg: #{$nx-color-code-bg};
+
+  // Colors — Mastery Glow
+  --nx-mastery-0: #{$nx-mastery-0};
+  --nx-mastery-1: #{$nx-mastery-1};
+  --nx-mastery-2: #{$nx-mastery-2};
+  --nx-mastery-3: #{$nx-mastery-3};
+  --nx-mastery-4: #{$nx-mastery-4};
+  --nx-mastery-5: #{$nx-mastery-5};
+
+  // Typography — Font Stacks
+  --nx-font-sans: #{$nx-font-sans};
+  --nx-font-mono: #{$nx-font-mono};
+
+  // Typography — Scale
+  --nx-text-page-title-size: #{$nx-text-page-title-size};
+  --nx-text-page-title-weight: #{$nx-text-page-title-weight};
+  --nx-text-section-heading-size: #{$nx-text-section-heading-size};
+  --nx-text-section-heading-weight: #{$nx-text-section-heading-weight};
+  --nx-text-card-title-size: #{$nx-text-card-title-size};
+  --nx-text-card-title-weight: #{$nx-text-card-title-weight};
+  --nx-text-body-size: #{$nx-text-body-size};
+  --nx-text-body-weight: #{$nx-text-body-weight};
+  --nx-text-caption-size: #{$nx-text-caption-size};
+  --nx-text-caption-weight: #{$nx-text-caption-weight};
+  --nx-text-code-size: #{$nx-text-code-size};
+  --nx-text-code-weight: #{$nx-text-code-weight};
+
+  // Spacing — 4px Grid
+  --nx-space-1: #{$nx-space-1};
+  --nx-space-2: #{$nx-space-2};
+  --nx-space-3: #{$nx-space-3};
+  --nx-space-4: #{$nx-space-4};
+  --nx-space-6: #{$nx-space-6};
+  --nx-space-8: #{$nx-space-8};
+  --nx-space-12: #{$nx-space-12};
+  --nx-space-16: #{$nx-space-16};
+
+  // Animation — Durations
+  --nx-duration-fast: #{$nx-duration-fast};
+  --nx-duration-normal: #{$nx-duration-normal};
+  --nx-duration-slow: #{$nx-duration-slow};
+  --nx-duration-game: #{$nx-duration-game};
+
+  // Animation — Easings
+  --nx-ease-out: #{$nx-ease-out};
+  --nx-ease-in: #{$nx-ease-in};
+  --nx-ease-in-out: #{$nx-ease-in-out};
+
+  // Component — Radii
+  --nx-radius-card: #{$nx-radius-card};
+  --nx-radius-button: #{$nx-radius-button};
+}

@@ -64,29 +64,6 @@ Acceptance criteria:
 - [ ] CI caches `node_modules` for faster runs
 - [ ] Workflow badge can be added to README (URL is valid)
 
-### T-2026-007
-- Title: Define design tokens as SCSS variables and CSS custom properties
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P0
-- Depends: T-2026-001
-- Blocked-by: —
-- Tags: styles, design-tokens, theming
-- Refs: docs/ux/visual-style.md
-
-Create the design token system based on the visual style guide. All colors, typography, spacing, and animation values should be defined as CSS custom properties for runtime theming, with SCSS variables for compile-time usage.
-
-Acceptance criteria:
-- [ ] `src/styles/_tokens.scss` defines all color tokens from the visual style guide (Void, Hull, Bulkhead, Corridor, Display, Beacon, and all accent colors)
-- [ ] Mastery glow colors are defined (0-5 stars)
-- [ ] Typography scale is defined (page title through code, with font stacks)
-- [ ] Spacing scale is defined (4px grid: 4, 8, 12, 16, 24, 32, 48, 64)
-- [ ] Animation timing tokens are defined (150-250ms UI, 300-500ms game, ease-out/ease-in)
-- [ ] All tokens are also exposed as CSS custom properties on `:root`
-- [ ] `src/styles/styles.scss` imports the tokens file
-
 ### T-2026-008
 - Title: Create global base styles and CSS reset
 - Status: todo
