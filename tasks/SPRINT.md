@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-046**: Create difficulty tier badge component (Assigned: claude, Status: in-progress)
 
 
 
