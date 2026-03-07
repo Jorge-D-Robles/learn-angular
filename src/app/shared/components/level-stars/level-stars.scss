@@ -1,0 +1,49 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nx-space-1);
+  color: var(--level-star-color, var(--nx-color-corridor));
+}
+
+// Filled stars: solid fill + stroke, with glow color
+.level-stars__star--filled {
+  svg {
+    fill: currentColor;
+    stroke: currentColor;
+  }
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+// Empty stars: outline only, muted
+.level-stars__star--empty {
+  opacity: 0.25;
+  svg {
+    fill: transparent;
+    stroke: currentColor;
+  }
+}
+
+// Size variants
+:host(.level-stars--sm) {
+  gap: 2px;
+}
+
+:host(.level-stars--lg) {
+  gap: var(--nx-space-2);
+}
+
+// Pulse animation for 3-star perfect
+:host(.level-stars--pulse) {
+  animation: level-pulse 2s ease-in-out infinite;
+}
+
+@keyframes level-pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host(.level-stars--pulse) {
+    animation: none;
+  }
+}
