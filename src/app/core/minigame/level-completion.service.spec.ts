@@ -10,6 +10,7 @@ import { GameStateService } from '../state/game-state.service';
 import { MasteryService } from '../progression/mastery.service';
 import { LevelCompletionService } from './level-completion.service';
 import { XpNotificationService } from '../notifications';
+import { StreakService } from '../progression/streak.service';
 
 // --- Test fixtures ---
 
@@ -183,23 +184,48 @@ describe('LevelCompletionService', () => {
     expect(perfect.xpEarned).toBe(300);
   });
 
-  // 7. Apply streak multiplier to XP
-  it('should apply streak multiplier to XP', () => {
-    const summary = service.completeLevel(
-      makeResult({ perfect: false }),
-      { streakMultiplier: 1.3 },
-    );
-    expect(summary.xpEarned).toBe(Math.round(15 * 1.3)); // 20
-    expect(summary.bonuses.streak).toBe(true);
-  });
+  // 7. Auto-apply streak bonus from StreakService
+  describe('streak bonus (auto from StreakService)', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
 
-  // 8. Default streak multiplier to 1.0
-  it('should default streak multiplier to 1.0', () => {
-    const summary = service.completeLevel(
-      makeResult({ perfect: false }),
-    );
-    expect(summary.xpEarned).toBe(15);
-    expect(summary.bonuses.streak).toBe(false);
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    function buildStreak(days: number): void {
+      const streakService = TestBed.inject(StreakService);
+      for (let i = 0; i < days; i++) {
+        vi.setSystemTime(
+          new Date(`2026-03-${String(1 + i).padStart(2, '0')}T12:00:00`),
+        );
+        streakService.recordDailyPlay();
+      }
+    }
+
+    it('should auto-apply streak bonus from StreakService (3-day streak)', () => {
+      buildStreak(3); // 1.3x
+      const summary = service.completeLevel(makeResult({ perfect: false }));
+      // Basic = 15, 15 * 1.3 = 19.5 -> Math.round = 20
+      expect(summary.xpEarned).toBe(20);
+      expect(summary.bonuses.streak).toBe(true);
+    });
+
+    it('should have no streak bonus when no streak active', () => {
+      const summary = service.completeLevel(makeResult({ perfect: false }));
+      expect(summary.xpEarned).toBe(15);
+      expect(summary.bonuses.streak).toBe(false);
+    });
+
+    it('should combine streak bonus with perfect score', () => {
+      buildStreak(3); // 1.3x
+      const summary = service.completeLevel(makeResult({ perfect: true }));
+      // Basic perfect = 30, 30 * 1.3 = 39
+      expect(summary.xpEarned).toBe(39);
+      expect(summary.bonuses.perfect).toBe(true);
+      expect(summary.bonuses.streak).toBe(true);
+    });
   });
 
   // 9. Detect rank-up
@@ -316,11 +342,22 @@ describe('LevelCompletionService', () => {
       expect(bonuses).not.toContain('Perfect!');
     });
 
-    it("should include 'Streak Bonus' when streak multiplier > 1", () => {
+    it('should include streak bonus amount in notification when streak active', () => {
+      vi.setSystemTime(new Date('2026-03-01T12:00:00'));
+      TestBed.inject(StreakService).recordDailyPlay();
       const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
-      service.completeLevel(makeResult(), { streakMultiplier: 1.3 });
+      service.completeLevel(makeResult({ perfect: false }));
       const bonuses = spy.mock.calls[0][1] as readonly string[];
-      expect(bonuses).toContain('Streak Bonus');
+      // Basic = 15, 1.1x, bonus = 2
+      expect(bonuses).toContain('+2 Streak Bonus');
+    });
+
+    it('should not include streak bonus in notification when no streak', () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeLevel(makeResult({ perfect: false }));
+      const bonuses = spy.mock.calls[0][1] as readonly string[];
+      const hasStreak = bonuses.some((b) => b.includes('Streak'));
+      expect(hasStreak).toBe(false);
     });
 
     it('should include rank-up info in notification when rank changes', () => {

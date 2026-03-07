@@ -9,9 +9,18 @@ import {
   type RankThreshold,
 } from '../state/rank.constants';
 import { GameStateService } from '../state/game-state.service';
+import { StreakService } from './streak.service';
 
 /** XP awarded for completing a story mission. Source: docs/progression.md */
 export const STORY_MISSION_XP = 50 as const;
+
+/** Breakdown of XP after applying the streak bonus multiplier. */
+export interface XpWithStreakBonus {
+  readonly baseXp: number;
+  readonly streakBonus: number;
+  readonly totalXp: number;
+  readonly streakMultiplier: number;
+}
 
 /**
  * Returns the RankThreshold for the next rank above the given XP,
@@ -53,6 +62,7 @@ export function getCurrentRankThreshold(xp: number): RankThreshold {
 @Injectable({ providedIn: 'root' })
 export class XpService {
   private readonly gameState = inject(GameStateService);
+  private readonly streakService = inject(StreakService);
 
   /** Total XP accumulated (re-exposed from GameStateService). */
   readonly totalXp = this.gameState.totalXp;
@@ -90,6 +100,18 @@ export class XpService {
   /** Returns the XP reward for completing a story mission. */
   calculateStoryXp(): number {
     return STORY_MISSION_XP;
+  }
+
+  /**
+   * Applies the current streak multiplier to a base XP amount.
+   * Returns a breakdown of base, bonus, and total XP.
+   * Streak bonus formula: +10% per consecutive day, capped at +50%.
+   */
+  applyStreakBonus(baseXp: number): XpWithStreakBonus {
+    const streakMultiplier = this.streakService.streakMultiplier();
+    const totalXp = Math.round(baseXp * streakMultiplier);
+    const streakBonus = totalXp - baseXp;
+    return { baseXp, streakBonus, totalXp, streakMultiplier };
   }
 
   /** Adds XP to the player's total. Delegates to GameStateService. */

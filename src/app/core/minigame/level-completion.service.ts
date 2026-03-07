@@ -5,12 +5,6 @@ import { XpService } from '../progression/xp.service';
 import { MasteryService } from '../progression/mastery.service';
 import { XpNotificationService } from '../notifications';
 
-/** Options for the level completion flow. */
-export interface LevelCompletionOptions {
-  /** Streak multiplier applied to XP. Default: 1.0 (no bonus). */
-  readonly streakMultiplier?: number;
-}
-
 /** Summary returned after completing a level. */
 export interface LevelCompletionSummary {
   /** Final score achieved. */
@@ -49,14 +43,10 @@ export class LevelCompletionService {
    * Orchestrates the full completion pipeline for a finished level.
    *
    * @param result - The MinigameResult from the engine (xpEarned will be overridden).
-   * @param options - Optional settings (e.g., streak multiplier).
    * @returns A LevelCompletionSummary with XP, bonuses, rank-up, and best-score info.
    * @throws Error if the levelId is not registered in LevelProgressionService.
    */
-  completeLevel(
-    result: MinigameResult,
-    options?: LevelCompletionOptions,
-  ): LevelCompletionSummary {
+  completeLevel(result: MinigameResult): LevelCompletionSummary {
     // 1. Look up level definition for tier
     const levelDef = this.levelProgression.getLevelDefinition(result.levelId);
     if (levelDef === null) {
@@ -65,13 +55,13 @@ export class LevelCompletionService {
       );
     }
 
-    // 2. Calculate XP
+    // 2. Calculate XP with streak bonus
     const baseXp = this.xpService.calculateLevelXp(
       levelDef.tier,
       result.perfect,
     );
-    const streakMultiplier = options?.streakMultiplier ?? 1.0;
-    const xpEarned = Math.round(baseXp * streakMultiplier);
+    const xpBreakdown = this.xpService.applyStreakBonus(baseXp);
+    const xpEarned = xpBreakdown.totalXp;
 
     // 3. Capture rank BEFORE state mutation
     const rankBefore = this.xpService.currentRank();
@@ -99,8 +89,8 @@ export class LevelCompletionService {
     if (result.perfect === true) {
       bonuses.push('Perfect!');
     }
-    if (streakMultiplier > 1.0) {
-      bonuses.push('Streak Bonus');
+    if (xpBreakdown.streakBonus > 0) {
+      bonuses.push(`+${xpBreakdown.streakBonus} Streak Bonus`);
     }
     if (rankUpOccurred) {
       bonuses.push(`Rank Up: ${rankAfter}`);
@@ -113,7 +103,7 @@ export class LevelCompletionService {
       xpEarned,
       bonuses: {
         perfect: result.perfect === true,
-        streak: streakMultiplier > 1.0,
+        streak: xpBreakdown.streakBonus > 0,
       },
       isNewBestScore,
       rankUpOccurred,

@@ -6,6 +6,7 @@ import {
   getNextRankThreshold,
   getCurrentRankThreshold,
 } from './xp.service';
+import { StreakService } from './streak.service';
 
 function createFakeStorage(): Storage {
   const store = new Map<string, string>();
@@ -246,6 +247,103 @@ describe('XpService', () => {
     it('should return 50 at 1000 XP (50% from Ensign 500 to Lieutenant 1500)', () => {
       service.addXp(1_000);
       expect(service.rankProgress()).toBe(50);
+    });
+  });
+
+  describe('applyStreakBonus', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    function buildStreak(days: number): void {
+      const streakService = TestBed.inject(StreakService);
+      for (let i = 0; i < days; i++) {
+        vi.setSystemTime(
+          new Date(`2026-03-${String(1 + i).padStart(2, '0')}T12:00:00`),
+        );
+        streakService.recordDailyPlay();
+      }
+    }
+
+    it('should return baseXp with 0 bonus when no streak (0 active days)', () => {
+      const result = service.applyStreakBonus(20);
+      expect(result).toEqual({
+        baseXp: 20,
+        streakBonus: 0,
+        totalXp: 20,
+        streakMultiplier: 1.0,
+      });
+    });
+
+    it('should apply 10% bonus for 1-day streak', () => {
+      buildStreak(1);
+      const result = service.applyStreakBonus(20);
+      expect(result).toEqual({
+        baseXp: 20,
+        streakBonus: 2,
+        totalXp: 22,
+        streakMultiplier: 1.1,
+      });
+    });
+
+    it('should apply 30% bonus for 3-day streak', () => {
+      buildStreak(3);
+      const result = service.applyStreakBonus(20);
+      expect(result).toEqual({
+        baseXp: 20,
+        streakBonus: 6,
+        totalXp: 26,
+        streakMultiplier: 1.3,
+      });
+    });
+
+    it('should cap at 50% bonus for 5+ day streak', () => {
+      buildStreak(5);
+      const result = service.applyStreakBonus(20);
+      expect(result).toEqual({
+        baseXp: 20,
+        streakBonus: 10,
+        totalXp: 30,
+        streakMultiplier: 1.5,
+      });
+    });
+
+    it('should still cap at 50% for 7-day streak', () => {
+      buildStreak(7);
+      const result = service.applyStreakBonus(20);
+      expect(result).toEqual({
+        baseXp: 20,
+        streakBonus: 10,
+        totalXp: 30,
+        streakMultiplier: 1.5,
+      });
+    });
+
+    it('should round total XP when streak produces fractional value', () => {
+      buildStreak(1); // 1.1x
+      const result = service.applyStreakBonus(15);
+      // 15 * 1.1 = 16.5 -> Math.round = 17, bonus = 17 - 15 = 2
+      expect(result).toEqual({
+        baseXp: 15,
+        streakBonus: 2,
+        totalXp: 17,
+        streakMultiplier: 1.1,
+      });
+    });
+
+    it('should return 0 bonus when baseXp is 0', () => {
+      buildStreak(3); // 1.3x
+      const result = service.applyStreakBonus(0);
+      expect(result).toEqual({
+        baseXp: 0,
+        streakBonus: 0,
+        totalXp: 0,
+        streakMultiplier: 1.3,
+      });
     });
   });
 });
