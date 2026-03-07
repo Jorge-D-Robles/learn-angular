@@ -1,0 +1,62 @@
+:host {
+  display: block;
+}
+
+.xp-progress-bar__track {
+  background: var(--nx-color-bulkhead);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.xp-progress-bar__fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--nx-color-reactor-blue),
+    var(--nx-color-sensor-green)
+  );
+  border-radius: 4px;
+  transition: width var(--nx-duration-normal) var(--nx-ease-out);
+}
+
+// Compact variant: thin 8px bar with percentage label
+:host(.xp-progress-bar--compact) {
+  .xp-progress-bar__track {
+    height: 8px;
+  }
+
+  .xp-progress-bar__pct {
+    display: block;
+    margin-top: 4px;
+    font-size: var(--nx-text-caption-size, 0.75rem);
+    color: var(--nx-color-corridor);
+  }
+}
+
+// Full variant: thicker 16px bar with rank labels and XP numbers
+:host(.xp-progress-bar--full) {
+  .xp-progress-bar__track {
+    height: 16px;
+  }
+
+  .xp-progress-bar__labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    font-size: var(--nx-text-caption-size, 0.75rem);
+    color: var(--nx-color-corridor);
+  }
+
+  .xp-progress-bar__xp-text {
+    display: block;
+    margin-top: 4px;
+    font-size: var(--nx-text-caption-size, 0.75rem);
+    color: var(--nx-color-solar-gold);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xp-progress-bar__fill {
+    transition: none;
+  }
+}
