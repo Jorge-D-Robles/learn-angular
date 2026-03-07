@@ -1,0 +1,86 @@
+.pause-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 14, 26, 0.85); // --nx-color-void at 85%
+  z-index: 100;
+  outline: none; // Remove focus outline on the overlay div
+}
+
+.pause-overlay__panel {
+  background: var(--nx-color-hull);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card);
+  padding: var(--nx-space-8);
+  min-width: 280px;
+  text-align: center;
+}
+
+.pause-overlay__title {
+  margin: 0 0 var(--nx-space-6);
+  font-size: var(--nx-text-section-heading-size);
+  font-weight: var(--nx-text-section-heading-weight);
+  color: var(--nx-color-beacon);
+}
+
+.pause-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pause-menu__item {
+  padding: var(--nx-space-3) var(--nx-space-4);
+  margin: var(--nx-space-1) 0;
+  border-radius: var(--nx-radius-button);
+  color: var(--nx-color-display);
+  cursor: pointer;
+  transition: background var(--nx-duration-fast) var(--nx-ease-out);
+
+  &:hover,
+  &--focused {
+    background: var(--nx-color-hull-dark, rgba(255, 255, 255, 0.05));
+    border-left: 3px solid var(--nx-color-reactor-blue);
+  }
+}
+
+.pause-overlay__shortcuts {
+  margin-top: var(--nx-space-4);
+  text-align: left;
+}
+
+.pause-overlay__shortcuts-title {
+  font-size: var(--nx-text-caption-size);
+  color: var(--nx-color-corridor);
+  margin: 0 0 var(--nx-space-2);
+}
+
+.pause-overlay__shortcut-entry {
+  display: flex;
+  gap: var(--nx-space-3);
+  padding: var(--nx-space-1) 0;
+}
+
+.pause-overlay__shortcut-key {
+  font-family: monospace;
+  color: var(--nx-color-reactor-blue);
+  min-width: 60px;
+}
+
+.pause-overlay__shortcut-label {
+  color: var(--nx-color-display);
+  margin: 0;
+}
+
+.pause-overlay__no-shortcuts {
+  color: var(--nx-color-corridor);
+  font-size: var(--nx-text-caption-size);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pause-menu__item {
+    transition: none;
+  }
+}
