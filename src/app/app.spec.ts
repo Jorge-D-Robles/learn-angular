@@ -101,4 +101,13 @@ describe('App', () => {
     );
     expect(sideNav).toBeTruthy();
   });
+
+  it('should render the bottom nav component', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const bottomNav = fixture.nativeElement.querySelector(
+      '.app-body app-bottom-nav',
+    );
+    expect(bottomNav).toBeTruthy();
+  });
 });

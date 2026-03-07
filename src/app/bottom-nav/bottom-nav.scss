@@ -1,0 +1,104 @@
+// Bottom Navigation — mobile only (< 768px)
+:host {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  z-index: 100;
+  background-color: var(--nx-color-hull);
+  border-top: 1px solid var(--nx-color-bulkhead);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+nav {
+  display: flex;
+  height: 100%;
+}
+
+a {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--nx-color-corridor);
+  text-decoration: none;
+  transition: color var(--nx-duration-fast) var(--nx-ease-out);
+
+  &:hover {
+    color: var(--nx-color-display);
+  }
+
+  &.active {
+    color: var(--nx-color-reactor-blue);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Icon placeholders — CSS shapes (replaced once T-2026-040 lands)
+// ---------------------------------------------------------------------------
+.bottom-nav__icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+// Dashboard — circle
+.bottom-nav__icon--dashboard {
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+// Mission — diamond (rotated square)
+.bottom-nav__icon--mission {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  transform: rotate(45deg);
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+// Games — grid (2x2 dots)
+.bottom-nav__icon--games {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 4px;
+  padding: 2px;
+
+  &::before,
+  &::after {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background-color: currentColor;
+    border-radius: 50%;
+  }
+}
+
+// Profile — square
+.bottom-nav__icon--profile {
+  border: 2px solid currentColor;
+  border-radius: 2px;
+}
+
+// ---------------------------------------------------------------------------
+// Label
+// ---------------------------------------------------------------------------
+.bottom-nav__label {
+  font-size: var(--nx-text-caption-size);
+  font-weight: var(--nx-text-caption-weight);
+  line-height: 1;
+}
+
+// ---------------------------------------------------------------------------
+// Responsive — hide on tablet and desktop (>= 768px)
+// ---------------------------------------------------------------------------
+@media (min-width: 768px) {
+  :host {
+    display: none;
+  }
+}
