@@ -1,9 +1,10 @@
 import { Component, computed, input, output } from '@angular/core';
+import { PauseMenuComponent } from '../../../shared/components/pause-menu/pause-menu';
 import { MinigameStatus } from '../minigame.types';
 
 @Component({
   selector: 'app-minigame-shell',
-  imports: [],
+  imports: [PauseMenuComponent],
   template: `
     <div class="minigame-shell">
       <!-- HUD Bar -->
@@ -31,13 +32,10 @@ import { MinigameStatus } from '../minigame.types';
 
       <!-- Pause Overlay -->
       @if (status() === paused) {
-        <div class="shell-overlay" role="dialog" aria-modal="true" aria-labelledby="pause-title">
-          <div class="shell-overlay__panel">
-            <h2 id="pause-title">Paused</h2>
-            <button type="button" (click)="resumeGame.emit()">Resume</button>
-            <button type="button" (click)="quit.emit()">Quit</button>
-          </div>
-        </div>
+        <nx-pause-menu
+          (resume)="resumeGame.emit()"
+          (restart)="restartGame.emit()"
+          (quit)="quit.emit()" />
       }
 
       <!-- Completion Overlay -->
@@ -87,6 +85,7 @@ export class MinigameShellComponent {
   // --- Signal outputs ---
   readonly pauseGame = output();
   readonly resumeGame = output();
+  readonly restartGame = output();
   readonly quit = output();
   readonly retry = output();
   readonly nextLevel = output();

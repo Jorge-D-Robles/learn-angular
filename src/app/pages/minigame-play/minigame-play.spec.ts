@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { MinigamePlayPage } from './minigame-play';
+import { MinigameShellComponent } from '../../core/minigame/minigame-shell/minigame-shell';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
 import { LevelLoaderService } from '../../core/levels/level-loader.service';
@@ -143,6 +145,20 @@ async function setup(options: {
 }
 
 describe('MinigamePlayPage', () => {
+  // HTMLDialogElement polyfill — PauseMenuComponent uses ConfirmDialogComponent which calls showModal()
+  beforeEach(() => {
+    if (!HTMLDialogElement.prototype.showModal) {
+      HTMLDialogElement.prototype.showModal = function () {
+        this.setAttribute('open', '');
+      };
+    }
+    if (!HTMLDialogElement.prototype.close) {
+      HTMLDialogElement.prototype.close = function () {
+        this.removeAttribute('open');
+      };
+    }
+  });
+
   // --- 1. Basic instantiation ---
   it('should create the component', async () => {
     const { component } = await setup({
@@ -387,7 +403,7 @@ describe('MinigamePlayPage', () => {
   it('should call engine.resume() on resumeGame event', async () => {
     const testEngine = new TestEngine();
     const factory = vi.fn().mockReturnValue(testEngine);
-    const { fixture, element } = await setup({
+    const { fixture } = await setup({
       registry: {
         getComponent: vi.fn().mockReturnValue(DummyGameComponent),
         getEngineFactory: vi.fn().mockReturnValue(factory),
@@ -401,9 +417,10 @@ describe('MinigamePlayPage', () => {
     testEngine.pause();
     fixture.detectChanges();
 
-    // Click resume
-    const resumeBtn = element.querySelector('.shell-overlay__panel button') as HTMLButtonElement;
-    resumeBtn.click();
+    // Trigger resumeGame output from the shell
+    fixture.debugElement
+      .query(By.directive(MinigameShellComponent))
+      .triggerEventHandler('resumeGame');
     fixture.detectChanges();
 
     expect(testEngine.status()).toBe(MinigameStatus.Playing);
@@ -455,6 +472,37 @@ describe('MinigamePlayPage', () => {
 
     // Retry
     component.onRetry();
+
+    expect(testEngine.status()).toBe(MinigameStatus.Playing);
+    expect(testEngine.score()).toBe(0);
+    testEngine.destroy();
+  });
+
+  // --- 19b. restartGame event triggers engine re-initialization ---
+  it('should re-initialize engine on restartGame event from shell', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Earn some score, then pause
+    testEngine.submitAction('test');
+    expect(testEngine.score()).toBe(10);
+    testEngine.pause();
+    fixture.detectChanges();
+
+    // Trigger restartGame from shell
+    fixture.debugElement
+      .query(By.directive(MinigameShellComponent))
+      .triggerEventHandler('restartGame');
+    fixture.detectChanges();
 
     expect(testEngine.status()).toBe(MinigameStatus.Playing);
     expect(testEngine.score()).toBe(0);

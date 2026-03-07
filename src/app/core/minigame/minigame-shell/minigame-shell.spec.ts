@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
+import { By } from '@angular/platform-browser';
 import { createComponent } from '../../../../testing/test-utils';
 import { MinigameShellComponent } from './minigame-shell';
+import { PauseMenuComponent } from '../../../shared/components/pause-menu/pause-menu';
 import { MinigameStatus } from '../minigame.types';
 
 @Component({
@@ -8,8 +10,8 @@ import { MinigameStatus } from '../minigame.types';
     [score]="score" [lives]="lives" [maxLives]="maxLives"
     [timeRemaining]="timeRemaining" [timerDuration]="timerDuration"
     [status]="status" [xpEarned]="xpEarned" [starRating]="starRating"
-    (pauseGame)="onPause()" (resumeGame)="onResume()" (quit)="onQuit()"
-    (retry)="onRetry()" (nextLevel)="onNextLevel()" (replay)="onReplay()"
+    (pauseGame)="onPause()" (resumeGame)="onResume()" (restartGame)="onRestart()"
+    (quit)="onQuit()" (retry)="onRetry()" (nextLevel)="onNextLevel()" (replay)="onReplay()"
   ><p class="game-content">Game here</p></app-minigame-shell>`,
   imports: [MinigameShellComponent],
 })
@@ -25,6 +27,7 @@ class TestHost {
 
   pauseCalled = false;
   resumeCalled = false;
+  restartCalled = false;
   quitCalled = false;
   retryCalled = false;
   nextLevelCalled = false;
@@ -32,6 +35,7 @@ class TestHost {
 
   onPause(): void { this.pauseCalled = true; }
   onResume(): void { this.resumeCalled = true; }
+  onRestart(): void { this.restartCalled = true; }
   onQuit(): void { this.quitCalled = true; }
   onRetry(): void { this.retryCalled = true; }
   onNextLevel(): void { this.nextLevelCalled = true; }
@@ -39,6 +43,20 @@ class TestHost {
 }
 
 describe('MinigameShellComponent', () => {
+  // HTMLDialogElement polyfill — PauseMenuComponent uses ConfirmDialogComponent which calls showModal()
+  beforeEach(() => {
+    if (!HTMLDialogElement.prototype.showModal) {
+      HTMLDialogElement.prototype.showModal = function () {
+        this.setAttribute('open', '');
+      };
+    }
+    if (!HTMLDialogElement.prototype.close) {
+      HTMLDialogElement.prototype.close = function () {
+        this.removeAttribute('open');
+      };
+    }
+  });
+
   // --- 1. Component creation ---
   it('should create the component', async () => {
     const { component } = await createComponent(TestHost);
@@ -154,18 +172,14 @@ describe('MinigameShellComponent', () => {
     expect(overlay).toBeNull();
   });
 
-  // --- 12. Pause overlay visible ---
-  it('should show pause overlay when status is Paused', async () => {
+  // --- 12. Pause overlay renders PauseMenuComponent ---
+  it('should render nx-pause-menu when status is Paused', async () => {
     const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Paused;
     fixture.detectChanges();
     await fixture.whenStable();
-    const overlay = element.querySelector('.shell-overlay');
-    expect(overlay).toBeTruthy();
-    expect(overlay?.getAttribute('role')).toBe('dialog');
-    expect(overlay?.getAttribute('aria-modal')).toBe('true');
-    expect(overlay?.textContent).toContain('Resume');
-    expect(overlay?.textContent).toContain('Quit');
+    expect(element.querySelector('nx-pause-menu')).toBeTruthy();
+    expect(element.querySelector('.shell-overlay__panel')).toBeNull();
   });
 
   // --- 13. Completion overlay visible ---
@@ -225,30 +239,46 @@ describe('MinigameShellComponent', () => {
     expect(fixture.componentInstance.pauseCalled).toBe(true);
   });
 
-  // --- 17. Resume button emits ---
-  it('should emit resume when Resume is clicked in pause overlay', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+  // --- 17. Resume event forwarding from PauseMenuComponent ---
+  it('should emit resumeGame when resume event fires from pause menu', async () => {
+    const { fixture } = await createComponent(TestHost, { detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Paused;
     fixture.detectChanges();
     await fixture.whenStable();
-    const buttons = element.querySelectorAll('.shell-overlay__panel button');
-    const resumeBtn = Array.from(buttons).find(b => b.textContent?.trim() === 'Resume') as HTMLButtonElement;
-    resumeBtn.click();
+    fixture.debugElement.query(By.directive(PauseMenuComponent)).triggerEventHandler('resume');
     fixture.detectChanges();
     expect(fixture.componentInstance.resumeCalled).toBe(true);
   });
 
-  // --- 18. Quit button emits from pause overlay ---
-  it('should emit quit when Quit is clicked in pause overlay', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+  // --- 18. Quit event forwarding from PauseMenuComponent ---
+  it('should emit quit when quit event fires from pause menu', async () => {
+    const { fixture } = await createComponent(TestHost, { detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Paused;
     fixture.detectChanges();
     await fixture.whenStable();
-    const buttons = element.querySelectorAll('.shell-overlay__panel button');
-    const quitBtn = Array.from(buttons).find(b => b.textContent?.trim() === 'Quit') as HTMLButtonElement;
-    quitBtn.click();
+    fixture.debugElement.query(By.directive(PauseMenuComponent)).triggerEventHandler('quit');
     fixture.detectChanges();
     expect(fixture.componentInstance.quitCalled).toBe(true);
+  });
+
+  // --- 18b. Restart event forwarding from PauseMenuComponent ---
+  it('should emit restartGame when restart event fires from pause menu', async () => {
+    const { fixture } = await createComponent(TestHost, { detectChanges: false });
+    fixture.componentInstance.status = MinigameStatus.Paused;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.debugElement.query(By.directive(PauseMenuComponent)).triggerEventHandler('restart');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.restartCalled).toBe(true);
+  });
+
+  // --- 18c. No pause menu when playing ---
+  it('should not render nx-pause-menu when status is Playing', async () => {
+    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    fixture.componentInstance.status = MinigameStatus.Playing;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(element.querySelector('nx-pause-menu')).toBeNull();
   });
 
   // --- 19. Retry button emits from failure overlay ---

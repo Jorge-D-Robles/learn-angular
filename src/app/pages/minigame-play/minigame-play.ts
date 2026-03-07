@@ -50,6 +50,7 @@ import type { LevelDefinition } from '../../core/levels/level.types';
           (pauseGame)="onPause()"
           (resumeGame)="onResume()"
           (quit)="onQuit()"
+          (restartGame)="onRetry()"
           (retry)="onRetry()"
           (replay)="onReplay()"
           (nextLevel)="onNextLevel()"
