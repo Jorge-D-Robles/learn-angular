@@ -1,10 +1,11 @@
 import { Component, computed, input, output } from '@angular/core';
+import { LevelFailedComponent } from '../../../shared/components/level-failed/level-failed';
 import { PauseMenuComponent } from '../../../shared/components/pause-menu/pause-menu';
 import { MinigameStatus } from '../minigame.types';
 
 @Component({
   selector: 'app-minigame-shell',
-  imports: [PauseMenuComponent],
+  imports: [LevelFailedComponent, PauseMenuComponent],
   template: `
     <div class="minigame-shell">
       <!-- HUD Bar -->
@@ -58,14 +59,13 @@ import { MinigameStatus } from '../minigame.types';
 
       <!-- Failure Overlay -->
       @if (status() === lost) {
-        <div class="shell-overlay shell-overlay--failure" role="dialog" aria-modal="true" aria-labelledby="failure-title">
-          <div class="shell-overlay__panel">
-            <h2 id="failure-title">Level Failed</h2>
-            <div class="shell-overlay__score">{{ score() }}</div>
-            <button type="button" (click)="retry.emit()">Retry</button>
-            <button type="button" (click)="quit.emit()">Quit</button>
-          </div>
-        </div>
+        <nx-level-failed
+          [reason]="failureReason()"
+          [score]="score()"
+          [hintsAvailable]="hintsAvailable()"
+          (retry)="retry.emit()"
+          (useHint)="useHint.emit()"
+          (quit)="quit.emit()" />
       }
     </div>
   `,
@@ -81,6 +81,7 @@ export class MinigameShellComponent {
   readonly status = input(MinigameStatus.Loading);
   readonly xpEarned = input(0);
   readonly starRating = input(0);
+  readonly hintsAvailable = input(false);
 
   // --- Signal outputs ---
   readonly pauseGame = output();
@@ -88,6 +89,7 @@ export class MinigameShellComponent {
   readonly restartGame = output();
   readonly quit = output();
   readonly retry = output();
+  readonly useHint = output();
   readonly nextLevel = output();
   readonly replay = output();
 
@@ -97,6 +99,16 @@ export class MinigameShellComponent {
   readonly lost = MinigameStatus.Lost;
 
   // --- Computed signals ---
+  readonly failureReason = computed(() => {
+    if (this.lives() <= 0) {
+      return '3 strikes';
+    }
+    if (this.timerDuration() > 0 && this.timeRemaining() <= 0) {
+      return 'Time expired';
+    }
+    return 'Mission failed';
+  });
+
   readonly showTimer = computed(() => this.timerDuration() > 0);
 
   readonly timerColor = computed(() => {

@@ -9,6 +9,7 @@ import { MinigameRegistryService } from '../../core/minigame/minigame-registry.s
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
 import { LevelLoaderService } from '../../core/levels/level-loader.service';
 import { LevelCompletionService, type LevelCompletionSummary } from '../../core/minigame/level-completion.service';
+import { HintService } from '../../core/minigame/hint.service';
 import { MinigameEngine, type ActionResult } from '../../core/minigame/minigame-engine';
 import type { MinigameConfig } from '../../core/minigame/minigame.types';
 import { DifficultyTier, MinigameStatus } from '../../core/minigame/minigame.types';
@@ -101,6 +102,17 @@ function mockLevelCompletion(overrides: Partial<LevelCompletionService> = {}) {
   };
 }
 
+function mockHintService(overrides: Partial<HintService> = {}) {
+  return {
+    provide: HintService,
+    useValue: {
+      getRemainingHints: vi.fn().mockReturnValue(0),
+      requestHint: vi.fn().mockReturnValue(null),
+      ...overrides,
+    },
+  };
+}
+
 // --- Setup helper ---
 
 async function setup(options: {
@@ -109,6 +121,7 @@ async function setup(options: {
   levelProgression?: Partial<LevelProgressionService>;
   levelLoader?: Partial<LevelLoaderService>;
   levelCompletion?: Partial<LevelCompletionService>;
+  hintService?: Partial<HintService>;
 } = {}) {
   const {
     params = { gameId: 'module-assembly', levelId: 'ma-basic-01' },
@@ -116,6 +129,7 @@ async function setup(options: {
     levelProgression = {},
     levelLoader = {},
     levelCompletion = {},
+    hintService = {},
   } = options;
 
   await TestBed.configureTestingModule({
@@ -126,6 +140,7 @@ async function setup(options: {
       mockLevelProgression(levelProgression),
       mockLevelLoader(levelLoader),
       mockLevelCompletion(levelCompletion),
+      mockHintService(hintService),
     ],
   }).compileComponents();
 
@@ -659,6 +674,116 @@ describe('MinigamePlayPage', () => {
 
     expect(completeLevelSpy).toHaveBeenCalled();
     expect(component.completionSummary()).toBeNull();
+    testEngine.destroy();
+  });
+
+  // --- 26. onUseHint calls requestHint then retries ---
+  it('should call hintService.requestHint and retry on useHint event', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const requestHintSpy = vi.fn().mockReturnValue({ hint: { id: 'h1', text: 'Try X' }, penalty: 25, remainingHints: 1 });
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      hintService: {
+        getRemainingHints: vi.fn().mockReturnValue(2),
+        requestHint: requestHintSpy,
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Engine is auto-initialized by setup; put it in Lost state
+    testEngine.submitAction('test');
+    expect(testEngine.score()).toBe(10);
+    testEngine.fail();
+    expect(testEngine.status()).toBe(MinigameStatus.Lost);
+
+    // Use hint
+    component.onUseHint();
+
+    expect(requestHintSpy).toHaveBeenCalledWith('ma-basic-01');
+    expect(testEngine.status()).toBe(MinigameStatus.Playing);
+    expect(testEngine.score()).toBe(0);
+    testEngine.destroy();
+  });
+
+  // --- 27. onUseHint retries even when requestHint returns null ---
+  it('should still retry even when requestHint returns null', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const requestHintSpy = vi.fn().mockReturnValue(null);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      hintService: {
+        getRemainingHints: vi.fn().mockReturnValue(0),
+        requestHint: requestHintSpy,
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Put engine in Lost state
+    testEngine.fail();
+    expect(testEngine.status()).toBe(MinigameStatus.Lost);
+
+    // Use hint (returns null)
+    component.onUseHint();
+
+    expect(requestHintSpy).toHaveBeenCalledWith('ma-basic-01');
+    expect(testEngine.status()).toBe(MinigameStatus.Playing);
+    testEngine.destroy();
+  });
+
+  // --- 28. hintsAvailable computed correctly (true) ---
+  it('should compute hintsAvailable as true when hints remain', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      hintService: {
+        getRemainingHints: vi.fn().mockReturnValue(2),
+        requestHint: vi.fn().mockReturnValue(null),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Engine is auto-initialized by the effect chain, so currentLevel() is non-null
+    expect(component.hintsAvailable()).toBe(true);
+    testEngine.destroy();
+  });
+
+  // --- 29. hintsAvailable computed correctly (false) ---
+  it('should compute hintsAvailable as false when no hints remain', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      hintService: {
+        getRemainingHints: vi.fn().mockReturnValue(0),
+        requestHint: vi.fn().mockReturnValue(null),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.hintsAvailable()).toBe(false);
     testEngine.destroy();
   });
 });

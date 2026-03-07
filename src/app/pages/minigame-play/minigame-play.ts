@@ -8,6 +8,7 @@ import { MinigameShellComponent } from '../../core/minigame/minigame-shell/minig
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
 import { LevelLoaderService } from '../../core/levels/level-loader.service';
 import { LevelCompletionService, type LevelCompletionSummary } from '../../core/minigame/level-completion.service';
+import { HintService } from '../../core/minigame/hint.service';
 import { MinigameEngine } from '../../core/minigame/minigame-engine';
 import { MinigameStatus, type MinigameId, type MinigameLevel, type MinigameResult } from '../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
@@ -47,11 +48,13 @@ import type { LevelDefinition } from '../../core/levels/level.types';
           [status]="engine()?.status() ?? loadingStatus"
           [xpEarned]="completionSummary()?.xpEarned ?? 0"
           [starRating]="completionSummary()?.starRating ?? 0"
+          [hintsAvailable]="hintsAvailable()"
           (pauseGame)="onPause()"
           (resumeGame)="onResume()"
           (quit)="onQuit()"
           (restartGame)="onRetry()"
           (retry)="onRetry()"
+          (useHint)="onUseHint()"
           (replay)="onReplay()"
           (nextLevel)="onNextLevel()"
         >
@@ -68,6 +71,7 @@ export class MinigamePlayPage {
   private readonly router = inject(Router);
   private readonly levelLoader = inject(LevelLoaderService);
   private readonly levelCompletion = inject(LevelCompletionService);
+  private readonly hintService = inject(HintService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly engine = signal<MinigameEngine<unknown> | null>(null);
@@ -114,6 +118,14 @@ export class MinigamePlayPage {
     }
 
     return 'ready';
+  });
+
+  readonly hintsAvailable = computed(() => {
+    const eng = this.engine();
+    if (!eng) return false;
+    const levelId = eng.currentLevel();
+    if (!levelId) return false;
+    return this.hintService.getRemainingHints(levelId) > 0;
   });
 
   constructor() {
@@ -191,6 +203,16 @@ export class MinigamePlayPage {
 
   onQuit(): void {
     this.router.navigate(['/minigames', this.gameId()]);
+  }
+
+  onUseHint(): void {
+    const eng = this.engine();
+    if (!eng) return;
+    const levelId = eng.currentLevel();
+    if (levelId) {
+      this.hintService.requestHint(levelId);
+    }
+    this.onRetry();
   }
 
   onRetry(): void {

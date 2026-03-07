@@ -1,17 +1,41 @@
 import { Component } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import {
+  LucideIconConfig,
+  LucideIconProvider,
+  LUCIDE_ICONS,
+} from 'lucide-angular';
 import { createComponent } from '../../../../testing/test-utils';
+import { APP_ICONS } from '../../../shared/icons';
+import { LevelFailedComponent } from '../../../shared/components/level-failed/level-failed';
 import { MinigameShellComponent } from './minigame-shell';
 import { PauseMenuComponent } from '../../../shared/components/pause-menu/pause-menu';
 import { MinigameStatus } from '../minigame.types';
+
+const ICON_PROVIDERS = [
+  {
+    provide: LUCIDE_ICONS,
+    multi: true,
+    useValue: new LucideIconProvider(APP_ICONS),
+  },
+  {
+    provide: LucideIconConfig,
+    useValue: Object.assign(new LucideIconConfig(), {
+      size: 24,
+      color: 'currentColor',
+    }),
+  },
+];
 
 @Component({
   template: `<app-minigame-shell
     [score]="score" [lives]="lives" [maxLives]="maxLives"
     [timeRemaining]="timeRemaining" [timerDuration]="timerDuration"
     [status]="status" [xpEarned]="xpEarned" [starRating]="starRating"
+    [hintsAvailable]="hintsAvailable"
     (pauseGame)="onPause()" (resumeGame)="onResume()" (restartGame)="onRestart()"
-    (quit)="onQuit()" (retry)="onRetry()" (nextLevel)="onNextLevel()" (replay)="onReplay()"
+    (quit)="onQuit()" (retry)="onRetry()" (useHint)="onUseHint()"
+    (nextLevel)="onNextLevel()" (replay)="onReplay()"
   ><p class="game-content">Game here</p></app-minigame-shell>`,
   imports: [MinigameShellComponent],
 })
@@ -24,12 +48,14 @@ class TestHost {
   status: MinigameStatus = MinigameStatus.Playing;
   xpEarned = 0;
   starRating = 0;
+  hintsAvailable = false;
 
   pauseCalled = false;
   resumeCalled = false;
   restartCalled = false;
   quitCalled = false;
   retryCalled = false;
+  useHintCalled = false;
   nextLevelCalled = false;
   replayCalled = false;
 
@@ -38,6 +64,7 @@ class TestHost {
   onRestart(): void { this.restartCalled = true; }
   onQuit(): void { this.quitCalled = true; }
   onRetry(): void { this.retryCalled = true; }
+  onUseHint(): void { this.useHintCalled = true; }
   onNextLevel(): void { this.nextLevelCalled = true; }
   onReplay(): void { this.replayCalled = true; }
 }
@@ -59,20 +86,20 @@ describe('MinigameShellComponent', () => {
 
   // --- 1. Component creation ---
   it('should create the component', async () => {
-    const { component } = await createComponent(TestHost);
+    const { component } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS] });
     expect(component).toBeTruthy();
   });
 
   // --- 2. Content projection ---
   it('should project content into shell-content', async () => {
-    const { element } = await createComponent(TestHost);
+    const { element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS] });
     const projected = element.querySelector('.shell-content .game-content');
     expect(projected?.textContent).toContain('Game here');
   });
 
   // --- 3. Score display ---
   it('should display the score value', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.score = 150;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -82,7 +109,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 4. Score updates ---
   it('should update displayed score when input changes', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.score = 100;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -97,7 +124,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 5. Lives display ---
   it('should display correct filled and empty lives', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.lives = 2;
     fixture.componentInstance.maxLives = 3;
     fixture.detectChanges();
@@ -110,7 +137,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 6. Timer hidden when timerDuration is 0 ---
   it('should hide timer when timerDuration is 0', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.timerDuration = 0;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -120,7 +147,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 7. Timer shown when timerDuration > 0 ---
   it('should show timer when timerDuration is greater than 0', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.timerDuration = 60;
     fixture.componentInstance.timeRemaining = 30;
     fixture.detectChanges();
@@ -131,7 +158,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 8. Timer color green (>50%) ---
   it('should use green timer color when more than 50% time remains', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.timerDuration = 60;
     fixture.componentInstance.timeRemaining = 40;
     fixture.detectChanges();
@@ -142,7 +169,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 9. Timer color orange (25-50%) ---
   it('should use orange timer color when 25-50% time remains', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.timerDuration = 60;
     fixture.componentInstance.timeRemaining = 20;
     fixture.detectChanges();
@@ -153,7 +180,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 10. Timer color red (<25%) ---
   it('should use red timer color when less than 25% time remains', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.timerDuration = 60;
     fixture.componentInstance.timeRemaining = 10;
     fixture.detectChanges();
@@ -164,7 +191,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 11. No overlay during Playing ---
   it('should not show any overlay during Playing status', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Playing;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -174,7 +201,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 12. Pause overlay renders PauseMenuComponent ---
   it('should render nx-pause-menu when status is Paused', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Paused;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -184,7 +211,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 13. Completion overlay visible ---
   it('should show completion overlay when status is Won', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
     fixture.componentInstance.score = 500;
     fixture.componentInstance.xpEarned = 120;
@@ -201,25 +228,22 @@ describe('MinigameShellComponent', () => {
     expect(overlay?.textContent).toContain('Replay');
   });
 
-  // --- 14. Failure overlay visible ---
+  // --- 14. Failure overlay renders <nx-level-failed> ---
   it('should show failure overlay when status is Lost', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Lost;
     fixture.componentInstance.score = 80;
+    fixture.componentInstance.lives = 0;
     fixture.detectChanges();
     await fixture.whenStable();
-    const overlay = element.querySelector('.shell-overlay--failure');
-    expect(overlay).toBeTruthy();
-    expect(overlay?.getAttribute('role')).toBe('dialog');
-    expect(overlay?.getAttribute('aria-modal')).toBe('true');
-    expect(overlay?.textContent).toContain('80');
-    expect(overlay?.textContent).toContain('Retry');
-    expect(overlay?.textContent).toContain('Quit');
+    expect(element.querySelector('nx-level-failed')).toBeTruthy();
+    expect(element.querySelector('.level-failed__reason')?.textContent).toContain('3 strikes');
+    expect(element.querySelector('.level-failed__score')?.textContent?.trim()).toBe('80');
   });
 
   // --- 15. Star rating display ---
   it('should display correct number of filled and unfilled stars', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
     fixture.componentInstance.starRating = 3;
     fixture.detectChanges();
@@ -232,7 +256,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 16. Pause button emits ---
   it('should emit pause when pause button is clicked', async () => {
-    const { fixture, element } = await createComponent(TestHost);
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS] });
     const pauseBtn = element.querySelector('.shell-hud__pause') as HTMLButtonElement;
     pauseBtn.click();
     fixture.detectChanges();
@@ -241,7 +265,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 17. Resume event forwarding from PauseMenuComponent ---
   it('should emit resumeGame when resume event fires from pause menu', async () => {
-    const { fixture } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Paused;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -252,7 +276,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 18. Quit event forwarding from PauseMenuComponent ---
   it('should emit quit when quit event fires from pause menu', async () => {
-    const { fixture } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Paused;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -263,7 +287,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 18b. Restart event forwarding from PauseMenuComponent ---
   it('should emit restartGame when restart event fires from pause menu', async () => {
-    const { fixture } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Paused;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -274,42 +298,38 @@ describe('MinigameShellComponent', () => {
 
   // --- 18c. No pause menu when playing ---
   it('should not render nx-pause-menu when status is Playing', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Playing;
     fixture.detectChanges();
     await fixture.whenStable();
     expect(element.querySelector('nx-pause-menu')).toBeNull();
   });
 
-  // --- 19. Retry button emits from failure overlay ---
-  it('should emit retry when Retry is clicked in failure overlay', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+  // --- 19. Retry event forwarding from LevelFailedComponent ---
+  it('should emit retry when retry event fires from level-failed', async () => {
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Lost;
     fixture.detectChanges();
     await fixture.whenStable();
-    const buttons = element.querySelectorAll('.shell-overlay__panel button');
-    const retryBtn = Array.from(buttons).find(b => b.textContent?.trim() === 'Retry') as HTMLButtonElement;
-    retryBtn.click();
+    fixture.debugElement.query(By.directive(LevelFailedComponent)).triggerEventHandler('retry');
     fixture.detectChanges();
     expect(fixture.componentInstance.retryCalled).toBe(true);
   });
 
-  // --- 20. Quit button emits from failure overlay ---
-  it('should emit quit when Quit is clicked in failure overlay', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+  // --- 20. Quit event forwarding from LevelFailedComponent ---
+  it('should emit quit when quit event fires from level-failed', async () => {
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Lost;
     fixture.detectChanges();
     await fixture.whenStable();
-    const buttons = element.querySelectorAll('.shell-overlay__panel button');
-    const quitBtn = Array.from(buttons).find(b => b.textContent?.trim() === 'Quit') as HTMLButtonElement;
-    quitBtn.click();
+    fixture.debugElement.query(By.directive(LevelFailedComponent)).triggerEventHandler('quit');
     fixture.detectChanges();
     expect(fixture.componentInstance.quitCalled).toBe(true);
   });
 
   // --- 21. Next Level button emits ---
   it('should emit nextLevel when Next Level is clicked in completion overlay', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -322,7 +342,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 22. Replay button emits ---
   it('should emit replay when Replay is clicked in completion overlay', async () => {
-    const { fixture, element } = await createComponent(TestHost, { detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -331,5 +351,62 @@ describe('MinigameShellComponent', () => {
     replayBtn.click();
     fixture.detectChanges();
     expect(fixture.componentInstance.replayCalled).toBe(true);
+  });
+
+  // --- 23. Failure reason '3 strikes' when lives are 0 ---
+  it("should derive failure reason as '3 strikes' when lives are 0", async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.status = MinigameStatus.Lost;
+    fixture.componentInstance.lives = 0;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(element.querySelector('.level-failed__reason')?.textContent).toContain('3 strikes');
+  });
+
+  // --- 24. Failure reason 'Time expired' ---
+  it("should derive failure reason as 'Time expired' when timer has expired", async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.status = MinigameStatus.Lost;
+    fixture.componentInstance.lives = 2;
+    fixture.componentInstance.timerDuration = 60;
+    fixture.componentInstance.timeRemaining = 0;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(element.querySelector('.level-failed__reason')?.textContent).toContain('Time expired');
+  });
+
+  // --- 25. Failure reason 'Mission failed' fallback ---
+  it("should derive failure reason as 'Mission failed' for generic failure", async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.status = MinigameStatus.Lost;
+    fixture.componentInstance.lives = 1;
+    fixture.componentInstance.timerDuration = 0;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(element.querySelector('.level-failed__reason')?.textContent).toContain('Mission failed');
+  });
+
+  // --- 26. UseHint event forwarding from LevelFailedComponent ---
+  it('should emit useHint when useHint event fires from level-failed', async () => {
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.status = MinigameStatus.Lost;
+    fixture.componentInstance.hintsAvailable = true;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.debugElement.query(By.directive(LevelFailedComponent)).triggerEventHandler('useHint');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.useHintCalled).toBe(true);
+  });
+
+  // --- 27. hintsAvailable passed through to level-failed ---
+  it('should pass hintsAvailable to level-failed component', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.status = MinigameStatus.Lost;
+    fixture.componentInstance.hintsAvailable = true;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const useHintBtn = Array.from(element.querySelectorAll('.level-failed__btn'))
+      .find(b => b.textContent?.trim() === 'Use Hint');
+    expect(useHintBtn).toBeTruthy();
   });
 });
