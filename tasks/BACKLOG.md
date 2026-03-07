@@ -132,26 +132,6 @@ Acceptance criteria:
 - [ ] NotFoundPage displays a "Hull Breach - Section Not Found" message
 - [ ] All components have basic unit tests
 
-### T-2026-036
-- Title: Clean up Angular CLI boilerplate from app template
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P0
-- Depends: T-2026-001
-- Blocked-by: —
-- Tags: cleanup, template, app-shell
-- Refs: src/app/app.html
-
-The `app.html` file still contains the default Angular CLI placeholder template (giant SVG logo, "Hello, learn-angular" heading, etc.) alongside the `<router-outlet>`. The boilerplate `<main>` block should be removed, leaving only `<router-outlet />`.
-
-Acceptance criteria:
-- [ ] `app.html` contains only `<router-outlet />` (and any app shell wrapper needed)
-- [ ] No Angular CLI boilerplate content remains
-- [ ] All existing tests still pass
-- [ ] E2e tests still pass
-
 ### T-2026-037
 - Title: Investigate Angular 21 Vite dev server routing bug
 - Status: todo
