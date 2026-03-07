@@ -28,36 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-022
-- Title: Create MasteryService for topic mastery tracking (0-5 stars)
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P1
-- Depends: T-2026-015, T-2026-020
-- Blocked-by: —
-- Tags: progression, mastery, service
-- Refs: docs/progression.md
-
-Service that tracks mastery stars (0-5) per Angular topic. Mastery increases as players complete story missions and minigame levels.
-
-Acceptance criteria:
-- [ ] `MasteryService` at `src/app/core/progression/mastery.service.ts`
-- [ ] Tracks mastery per topic (using topic/chapter ID as key): 0-5 stars
-- [ ] Star thresholds match docs/progression.md:
-  - 0: Not started
-  - 1: Story mission completed
-  - 2: Basic minigame levels completed
-  - 3: Advanced minigame levels completed
-  - 4: Boss level completed
-  - 5: All levels perfected (perfect score on every level)
-- [ ] `getMastery(topicId)`: returns current star count (0-5)
-- [ ] `updateMastery(topicId)`: recalculates mastery based on level progress data
-- [ ] `getAllMastery()`: returns a map of all topic mastery ratings
-- [ ] Integrates with `LevelProgressionService` to read completion data
-- [ ] Unit tests for each star threshold transition
-
 ### T-2026-023
 - Title: Create SpacedRepetitionService for mastery degradation
 - Status: todo

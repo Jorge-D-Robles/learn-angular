@@ -26,10 +26,18 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
+- **T-2026-113**: Create LevelCompletionService to integrate game completion with progression (Priority: high, Size: M)
+- **T-2026-042**: Wire MinigameRegistryService to router for dynamic component loading (Priority: high, Size: S)
+- **T-2026-027**: Create StreakService for daily login streak tracking (Priority: medium, Size: S)
+- **T-2026-030**: Create LevelLoaderService for loading level data (Priority: medium, Size: S)
+- **T-2026-032**: Create XP notification toast component (Priority: medium, Size: S)
+- **T-2026-044**: Create HintService for minigame hint system (Priority: medium, Size: S)
+- **T-2026-054**: Create DragDropService for shared drag-and-drop mechanics (Priority: medium, Size: M)
 
 ---
 
