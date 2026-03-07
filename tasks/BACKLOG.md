@@ -158,8 +158,8 @@ Acceptance criteria:
 
 ### T-2026-025
 - Title: Integrate persistence with GameStateService auto-save
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P1
@@ -176,6 +176,7 @@ Acceptance criteria:
 - [ ] Debounce saves to avoid excessive writes (at most once per 500ms)
 - [ ] If no saved state exists, initializes with defaults (Cadet rank, 0 XP)
 - [ ] Unit tests verify: load on init, auto-save on mutation, debounce behavior
+- Started: 2026-03-07
 
 ### T-2026-026
 - Title: Create GameProgressionService for mission/content unlocking

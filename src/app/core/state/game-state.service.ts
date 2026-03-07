@@ -18,11 +18,33 @@
  * // Write (validated): this.gameState.addXp(50)
  * ```
  */
-import { computed, Injectable, signal } from '@angular/core';
+import {
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  Injectable,
+  signal,
+  untracked,
+} from '@angular/core';
 import { getRankForXp } from './rank.constants';
+import { StatePersistenceService } from '../persistence/state-persistence.service';
+
+export interface GameStateSnapshot {
+  playerName: string;
+  totalXp: number;
+}
+
+const GAME_STATE_KEY = 'game-state';
 
 @Injectable({ providedIn: 'root' })
 export class GameStateService {
+  static readonly SAVE_DEBOUNCE_MS = 500;
+
+  private readonly persistence = inject(StatePersistenceService);
+  private readonly destroyRef = inject(DestroyRef);
+  private _saveTimeout: ReturnType<typeof setTimeout> | null = null;
+
   // --- Private mutable signals ---
   private readonly _playerName = signal<string>('');
   private readonly _totalXp = signal<number>(0);
@@ -36,6 +58,16 @@ export class GameStateService {
 
   /** Current rank derived from totalXp via rank thresholds. */
   readonly currentRank = computed(() => getRankForXp(this._totalXp()));
+
+  constructor() {
+    this._setupAutoSave();
+    this._loadState();
+    this.destroyRef.onDestroy(() => {
+      if (this._saveTimeout !== null) {
+        clearTimeout(this._saveTimeout);
+      }
+    });
+  }
 
   // --- Mutation methods ---
 
@@ -57,12 +89,45 @@ export class GameStateService {
   }
 
   /**
-   * Resets all in-memory state to defaults.
-   * NOTE: This does not clear persisted state -- T-2026-025 will wire
-   * this to StatePersistenceService for localStorage clearing.
+   * Resets all in-memory state to defaults and clears persisted state immediately.
    */
   resetState(): void {
     this._playerName.set('');
     this._totalXp.set(0);
+    this.persistence.clear(GAME_STATE_KEY);
+  }
+
+  // --- Private methods ---
+
+  private _loadState(): void {
+    const saved = this.persistence.load<GameStateSnapshot>(GAME_STATE_KEY);
+    if (saved !== null && typeof saved === 'object' && !Array.isArray(saved)) {
+      if (typeof saved.playerName === 'string') {
+        this._playerName.set(saved.playerName);
+      }
+      if (typeof saved.totalXp === 'number' && saved.totalXp >= 0) {
+        this._totalXp.set(saved.totalXp);
+      }
+    }
+  }
+
+  private _setupAutoSave(): void {
+    effect(() => {
+      const snapshot: GameStateSnapshot = {
+        playerName: this.playerName(),
+        totalXp: this.totalXp(),
+      };
+      untracked(() => this._debouncedSave(snapshot));
+    });
+  }
+
+  private _debouncedSave(snapshot: GameStateSnapshot): void {
+    if (this._saveTimeout !== null) {
+      clearTimeout(this._saveTimeout);
+    }
+    this._saveTimeout = setTimeout(() => {
+      this.persistence.save(GAME_STATE_KEY, snapshot);
+      this._saveTimeout = null;
+    }, GameStateService.SAVE_DEBOUNCE_MS);
   }
 }
