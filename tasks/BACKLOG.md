@@ -651,30 +651,6 @@ Acceptance criteria:
 - [ ] Update existing imports in `xp.service.ts` and `game-state.service.spec.ts` to use barrel path
 - [ ] Verify build and all tests pass with updated imports
 
-### T-2026-113
-- Title: Create LevelCompletionService to integrate game completion with progression
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P1
-- Depends: T-2026-017, T-2026-020, T-2026-021, T-2026-028
-- Blocked-by: —
-- Tags: integration, progression, minigame-framework, service
-- Refs: docs/progression.md, docs/overview.md
-
-There is no service that connects the MinigameEngine's level completion event to the progression system. When a player completes a level, multiple services need to be updated: ScoreCalculationService calculates the final score, LevelProgressionService records the level completion and star rating, XpService awards XP based on tier and performance, and GameProgressionService checks if new content should be unlocked. This integration service is the critical glue between the minigame framework and the progression system.
-
-Acceptance criteria:
-- [ ] `LevelCompletionService` at `src/app/core/minigame/level-completion.service.ts`
-- [ ] `completeLevel(gameId, levelId, result: MinigameResult)`: orchestrates the full completion flow
-- [ ] Flow: (1) ScoreCalculationService.calculateScore -> (2) LevelProgressionService.recordCompletion -> (3) XpService.addXp (calculated from tier + perfect bonus) -> (4) returns a LevelCompletionSummary
-- [ ] `LevelCompletionSummary` interface: score, starRating, xpEarned, bonuses (perfect, streak), isNewBestScore, rankUpOccurred
-- [ ] Detects rank-up: compares rank before and after XP addition
-- [ ] Integrates with StreakService.streakMultiplier for XP bonus when available (optional dep)
-- [ ] Does NOT depend on UI components -- pure service orchestration
-- [ ] Unit tests for: standard completion flow, perfect score bonus, rank-up detection, streak multiplier application
-
 ---
 
 ## P2 -- Foundations Bundle
