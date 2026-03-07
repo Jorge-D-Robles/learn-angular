@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 ## Project
-**Learn Angular** — a web app that gamifies learning Angular as a framework. Details TBD pending design research.
+**Learn Angular** — a web app that gamifies learning Angular through a space-station narrative ("Nexus Station") and 12 polished, deeply replayable minigames. See `docs/overview.md` for full vision.
 
 ## Tech Stack
 Angular 21 · TypeScript · (remaining stack TBD after design research)
@@ -9,6 +9,16 @@ Angular 21 · TypeScript · (remaining stack TBD after design research)
 ## Repo Layout
 ```
 docs/               # Design specs (source of truth for ALL requirements)
+  CLAUDE.md         #   Agent rules for working with specs
+  overview.md       #   Vision, audience, core game loop
+  curriculum.md     #   34-chapter learning path
+  progression.md    #   XP, ranks, mastery, spaced repetition
+  architecture.md   #   Tech architecture (TBD, populated during P1)
+  minigames/        #   One spec file per minigame (12 total)
+  ux/               #   Navigation flow, visual style guide
+  research/         #   Topic analysis, gamification patterns
+refs/               # External reference material (git submodules)
+  angular/          #   Angular source repo (sparse checkout: adev/src/content/ only)
 tasks/              # Task management (sprint-based ticket system)
   CLAUDE.md         #   Agent workflow, ticket format, commands <- READ THIS FIRST
   BACKLOG.md        #   All tickets
@@ -36,3 +46,4 @@ Use these skills or agents when needed:
 - `/next-ticket` — Claim and start the next ticket
 - `/close-sprint` — End sprint, archive, start new one
 - `/backlog-analyst` — Run backlog analyst agent to find and ticket design gaps
+- `/angular-docs` — Query Angular docs via the angular-docs-lookup agent

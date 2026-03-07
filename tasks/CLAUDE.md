@@ -86,7 +86,19 @@ Year-scoped sequential: `T-2026-001`, `T-2026-002`, etc.
 
 ## Milestones
 
-*(Milestones will be defined after design research is complete. Update this table when design docs are finalized.)*
+| Milestone | Name | Scope |
+|-----------|------|-------|
+| P0 | Setup & Design | Design research, scaffolding, docs |
+| P1 | Core Engine | Minigame framework, code editor, level system, progression, state |
+| P2 | Foundations Bundle | Story missions 1-10 + minigames: Module Assembly, Wire Protocol, Flow Commander, Signal Corps |
+| P3 | Navigation Bundle | Story missions 11-13 + Corridor Runner minigame |
+| P4 | Forms Bundle | Story missions 14-17 + Terminal Hack minigame |
+| P5 | Architecture Bundle | Story missions 18-22 + Power Grid, Data Relay minigames |
+| P6 | Signals Bundle | Story missions 23-26 + Reactor Core minigame |
+| P7 | Advanced Bundle | Story missions 27-34 + Deep Space Radio, System Certification, Blast Doors minigames |
+| P8 | Polish & Replayability | Endless modes, daily challenges, leaderboards, speed runs, cosmetic unlocks |
+
+*Each milestone ships story missions AND their minigames together. Minigames are the higher-effort deliverable in each bundle.*
 
 ---
 
