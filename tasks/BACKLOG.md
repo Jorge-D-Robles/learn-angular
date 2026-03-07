@@ -78,29 +78,6 @@ Acceptance criteria:
 - [ ] Prerequisite chain follows curriculum.md dependency order (Ch 1 -> Ch 2 -> ... -> Ch 34)
 - [ ] Unit tests for: mission availability chain, minigame unlock on mission completion, campaign progress calculation
 
-### T-2026-027
-- Title: Create StreakService for daily login streak tracking
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-015, T-2026-024
-- Blocked-by: —
-- Tags: progression, streak, gamification
-- Refs: docs/progression.md, docs/research/gamification-patterns.md
-
-Service that tracks daily play streaks and calculates the XP bonus multiplier.
-
-Acceptance criteria:
-- [ ] `StreakService` at `src/app/core/progression/streak.service.ts`
-- [ ] `currentStreak` signal: number of consecutive days played
-- [ ] `streakMultiplier` computed signal: +10% per consecutive day, caps at +50% (5 days)
-- [ ] `recordDailyPlay()`: called when player completes any activity; updates streak
-- [ ] Missing a day resets the multiplier to 0% but does NOT reset the streak count display
-- [ ] Streak data persisted via `StatePersistenceService`
-- [ ] Unit tests with mocked dates: streak increment, multiplier calculation, cap at 50%, reset behavior
-
 ### T-2026-030
 - Title: Create LevelLoaderService for loading level data
 - Status: todo
