@@ -158,8 +158,8 @@ Acceptance criteria:
 
 ### T-2026-024
 - Title: Create StatePersistenceService for localStorage save/load
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: M
 - Milestone: P1
@@ -181,6 +181,7 @@ Acceptance criteria:
 - [ ] `exportState()`: returns all game state as a JSON string (for backup)
 - [ ] `importState(json)`: restores game state from a JSON string
 - [ ] Unit tests with mocked localStorage: save/load roundtrip, corrupted data handling, clear operations
+- Started: 2026-03-07
 
 ### T-2026-025
 - Title: Integrate persistence with GameStateService auto-save
