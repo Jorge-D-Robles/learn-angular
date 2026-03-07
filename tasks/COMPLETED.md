@@ -38,3 +38,4 @@
 [2026-03-07] T-2026-032: Create XP notification toast component — added XpNotificationService and XpNotificationComponent with auto-dismiss, stacking, slide-in animation, prefers-reduced-motion, 11 tests (claude)
 [2026-03-07] T-2026-044: Create HintService for minigame hint system — added HintService with hint registration, dispensing, penalty calculation, signals, 27 tests (claude)
 [2026-03-07] T-2026-054: Create DragDropService for shared drag-and-drop mechanics — added DragDropService, DraggableDirective, DropZoneDirective with pointer events, keyboard accessibility, zone predicates, 37 tests (claude)
+[2026-03-07] T-2026-026: Create GameProgressionService for mission/content unlocking — added GameProgressionService with mission availability, minigame unlocking, campaign progress, prerequisite chains, debounced persistence, 27 tests (claude)
