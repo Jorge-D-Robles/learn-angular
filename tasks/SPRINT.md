@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-031**: Create code editor component wrapper (Assigned: claude, Status: in-progress)
 
 
 
