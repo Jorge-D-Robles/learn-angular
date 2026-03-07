@@ -497,28 +497,6 @@ Acceptance criteria:
 - [ ] LevelCompletionSummary includes `replayMultiplier` field
 - [ ] Unit tests for: first play full XP, diminished replay XP, improvement exception
 
-### T-2026-186
-- Title: Integrate LevelFailedComponent with MinigameShell failure overlay
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-183, T-2026-018
-- Blocked-by: —
-- Tags: integration, minigame-framework, level-failure, ui
-- Refs: docs/ux/navigation.md
-
-LevelFailedComponent (T-2026-183) provides the failure UI and MinigameShell (T-2026-018) has a failure overlay. This integration ticket wires them together so that when the engine status changes to Lost, the shell renders the failure component with the correct reason, and the component's events (retry, hint, quit) drive shell behavior.
-
-Acceptance criteria:
-- [ ] MinigameShell's failure overlay renders `<nx-level-failed>` component
-- [ ] Failure reason derived from engine state (e.g., lives === 0 -> "3 strikes", timeRemaining === 0 -> "Time expired")
-- [ ] "Retry" event resets engine with same level data
-- [ ] "Use Hint" event registers a hint via HintService, then retries
-- [ ] "Level Select" event navigates to `/minigames/:gameId`
-- [ ] Unit tests for: failure display, retry reset, hint integration, navigation
-
 ### T-2026-201
 - Title: Add ComboTrackerService to minigame barrel export
 - Status: todo
