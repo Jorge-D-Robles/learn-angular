@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-038**: Define curriculum data model for 34 story missions (Assigned: claude, Status: in-progress)
 
 
 
