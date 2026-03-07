@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-019**: Define level data model and type-safe level schema (Assigned: claude, Status: in-progress)
 
 
 

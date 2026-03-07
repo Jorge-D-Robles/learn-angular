@@ -17,3 +17,4 @@
 [2026-03-06] T-2026-011: Add bottom navigation for mobile layout — added bottom nav with 4 tabs, fixed positioning, CSS icons, routerLinkActive, responsive hide, 9 unit tests (claude)
 [2026-03-07] T-2026-006: Configure CI pipeline with GitHub Actions — configured GitHub Actions CI with 3 parallel jobs (lint, test, build), Node 22 LTS, npm caching, corepack (claude)
 [2026-03-07] T-2026-016: Define minigame lifecycle interfaces and types — defined minigame framework types: MinigameId, DifficultyTier, MinigameStatus, MinigameConfig, MinigameLevel, MinigameState, MinigameResult with 18 tests (claude)
+[2026-03-07] T-2026-019: Define level data model and type-safe level schema — defined LevelDefinition<T>, LevelPack, LevelTierConfig interfaces, TIER_XP_REWARDS, PERFECT_SCORE_MULTIPLIER constants, barrel export, 17 tests (claude)
