@@ -359,8 +359,8 @@ Acceptance criteria:
 
 ### T-2026-160
 - Title: Create ExpressionBuilderComponent for condition/formula editing
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: M
 - Milestone: P1
@@ -383,6 +383,7 @@ Acceptance criteria:
 - [ ] Keyboard accessible: Tab through dropdowns and inputs
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: guided mode assembly, raw mode input, validation feedback, mode switching
+- Started: 2026-03-07
 
 ### T-2026-162
 - Title: Integrate PauseMenuComponent with MinigameShell pause state
