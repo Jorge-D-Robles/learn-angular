@@ -37,3 +37,4 @@
 [2026-03-07] T-2026-030: Create LevelLoaderService for loading level data — created LevelLoaderService with registry Map, Observable API, LevelProgressionService integration, 13 tests (claude)
 [2026-03-07] T-2026-032: Create XP notification toast component — added XpNotificationService and XpNotificationComponent with auto-dismiss, stacking, slide-in animation, prefers-reduced-motion, 11 tests (claude)
 [2026-03-07] T-2026-044: Create HintService for minigame hint system — added HintService with hint registration, dispensing, penalty calculation, signals, 27 tests (claude)
+[2026-03-07] T-2026-054: Create DragDropService for shared drag-and-drop mechanics — added DragDropService, DraggableDirective, DropZoneDirective with pointer events, keyboard accessibility, zone predicates, 37 tests (claude)

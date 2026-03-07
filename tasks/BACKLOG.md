@@ -416,31 +416,6 @@ Acceptance criteria:
 - [ ] Pages created at `src/app/pages/endless-mode/`, `src/app/pages/speed-run/`, `src/app/pages/daily-challenge/`
 - [ ] Unit tests for: route resolution, gameId param reading
 
-### T-2026-054
-- Title: Create DragDropService for shared drag-and-drop mechanics
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: M
-- Milestone: P1
-- Depends: T-2026-007
-- Blocked-by: —
-- Tags: minigame-framework, drag-drop, interaction, service
-- Refs: docs/minigames/01-module-assembly.md, docs/minigames/03-flow-commander.md, docs/minigames/04-signal-corps.md, docs/minigames/08-data-relay.md
-
-Multiple minigames require drag-and-drop mechanics: Module Assembly (drag parts to slots), Flow Commander (drag gates to junctions), Signal Corps (drag wires between ports), Data Relay (drag pipes into streams), Power Grid (draw power lines). This shared service provides a reusable, accessible drag-and-drop system.
-
-Acceptance criteria:
-- [ ] `DragDropService` at `src/app/core/minigame/drag-drop.service.ts`
-- [ ] `DraggableDirective` at `src/app/shared/directives/draggable.directive.ts` -- makes elements draggable
-- [ ] `DropZoneDirective` at `src/app/shared/directives/drop-zone.directive.ts` -- marks valid drop targets
-- [ ] Supports both mouse and touch input (pointer events)
-- [ ] `onDragStart`, `onDrag`, `onDrop`, `onDragCancel` event outputs
-- [ ] Drop zone validation: accepts/rejects based on configurable predicate
-- [ ] Visual feedback: dragging element follows pointer, drop zones highlight on hover
-- [ ] Keyboard accessible: Tab to draggable, Enter to pick up, arrow keys to move, Enter to drop
-- [ ] Unit tests for: drag initiation, drop acceptance/rejection, touch support, keyboard navigation
-
 ### T-2026-055
 - Title: Create LockedContentComponent for gated content display
 - Status: todo
@@ -532,6 +507,328 @@ Acceptance criteria:
 - [ ] Exports `RANK_THRESHOLDS`, `RankThreshold`, `getRankForXp` from `rank.constants`
 - [ ] Update existing imports in `xp.service.ts` and `game-state.service.spec.ts` to use barrel path
 - [ ] Verify build and all tests pass with updated imports
+
+### T-2026-124
+- Title: Wire top bar to display live rank and XP from services
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P1
+- Depends: T-2026-021, T-2026-035
+- Blocked-by: —
+- Tags: ui, integration, top-bar, xp, rank
+- Refs: docs/ux/navigation.md, src/app/app.ts, src/app/app.html
+
+The top bar in `app.html` currently has a hard-coded "Cadet" rank text and an empty XP bar div. Navigation.md specifies the top bar should display: current rank badge, XP bar (compact variant), and settings gear icon linking to /settings. This ticket wires the top bar to live data from XpService and uses XpProgressBarComponent (T-2026-035).
+
+Acceptance criteria:
+- [ ] App component injects `XpService` and reads `currentRank`, `totalXp`, `xpToNextRank` signals
+- [ ] Top bar rank display is driven by `currentRank` signal (not hard-coded "Cadet")
+- [ ] Top bar XP bar is replaced with `XpProgressBarComponent` in compact variant
+- [ ] Settings button navigates to `/settings` route via routerLink
+- [ ] Unit tests for: rank text updates when XP changes, XP bar receives correct inputs
+- [ ] Build and all existing tests pass
+
+### T-2026-125
+- Title: Add XpNotificationComponent to app shell root
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-032
+- Blocked-by: —
+- Tags: ui, integration, notifications, xp
+- Refs: src/app/app.ts, src/app/app.html
+
+XpNotificationComponent and XpNotificationService were built (T-2026-032) but the notification component is not rendered anywhere in the app shell. It needs to be added at the root level so XP toast notifications appear globally when XP is awarded from any page.
+
+Acceptance criteria:
+- [ ] `XpNotificationComponent` added to App component imports
+- [ ] `<app-xp-notification />` (or equivalent selector) rendered in `app.html` at the root level (after the app-body div)
+- [ ] XP notifications display correctly when XP is awarded from any route
+- [ ] Notifications stack and auto-dismiss as designed
+- [ ] Unit test: verify XpNotificationComponent is present in app template
+
+### T-2026-126
+- Title: Create core module root barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-112
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/
+
+The `src/app/core/` directory has subdirectory barrels for `minigame/`, `levels/`, `progression/`, `persistence/`, `curriculum/`, `settings/`, and `notifications/`, but no root `core/index.ts` barrel. Adding one follows the same convention used in `shared/index.ts` and provides a single import point for all core services.
+
+Acceptance criteria:
+- [ ] `src/app/core/index.ts` barrel export created
+- [ ] Re-exports from all subdirectory barrels: state, minigame, levels, progression, persistence, curriculum, settings, notifications
+- [ ] Verify build passes (no circular dependency issues)
+- [ ] Update at least one consumer file to use the core barrel import as a smoke test
+
+### T-2026-127
+- Title: Wire LevelCompletionService to XpNotificationService
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-113, T-2026-032
+- Blocked-by: —
+- Tags: integration, progression, notifications
+- Refs: src/app/core/minigame/level-completion.service.ts, src/app/core/notifications/xp-notification.service.ts
+
+LevelCompletionService orchestrates the score->progress->XP->mastery flow, and XpNotificationService shows XP toast notifications. These two services are not connected -- completing a level awards XP but does not trigger a visible notification. This ticket wires them together so players see XP gain feedback.
+
+Acceptance criteria:
+- [ ] LevelCompletionService injects XpNotificationService (or emits an event that the notification service listens to)
+- [ ] When `completeLevel()` awards XP, an XP notification is triggered with the amount awarded
+- [ ] Notification shows the XP amount and source (e.g., "Level Complete +20 XP")
+- [ ] If a rank-up occurs, the notification includes rank-up information
+- [ ] Unit tests for: notification triggered on level completion, correct XP amount in notification
+- [ ] Existing LevelCompletionService and XpNotificationService tests continue to pass
+
+### T-2026-128
+- Title: Create LoadingSpinnerComponent for async content states
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-007
+- Blocked-by: —
+- Tags: ui, component, shared
+- Refs: docs/ux/visual-style.md
+
+Multiple pages load data asynchronously (level data, mission content, minigame components via lazy loading). There is no shared loading indicator component. The visual style guide specifies station-themed UI, so this should be a space-station styled spinner or loading animation.
+
+Acceptance criteria:
+- [ ] `LoadingSpinnerComponent` at `src/app/shared/components/loading-spinner/`
+- [ ] Selector: `nx-loading-spinner`
+- [ ] Input: `size` ('sm' | 'md' | 'lg'), default 'md'
+- [ ] Input: `message` (optional string, e.g., "Loading level data...")
+- [ ] Station-themed visual: rotating ring or pulsing hexagon using CSS animations
+- [ ] Respects `prefers-reduced-motion` (shows static indicator instead)
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: rendering at each size, message display, reduced motion behavior
+
+### T-2026-129
+- Title: Create EmptyStateComponent for no-content pages
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-007
+- Blocked-by: —
+- Tags: ui, component, shared
+- Refs: docs/ux/visual-style.md, docs/ux/navigation.md
+
+Multiple pages need empty state displays: dashboard with no completed missions, minigame hub with all games locked, profile with no stats. A shared component ensures consistent empty state presentation across the app.
+
+Acceptance criteria:
+- [ ] `EmptyStateComponent` at `src/app/shared/components/empty-state/`
+- [ ] Selector: `nx-empty-state`
+- [ ] Inputs: `icon` (string, icon name), `title` (string), `message` (string)
+- [ ] Content projection slot for optional action button
+- [ ] Station-themed styling: muted colors, centered layout
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: rendering with all inputs, content projection slot
+
+### T-2026-130
+- Title: Create TooltipDirective for contextual help
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-007
+- Blocked-by: —
+- Tags: ui, directive, shared, accessibility
+- Refs: docs/ux/visual-style.md
+
+Minigame UIs, level select pages, and dashboard elements need tooltip support for contextual explanations (e.g., hovering over a mastery star to see what it means, hovering over a locked level to see unlock requirements). No shared tooltip exists.
+
+Acceptance criteria:
+- [ ] `TooltipDirective` at `src/app/shared/directives/tooltip.directive.ts`
+- [ ] Selector: `[nxTooltip]`
+- [ ] Input: `nxTooltip` (string, tooltip text)
+- [ ] Input: `nxTooltipPosition` ('top' | 'bottom' | 'left' | 'right'), default 'top'
+- [ ] Shows tooltip on hover/focus with 200ms delay
+- [ ] Hides on mouse leave/blur
+- [ ] Station-themed styling: Hull background, Display text, Bulkhead border
+- [ ] Keyboard accessible: shows on focus, hides on blur
+- [ ] Exported from shared directives barrel
+- [ ] Unit tests for: show/hide on hover, position classes, keyboard accessibility
+
+### T-2026-131
+- Title: Create ErrorStateComponent for error display
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-007
+- Blocked-by: —
+- Tags: ui, component, shared, error-handling
+- Refs: docs/ux/visual-style.md
+
+When level data fails to load, a minigame component is not found, or a service throws an error, users currently see raw error text or nothing. This shared component provides a consistent error state display with retry capability.
+
+Acceptance criteria:
+- [ ] `ErrorStateComponent` at `src/app/shared/components/error-state/`
+- [ ] Selector: `nx-error-state`
+- [ ] Inputs: `title` (string, default "Something went wrong"), `message` (string), `retryable` (boolean, default true)
+- [ ] Output: `retry` event emitted when retry button is clicked
+- [ ] Uses Emergency Red accent color for error icon
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: rendering, retry event emission, non-retryable hides button
+
+### T-2026-132
+- Title: Style NotFoundPage with station theme
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-007, T-2026-013
+- Blocked-by: —
+- Tags: ui, styling, not-found, page
+- Refs: docs/ux/visual-style.md, src/app/pages/not-found/not-found.ts
+
+The 404 Not Found page currently shows plain text. The design docs describe a "Hull Breach" theme for 404 pages (Corridor Runner spec references "Hull Breach" as the 404 concept). This ticket styles the 404 page with station-themed visuals.
+
+Acceptance criteria:
+- [ ] NotFoundPage updated with "Hull Breach" themed styling
+- [ ] Space-station appropriate imagery or CSS art (e.g., warning stripes, breach animation)
+- [ ] "Return to Dashboard" link styled as primary button
+- [ ] Uses design tokens: Emergency Red accent, Void background
+- [ ] Responsive layout for mobile and desktop
+- [ ] Unit tests still pass after styling update
+
+### T-2026-133
+- Title: Create StreakBadgeComponent for streak display
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-027, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, streak, gamification
+- Refs: docs/progression.md, docs/research/gamification-patterns.md, docs/ux/navigation.md
+
+The profile page needs a streak counter display (navigation.md: "Streak counter"), and the dashboard could show it too. StreakService (T-2026-027) provides the data but there is no visual component for displaying streak information.
+
+Acceptance criteria:
+- [ ] `StreakBadgeComponent` at `src/app/shared/components/streak-badge/`
+- [ ] Selector: `nx-streak-badge`
+- [ ] Inputs: `currentStreak` (number), `multiplier` (number)
+- [ ] Displays: flame/streak icon, current streak day count, multiplier percentage (e.g., "+30%")
+- [ ] Visual states: no streak (dim), active streak (glowing), max streak 5+ days (Solar Gold glow)
+- [ ] Accessible: aria-label describes streak status
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: rendering at each state, multiplier display, aria-label
+
+### T-2026-134
+- Title: Create keyboard shortcut service for minigame controls
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: —
+- Blocked-by: —
+- Tags: minigame-framework, accessibility, keyboard, service
+- Refs: docs/minigames/01-module-assembly.md, docs/minigames/02-wire-protocol.md, docs/minigames/03-flow-commander.md
+
+Multiple minigame specs reference keyboard shortcuts: Module Assembly (number keys for slots, spacebar to grab), Wire Protocol (1-4 for wire types), Flow Commander (keyboard gate selection). A shared service to register, manage, and display keyboard shortcuts avoids duplicating this logic in each minigame.
+
+Acceptance criteria:
+- [ ] `KeyboardShortcutService` at `src/app/core/minigame/keyboard-shortcut.service.ts`
+- [ ] `register(key: string, label: string, callback: () => void)`: registers a keyboard shortcut
+- [ ] `unregisterAll()`: clears all shortcuts (call on minigame destroy)
+- [ ] `getRegistered()`: returns list of current shortcuts (for display in help overlay)
+- [ ] `isEnabled` signal: can disable all shortcuts (e.g., when pause menu is open)
+- [ ] Listens to `keydown` events on `document`, dispatches to registered handlers
+- [ ] Prevents default browser behavior for registered keys
+- [ ] Barrel export from core/minigame
+- [ ] Unit tests for: registration, dispatch, unregister, enable/disable toggle
+
+### T-2026-135
+- Title: Create PauseMenuComponent for minigame pause overlay
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-018, T-2026-057
+- Blocked-by: —
+- Tags: ui, component, minigame-framework, pause
+- Refs: docs/ux/navigation.md, docs/minigames/TEMPLATE.md
+
+Navigation.md lists "Pause menu" as an element of the Minigame Play screen. MinigameShell (T-2026-018) has a pause overlay but it lacks a proper menu with options. This component provides: Resume, Restart Level, Quit (with confirmation via ConfirmDialogComponent), and Keyboard Shortcuts display.
+
+Acceptance criteria:
+- [ ] `PauseMenuComponent` at `src/app/shared/components/pause-menu/`
+- [ ] Selector: `nx-pause-menu`
+- [ ] Menu options: Resume, Restart Level, View Shortcuts, Quit to Level Select
+- [ ] Resume: emits `resume` event
+- [ ] Restart: emits `restart` event
+- [ ] Quit: shows ConfirmDialogComponent (warning variant) before emitting `quit` event
+- [ ] View Shortcuts: displays registered keyboard shortcuts from KeyboardShortcutService
+- [ ] Full-screen overlay with semi-transparent backdrop
+- [ ] Keyboard: Escape to resume, arrow keys to navigate menu
+- [ ] Unit tests for: menu option rendering, event emission, quit confirmation
+
+### T-2026-136
+- Title: Integrate StreakService XP multiplier with XpService
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-027, T-2026-021
+- Blocked-by: —
+- Tags: integration, progression, streak, xp
+- Refs: docs/progression.md
+
+Progression.md specifies "+10% per consecutive day, caps at +50% (5 days)" streak bonus on XP. StreakService tracks streaks and XpService calculates XP, but they are not connected. XP awards should be multiplied by the streak bonus.
+
+Acceptance criteria:
+- [ ] XpService's `addXp()` or `calculateLevelXp()` applies streak multiplier from StreakService
+- [ ] Multiplier formula: `1 + (streak.multiplier)` where multiplier is 0.1 per day, capped at 0.5
+- [ ] XP notification shows base XP and streak bonus separately (e.g., "20 XP + 6 streak bonus")
+- [ ] No streak bonus for 0-day streaks (multiplier = 1.0x)
+- [ ] Unit tests for: XP calculation with streak, cap at 50%, no bonus at 0 streak
+- [ ] Existing XpService tests updated to account for streak integration
+
+### T-2026-158
+- Title: Create WireDrawService for wire-drawing interaction mechanics
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P1
+- Depends: T-2026-054
+- Blocked-by: —
+- Tags: minigame-framework, interaction, service
+- Refs: docs/minigames/04-signal-corps.md, docs/minigames/07-power-grid.md
+
+Signal Corps and Power Grid use wire-drawing mechanics (click source port, draw line, click target port) that differ from spatial drag-and-drop. This service provides a reusable wire-drawing interaction system separate from DragDropService.
+
+Acceptance criteria:
+- [ ] `WireDrawService` at `src/app/core/minigame/wire-draw.service.ts`
+- [ ] Supports click-to-start-wire, visual line preview, click-to-connect interaction model
+- [ ] Port registration/unregistration for source and target endpoints
+- [ ] Connection validation via configurable predicate
+- [ ] Keyboard accessible: Tab between ports, Enter to start/complete wire
+- [ ] Unit tests for: wire initiation, connection acceptance/rejection, keyboard support
 
 ---
 
@@ -1128,6 +1425,155 @@ Acceptance criteria:
 - [ ] Respects `prefers-reduced-motion` (disable pulse animations)
 - [ ] Unit tests for: glow state per mastery level, module click emission, dark state for 0 mastery
 
+### T-2026-137
+- Title: Register Module Assembly level data with LevelLoaderService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-058, T-2026-030
+- Blocked-by: —
+- Tags: minigame, module-assembly, level-data, integration
+- Refs: docs/minigames/01-module-assembly.md, src/app/core/levels/level-loader.service.ts
+
+The Module Assembly level data file (T-2026-058) defines the 18 levels, and LevelLoaderService (T-2026-030) provides the loading API. The level data must be registered with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
+
+Acceptance criteria:
+- [ ] Module Assembly level pack registered with LevelLoaderService via its `registerLevelPack()` method
+- [ ] Registration happens at app initialization or on first access (lazy)
+- [ ] `LevelLoaderService.loadLevel('module-assembly', levelId)` returns the correct level data
+- [ ] `LevelLoaderService.getLevelPack('module-assembly')` returns all 18 levels grouped by tier
+- [ ] Unit tests for: level loading by ID, level pack retrieval, tier grouping
+
+### T-2026-138
+- Title: Register Wire Protocol level data with LevelLoaderService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-062, T-2026-030
+- Blocked-by: —
+- Tags: minigame, wire-protocol, level-data, integration
+- Refs: docs/minigames/02-wire-protocol.md, src/app/core/levels/level-loader.service.ts
+
+Register Wire Protocol level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
+
+Acceptance criteria:
+- [ ] Wire Protocol level pack registered with LevelLoaderService
+- [ ] `LevelLoaderService.loadLevel('wire-protocol', levelId)` returns correct level data
+- [ ] `LevelLoaderService.getLevelPack('wire-protocol')` returns all 18 levels grouped by tier
+- [ ] Unit tests for: level loading by ID, level pack retrieval
+
+### T-2026-139
+- Title: Register Flow Commander level data with LevelLoaderService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-066, T-2026-030
+- Blocked-by: —
+- Tags: minigame, flow-commander, level-data, integration
+- Refs: docs/minigames/03-flow-commander.md, src/app/core/levels/level-loader.service.ts
+
+Register Flow Commander level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
+
+Acceptance criteria:
+- [ ] Flow Commander level pack registered with LevelLoaderService
+- [ ] `LevelLoaderService.loadLevel('flow-commander', levelId)` returns correct level data
+- [ ] `LevelLoaderService.getLevelPack('flow-commander')` returns all 18 levels grouped by tier
+- [ ] Unit tests for: level loading by ID, level pack retrieval
+
+### T-2026-140
+- Title: Register Signal Corps level data with LevelLoaderService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-070, T-2026-030
+- Blocked-by: —
+- Tags: minigame, signal-corps, level-data, integration
+- Refs: docs/minigames/04-signal-corps.md, src/app/core/levels/level-loader.service.ts
+
+Register Signal Corps level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
+
+Acceptance criteria:
+- [ ] Signal Corps level pack registered with LevelLoaderService
+- [ ] `LevelLoaderService.loadLevel('signal-corps', levelId)` returns correct level data
+- [ ] `LevelLoaderService.getLevelPack('signal-corps')` returns all 18 levels grouped by tier
+- [ ] Unit tests for: level loading by ID, level pack retrieval
+
+### T-2026-141
+- Title: Create CampaignProgressPage for story mission overview
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-026, T-2026-038, T-2026-055
+- Blocked-by: —
+- Tags: story-missions, page, component, ui, campaign
+- Refs: docs/ux/navigation.md, docs/curriculum.md
+
+The side nav has a "Current Mission" link and the dashboard shows an "Active story mission prompt." But there is no dedicated page to view all story missions across all 6 curriculum phases with their completion status, locked/unlocked state, and narrative context. Navigation.md's route structure lists `/mission/:chapterId` for individual missions but lacks an index view.
+
+Acceptance criteria:
+- [ ] `CampaignPage` at `src/app/pages/campaign/campaign.ts`
+- [ ] Route `/campaign` added to `app.routes.ts` with lazy loading
+- [ ] Displays all 34 missions grouped by curriculum phase (Foundations, Navigation, Data Input, etc.)
+- [ ] Each mission shows: chapter number, title, Angular topic, completion status, locked state
+- [ ] Completed missions show a checkmark; locked missions use LockedContentComponent
+- [ ] Next available mission is highlighted with "Continue" button
+- [ ] Phase headers show progress (e.g., "Phase 1: 7/10 completed")
+- [ ] Click unlocked mission navigates to `/mission/:chapterId`
+- [ ] Side nav "Current Mission" link updated to point to `/campaign`
+- [ ] Unit tests for: phase grouping, completion status, locked state, navigation
+
+### T-2026-142
+- Title: Create P2 end-to-end smoke test for full game loop
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-061, T-2026-075, T-2026-076, T-2026-077
+- Blocked-by: —
+- Tags: testing, e2e, integration, game-loop
+- Refs: docs/overview.md, playwright.config.ts
+
+The core game loop (overview.md) is: Story Mission -> Unlock Minigame -> Master Minigame -> Next Story Mission. No e2e test validates this end-to-end flow. This ticket creates a Playwright test that exercises the full loop with Module Assembly as the test minigame.
+
+Acceptance criteria:
+- [ ] Playwright test at `e2e/game-loop.spec.ts`
+- [ ] Test flow: Dashboard -> Campaign -> Mission 1 -> Complete mission -> Navigate to Minigame Hub -> Module Assembly unlocked -> Level Select -> Play Level 1 -> Complete level -> XP awarded -> Return to level select
+- [ ] Verifies: mission completion state persists, minigame unlocks after mission, XP bar updates, level stars display after completion
+- [ ] Test runs in CI (GitHub Actions)
+- [ ] Does not require manual interaction (uses programmatic data setup or test fixtures)
+
+### T-2026-143
+- Title: Wire SettingsPage theme preference to document body class
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-080, T-2026-039
+- Blocked-by: —
+- Tags: settings, theme, integration, ui
+- Refs: docs/ux/navigation.md, docs/ux/visual-style.md
+
+SettingsService (T-2026-039) stores a theme preference and SettingsPage (T-2026-080) provides the UI. But changing the theme preference doesn't actually apply it to the document. This ticket wires the theme setting to the document body class so CSS custom properties switch themes.
+
+Acceptance criteria:
+- [ ] App component (or a root-level effect) reads `SettingsService.settings().theme` and applies class to `document.body`
+- [ ] Classes: `theme-dark` (default), `theme-station`, `theme-light`
+- [ ] CSS custom properties are scoped to theme classes in `styles.scss` (or a dedicated `themes.scss`)
+- [ ] Theme persists across page reloads (already handled by SettingsService auto-save)
+- [ ] Unit tests for: body class updates when theme changes, correct class per theme value
+
 ---
 
 ## P3 -- Navigation Bundle
@@ -1246,6 +1692,26 @@ Acceptance criteria:
 - [ ] Ch 13 (RouterLink): Navigation Console with routerLink directive examples
 - [ ] Each mission has 3-5 steps
 - [ ] Unit tests verify: all 3 missions have valid content
+
+### T-2026-144
+- Title: Register Corridor Runner level data with LevelLoaderService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P3
+- Depends: T-2026-081, T-2026-030
+- Blocked-by: —
+- Tags: minigame, corridor-runner, level-data, integration
+- Refs: docs/minigames/05-corridor-runner.md, src/app/core/levels/level-loader.service.ts
+
+Register Corridor Runner level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
+
+Acceptance criteria:
+- [ ] Corridor Runner level pack registered with LevelLoaderService
+- [ ] `LevelLoaderService.loadLevel('corridor-runner', levelId)` returns correct level data
+- [ ] `LevelLoaderService.getLevelPack('corridor-runner')` returns all 18 levels grouped by tier
+- [ ] Unit tests for: level loading by ID, level pack retrieval
 
 ---
 
@@ -1366,6 +1832,26 @@ Acceptance criteria:
 - [ ] Ch 17 (Forms Validation): Data Integrity Checks with validator examples
 - [ ] Each mission has 3-5 steps
 - [ ] Unit tests verify: all 4 missions have valid content
+
+### T-2026-145
+- Title: Register Terminal Hack level data with LevelLoaderService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P4
+- Depends: T-2026-086, T-2026-030
+- Blocked-by: —
+- Tags: minigame, terminal-hack, level-data, integration
+- Refs: docs/minigames/06-terminal-hack.md, src/app/core/levels/level-loader.service.ts
+
+Register Terminal Hack level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
+
+Acceptance criteria:
+- [ ] Terminal Hack level pack registered with LevelLoaderService
+- [ ] `LevelLoaderService.loadLevel('terminal-hack', levelId)` returns correct level data
+- [ ] `LevelLoaderService.getLevelPack('terminal-hack')` returns all 21 levels grouped by tier
+- [ ] Unit tests for: level loading by ID, level pack retrieval
 
 ---
 
@@ -1564,6 +2050,46 @@ Acceptance criteria:
 - [ ] MinigameShell integration works (score, timer, lives)
 - [ ] E2e smoke test: navigate to level 1, verify game renders
 
+### T-2026-146
+- Title: Register Power Grid level data with LevelLoaderService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P5
+- Depends: T-2026-091, T-2026-030
+- Blocked-by: —
+- Tags: minigame, power-grid, level-data, integration
+- Refs: docs/minigames/07-power-grid.md, src/app/core/levels/level-loader.service.ts
+
+Register Power Grid level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
+
+Acceptance criteria:
+- [ ] Power Grid level pack registered with LevelLoaderService
+- [ ] `LevelLoaderService.loadLevel('power-grid', levelId)` returns correct level data
+- [ ] `LevelLoaderService.getLevelPack('power-grid')` returns all 18 levels grouped by tier
+- [ ] Unit tests for: level loading by ID, level pack retrieval
+
+### T-2026-147
+- Title: Register Data Relay level data with LevelLoaderService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P5
+- Depends: T-2026-094, T-2026-030
+- Blocked-by: —
+- Tags: minigame, data-relay, level-data, integration
+- Refs: docs/minigames/08-data-relay.md, src/app/core/levels/level-loader.service.ts
+
+Register Data Relay level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
+
+Acceptance criteria:
+- [ ] Data Relay level pack registered with LevelLoaderService
+- [ ] `LevelLoaderService.loadLevel('data-relay', levelId)` returns correct level data
+- [ ] `LevelLoaderService.getLevelPack('data-relay')` returns all 18 levels grouped by tier
+- [ ] Unit tests for: level loading by ID, level pack retrieval
+
 ---
 
 ## P6 -- Signals Bundle
@@ -1674,6 +2200,26 @@ Acceptance criteria:
 - [ ] Level data loads correctly for all 21 levels
 - [ ] MinigameShell integration works (score, timer, lives)
 - [ ] E2e smoke test: navigate to level 1, verify game renders
+
+### T-2026-148
+- Title: Register Reactor Core level data with LevelLoaderService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P6
+- Depends: T-2026-098, T-2026-030
+- Blocked-by: —
+- Tags: minigame, reactor-core, level-data, integration
+- Refs: docs/minigames/09-reactor-core.md, src/app/core/levels/level-loader.service.ts
+
+Register Reactor Core level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
+
+Acceptance criteria:
+- [ ] Reactor Core level pack registered with LevelLoaderService
+- [ ] `LevelLoaderService.loadLevel('reactor-core', levelId)` returns correct level data
+- [ ] `LevelLoaderService.getLevelPack('reactor-core')` returns all 21 levels grouped by tier
+- [ ] Unit tests for: level loading by ID, level pack retrieval
 
 ---
 
@@ -1971,6 +2517,86 @@ Acceptance criteria:
 - [ ] MinigameShell integration works (score, timer, lives)
 - [ ] E2e smoke test: navigate to level 1, verify game renders
 
+### T-2026-149
+- Title: Register Deep Space Radio level data with LevelLoaderService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-102, T-2026-030
+- Blocked-by: —
+- Tags: minigame, deep-space-radio, level-data, integration
+- Refs: docs/minigames/10-deep-space-radio.md, src/app/core/levels/level-loader.service.ts
+
+Register Deep Space Radio level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
+
+Acceptance criteria:
+- [ ] Deep Space Radio level pack registered with LevelLoaderService
+- [ ] `LevelLoaderService.loadLevel('deep-space-radio', levelId)` returns correct level data
+- [ ] `LevelLoaderService.getLevelPack('deep-space-radio')` returns all 18 levels grouped by tier
+- [ ] Unit tests for: level loading by ID, level pack retrieval
+
+### T-2026-150
+- Title: Register System Certification level data with LevelLoaderService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-104, T-2026-030
+- Blocked-by: —
+- Tags: minigame, system-certification, level-data, integration
+- Refs: docs/minigames/11-system-certification.md, src/app/core/levels/level-loader.service.ts
+
+Register System Certification level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
+
+Acceptance criteria:
+- [ ] System Certification level pack registered with LevelLoaderService
+- [ ] `LevelLoaderService.loadLevel('system-certification', levelId)` returns correct level data
+- [ ] `LevelLoaderService.getLevelPack('system-certification')` returns all 18 levels grouped by tier
+- [ ] Unit tests for: level loading by ID, level pack retrieval
+
+### T-2026-151
+- Title: Register Blast Doors level data with LevelLoaderService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-106, T-2026-030
+- Blocked-by: —
+- Tags: minigame, blast-doors, level-data, integration
+- Refs: docs/minigames/12-blast-doors.md, src/app/core/levels/level-loader.service.ts
+
+Register Blast Doors level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
+
+Acceptance criteria:
+- [ ] Blast Doors level pack registered with LevelLoaderService
+- [ ] `LevelLoaderService.loadLevel('blast-doors', levelId)` returns correct level data
+- [ ] `LevelLoaderService.getLevelPack('blast-doors')` returns all 18 levels grouped by tier
+- [ ] Unit tests for: level loading by ID, level pack retrieval
+
+### T-2026-152
+- Title: Create story mission content for Chapters 27-34 (Phase 6 Advanced) mission data directory structure
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-108
+- Blocked-by: —
+- Tags: story-missions, content, infrastructure
+- Refs: docs/curriculum.md
+
+T-2026-108 creates mission content for chapters 27-34 but the curriculum has these spanning Phase 6 Advanced. The missions directory currently only has phase-1 through phase-6 subdirectories planned. Chapters 27-34 need proper directory organization since they span multiple conceptual groups (Content Projection, Lifecycle, Directives, HTTP, Testing, Animations, Performance).
+
+Acceptance criteria:
+- [ ] Mission data directories created for chapters 27-34 under `src/app/data/missions/`
+- [ ] Directory structure documented: phase-6 contains Ch 23-26 (signals), remaining advanced chapters in phase-7 or an advanced/ subdirectory
+- [ ] StoryMission type supports the advanced phase chapters
+- [ ] Unit tests verify directory/data consistency with curriculum.md chapter definitions
+
 ---
 
 ## P8 -- Polish & Replayability
@@ -2046,3 +2672,121 @@ Acceptance criteria:
 - [ ] `getEquipped(type)`: returns currently equipped cosmetic
 - [ ] Persisted via StatePersistenceService
 - [ ] Unit tests for: unlock evaluation, equip/unequip, persistence
+
+### T-2026-153
+- Title: Create AchievementBadgeComponent for badge display
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P8
+- Depends: T-2026-109, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, achievements, gamification
+- Refs: docs/research/gamification-patterns.md, docs/ux/navigation.md
+
+AchievementService (T-2026-109) provides the data, but there is no visual component for rendering individual achievement badges. Navigation.md specifies the profile page shows "Achievement badges." This component renders a single badge with earned/locked state.
+
+Acceptance criteria:
+- [ ] `AchievementBadgeComponent` at `src/app/shared/components/achievement-badge/`
+- [ ] Selector: `nx-achievement-badge`
+- [ ] Inputs: `achievement` (Achievement interface), `size` ('sm' | 'md' | 'lg')
+- [ ] Earned state: full color badge with icon, title, earned date
+- [ ] Hidden unearned: shows silhouette with "???" title
+- [ ] Non-hidden unearned: shows dimmed badge with title and lock icon
+- [ ] Tooltip on hover shows description and unlock criteria
+- [ ] Type-specific styling: Discovery (Reactor Blue), Mastery (Solar Gold), Commitment (Sensor Green)
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: earned rendering, hidden rendering, type-specific colors, tooltip
+
+### T-2026-154
+- Title: Create AchievementGridComponent for profile page badge display
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P8
+- Depends: T-2026-153, T-2026-109
+- Blocked-by: —
+- Tags: ui, component, achievements, profile
+- Refs: docs/ux/navigation.md
+
+Profile page needs a grid of achievement badges with filtering by type (Discovery, Mastery, Commitment) and earned/unearned state. Builds on AchievementBadgeComponent.
+
+Acceptance criteria:
+- [ ] `AchievementGridComponent` at `src/app/shared/components/achievement-grid/`
+- [ ] Selector: `nx-achievement-grid`
+- [ ] Displays all achievements from AchievementService in a responsive grid
+- [ ] Filter tabs: All, Discovery, Mastery, Commitment
+- [ ] Progress summary: "X of Y achievements earned"
+- [ ] Earned badges appear first, then unearned (sorted by type within each group)
+- [ ] Responsive: adapts grid columns for mobile/tablet/desktop
+- [ ] Unit tests for: grid rendering, filtering, progress count, sort order
+
+### T-2026-155
+- Title: Create EndlessModePage content with session UI
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P8
+- Depends: T-2026-048, T-2026-053
+- Blocked-by: —
+- Tags: replay-modes, endless, page, ui
+- Refs: docs/progression.md, docs/minigames/TEMPLATE.md
+
+T-2026-053 adds the route and placeholder page for endless mode. This ticket replaces the placeholder with a functional UI that integrates with EndlessModeService. Shows pre-game setup (high score, rules), in-game HUD (round, score, difficulty), and post-game summary.
+
+Acceptance criteria:
+- [ ] EndlessModePage at `src/app/pages/endless-mode/` replaces placeholder
+- [ ] Pre-game state: displays game name, current high score, "Start" button
+- [ ] In-game state: renders the minigame component with endless-mode HUD (round counter, running score, difficulty indicator)
+- [ ] Post-game state: shows final score, rounds survived, new high score badge if applicable, "Play Again" and "Back to Level Select" buttons
+- [ ] Integrates with EndlessModeService for session management
+- [ ] Unit tests for: pre-game display, post-game summary, high score detection
+
+### T-2026-156
+- Title: Create SpeedRunPage content with timer UI
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P8
+- Depends: T-2026-049, T-2026-053
+- Blocked-by: —
+- Tags: replay-modes, speed-run, page, ui
+- Refs: docs/progression.md, docs/minigames/TEMPLATE.md
+
+T-2026-053 adds the route and placeholder page for speed run mode. This ticket replaces the placeholder with a functional UI that integrates with SpeedRunService. Shows pre-run setup (par time, best time), in-run timer with split tracking, and post-run results.
+
+Acceptance criteria:
+- [ ] SpeedRunPage at `src/app/pages/speed-run/` replaces placeholder
+- [ ] Pre-run state: displays par time, personal best time, level set preview, "Start Run" button
+- [ ] In-run state: prominent countdown/elapsed timer, level progress (X/Y levels), split times per level
+- [ ] Post-run state: final time, comparison to par and personal best, time splits breakdown, "Retry" and "Back" buttons
+- [ ] Timer display turns green (under par), orange (near par), red (over par) based on elapsed time
+- [ ] Integrates with SpeedRunService for session and time tracking
+- [ ] Unit tests for: timer display, par comparison colors, split time display
+
+### T-2026-157
+- Title: Create DailyChallengePage content with challenge UI
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P8
+- Depends: T-2026-041, T-2026-053
+- Blocked-by: —
+- Tags: replay-modes, daily-challenge, page, ui
+- Refs: docs/progression.md, docs/research/gamification-patterns.md
+
+T-2026-053 adds the route and placeholder page for daily challenge. This ticket replaces the placeholder with a functional UI that integrates with DailyChallengeService. Shows today's challenge with topic and bonus XP, completion state, and streak integration.
+
+Acceptance criteria:
+- [ ] DailyChallengePage at `src/app/pages/daily-challenge/` replaces placeholder
+- [ ] Displays today's challenge: game name, topic, bonus XP (50), preview of the level
+- [ ] If completed: shows completion checkmark, score, time until next challenge (midnight rollover)
+- [ ] If not completed: "Accept Challenge" button that loads the minigame level
+- [ ] Streak display: shows current daily streak and multiplier
+- [ ] Integrates with DailyChallengeService for challenge data and completion
+- [ ] Unit tests for: challenge display, completed state, streak display, countdown timer
