@@ -1,9 +1,9 @@
 # Current Sprint
 
-Sprint: S01-scaffolding
-Milestone: P0
-Goal: Scaffold the Angular project, configure tooling, and establish the app shell
-Started: 2026-03-06
+Sprint: S02-core-engine
+Milestone: P1
+Goal: Build the P1 core engine: minigame framework, progression services, state persistence, and shared UI components
+Started: 2026-03-07
 
 <!-- Velocity: (recorded at sprint close) -->
 
@@ -11,20 +11,19 @@ Started: 2026-03-06
 
 ## Active
 
+- **T-2026-016**: Define minigame lifecycle interfaces and types (Assigned: claude, Status: in-progress)
+
 
 ---
 
 ## Queue
 
+- T-2026-024: Create StatePersistenceService for localStorage save/load [HIGH, M]
+- T-2026-031: Create code editor component wrapper [HIGH, M]
+- T-2026-040: Install and configure icon library [MEDIUM, S]
+
 ---
 
 ## Done This Sprint
 
-- T-2026-005: Set up Playwright e2e testing with 2 smoke tests
-- T-2026-036: Clean up Angular CLI boilerplate from app template
-- T-2026-008: Create global base styles and CSS reset
-- T-2026-009: Create app shell layout component with top bar
-- T-2026-014: Create shared UI component library barrel exports
-- T-2026-013: Create placeholder page components for all routes
-- T-2026-010: Add side navigation for desktop layout
-- T-2026-011: Add bottom navigation for mobile layout
+*(none yet)*

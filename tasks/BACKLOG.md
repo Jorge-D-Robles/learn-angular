@@ -30,8 +30,8 @@ Acceptance criteria:
 
 ### T-2026-016
 - Title: Define minigame lifecycle interfaces and types
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: M
 - Milestone: P1
@@ -51,6 +51,7 @@ Acceptance criteria:
 - [ ] `MinigameStatus` enum: Loading, Playing, Paused, Won, Lost
 - [ ] All types are exported from `src/app/core/minigame/minigame.types.ts`
 - [ ] Types are well-documented with JSDoc comments
+- Started: 2026-03-07
 
 ### T-2026-017
 - Title: Create abstract MinigameEngine base class
