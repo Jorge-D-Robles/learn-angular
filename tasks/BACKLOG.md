@@ -24,28 +24,6 @@ Acceptance criteria:
 - [ ] CI caches `node_modules` for faster runs
 - [ ] Workflow badge can be added to README (URL is valid)
 
-### T-2026-011
-- Title: Add bottom navigation for mobile layout
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P0
-- Depends: T-2026-009
-- Blocked-by: —
-- Tags: navigation, layout, component, ui, mobile
-- Refs: docs/ux/navigation.md
-
-Add a bottom navigation bar for mobile (< 768px) with four tabs: Dashboard, Mission, Games, Profile. Mirrors the side nav links.
-
-Acceptance criteria:
-- [ ] `BottomNavComponent` renders four tab items with icons and labels
-- [ ] Navigation uses `routerLink` and `routerLinkActive`
-- [ ] Bottom nav is visible only on mobile (< 768px), hidden on tablet and desktop
-- [ ] Uses fixed positioning at the bottom of the viewport
-- [ ] Active tab is highlighted with accent color
-- [ ] Unit tests verify tab items render correctly
-
 ### T-2026-037
 - Title: Investigate Angular 21 Vite dev server routing bug
 - Status: todo

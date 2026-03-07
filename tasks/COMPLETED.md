@@ -14,3 +14,4 @@
 [2026-03-06] T-2026-014: Create shared UI component library barrel exports — created shared UI library with barrel exports, StationCardComponent sample component, 6 unit tests (claude)
 [2026-03-06] T-2026-013: Create placeholder page components for all routes — added route param display to 3 parameterized pages, updated NotFoundPage text, 22 unit tests across 8 spec files (claude)
 [2026-03-06] T-2026-010: Add side navigation for desktop layout — added side nav with 4 routerLink items, routerLinkActive, responsive hide at 1024px, 9 unit tests (claude)
+[2026-03-06] T-2026-011: Add bottom navigation for mobile layout — added bottom nav with 4 tabs, fixed positioning, CSS icons, routerLinkActive, responsive hide, 9 unit tests (claude)
