@@ -65,3 +65,4 @@
 [2026-03-07] T-2026-169: Add test coverage threshold enforcement to CI pipeline — added coverage thresholds (80/75/80/80) and CI enforcement via angular.json (claude)
 [2026-03-07] T-2026-170: Create global ErrorHandler integration for uncaught errors — created GlobalErrorHandler with structured logging, lastError signal, and error normalization (claude)
 [2026-03-07] T-2026-179: Apply streak bonus to story mission XP in GameProgressionService — applied streak bonus to story mission XP with notifications (claude)
+[2026-03-07] T-2026-183: Create LevelFailedComponent for post-failure display — created LevelFailedComponent with retry, hint, and quit actions (claude)

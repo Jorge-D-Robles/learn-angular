@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-183**: Create LevelFailedComponent for post-failure display (Assigned: claude, Status: in-progress)
 
 
 
