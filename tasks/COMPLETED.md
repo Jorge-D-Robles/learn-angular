@@ -72,3 +72,4 @@
 [2026-03-07] T-2026-046: Create difficulty tier badge component — created TierBadgeComponent with color-coded backgrounds and Boss glow effect (claude)
 [2026-03-07] T-2026-223: Wire MinigamePlayPage engine lifecycle to MinigameShell inputs and events — wired engine lifecycle, signal bindings, shell events, and completion flow in MinigamePlayPage (claude)
 [2026-03-07] T-2026-162: Integrate PauseMenuComponent with MinigameShell pause state — replaced shell inline pause overlay with PauseMenuComponent, added restartGame output forwarding (claude)
+[2026-03-07] T-2026-182: Create LevelNavigationService for next/previous level resolution — created LevelNavigationService with getNextLevel, getPreviousLevel, isNextLevelUnlocked (claude)

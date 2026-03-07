@@ -453,29 +453,6 @@ Acceptance criteria:
 - [ ] Previous best score loaded from LevelProgressionService for comparison
 - [ ] Unit tests for: results display on completion, next level loading, replay reset, navigation
 
-### T-2026-182
-- Title: Create LevelNavigationService for next/previous level resolution
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-030, T-2026-020
-- Blocked-by: —
-- Tags: minigame-framework, levels, navigation, service
-- Refs: docs/ux/navigation.md, src/app/core/levels/level-loader.service.ts
-
-LevelResultsComponent (T-2026-159) has a "Next Level" button and LevelSelectPage (T-2026-077) needs to highlight the next playable level. But there is no service that resolves what the next or previous level is given a gameId and current levelId, accounting for tier ordering and unlock status. LevelLoaderService loads data but does not provide navigation.
-
-Acceptance criteria:
-- [ ] `LevelNavigationService` at `src/app/core/levels/level-navigation.service.ts`
-- [ ] `getNextLevel(gameId, currentLevelId)`: returns the next LevelDefinition or null if at end
-- [ ] `getPreviousLevel(gameId, currentLevelId)`: returns the previous LevelDefinition or null if at start
-- [ ] `isNextLevelUnlocked(gameId, currentLevelId)`: checks if the next level is unlocked via LevelProgressionService
-- [ ] Respects tier ordering: Basic 1-6 -> Intermediate 7-12 -> Advanced 13-17 -> Boss 18
-- [ ] Exported from levels barrel
-- [ ] Unit tests for: next level resolution, previous level, end-of-game null, cross-tier navigation, unlock check
-
 ### T-2026-184
 - Title: Integrate ComboTrackerService with MinigameEngine base class
 - Status: todo
