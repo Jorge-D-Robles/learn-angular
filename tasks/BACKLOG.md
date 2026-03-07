@@ -359,8 +359,8 @@ Acceptance criteria:
 
 ### T-2026-159
 - Title: Create LevelResultsComponent for post-level completion display
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: M
 - Milestone: P1
@@ -383,6 +383,7 @@ Acceptance criteria:
 - [ ] Respects `prefers-reduced-motion`
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: score display, XP breakdown rendering, new best detection, button events, disabled next level
+- Started: 2026-03-07
 
 ### T-2026-160
 - Title: Create ExpressionBuilderComponent for condition/formula editing
