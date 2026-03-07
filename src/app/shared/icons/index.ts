@@ -1,5 +1,6 @@
 import {
   House,
+  Lock,
   Map,
   Gamepad2,
   User,
@@ -23,15 +24,17 @@ export { LucideAngularModule } from 'lucide-angular';
  * Add new icons here when needed — they will be tree-shaken if unused.
  *
  * Icon name mapping (ticket name -> Lucide name):
- *   home     -> House        | map      -> Map
- *   gamepad  -> Gamepad2     | user     -> User
- *   settings -> Settings     | star     -> Star
- *   heart    -> Heart        | pause    -> Pause
- *   play     -> Play         | chevron  -> ChevronRight/Down/Left/Up
+ *   home     -> House        | lock     -> Lock
+ *   map      -> Map          | gamepad  -> Gamepad2
+ *   user     -> User         | settings -> Settings
+ *   star     -> Star         | heart    -> Heart
+ *   pause    -> Pause        | play     -> Play
+ *   chevron  -> ChevronRight/Down/Left/Up
  *   x-close  -> X
  */
 export const APP_ICONS: LucideIcons = {
   House,
+  Lock,
   Map,
   Gamepad2,
   User,

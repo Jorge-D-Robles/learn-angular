@@ -48,6 +48,7 @@ class ColorInheritTestHost {}
 class AllIconsTestHost {
   iconNames = [
     'house',
+    'lock',
     'map',
     'gamepad-2',
     'user',
@@ -131,6 +132,6 @@ describe('Icon Configuration', () => {
       providers: ICON_PROVIDERS,
     });
     const svgs = element.querySelectorAll('svg');
-    expect(svgs.length).toBe(14);
+    expect(svgs.length).toBe(15);
   });
 });
