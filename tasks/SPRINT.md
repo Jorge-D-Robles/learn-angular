@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-134**: Create keyboard shortcut service for minigame controls (Assigned: claude, Status: in-progress)
 
 
 

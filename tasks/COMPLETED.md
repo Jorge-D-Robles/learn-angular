@@ -45,3 +45,4 @@
 [2026-03-07] T-2026-057: Create ConfirmDialogComponent for destructive actions — added ConfirmDialogComponent with native dialog, danger/warning variants, aria-labelledby, 15 tests (claude)
 [2026-03-07] T-2026-125: Add XpNotificationComponent to app shell root — wired XpNotificationComponent into app shell root for global XP toast notifications (claude)
 [2026-03-07] T-2026-127: Wire LevelCompletionService to XpNotificationService — wired LevelCompletionService to XpNotificationService with bonuses (Level Complete, Perfect, Streak, Rank Up), 8 new tests (claude)
+[2026-03-07] T-2026-134: Create keyboard shortcut service for minigame controls — added KeyboardShortcutService with register/unregister/dispatch, isEnabled signal, case normalization, 10 tests (claude)
