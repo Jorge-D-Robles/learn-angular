@@ -20,11 +20,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- T-2026-020: Create LevelProgressionService for tracking level completion [HIGH, M]
 - T-2026-021: Create XpService for XP calculation and rank tracking [HIGH, M]
 - T-2026-028: Create ScoreCalculationService for level scoring [MEDIUM, S]
 - T-2026-029: Create MinigameRegistryService for game registration and lookup [MEDIUM, S]

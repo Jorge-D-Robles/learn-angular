@@ -28,30 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-020
-- Title: Create LevelProgressionService for tracking level completion
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P1
-- Depends: T-2026-019, T-2026-015
-- Blocked-by: —
-- Tags: levels, progression, service
-- Refs: docs/progression.md, docs/curriculum.md
-
-Service that tracks which levels have been completed, best scores, and star ratings per level. Determines level unlock status based on tier progression rules.
-
-Acceptance criteria:
-- [ ] `LevelProgressionService` at `src/app/core/levels/level-progression.service.ts`
-- [ ] Tracks per-level: completed (boolean), bestScore (number), perfect (boolean), attempts (number)
-- [ ] `isLevelUnlocked(levelId)`: returns true if all prerequisite levels in the tier are complete
-- [ ] `completeLevel(result: MinigameResult)`: records completion, updates best score if improved
-- [ ] `getLevelProgress(gameId)`: returns progress for all levels in a minigame
-- [ ] `getTierProgress(gameId, tier)`: returns completion percentage for a tier
-- [ ] State stored via signals, integrates with `GameStateService`
-- [ ] Unit tests for: unlock logic, best score tracking, tier progression
-
 ### T-2026-021
 - Title: Create XpService for XP calculation and rank tracking
 - Status: todo
