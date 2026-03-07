@@ -1,0 +1,122 @@
+:host {
+  display: block;
+  background: var(--nx-color-hull);
+  border-left: 4px solid var(--nx-color-alert-orange);
+  border-radius: var(--nx-radius-card, 8px);
+  padding: var(--nx-space-4);
+}
+
+.degradation-alert__header {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-2);
+  margin-bottom: var(--nx-space-3);
+  color: var(--nx-color-alert-orange);
+}
+
+.degradation-alert__title {
+  margin: 0;
+  font-size: var(--nx-text-card-title-size, 1.125rem);
+  font-weight: var(--nx-text-card-title-weight, 600);
+  color: var(--nx-color-display);
+}
+
+.degradation-alert__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--nx-space-3) 0;
+  border-top: 1px solid var(--nx-color-bulkhead);
+}
+
+.degradation-alert__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nx-space-1);
+}
+
+.degradation-alert__topic-name {
+  color: var(--nx-color-display);
+  font-weight: 500;
+}
+
+.degradation-alert__mastery-diff {
+  color: var(--nx-color-alert-orange);
+  font-weight: 600;
+  animation: mastery-dim 2s ease-in-out infinite;
+}
+
+.degradation-alert__days {
+  color: var(--nx-color-corridor);
+  font-size: var(--nx-text-caption-size, 0.75rem);
+}
+
+.degradation-alert__practice-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--nx-space-2) var(--nx-space-4);
+  background: transparent;
+  color: var(--nx-color-alert-orange);
+  border: 1px solid var(--nx-color-alert-orange);
+  border-radius: var(--nx-radius-btn, 6px);
+  font-size: var(--nx-text-body-size, 1rem);
+  cursor: pointer;
+  transition: background var(--nx-duration-fast, 150ms) var(--nx-ease-out, ease-out);
+
+  &:hover {
+    background: color-mix(in srgb, var(--nx-color-alert-orange) 10%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--nx-color-alert-orange);
+    outline-offset: 2px;
+  }
+}
+
+@keyframes mastery-dim {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+// Compact variant: tighter spacing, smaller text
+:host(.degradation-alert--compact) {
+  padding: var(--nx-space-3);
+
+  .degradation-alert__header {
+    margin-bottom: var(--nx-space-2);
+  }
+
+  .degradation-alert__item {
+    padding: var(--nx-space-2) 0;
+  }
+
+  .degradation-alert__topic-name {
+    font-size: var(--nx-text-caption-size, 0.75rem);
+  }
+
+  .degradation-alert__practice-btn {
+    padding: var(--nx-space-1) var(--nx-space-3);
+    font-size: var(--nx-text-caption-size, 0.75rem);
+  }
+}
+
+// Full variant: standard spacing, body-sized text
+:host(.degradation-alert--full) {
+  .degradation-alert__topic-name {
+    font-size: var(--nx-text-body-size, 1rem);
+  }
+
+  .degradation-alert__days {
+    font-size: var(--nx-text-body-size, 1rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .degradation-alert__mastery-diff {
+    animation: none;
+  }
+
+  .degradation-alert__practice-btn {
+    transition: none;
+  }
+}

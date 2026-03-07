@@ -1,5 +1,6 @@
 export { CodeEditorComponent } from './code-editor/code-editor';
 export { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog';
+export { DegradationAlertComponent } from './degradation-alert/degradation-alert';
 export { ErrorStateComponent } from './error-state/error-state';
 export { LevelResultsComponent } from './level-results/level-results';
 export { LevelStarsComponent } from './level-stars/level-stars';

@@ -11,6 +11,8 @@ Started: 2026-03-07
 
 ## Active
 
+- **T-2026-161**: Create DegradationAlertComponent for spaced repetition notifications (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -61,7 +63,6 @@ Started: 2026-03-07
 
 ## Queue
 
-- **T-2026-161**: Create DegradationAlertComponent for spaced repetition notifications (Priority: medium, Size: S)
 
 ---
 
