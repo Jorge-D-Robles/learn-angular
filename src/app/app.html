@@ -1,1 +1,18 @@
-<router-outlet />
+<header class="top-bar">
+  <a class="top-bar__logo" routerLink="/">Nexus Station</a>
+
+  <div class="top-bar__status">
+    <span class="top-bar__rank">Cadet</span>
+    <div class="top-bar__xp">
+      <div class="top-bar__xp-bar"></div>
+    </div>
+  </div>
+
+  <button class="top-bar__settings" type="button" aria-label="Settings">
+    <span class="top-bar__settings-icon" aria-hidden="true"></span>
+  </button>
+</header>
+
+<main class="content">
+  <router-outlet />
+</main>

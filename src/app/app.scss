@@ -1,0 +1,127 @@
+// App Shell Layout — vertical flex: top bar + content
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+// ---------------------------------------------------------------------------
+// Top Bar
+// ---------------------------------------------------------------------------
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-4);
+  padding: var(--nx-space-2) var(--nx-space-4);
+  background-color: var(--nx-color-hull);
+  border-bottom: 1px solid var(--nx-color-bulkhead);
+  height: 56px;
+  flex-shrink: 0;
+}
+
+// Logo uses card-title scale (1.125rem/600) — a deliberate design choice.
+// It's smaller than section-heading to not dominate the compact top bar,
+// but larger than body text for visual hierarchy. No spec-defined logo size exists.
+.top-bar__logo {
+  font-size: var(--nx-text-card-title-size);
+  font-weight: var(--nx-text-card-title-weight);
+  color: var(--nx-color-beacon);
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--nx-color-reactor-blue);
+    text-decoration: none;
+  }
+}
+
+.top-bar__status {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-3);
+  margin-left: auto;
+}
+
+.top-bar__rank {
+  font-size: var(--nx-text-caption-size);
+  font-weight: var(--nx-text-caption-weight);
+  color: var(--nx-color-solar-gold);
+  white-space: nowrap;
+}
+
+.top-bar__xp {
+  width: 120px;
+  height: 8px;
+  background-color: var(--nx-color-bulkhead);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.top-bar__xp-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--nx-color-reactor-blue),
+    var(--nx-color-sensor-green)
+  );
+  border-radius: 4px;
+  transition: width var(--nx-duration-normal) var(--nx-ease-out);
+}
+
+.top-bar__settings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-button);
+  color: var(--nx-color-corridor);
+  cursor: pointer;
+  transition: color var(--nx-duration-fast) var(--nx-ease-out),
+              border-color var(--nx-duration-fast) var(--nx-ease-out);
+
+  &:hover {
+    color: var(--nx-color-beacon);
+    border-color: var(--nx-color-corridor);
+  }
+}
+
+// Gear icon via CSS (avoids icon library dependency for now)
+.top-bar__settings-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  position: relative;
+}
+
+// ---------------------------------------------------------------------------
+// Content Area
+// ---------------------------------------------------------------------------
+.content {
+  flex: 1;
+  padding: var(--nx-space-6);
+  overflow-y: auto;
+}
+
+// ---------------------------------------------------------------------------
+// Responsive — Mobile (< 768px)
+// ---------------------------------------------------------------------------
+@media (max-width: 767px) {
+  .top-bar {
+    padding: var(--nx-space-2) var(--nx-space-3);
+    height: 48px;
+  }
+
+  .top-bar__status {
+    display: none;
+  }
+
+  .content {
+    padding: var(--nx-space-4);
+  }
+}

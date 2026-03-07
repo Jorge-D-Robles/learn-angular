@@ -24,28 +24,6 @@ Acceptance criteria:
 - [ ] CI caches `node_modules` for faster runs
 - [ ] Workflow badge can be added to README (URL is valid)
 
-### T-2026-009
-- Title: Create app shell layout component with top bar
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P0
-- Depends: T-2026-007, T-2026-008
-- Blocked-by: —
-- Tags: layout, shell, component, ui
-- Refs: docs/ux/navigation.md, docs/ux/visual-style.md
-
-Create the root app shell layout with a top bar and main content area. The top bar should contain placeholder slots for: logo/home link, rank badge, XP bar, and settings icon. The main content area holds `<router-outlet>`.
-
-Acceptance criteria:
-- [ ] `AppComponent` renders a top bar and a `<router-outlet>` content area
-- [ ] Top bar has placeholder elements for: logo, rank badge, XP bar, settings icon
-- [ ] Top bar uses design tokens for colors and spacing
-- [ ] Layout uses CSS Grid or Flexbox for structure
-- [ ] Component has unit tests verifying the shell renders with router outlet
-- [ ] Responsive: top bar content adjusts for mobile (< 768px)
-
 ### T-2026-010
 - Title: Add side navigation for desktop layout
 - Status: todo
