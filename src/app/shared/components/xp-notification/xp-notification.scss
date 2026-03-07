@@ -1,0 +1,52 @@
+:host {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.xp-toast {
+  pointer-events: auto;
+  background-color: var(--nx-color-hull);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card);
+  padding: var(--nx-space-3) var(--nx-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: slideIn 250ms ease-out;
+}
+
+.xp-toast__amount {
+  color: var(--nx-color-solar-gold);
+  font-weight: 700;
+  font-size: var(--nx-text-body-large-size, 1.125rem);
+}
+
+.xp-toast__bonus {
+  font-size: var(--nx-text-caption-size, 0.75rem);
+  color: var(--nx-color-corridor);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xp-toast {
+    animation: none;
+    opacity: 1;
+  }
+}
