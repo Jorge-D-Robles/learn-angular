@@ -370,8 +370,8 @@ Acceptance criteria:
 
 ### T-2026-057
 - Title: Create ConfirmDialogComponent for destructive actions
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -391,6 +391,7 @@ Acceptance criteria:
 - [ ] Warning variant uses Alert Orange for confirm button
 - [ ] Keyboard accessible: Escape to cancel, Enter to confirm, focus trap within dialog
 - [ ] Unit tests for: rendering, confirm/cancel event emission, keyboard handling, focus trap
+- Started: 2026-03-07
 
 ### T-2026-112
 - Title: Create barrel export for core/state module

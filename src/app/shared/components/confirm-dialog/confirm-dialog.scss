@@ -1,0 +1,87 @@
+.confirm-dialog {
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card);
+  background: var(--nx-color-hull);
+  color: var(--nx-color-display);
+  padding: var(--nx-space-8);
+  max-width: 400px;
+  width: 90vw;
+  text-align: center;
+  animation: dialogFadeIn var(--nx-duration-normal) var(--nx-ease-out);
+
+  &::backdrop {
+    background: rgba(10, 14, 26, 0.85); // --nx-color-void at 85% opacity
+  }
+}
+
+.confirm-dialog__title {
+  margin: 0 0 var(--nx-space-3);
+  font-size: var(--nx-text-section-heading-size);
+  font-weight: var(--nx-text-section-heading-weight);
+  color: var(--nx-color-beacon);
+}
+
+.confirm-dialog__message {
+  margin: 0 0 var(--nx-space-6);
+  font-size: var(--nx-text-body-size);
+  color: var(--nx-color-corridor);
+  line-height: 1.5;
+}
+
+.confirm-dialog__actions {
+  display: flex;
+  gap: var(--nx-space-3);
+  justify-content: center;
+}
+
+.confirm-dialog__btn {
+  flex: 1;
+  padding: var(--nx-space-2) var(--nx-space-4);
+  border-radius: var(--nx-radius-button);
+  font-size: var(--nx-text-body-size);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity var(--nx-duration-fast) var(--nx-ease-out);
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.confirm-dialog__btn--cancel {
+  background: transparent;
+  border: 1px solid var(--nx-color-bulkhead);
+  color: var(--nx-color-corridor);
+}
+
+.confirm-dialog__btn--confirm {
+  color: var(--nx-color-beacon);
+}
+
+// Variant: danger -> Emergency Red confirm button
+.confirm-dialog--danger .confirm-dialog__btn--confirm {
+  background: var(--nx-color-emergency-red);
+}
+
+// Variant: warning -> Alert Orange confirm button
+.confirm-dialog--warning .confirm-dialog__btn--confirm {
+  background: var(--nx-color-alert-orange);
+}
+
+@keyframes dialogFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirm-dialog {
+    animation: none;
+  }
+}
