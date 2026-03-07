@@ -52,8 +52,8 @@ Acceptance criteria:
 
 ### T-2026-034
 - Title: Create mastery star display component
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -71,6 +71,7 @@ Acceptance criteria:
 - [ ] Glow color matches mastery glow colors: 0=none, 1=dim white, 2=Reactor Blue, 3=Sensor Green, 4=Solar Gold, 5=Solar Gold + pulse animation
 - [ ] Accessible: aria-label describes mastery level (e.g., "3 out of 5 stars mastery")
 - [ ] Unit tests for: correct fill count at each level, glow color application, aria-label
+- Started: 2026-03-07
 
 ### T-2026-041
 - Title: Create DailyChallengeService for daily challenge rotation

@@ -1,0 +1,49 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nx-space-1);
+  color: var(--mastery-glow, var(--nx-color-corridor));
+}
+
+// Filled stars: solid fill + stroke, with glow color
+.mastery-stars__star--filled {
+  svg {
+    fill: currentColor;
+    stroke: currentColor;
+  }
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+// Empty stars: outline only, muted
+.mastery-stars__star--empty {
+  opacity: 0.25;
+  svg {
+    fill: transparent;
+    stroke: currentColor;
+  }
+}
+
+// Size variants
+:host(.mastery-stars--sm) {
+  gap: 2px;
+}
+
+:host(.mastery-stars--lg) {
+  gap: var(--nx-space-2);
+}
+
+// Pulse animation for 5-star mastery
+:host(.mastery-stars--pulse) {
+  animation: mastery-pulse 2s ease-in-out infinite;
+}
+
+@keyframes mastery-pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host(.mastery-stars--pulse) {
+    animation: none;
+  }
+}
