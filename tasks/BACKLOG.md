@@ -389,29 +389,6 @@ Acceptance criteria:
 - [ ] Update existing imports in `xp.service.ts` and `game-state.service.spec.ts` to use barrel path
 - [ ] Verify build and all tests pass with updated imports
 
-### T-2026-124
-- Title: Wire top bar to display live rank and XP from services
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P1
-- Depends: T-2026-021, T-2026-035
-- Blocked-by: —
-- Tags: ui, integration, top-bar, xp, rank
-- Refs: docs/ux/navigation.md, src/app/app.ts, src/app/app.html
-
-The top bar in `app.html` currently has a hard-coded "Cadet" rank text and an empty XP bar div. Navigation.md specifies the top bar should display: current rank badge, XP bar (compact variant), and settings gear icon linking to /settings. This ticket wires the top bar to live data from XpService and uses XpProgressBarComponent (T-2026-035).
-
-Acceptance criteria:
-- [ ] App component injects `XpService` and reads `currentRank`, `totalXp`, `xpToNextRank` signals
-- [ ] Top bar rank display is driven by `currentRank` signal (not hard-coded "Cadet")
-- [ ] Top bar XP bar is replaced with `XpProgressBarComponent` in compact variant
-- [ ] Settings button navigates to `/settings` route via routerLink
-- [ ] Unit tests for: rank text updates when XP changes, XP bar receives correct inputs
-- [ ] Build and all existing tests pass
-- Started: 2026-03-07
-
 ### T-2026-126
 - Title: Create core module root barrel export
 - Status: todo

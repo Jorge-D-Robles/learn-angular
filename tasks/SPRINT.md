@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-124**: Wire top bar to display live rank and XP from services (Assigned: claude, Status: in-progress)
 
 
 
