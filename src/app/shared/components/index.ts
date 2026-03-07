@@ -11,6 +11,7 @@ export { LockedContentComponent } from './locked-content/locked-content';
 export { MasteryStarsComponent } from './mastery-stars/mastery-stars';
 export { PauseMenuComponent } from './pause-menu/pause-menu';
 export { StationCardComponent } from './station-card/station-card';
+export { TierBadgeComponent } from './tier-badge/tier-badge';
 export { SvgPortComponent } from './svg-port/svg-port';
 export { XpNotificationComponent } from './xp-notification/xp-notification';
 export { XpProgressBarComponent } from './xp-progress-bar/xp-progress-bar';

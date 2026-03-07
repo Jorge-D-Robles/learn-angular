@@ -1,0 +1,52 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--nx-radius-button);
+  font-weight: 600;
+  color: var(--nx-color-beacon);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+// Size variants
+:host(.tier-badge--md) {
+  padding: var(--nx-space-1) var(--nx-space-3);
+  font-size: var(--nx-text-caption-size);
+}
+
+:host(.tier-badge--sm) {
+  padding: 2px var(--nx-space-2);
+  font-size: 0.75rem;
+}
+
+// Tier color variants
+:host(.tier-badge--basic) {
+  background-color: var(--nx-color-reactor-blue);
+}
+
+:host(.tier-badge--intermediate) {
+  background-color: var(--nx-color-alert-orange);
+}
+
+:host(.tier-badge--advanced) {
+  background-color: var(--nx-color-emergency-red);
+}
+
+:host(.tier-badge--boss) {
+  background-color: var(--nx-color-comm-purple);
+  box-shadow: 0 0 8px var(--nx-color-comm-purple), 0 0 16px rgba(168, 85, 247, 0.4);
+  animation: nx-tier-badge-boss-glow 2s ease-in-out infinite;
+}
+
+@keyframes nx-tier-badge-boss-glow {
+  0%, 100% { box-shadow: 0 0 8px var(--nx-color-comm-purple), 0 0 16px rgba(168, 85, 247, 0.4); }
+  50% { box-shadow: 0 0 12px var(--nx-color-comm-purple), 0 0 24px rgba(168, 85, 247, 0.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host(.tier-badge--boss) {
+    animation: none;
+  }
+}

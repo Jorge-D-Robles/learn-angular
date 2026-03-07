@@ -76,8 +76,8 @@ Acceptance criteria:
 
 ### T-2026-046
 - Title: Create difficulty tier badge component
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -99,6 +99,7 @@ Acceptance criteria:
 - [ ] Input: `size` ('sm' | 'md') for compact vs standard display
 - [ ] Accessible: role and aria-label
 - [ ] Unit tests for: correct label text per tier, correct color class per tier
+- Started: 2026-03-07
 
 ### T-2026-050
 - Title: Create PlayTimeService for tracking session and total play time
