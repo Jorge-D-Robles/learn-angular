@@ -111,27 +111,6 @@ Acceptance criteria:
 - [ ] If fixable: apply fix and update playwright.config.ts to use plain `ng serve`
 - [ ] If not fixable: document the workaround and link to the upstream issue
 
-### T-2026-014
-- Title: Create shared UI component library barrel exports
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P0
-- Depends: T-2026-001
-- Blocked-by: —
-- Tags: architecture, shared, components
-- Refs: docs/ux/visual-style.md
-
-Set up the shared component directory structure with barrel exports for future UI components (buttons, cards, badges, progress bars, etc.).
-
-Acceptance criteria:
-- [ ] Directory structure: `src/app/shared/components/`, `src/app/shared/pipes/`, `src/app/shared/directives/`
-- [ ] Each subdirectory has an `index.ts` barrel export file
-- [ ] `src/app/shared/index.ts` re-exports from all subdirectories
-- [ ] A sample shared component exists (e.g., `StationCardComponent`) using design tokens to verify the pattern works
-- [ ] Unit test for the sample component passes
-
 ---
 
 ## P1 -- Core Engine

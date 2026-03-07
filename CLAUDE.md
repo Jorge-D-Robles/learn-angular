@@ -43,6 +43,12 @@ tasks/              # Task management (sprint-based ticket system)
 6. **Clean, modular code.** Idiomatic TypeScript. Small files, small functions. No monoliths.
 7. **Auto-update CLAUDE.md.** If you discover a pattern, convention, gotcha, or rule that should be documented, update the relevant CLAUDE.md immediately.
 
+## Conventions
+
+- **Selector prefixes:** App-level components use the `app-` prefix (e.g., `app-root`). Shared library components in `src/app/shared/` use the `nx-` prefix (e.g., `nx-station-card`). Both prefixes are configured in `eslint.config.js`.
+- **File naming:** Component files use `component-name.ts` (not `component-name.component.ts`), matching Angular 2025 conventions. Same for specs: `component-name.spec.ts`.
+- **Barrel exports:** Each subdirectory under `src/app/shared/` has an `index.ts` barrel. The root `src/app/shared/index.ts` re-exports all subdirectories. Empty barrels use `export {};` to remain valid TypeScript modules.
+
 ## Commands
 
 Use these skills or agents when needed:

@@ -1,0 +1,26 @@
+:host {
+  display: block;
+  background-color: var(--nx-color-hull);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card); // 8px
+  transition: border-color var(--nx-duration-fast) var(--nx-ease-out);
+}
+
+:host:hover {
+  border-color: var(--card-accent);
+}
+
+.station-card__header {
+  padding: var(--nx-space-4) var(--nx-space-6) 0; // 16px 24px 0
+}
+
+.station-card__title {
+  margin: 0;
+  font-size: var(--nx-text-card-title-size); // 1.125rem
+  font-weight: var(--nx-text-card-title-weight); // 600
+  color: var(--nx-color-display);
+}
+
+.station-card__body {
+  padding: var(--nx-space-4) var(--nx-space-6); // 16px 24px
+}
