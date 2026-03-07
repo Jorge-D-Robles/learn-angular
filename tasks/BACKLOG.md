@@ -359,8 +359,8 @@ Acceptance criteria:
 
 ### T-2026-158
 - Title: Create WireDrawService for wire-drawing interaction mechanics
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: M
 - Milestone: P1
@@ -378,6 +378,7 @@ Acceptance criteria:
 - [ ] Connection validation via configurable predicate
 - [ ] Keyboard accessible: Tab between ports, Enter to start/complete wire
 - [ ] Unit tests for: wire initiation, connection acceptance/rejection, keyboard support
+- Started: 2026-03-07
 
 ### T-2026-159
 - Title: Create LevelResultsComponent for post-level completion display

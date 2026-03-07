@@ -11,6 +11,8 @@ Started: 2026-03-07
 
 ## Active
 
+- **T-2026-158**: Create WireDrawService for wire-drawing interaction mechanics (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -59,7 +61,6 @@ Started: 2026-03-07
 
 ## Queue
 
-- **T-2026-158**: Create WireDrawService for wire-drawing interaction mechanics (Priority: medium, Size: M)
 - **T-2026-159**: Create LevelResultsComponent for post-level completion display (Priority: medium, Size: M)
 - **T-2026-161**: Create DegradationAlertComponent for spaced repetition notifications (Priority: medium, Size: S)
 
