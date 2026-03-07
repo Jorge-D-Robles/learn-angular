@@ -100,30 +100,6 @@ Acceptance criteria:
 - [ ] Accessible: role and aria-label
 - [ ] Unit tests for: correct label text per tier, correct color class per tier
 
-### T-2026-047
-- Title: Create RefresherChallengeService for mastery restoration
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-023, T-2026-030
-- Blocked-by: —
-- Tags: progression, spaced-repetition, refresher, service
-- Refs: docs/progression.md, docs/research/gamification-patterns.md
-
-Service that generates and manages refresher challenges -- short 3-5 question micro-levels that restore mastery stars lost to spaced repetition degradation. Progression.md specifies "Quick refreshers: 3-5 questions, restore 1 star of lost mastery" and "Format: Mix of minigame micro-levels and multiple-choice questions."
-
-Acceptance criteria:
-- [ ] `RefresherChallengeService` at `src/app/core/progression/refresher-challenge.service.ts`
-- [ ] `RefresherChallenge` interface: topicId, questions (3-5), gameId, microLevelIds, restoredStars (1)
-- [ ] `generateRefresher(topicId)`: creates a refresher challenge for a degrading topic
-- [ ] `completeRefresher(topicId)`: restores 1 star of degraded mastery via MasteryService
-- [ ] `getPendingRefreshers()`: returns list of topics with available refresher challenges (degraded topics)
-- [ ] Integrates with SpacedRepetitionService to identify degrading topics
-- [ ] Integrates with LevelLoaderService to pull micro-level data for the relevant minigame
-- [ ] Unit tests for: refresher generation, mastery restoration, pending refresher list
-
 ### T-2026-048
 - Title: Create EndlessModeService for procedural level generation
 - Status: todo
@@ -3408,3 +3384,23 @@ Acceptance criteria:
 - [ ] Story mission XP notifications show streak bonus breakdown (e.g., "+5 Streak Bonus")
 - [ ] Unit tests verify streak bonus is applied to story mission XP
 - [ ] Unit tests verify notification format with streak bonus
+
+### T-2026-180
+- Title: Add multiple-choice question support to RefresherChallengeService
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: M
+- Milestone: P2
+- Depends: T-2026-047
+- Blocked-by: —
+- Tags: progression, refresher, multiple-choice, content
+- Refs: docs/progression.md, src/app/core/progression/refresher-challenge.service.ts
+
+Follow-up from T-2026-047. Progression.md specifies refresher format as "Mix of minigame micro-levels and multiple-choice questions." Currently only micro-levels are supported. This ticket adds a multiple-choice question content source to RefresherChallengeService, using the REFRESHER_MIN_QUESTIONS constant reserved for this purpose.
+
+Acceptance criteria:
+- [ ] Multiple-choice question type/interface defined
+- [ ] RefresherChallengeService mixes micro-levels and multiple-choice questions
+- [ ] REFRESHER_MIN_QUESTIONS enforced as minimum question count
+- [ ] Unit tests for mixed question selection
