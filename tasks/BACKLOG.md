@@ -551,32 +551,6 @@ Acceptance criteria:
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: rendering at each state, multiplier display, aria-label
 
-### T-2026-135
-- Title: Create PauseMenuComponent for minigame pause overlay
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-018, T-2026-057
-- Blocked-by: —
-- Tags: ui, component, minigame-framework, pause
-- Refs: docs/ux/navigation.md, docs/minigames/TEMPLATE.md
-
-Navigation.md lists "Pause menu" as an element of the Minigame Play screen. MinigameShell (T-2026-018) has a pause overlay but it lacks a proper menu with options. This component provides: Resume, Restart Level, Quit (with confirmation via ConfirmDialogComponent), and Keyboard Shortcuts display.
-
-Acceptance criteria:
-- [ ] `PauseMenuComponent` at `src/app/shared/components/pause-menu/`
-- [ ] Selector: `nx-pause-menu`
-- [ ] Menu options: Resume, Restart Level, View Shortcuts, Quit to Level Select
-- [ ] Resume: emits `resume` event
-- [ ] Restart: emits `restart` event
-- [ ] Quit: shows ConfirmDialogComponent (warning variant) before emitting `quit` event
-- [ ] View Shortcuts: displays registered keyboard shortcuts from KeyboardShortcutService
-- [ ] Full-screen overlay with semi-transparent backdrop
-- [ ] Keyboard: Escape to resume, arrow keys to navigate menu
-- [ ] Unit tests for: menu option rendering, event emission, quit confirmation
-
 ### T-2026-136
 - Title: Integrate StreakService XP multiplier with XpService
 - Status: todo
@@ -620,6 +594,295 @@ Acceptance criteria:
 - [ ] Connection validation via configurable predicate
 - [ ] Keyboard accessible: Tab between ports, Enter to start/complete wire
 - [ ] Unit tests for: wire initiation, connection acceptance/rejection, keyboard support
+
+### T-2026-159
+- Title: Create LevelResultsComponent for post-level completion display
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P1
+- Depends: T-2026-018, T-2026-028, T-2026-045, T-2026-113
+- Blocked-by: —
+- Tags: ui, component, minigame-framework, level-completion
+- Refs: docs/ux/navigation.md, docs/ux/visual-style.md, docs/progression.md
+
+Navigation.md specifies "Level completion overlay" as an element of the Minigame Play screen. MinigameShell (T-2026-018) has a basic completion overlay, but it lacks a detailed results display. This component shows the full post-level experience: star rating earned, XP breakdown (base + perfect bonus + streak bonus), comparison to previous best score, and navigation options (next level, replay, quit to level select).
+
+Acceptance criteria:
+- [ ] `LevelResultsComponent` at `src/app/shared/components/level-results/`
+- [ ] Selector: `nx-level-results`
+- [ ] Inputs: `result` (MinigameResult), `previousBest` (number | null), `xpAwarded` (number), `bonuses` (array of {label, amount})
+- [ ] Displays: star rating (using LevelStarsComponent), score with comparison to previous best, XP breakdown list
+- [ ] "New Best!" badge when score exceeds previous best
+- [ ] Action buttons: "Next Level" (emits `nextLevel`), "Replay" (emits `replay`), "Level Select" (emits `quit`)
+- [ ] "Next Level" button disabled if next level is locked
+- [ ] Station-themed styling with celebratory glow on perfect scores
+- [ ] Respects `prefers-reduced-motion`
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: score display, XP breakdown rendering, new best detection, button events, disabled next level
+
+### T-2026-160
+- Title: Create ExpressionBuilderComponent for condition/formula editing
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P1
+- Depends: T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame-framework, expression-builder
+- Refs: docs/minigames/03-flow-commander.md, docs/minigames/09-reactor-core.md
+
+Flow Commander spec says "Condition editor starts as a dropdown builder, graduates to raw expression input at advanced levels." Reactor Core uses "expression builder for computed node formulas." This shared component provides a visual expression builder for minigames that need user-authored conditions or formulas, with two modes: guided (dropdowns for operands/operators) and raw (free-text input with validation).
+
+Acceptance criteria:
+- [ ] `ExpressionBuilderComponent` at `src/app/shared/components/expression-builder/`
+- [ ] Selector: `nx-expression-builder`
+- [ ] Input: `mode` ('guided' | 'raw'), `variables` (string[] of available variable names), `operators` (string[] of available operators)
+- [ ] Input: `value` (string, current expression), Output: `valueChange` (string, two-way bindable)
+- [ ] Guided mode: dropdown for left operand, operator dropdown, right operand (value or variable dropdown)
+- [ ] Raw mode: text input with syntax validation feedback
+- [ ] Output: `expressionChange` emitting the validated expression string
+- [ ] Validation: highlights invalid expressions with error message
+- [ ] Keyboard accessible: Tab through dropdowns and inputs
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: guided mode assembly, raw mode input, validation feedback, mode switching
+
+### T-2026-161
+- Title: Create DegradationAlertComponent for spaced repetition notifications
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-023, T-2026-034, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, spaced-repetition, dashboard
+- Refs: docs/ux/navigation.md, docs/progression.md
+
+Navigation.md lists "Spaced repetition alerts (degrading topics)" as a dashboard element. SpacedRepetitionService (T-2026-023) tracks degradation, but there is no visual component to display degradation alerts. This component shows a list of topics losing mastery stars with a "Practice Now" action.
+
+Acceptance criteria:
+- [ ] `DegradationAlertComponent` at `src/app/shared/components/degradation-alert/`
+- [ ] Selector: `nx-degradation-alert`
+- [ ] Input: `degradingTopics` (array of {topicId, topicName, currentMastery, effectiveMastery, daysSinceLastPractice})
+- [ ] Displays each degrading topic with: topic name, mastery star difference (e.g., "3 -> 2"), days since last practice
+- [ ] "Practice Now" button per topic emits `practiceRequested` with topicId
+- [ ] Empty state: hidden when no topics are degrading
+- [ ] Compact variant for dashboard sidebar, full variant for profile page
+- [ ] Warning styling: Alert Orange border, dimming animation on mastery stars
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: topic list rendering, empty state hidden, practice event emission
+
+### T-2026-162
+- Title: Integrate PauseMenuComponent with MinigameShell pause state
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-135, T-2026-018
+- Blocked-by: —
+- Tags: integration, minigame-framework, pause
+- Refs: docs/ux/navigation.md, docs/minigames/TEMPLATE.md
+
+MinigameShell (T-2026-018) has a pause overlay and PauseMenuComponent (T-2026-135) provides the menu UI, but they are not connected. The shell's pause overlay needs to render PauseMenuComponent, and the menu's events (resume, restart, quit) need to drive the shell's state machine and engine lifecycle.
+
+Acceptance criteria:
+- [ ] MinigameShell's pause overlay replaced with `<nx-pause-menu>` component
+- [ ] PauseMenuComponent `resume` event calls engine.resume() and hides overlay
+- [ ] PauseMenuComponent `restart` event calls engine.reset() and restarts current level
+- [ ] PauseMenuComponent `quit` event navigates to level select page (`/minigames/:gameId`)
+- [ ] Escape key toggles pause state (already in shell, verify it triggers menu correctly)
+- [ ] Unit tests for: pause->menu display, resume restores game, restart resets level, quit navigates
+
+### T-2026-163
+- Title: Create MinigameTutorialOverlayComponent for first-time play instructions
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-018, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame-framework, tutorial, onboarding
+- Refs: docs/research/gamification-patterns.md, docs/ux/visual-style.md
+
+Gamification research specifies "progressive disclosure -- don't show everything at once." Each minigame has unique controls and mechanics. When a player launches a minigame for the first time, a tutorial overlay should explain the controls and objective. Subsequent plays skip it (or offer a "How to Play" button in the pause menu).
+
+Acceptance criteria:
+- [ ] `MinigameTutorialOverlayComponent` at `src/app/shared/components/minigame-tutorial/`
+- [ ] Selector: `nx-minigame-tutorial`
+- [ ] Input: `gameId` (MinigameId), `steps` (array of {title, description, image?})
+- [ ] Multi-step tutorial with next/previous/skip navigation
+- [ ] Step indicator (dots or numbers showing current step)
+- [ ] "Don't show again" checkbox that persists per-game via StatePersistenceService
+- [ ] Shown automatically on first play, accessible via pause menu "How to Play" on subsequent plays
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: step navigation, skip button, persistence of "don't show again" flag
+
+### T-2026-164
+- Title: Create XpDiminishingReturnsService for replay XP scaling
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-021, T-2026-020
+- Blocked-by: —
+- Tags: progression, xp, replay, service
+- Refs: docs/research/gamification-patterns.md, docs/progression.md
+
+Gamification research says "Players can replay easier levels for XP but get diminishing returns." Currently XpService awards the same XP regardless of how many times a level is replayed. This service tracks replay counts and applies a diminishing multiplier to prevent XP farming from repeated easy level completions.
+
+Acceptance criteria:
+- [ ] `XpDiminishingReturnsService` at `src/app/core/progression/xp-diminishing-returns.service.ts`
+- [ ] `getReplayMultiplier(gameId, levelId)`: returns multiplier (1.0 first play, 0.5 second, 0.25 third, 0.1 fourth+)
+- [ ] Tracks completion count per level via a Map
+- [ ] First completion always awards full XP
+- [ ] Improving star rating (e.g., 2->3 stars) awards full XP for the improvement delta, not diminished
+- [ ] Persisted via StatePersistenceService
+- [ ] Unit tests for: first play full XP, diminishing scale, improvement exception, persistence
+
+### T-2026-165
+- Title: Create barrel exports for audio and animation core modules
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-051, T-2026-052
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/audio/, src/app/core/animation/
+
+AudioService (T-2026-051) and AnimationService (T-2026-052) will create files in `src/app/core/audio/` and `src/app/core/animation/` but neither ticket creates barrel exports. Per project conventions, each core subdirectory needs an `index.ts` barrel. These barrels should be created after the services are implemented and included in the root core barrel (T-2026-126).
+
+Acceptance criteria:
+- [ ] `src/app/core/audio/index.ts` exports AudioService and SoundEffect enum
+- [ ] `src/app/core/animation/index.ts` exports AnimationService, animation triggers, ANIMATION_DURATIONS
+- [ ] Both barrels included in `src/app/core/index.ts` re-exports (depends on T-2026-126)
+- [ ] Build passes with no circular dependencies
+
+### T-2026-169
+- Title: Add test coverage threshold enforcement to CI pipeline
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-006, T-2026-004
+- Blocked-by: —
+- Tags: ci, testing, infrastructure, quality
+- Refs: .github/workflows/ci.yml, vitest.config.ts
+
+The project uses Vitest with coverage configured (T-2026-004) and has a CI pipeline (T-2026-006), but there is no enforcement of minimum coverage thresholds in CI. As the codebase grows, coverage could silently regress. This ticket adds coverage threshold checks that fail the CI build if coverage drops below the configured minimum.
+
+Acceptance criteria:
+- [ ] Vitest config updated with coverage thresholds: statements 80%, branches 75%, functions 80%, lines 80%
+- [ ] CI test job updated to run with `--coverage` flag
+- [ ] CI fails if coverage falls below thresholds
+- [ ] Coverage report output visible in CI job logs
+- [ ] Thresholds documented in project CLAUDE.md conventions section
+
+### T-2026-170
+- Title: Create global ErrorHandler integration for uncaught errors
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-131
+- Blocked-by: —
+- Tags: error-handling, infrastructure, service
+- Refs: docs/ux/visual-style.md
+
+There is no global error handling strategy. Angular's default ErrorHandler logs to console but provides no user-facing feedback. When a minigame engine throws, a service fails, or lazy loading breaks, users see nothing. This ticket creates a custom ErrorHandler that logs errors and optionally shows user-facing feedback via ErrorStateComponent.
+
+Acceptance criteria:
+- [ ] `GlobalErrorHandler` at `src/app/core/error/global-error-handler.ts`
+- [ ] Extends Angular's `ErrorHandler`
+- [ ] Logs all uncaught errors to console with structured format (timestamp, source, stack)
+- [ ] Provides `lastError` signal that components can read for user-facing display
+- [ ] Registered as `{ provide: ErrorHandler, useClass: GlobalErrorHandler }` in app.config.ts
+- [ ] `src/app/core/error/index.ts` barrel export created
+- [ ] Unit tests for: error capture, signal update, structured logging
+
+### T-2026-172
+- Title: Create SvgWireRendererComponent for SVG bezier curve wire rendering
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P1
+- Depends: T-2026-158, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame-framework, svg, wire-rendering
+- Refs: docs/minigames/02-wire-protocol.md, docs/minigames/04-signal-corps.md, docs/minigames/07-power-grid.md, docs/minigames/09-reactor-core.md
+
+Wire Protocol, Signal Corps, Power Grid, and Reactor Core all render wires/connections as SVG paths. Wire Protocol spec says "SVG wire rendering with bezier curves and flowing particle animation." Power Grid says "Draw power lines." Reactor Core says "draw dependency wires." A shared SVG wire rendering component prevents each minigame from reimplementing bezier curve rendering.
+
+Acceptance criteria:
+- [ ] `SvgWireRendererComponent` at `src/app/shared/components/svg-wire-renderer/`
+- [ ] Selector: `nx-svg-wire-renderer`
+- [ ] Input: `wires` (array of {id, startX, startY, endX, endY, color, animated})
+- [ ] Renders SVG bezier curves between start and end points
+- [ ] Color-coded wires (configurable per wire)
+- [ ] Optional flowing particle animation on connected wires (CSS keyframes on SVG dash-offset)
+- [ ] Respects `prefers-reduced-motion` (disables particle animation)
+- [ ] Handles dynamic wire addition/removal without full re-render
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: wire rendering, color application, animation toggle, dynamic updates
+
+### T-2026-174
+- Title: Create TimeFormatPipe for play time display
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: —
+- Blocked-by: —
+- Tags: pipe, shared, ui, time-formatting
+- Refs: docs/ux/navigation.md, src/app/shared/pipes/
+
+Navigation.md profile page specifies "Play time stats." The profile page (T-2026-079) and speed run pages (T-2026-156) need formatted time display (e.g., "2h 15m", "3:42.5", "00:45"). The shared/pipes barrel is currently empty. This pipe formats seconds into human-readable time strings.
+
+Acceptance criteria:
+- [ ] `TimeFormatPipe` at `src/app/shared/pipes/time-format.pipe.ts`
+- [ ] Selector: `timeFormat`
+- [ ] Input: number (seconds)
+- [ ] Input: format ('long' | 'short' | 'timer'), default 'long'
+- [ ] Long format: "2h 15m 30s" (omits zero units)
+- [ ] Short format: "2:15:30" (zero-padded)
+- [ ] Timer format: "03:42.5" (mm:ss.d for sub-minute, hh:mm:ss for longer)
+- [ ] Handles 0 seconds as "0s" / "0:00" / "00:00.0"
+- [ ] Exported from shared pipes barrel
+- [ ] Unit tests for: all three formats, edge cases (0, sub-minute, multi-hour)
+
+### T-2026-175
+- Title: Integrate LevelResultsComponent with MinigameShell completion flow
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-159, T-2026-162, T-2026-018
+- Blocked-by: —
+- Tags: integration, minigame-framework, level-completion, ui
+- Refs: docs/ux/navigation.md
+
+LevelResultsComponent (T-2026-159) provides the post-level display and MinigameShell (T-2026-018) has a completion overlay. This integration ticket wires them together: when the engine signals completion, the shell transitions to the results view, passing score/XP data, and the results component's navigation events (next/replay/quit) drive shell behavior.
+
+Acceptance criteria:
+- [ ] MinigameShell's completion overlay renders `<nx-level-results>` component
+- [ ] LevelCompletionService result data piped into LevelResultsComponent inputs
+- [ ] "Next Level" event loads the next level via LevelLoaderService and resets engine
+- [ ] "Replay" event resets engine with same level data
+- [ ] "Level Select" event navigates to `/minigames/:gameId`
+- [ ] Previous best score loaded from LevelProgressionService for comparison
+- [ ] Unit tests for: results display on completion, next level loading, replay reset, navigation
 
 ---
 
@@ -780,7 +1043,7 @@ Acceptance criteria:
 - Priority: high
 - Size: L
 - Milestone: P2
-- Depends: T-2026-063, T-2026-018
+- Depends: T-2026-063, T-2026-018, T-2026-158, T-2026-172
 - Blocked-by: —
 - Tags: minigame, wire-protocol, component, ui
 - Refs: docs/minigames/02-wire-protocol.md, docs/ux/visual-style.md
@@ -971,7 +1234,7 @@ Acceptance criteria:
 - Priority: high
 - Size: L
 - Milestone: P2
-- Depends: T-2026-071, T-2026-018
+- Depends: T-2026-071, T-2026-018, T-2026-158, T-2026-172
 - Blocked-by: —
 - Tags: minigame, signal-corps, component, ui
 - Refs: docs/minigames/04-signal-corps.md, docs/ux/visual-style.md
@@ -1364,6 +1627,144 @@ Acceptance criteria:
 - [ ] CSS custom properties are scoped to theme classes in `styles.scss` (or a dedicated `themes.scss`)
 - [ ] Theme persists across page reloads (already handled by SettingsService auto-save)
 - [ ] Unit tests for: body class updates when theme changes, correct class per theme value
+
+### T-2026-166
+- Title: Create StoryMissionContentService for loading and parsing mission content
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-074, T-2026-038
+- Blocked-by: —
+- Tags: story-missions, service, content-loading
+- Refs: docs/curriculum.md, docs/ux/navigation.md
+
+T-2026-074 defines the story mission content data, and T-2026-075 (StoryMissionPage) needs to load it. But there is no service ticket for loading, parsing, and providing mission content by chapterId. StoryMissionPage should not import static data directly -- a service layer provides testability and future extensibility (e.g., lazy loading mission content).
+
+Acceptance criteria:
+- [ ] `StoryMissionContentService` at `src/app/core/curriculum/story-mission-content.service.ts`
+- [ ] `getMissionContent(chapterId: number)`: returns StoryMissionContent for a chapter
+- [ ] `getMissionStepCount(chapterId: number)`: returns number of steps in a mission
+- [ ] `isMissionComplete(chapterId: number)`: checks if all steps have been viewed/completed
+- [ ] `completeMissionStep(chapterId, stepIndex)`: marks a step as completed
+- [ ] Integrates with GameProgressionService for completion tracking
+- [ ] Exported from curriculum barrel
+- [ ] Unit tests for: content loading by ID, step completion tracking, mission complete detection
+
+### T-2026-167
+- Title: Add campaign route to app.routes.ts
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-012
+- Blocked-by: —
+- Tags: routing, campaign, infrastructure
+- Refs: docs/ux/navigation.md, src/app/app.routes.ts
+
+T-2026-141 creates CampaignProgressPage but doesn't explicitly mention adding the route to app.routes.ts. The current routes file has no `/campaign` route. This ticket adds the route stub so T-2026-141 can focus on the page component itself.
+
+Acceptance criteria:
+- [ ] Route `/campaign` added to `app.routes.ts` with lazy-loaded CampaignPage
+- [ ] Placeholder `CampaignPage` component at `src/app/pages/campaign/campaign.ts`
+- [ ] Placeholder displays "Campaign" heading with route title
+- [ ] Side nav "Current Mission" link updated from `/mission/:chapterId` to `/campaign`
+- [ ] Unit test for: route resolution, component creation
+
+### T-2026-168
+- Title: Create MinigameInstructionsData for all P2 minigame tutorial content
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-163, T-2026-058, T-2026-062, T-2026-066, T-2026-070
+- Blocked-by: —
+- Tags: content, tutorial, minigame, data
+- Refs: docs/minigames/01-module-assembly.md, docs/minigames/02-wire-protocol.md, docs/minigames/03-flow-commander.md, docs/minigames/04-signal-corps.md
+
+Each minigame spec includes a "Controls" section detailing the interaction model. This ticket creates the tutorial step data for the 4 P2 minigames (Module Assembly, Wire Protocol, Flow Commander, Signal Corps) so MinigameTutorialOverlayComponent can display first-time play instructions.
+
+Acceptance criteria:
+- [ ] Tutorial data file at `src/app/data/tutorials/minigame-tutorials.data.ts`
+- [ ] `MinigameTutorialData` interface: gameId, steps (title, description)
+- [ ] Module Assembly tutorial: 3-4 steps covering drag-from-belt, slot matching, decoy rejection, keyboard shortcuts
+- [ ] Wire Protocol tutorial: 3-4 steps covering source-target clicking, wire type selection, verification, wire removal
+- [ ] Flow Commander tutorial: 3-4 steps covering gate placement, condition configuration, run/reset, item routing
+- [ ] Signal Corps tutorial: 3-4 steps covering tower configuration, input/output declaration, parent wiring, deploy
+- [ ] Unit tests for: all 4 games have tutorial data, each has 3-4 steps, required fields populated
+
+### T-2026-171
+- Title: Create accessibility audit ticket for WCAG 2.1 AA compliance
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-076, T-2026-077, T-2026-078, T-2026-075
+- Blocked-by: —
+- Tags: accessibility, audit, a11y, quality
+- Refs: docs/ux/visual-style.md, docs/ux/navigation.md
+
+Multiple components have ARIA attributes and keyboard support (DraggableDirective, DropZoneDirective, MasteryStarsComponent, XpProgressBarComponent), but there is no comprehensive accessibility audit ticket. Once the P2 pages are built, a systematic audit should verify WCAG 2.1 AA compliance across all primary user flows.
+
+Acceptance criteria:
+- [ ] Audit all page components for: keyboard navigation, screen reader support, focus management
+- [ ] Audit all minigame UIs for: keyboard alternatives to mouse interactions, ARIA live regions for score updates
+- [ ] Verify color contrast ratios meet WCAG 2.1 AA (4.5:1 for text, 3:1 for large text)
+- [ ] Verify all images/icons have alt text or aria-labels
+- [ ] Verify focus trapping in overlays (pause menu, completion overlay, dialogs)
+- [ ] Document findings as new tickets for any issues discovered
+- [ ] Add axe-core or similar a11y testing library to CI for automated checks
+
+### T-2026-173
+- Title: Create OnboardingService for first-time user experience
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-024, T-2026-007
+- Blocked-by: —
+- Tags: onboarding, service, ux, progressive-disclosure
+- Refs: docs/research/gamification-patterns.md, docs/ux/navigation.md
+
+Gamification research says "Progressive disclosure -- don't show everything at once" and lists it as an anti-pattern to "show everything at once." A new player landing on the dashboard needs guidance: what to do first, how the game loop works, what the station represents. This service tracks which onboarding steps have been completed and drives tooltip/highlight displays.
+
+Acceptance criteria:
+- [ ] `OnboardingService` at `src/app/core/progression/onboarding.service.ts`
+- [ ] `OnboardingStep` enum: welcome, firstMission, firstMinigame, firstLevelComplete, exploreHub, checkProfile
+- [ ] `isStepCompleted(step)`: returns whether a step has been shown and dismissed
+- [ ] `completeStep(step)`: marks a step as completed
+- [ ] `nextPendingStep()`: returns the next incomplete onboarding step, or null if all done
+- [ ] `isOnboardingComplete` computed signal: true when all steps are done
+- [ ] Persisted via StatePersistenceService
+- [ ] Exported from progression barrel
+- [ ] Unit tests for: step completion, next pending step, persistence, onboarding complete detection
+
+### T-2026-178
+- Title: Create P2 minigame engine integration tests
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-061, T-2026-065, T-2026-069, T-2026-073
+- Blocked-by: —
+- Tags: testing, integration, minigame, p2
+- Refs: docs/minigames/01-module-assembly.md, docs/minigames/02-wire-protocol.md, docs/minigames/03-flow-commander.md, docs/minigames/04-signal-corps.md
+
+Individual minigame engines and UIs have unit tests, but there are no integration tests verifying the engine-shell-level-data pipeline works end-to-end for each P2 minigame. These tests verify that: level data loads correctly into the engine, the engine produces correct state transitions, the shell displays the right overlays, and completion triggers progression updates.
+
+Acceptance criteria:
+- [ ] Integration test file per game: `module-assembly.integration.spec.ts`, etc. at `src/app/features/minigames/*/`
+- [ ] Each test: creates engine with real level data (level 1), starts level, submits correct actions, verifies completion
+- [ ] Each test: verifies MinigameShell state transitions (ready -> playing -> completed)
+- [ ] Each test: verifies LevelCompletionService is called with correct result
+- [ ] Each test: verifies score calculation produces expected values for known inputs
+- [ ] All 4 P2 games covered: Module Assembly, Wire Protocol, Flow Commander, Signal Corps
 
 ---
 
