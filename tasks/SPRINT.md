@@ -11,6 +11,8 @@ Started: 2026-03-07
 
 ## Active
 
+- **T-2026-038**: Define curriculum data model for 34 story missions (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -25,7 +27,6 @@ Started: 2026-03-07
 - T-2026-018: Create MinigameShell container component [HIGH, M]
 - T-2026-020: Create LevelProgressionService for tracking level completion [HIGH, M]
 - T-2026-021: Create XpService for XP calculation and rank tracking [HIGH, M]
-- T-2026-038: Define curriculum data model for 34 story missions [HIGH, S]
 - T-2026-028: Create ScoreCalculationService for level scoring [MEDIUM, S]
 - T-2026-029: Create MinigameRegistryService for game registration and lookup [MEDIUM, S]
 - T-2026-039: Create SettingsService for user preferences [MEDIUM, S]

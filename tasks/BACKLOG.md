@@ -367,10 +367,10 @@ Acceptance criteria:
 
 ### T-2026-038
 - Title: Define curriculum data model for 34 story missions
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
-- Size: S
+- Size: M
 - Milestone: P1
 - Depends: T-2026-016
 - Blocked-by: —
@@ -387,6 +387,7 @@ Acceptance criteria:
 - [ ] Each chapter's `unlocksMinigame` maps to the correct minigame ID (or null for Ch 9, 10, 27, 33, 34)
 - [ ] All 6 phases populated with correct chapter groupings
 - [ ] Unit tests verify: total chapter count is 34, each chapter has valid deps, no circular dependencies, all minigame IDs are valid
+- Started: 2026-03-07
 
 ### T-2026-039
 - Title: Create SettingsService for user preferences
