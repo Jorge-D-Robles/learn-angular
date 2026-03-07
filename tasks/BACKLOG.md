@@ -357,29 +357,6 @@ Acceptance criteria:
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: rendering at each state, multiplier display, aria-label
 
-### T-2026-158
-- Title: Create WireDrawService for wire-drawing interaction mechanics
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: M
-- Milestone: P1
-- Depends: T-2026-054
-- Blocked-by: —
-- Tags: minigame-framework, interaction, service
-- Refs: docs/minigames/04-signal-corps.md, docs/minigames/07-power-grid.md
-
-Signal Corps and Power Grid use wire-drawing mechanics (click source port, draw line, click target port) that differ from spatial drag-and-drop. This service provides a reusable wire-drawing interaction system separate from DragDropService.
-
-Acceptance criteria:
-- [ ] `WireDrawService` at `src/app/core/minigame/wire-draw.service.ts`
-- [ ] Supports click-to-start-wire, visual line preview, click-to-connect interaction model
-- [ ] Port registration/unregistration for source and target endpoints
-- [ ] Connection validation via configurable predicate
-- [ ] Keyboard accessible: Tab between ports, Enter to start/complete wire
-- [ ] Unit tests for: wire initiation, connection acceptance/rejection, keyboard support
-- Started: 2026-03-07
-
 ### T-2026-159
 - Title: Create LevelResultsComponent for post-level completion display
 - Status: todo
