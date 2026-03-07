@@ -15,7 +15,6 @@ Started: 2026-03-06
 ---
 
 ## Queue
-### T-2026-012 — Configure application routing with lazy-loaded route stubs [high, M] (dep: T-2026-001)
 ### T-2026-015 — Set up state management foundation with Angular signals [high, M] (dep: T-2026-001)
 ### T-2026-003 — Configure Prettier for code formatting [medium, S] (dep: T-2026-002)
 ### T-2026-005 — Set up Playwright for end-to-end testing [medium, S] (dep: T-2026-001)
