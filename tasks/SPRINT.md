@@ -11,6 +11,8 @@ Started: 2026-03-07
 
 ## Active
 
+- **T-2026-031**: Create code editor component wrapper (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -20,7 +22,6 @@ Started: 2026-03-07
 
 ## Queue
 
-- T-2026-031: Create code editor component wrapper [HIGH, M]
 - T-2026-038: Define curriculum data model for 34 story missions [HIGH, S]
 - T-2026-029: Create MinigameRegistryService for game registration and lookup [MEDIUM, S]
 - T-2026-040: Install and configure icon library [MEDIUM, S]

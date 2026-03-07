@@ -297,8 +297,8 @@ Acceptance criteria:
 
 ### T-2026-031
 - Title: Create code editor component wrapper
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: M
 - Milestone: P1
@@ -319,6 +319,7 @@ Acceptance criteria:
 - [ ] Uses monospace font from design tokens (JetBrains Mono / Fira Code / Cascadia Code)
 - [ ] Dark theme matches the Void/Hull color scheme
 - [ ] Unit tests for: rendering code, readonly mode, codeChange emission
+- Started: 2026-03-07
 
 ### T-2026-032
 - Title: Create XP notification toast component
