@@ -102,8 +102,8 @@ Acceptance criteria:
 
 ### T-2026-048
 - Title: Create EndlessModeService for procedural level generation
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: M
 - Milestone: P1
@@ -124,6 +124,7 @@ Acceptance criteria:
 - [ ] `getDifficultyParams(round)`: returns difficulty scaling parameters (speed, complexity, count)
 - [ ] High scores persisted via StatePersistenceService
 - [ ] Unit tests for: session lifecycle, difficulty scaling, high score tracking
+- Started: 2026-03-07
 
 ### T-2026-049
 - Title: Create SpeedRunService for timed challenge mode

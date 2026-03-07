@@ -6,4 +6,5 @@ export * from './level-completion.service';
 export * from './hint.service';
 export * from './drag-drop.service';
 export * from './keyboard-shortcut.service';
+export * from './endless-mode.service';
 export { MinigameShellComponent } from './minigame-shell/minigame-shell';
