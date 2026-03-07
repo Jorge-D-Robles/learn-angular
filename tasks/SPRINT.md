@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-169**: Add test coverage threshold enforcement to CI pipeline (Assigned: claude, Status: in-progress)
 
 
 

@@ -474,28 +474,6 @@ Acceptance criteria:
 - [ ] Both barrels included in `src/app/core/index.ts` re-exports (depends on T-2026-126)
 - [ ] Build passes with no circular dependencies
 
-### T-2026-169
-- Title: Add test coverage threshold enforcement to CI pipeline
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-006, T-2026-004
-- Blocked-by: —
-- Tags: ci, testing, infrastructure, quality
-- Refs: .github/workflows/ci.yml, vitest.config.ts
-
-The project uses Vitest with coverage configured (T-2026-004) and has a CI pipeline (T-2026-006), but there is no enforcement of minimum coverage thresholds in CI. As the codebase grows, coverage could silently regress. This ticket adds coverage threshold checks that fail the CI build if coverage drops below the configured minimum.
-
-Acceptance criteria:
-- [ ] Vitest config updated with coverage thresholds: statements 80%, branches 75%, functions 80%, lines 80%
-- [ ] CI test job updated to run with `--coverage` flag
-- [ ] CI fails if coverage falls below thresholds
-- [ ] Coverage report output visible in CI job logs
-- [ ] Thresholds documented in project CLAUDE.md conventions section
-- Started: 2026-03-07
-
 ### T-2026-170
 - Title: Create global ErrorHandler integration for uncaught errors
 - Status: todo

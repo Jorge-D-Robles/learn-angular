@@ -62,3 +62,4 @@
 [2026-03-07] T-2026-158: Create WireDrawService for wire-drawing interaction mechanics — created WireDrawService with state machine, port registry, validation predicates, and keyboard navigation (claude)
 [2026-03-07] T-2026-159: Create LevelResultsComponent for post-level completion display — created LevelResultsComponent with star rating, XP breakdown, new best badge, perfect glow, and nav buttons (claude)
 [2026-03-07] T-2026-161: Create DegradationAlertComponent for spaced repetition notifications — created DegradationAlertComponent with topic list, mastery diff, Practice Now buttons, compact/full variants (claude)
+[2026-03-07] T-2026-169: Add test coverage threshold enforcement to CI pipeline — added coverage thresholds (80/75/80/80) and CI enforcement via angular.json (claude)
