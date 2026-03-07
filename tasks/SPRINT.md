@@ -11,6 +11,8 @@ Started: 2026-03-07
 
 ## Active
 
+- **T-2026-169**: Add test coverage threshold enforcement to CI pipeline (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -62,7 +64,6 @@ Started: 2026-03-07
 
 ## Queue
 
-- **T-2026-169**: Add test coverage threshold enforcement to CI pipeline (Priority: medium, Size: S)
 - **T-2026-170**: Create global ErrorHandler integration for uncaught errors (Priority: medium, Size: S)
 - **T-2026-179**: Apply streak bonus to story mission XP in GameProgressionService (Priority: medium, Size: S)
 - **T-2026-183**: Create LevelFailedComponent for post-failure display (Priority: medium, Size: S)

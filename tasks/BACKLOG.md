@@ -476,8 +476,8 @@ Acceptance criteria:
 
 ### T-2026-169
 - Title: Add test coverage threshold enforcement to CI pipeline
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -494,6 +494,7 @@ Acceptance criteria:
 - [ ] CI fails if coverage falls below thresholds
 - [ ] Coverage report output visible in CI job logs
 - [ ] Thresholds documented in project CLAUDE.md conventions section
+- Started: 2026-03-07
 
 ### T-2026-170
 - Title: Create global ErrorHandler integration for uncaught errors
