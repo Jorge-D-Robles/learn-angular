@@ -240,29 +240,6 @@ Acceptance criteria:
 - [ ] Completion state persisted via `StatePersistenceService`
 - [ ] Unit tests with mocked dates: challenge generation, completion, date rollover, degrading topic priority
 
-### T-2026-042
-- Title: Wire MinigameRegistryService to router for dynamic component loading
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P1
-- Depends: T-2026-029, T-2026-018, T-2026-012
-- Blocked-by: —
-- Tags: minigame-framework, routing, integration
-- Refs: docs/ux/navigation.md, docs/minigames/TEMPLATE.md
-
-Create the route resolver/guard that uses MinigameRegistryService to dynamically load the correct minigame component when navigating to `/minigames/:gameId/level/:levelId`. This is the glue between the routing system and the minigame framework.
-
-Acceptance criteria:
-- [ ] Route for `/minigames/:gameId/level/:levelId` uses a component that resolves the game from the registry
-- [ ] `MinigamePlayPage` reads `:gameId` and `:levelId` from route params
-- [ ] Uses `MinigameRegistryService.getComponent(gameId)` to get the component type
-- [ ] Renders the resolved component inside `MinigameShellComponent`
-- [ ] Shows an error state if gameId is not found in the registry
-- [ ] Shows a "locked" state if the minigame is not yet unlocked (via GameProgressionService)
-- [ ] Unit tests for: component resolution, unknown game error, locked state display
-
 ### T-2026-043
 - Title: Populate architecture.md with P1 technical decisions
 - Status: todo

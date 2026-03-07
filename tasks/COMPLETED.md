@@ -32,3 +32,4 @@
 [2026-03-07] T-2026-040: Install and configure icon library — installed lucide-angular and configured icon library with 14 icons, barrel, and tests (claude)
 [2026-03-07] T-2026-022: Create MasteryService for topic mastery tracking (0-5 stars) — created MasteryService with star tracking (0-5), persistence, LevelProgressionService integration, 22 tests (claude)
 [2026-03-07] T-2026-113: Create LevelCompletionService to integrate game completion with progression — created LevelCompletionService facade orchestrating score→progress→XP→mastery flow, added getLevelDefinition accessor, 19 tests (claude)
+[2026-03-07] T-2026-042: Wire MinigameRegistryService to router for dynamic component loading — wired MinigameRegistryService to router with NgComponentOutlet, 4-state view (not-found/not-ready/locked/ready), forward-compatible lock check, 10 tests (claude)

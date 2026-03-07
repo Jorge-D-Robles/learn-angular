@@ -28,11 +28,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-042**: Wire MinigameRegistryService to router for dynamic component loading (Priority: high, Size: S)
 - **T-2026-027**: Create StreakService for daily login streak tracking (Priority: medium, Size: S)
 - **T-2026-030**: Create LevelLoaderService for loading level data (Priority: medium, Size: S)
 - **T-2026-032**: Create XP notification toast component (Priority: medium, Size: S)
