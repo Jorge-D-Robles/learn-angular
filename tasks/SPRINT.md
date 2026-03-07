@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-170**: Create global ErrorHandler integration for uncaught errors (Assigned: claude, Status: in-progress)
 
 
 
