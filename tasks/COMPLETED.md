@@ -19,3 +19,4 @@
 [2026-03-07] T-2026-016: Define minigame lifecycle interfaces and types — defined minigame framework types: MinigameId, DifficultyTier, MinigameStatus, MinigameConfig, MinigameLevel, MinigameState, MinigameResult with 18 tests (claude)
 [2026-03-07] T-2026-019: Define level data model and type-safe level schema — defined LevelDefinition<T>, LevelPack, LevelTierConfig interfaces, TIER_XP_REWARDS, PERFECT_SCORE_MULTIPLIER constants, barrel export, 17 tests (claude)
 [2026-03-07] T-2026-017: Create abstract MinigameEngine base class — created abstract MinigameEngine<TLevelData> with lifecycle state machine, signals, timer, action submission, barrel export, 49 tests (claude)
+[2026-03-07] T-2026-024: Create StatePersistenceService for localStorage save/load — created StatePersistenceService with namespaced localStorage, autoSave via effect(), export/import, Map-backed fake localStorage tests, 17 tests (claude)
