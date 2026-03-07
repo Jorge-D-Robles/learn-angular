@@ -102,8 +102,8 @@ Acceptance criteria:
 
 ### T-2026-049
 - Title: Create SpeedRunService for timed challenge mode
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -124,6 +124,7 @@ Acceptance criteria:
 - [ ] `getParTime(gameId)`: returns the par time for a game's speed run
 - [ ] Best times persisted via StatePersistenceService
 - [ ] Unit tests for: session start/end, time tracking, best time updates, par time comparison
+- Started: 2026-03-07
 
 ### T-2026-050
 - Title: Create PlayTimeService for tracking session and total play time
