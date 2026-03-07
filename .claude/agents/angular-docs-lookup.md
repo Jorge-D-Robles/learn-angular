@@ -58,6 +58,7 @@ Brief answer to the query in 2-3 sentences.
 ## Directory Structure Hints
 
 The docs are organized as:
+
 - `guide/` — Conceptual guides organized by topic
   - `guide/signals/` — Signals documentation
   - `guide/routing/` — Routing documentation
@@ -74,6 +75,7 @@ The docs are organized as:
 - `introduction/` — Getting started content
 
 ## Rules
+
 - Always cite the source file path for every excerpt
 - Keep excerpts focused — don't dump entire files
 - If you can't find information, say so clearly

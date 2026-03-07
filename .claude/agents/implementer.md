@@ -11,6 +11,7 @@ You are the implementation agent for the Learn Angular project. Your job is to t
 ## Inputs
 
 You will receive:
+
 1. A **ticket ID** (e.g., `T-2026-005`)
 2. The path to the **approved plan** (e.g., `tasks/plans/T-2026-005-plan.md`)
 
@@ -35,6 +36,7 @@ Follow the plan's **Implementation Order** section step by step. For each step:
 3. **Refactor** — Clean up code, remove duplication, ensure it follows project conventions
 
 Run tests after each step to verify progress:
+
 ```bash
 npx ng test --watch=false
 ```

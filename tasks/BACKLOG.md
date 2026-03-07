@@ -2,26 +2,6 @@
 
 ## P0 -- Setup & Design
 
-### T-2026-003
-- Title: Configure Prettier for code formatting
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P0
-- Depends: T-2026-002
-- Blocked-by: —
-- Tags: tooling, formatting, code-quality
-- Refs: docs/overview.md
-
-Add Prettier with Angular-compatible configuration and ensure it does not conflict with ESLint.
-
-Acceptance criteria:
-- [ ] `.prettierrc` config file exists with settings (singleQuote: true, printWidth: 100, trailingComma: all)
-- [ ] `npx prettier --check .` passes on the scaffolded code (or code is formatted to pass)
-- [ ] ESLint and Prettier do not produce conflicting rules (use `eslint-config-prettier` or equivalent)
-- [ ] `.prettierignore` excludes `dist/`, `node_modules/`, `refs/`
-
 ### T-2026-005
 - Title: Set up Playwright for end-to-end testing
 - Status: todo

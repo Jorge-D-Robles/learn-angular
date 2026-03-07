@@ -73,11 +73,7 @@
           "options": {
             "coverage": false,
             "coverageReporters": ["text", "html", "lcov"],
-            "coverageExclude": [
-              "src/testing/**",
-              "**/*.spec.ts",
-              "src/main.ts"
-            ]
+            "coverageExclude": ["src/testing/**", "**/*.spec.ts", "src/main.ts"]
           },
           "configurations": {
             "coverage": {

@@ -3,6 +3,7 @@
 ## Primary Screens
 
 ### 1. Station Dashboard (Home)
+
 The main hub. A visual representation of the Nexus Space Station showing all modules.
 
 - **URL:** `/`
@@ -16,6 +17,7 @@ The main hub. A visual representation of the Nexus Space Station showing all mod
   - Spaced repetition alerts (degrading topics)
 
 ### 2. Story Mission View
+
 Linear story mission experience for a single chapter.
 
 - **URL:** `/mission/:chapterId`
@@ -28,6 +30,7 @@ Linear story mission experience for a single chapter.
   - Progress indicator (mission steps)
 
 ### 3. Minigame Hub
+
 Browse and launch available minigames.
 
 - **URL:** `/minigames`
@@ -39,6 +42,7 @@ Browse and launch available minigames.
   - Filter by topic, mastery level
 
 ### 4. Minigame Play
+
 The active minigame experience.
 
 - **URL:** `/minigames/:gameId/level/:levelId`
@@ -51,6 +55,7 @@ The active minigame experience.
   - Level completion overlay
 
 ### 5. Minigame Level Select
+
 Choose a level within a minigame.
 
 - **URL:** `/minigames/:gameId`
@@ -62,6 +67,7 @@ Choose a level within a minigame.
   - Replay mode tabs (Story, Endless, Speed Run, Daily)
 
 ### 6. Profile / Progress
+
 Player stats and achievement tracking.
 
 - **URL:** `/profile`
@@ -74,6 +80,7 @@ Player stats and achievement tracking.
   - Streak counter
 
 ### 7. Settings
+
 App configuration.
 
 - **URL:** `/settings`
@@ -102,24 +109,28 @@ App configuration.
 ## Navigation Components
 
 ### Top Bar
+
 - Station logo / home link
 - Current rank badge
 - XP bar (compact)
 - Settings gear icon
 
 ### Side Navigation (Desktop)
+
 - Dashboard
 - Current Mission
 - Minigames
 - Profile
 
 ### Bottom Navigation (Mobile)
+
 - Dashboard
 - Mission
 - Games
 - Profile
 
 ## Responsive Breakpoints
+
 - **Mobile:** < 768px — bottom nav, stacked layouts
 - **Tablet:** 768px - 1024px — side nav collapses, game UI adapts
 - **Desktop:** > 1024px — full side nav, optimal game UI

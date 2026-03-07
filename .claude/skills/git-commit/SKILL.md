@@ -27,12 +27,14 @@ git add <files>
 ```
 
 **Important:**
+
 - Review `git status` before staging
 - Do NOT stage unrelated files
 - Do NOT stage `.env`, secrets, or IDE config files
 - If `tasks/plans/T-XXXX-plan.md` exists, do NOT stage it (plans are ephemeral)
 
 If all modified files are relevant to the ticket, you may use:
+
 ```bash
 git add -A
 ```
@@ -48,12 +50,14 @@ git commit -m "T-2026-NNN: short description of what was implemented"
 ```
 
 **Commit message rules:**
+
 - Start with the ticket ID: `T-2026-NNN: `
 - Use imperative mood: "implement", "add", "fix" — not "implemented", "added", "fixed"
 - Keep the first line under 72 characters
 - If more detail is needed, add a blank line then a body paragraph
 
 **Example:**
+
 ```bash
 git commit -m "T-2026-009: implement Room entities and TypeConverters
 
@@ -89,6 +93,7 @@ git push
 ```
 
 If the branch doesn't have an upstream yet:
+
 ```bash
 git push -u origin $(git branch --show-current)
 ```

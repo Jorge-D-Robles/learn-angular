@@ -1,6 +1,6 @@
 # Technical Architecture
 
-*This document will be populated during P1 (Core Engine) milestone. It will cover:*
+_This document will be populated during P1 (Core Engine) milestone. It will cover:_
 
 - Angular app structure and module organization
 - Minigame framework architecture

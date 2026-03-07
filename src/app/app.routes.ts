@@ -14,8 +14,7 @@ export const routes: Routes = [
   },
   {
     path: 'minigames/:gameId',
-    loadComponent: () =>
-      import('./pages/level-select/level-select').then((m) => m.LevelSelectPage),
+    loadComponent: () => import('./pages/level-select/level-select').then((m) => m.LevelSelectPage),
   },
   {
     path: 'minigames/:gameId/level/:levelId',

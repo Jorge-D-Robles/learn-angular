@@ -32,28 +32,34 @@ Create the plan at `tasks/plans/T-XXXX-plan.md` following this exact format:
 # Plan: T-2026-NNN — Task Title
 
 ## Task
+
 <description from BACKLOG.md, verbatim or summarized>
 
 ## Architecture
+
 <module boundaries, data flow, key design decisions>
 <explain WHY you chose this approach over alternatives>
 
 ## Files to Create/Modify
-| File | Action | Purpose |
-|------|--------|---------|
-| path/to/file.component.ts | create | Brief purpose |
-| path/to/other.service.ts | modify | What changes and why |
+
+| File                      | Action | Purpose              |
+| ------------------------- | ------ | -------------------- |
+| path/to/file.component.ts | create | Brief purpose        |
+| path/to/other.service.ts  | modify | What changes and why |
 
 ## Test Plan
+
 <what tests to write, how to verify correctness>
 <include specific test cases and expected behavior>
 
 ## Implementation Order
+
 1. Step 1 — what and why
 2. Step 2 — what and why
 3. ...
 
 ## Verification
+
 <how to confirm the implementation is correct>
 <build commands, test commands, manual checks>
 ```

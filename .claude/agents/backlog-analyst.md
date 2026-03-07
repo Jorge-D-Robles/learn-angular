@@ -37,9 +37,11 @@ Compare what the design docs specify against what's in the backlog and completed
 ### 4. Determine the Next Ticket ID
 
 Run this command to find the highest existing ticket ID:
+
 ```bash
 grep -oE 'T-2026-[0-9]+' tasks/BACKLOG.md tasks/COMPLETED.md | grep -oE 'T-2026-[0-9]+' | sort -t- -k3 -n | tail -1
 ```
+
 New tickets start from the next number after that.
 
 ### 5. Generate Tickets
@@ -48,6 +50,7 @@ For each gap found, create a ticket following this exact format:
 
 ```markdown
 ### T-2026-NNN
+
 - Title: Short imperative description
 - Status: todo
 - Assigned: unassigned

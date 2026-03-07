@@ -1,12 +1,15 @@
 # CLAUDE.md
 
 ## Project
+
 **Learn Angular** — a web app that gamifies learning Angular through a space-station narrative ("Nexus Station") and 12 polished, deeply replayable minigames. See `docs/overview.md` for full vision.
 
 ## Tech Stack
+
 Angular 21 · TypeScript · (remaining stack TBD after design research)
 
 ## Repo Layout
+
 ```
 docs/               # Design specs (source of truth for ALL requirements)
   CLAUDE.md         #   Agent rules for working with specs
@@ -28,6 +31,7 @@ tasks/              # Task management (sprint-based ticket system)
 ```
 
 ## Rules
+
 1. **Read `tasks/CLAUDE.md` before doing any work.** It defines the ticket workflow, claim process, and sprint rules.
 2. **Read the relevant `docs/` spec before starting a milestone.** Never guess — the spec is the source of truth.
 3. **Work through tickets, not ad-hoc.** Pick up tickets via the `/next-ticket` command. Log discovered bugs as new tickets in `BACKLOG.md`.
@@ -40,7 +44,9 @@ tasks/              # Task management (sprint-based ticket system)
 7. **Auto-update CLAUDE.md.** If you discover a pattern, convention, gotcha, or rule that should be documented, update the relevant CLAUDE.md immediately.
 
 ## Commands
+
 Use these skills or agents when needed:
+
 - `/sprint-status` — Current sprint summary
 - `/check-backlog` — Backlog health check
 - `/next-ticket` — Claim and start the next ticket

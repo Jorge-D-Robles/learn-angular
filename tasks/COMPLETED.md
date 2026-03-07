@@ -6,3 +6,4 @@
 [2026-03-06] T-2026-007: Define design tokens as SCSS variables and CSS custom properties — created design token system with 50 CSS custom properties (colors, typography, spacing, animation) (claude)
 [2026-03-06] T-2026-012: Configure application routing with lazy-loaded route stubs — configured 8 routes with lazy loading, 8 placeholder page components, 14 route tests (claude)
 [2026-03-06] T-2026-015: Set up state management foundation with Angular signals — created GameStateService with Angular signals, rank constants, 25 unit tests (claude)
+[2026-03-06] T-2026-003: Configure Prettier for code formatting — configured Prettier with trailingComma, eslint-config-prettier, .prettierignore (claude)

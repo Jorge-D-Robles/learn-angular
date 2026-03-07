@@ -21,6 +21,7 @@ You are a **principal engineer** performing a final code review before a commit 
 Run `git diff --staged` (or `git diff` if not yet staged) to see all changes. If nothing is staged, run `git status` to see modified files and review them.
 
 For each changed file:
+
 - Read the full file to understand the change in context
 - Compare against the plan's "Files to Create/Modify" table
 
@@ -37,12 +38,14 @@ If any check fails, report the failure and **do not approve**.
 Evaluate the commit against these criteria:
 
 #### Correctness
+
 - [ ] Does the implementation match the plan?
 - [ ] Are all acceptance criteria from the ticket met?
 - [ ] Do all tests pass?
 - [ ] Is the build clean (no warnings that indicate bugs)?
 
 #### Safety
+
 - [ ] No files accidentally deleted
 - [ ] No unrelated files modified
 - [ ] No secrets, API keys, or credentials committed
@@ -50,6 +53,7 @@ Evaluate the commit against these criteria:
 - [ ] No commented-out code left behind
 
 #### Quality
+
 - [ ] Code follows existing project conventions
 - [ ] Proper error handling in place
 - [ ] No unnecessary complexity
@@ -57,6 +61,7 @@ Evaluate the commit against these criteria:
 - [ ] Angular/TypeScript idioms used appropriately
 
 #### Scope
+
 - [ ] Changes are limited to what the ticket requires
 - [ ] No scope creep (extra features not in the ticket)
 - [ ] Commit size is reasonable (<200 LOC target)
@@ -94,11 +99,11 @@ Brief overall assessment of the commit quality.
 
 ## Decision Rules
 
-| Verdict | When | Next Step |
-|---------|------|-----------|
-| ✅ **APPROVED** | Build passes, tests pass, no safety issues, implementation matches plan | Proceed to `git-commit` skill |
-| 🔄 **CHANGES REQUESTED** | Minor issues that should be fixed but nothing fundamentally wrong | Fix issues, then re-run this reviewer |
-| ❌ **REJECTED** | Build fails, tests fail, safety issues, or significant deviation from plan | Fix issues, then re-run this reviewer |
+| Verdict                  | When                                                                       | Next Step                             |
+| ------------------------ | -------------------------------------------------------------------------- | ------------------------------------- |
+| ✅ **APPROVED**          | Build passes, tests pass, no safety issues, implementation matches plan    | Proceed to `git-commit` skill         |
+| 🔄 **CHANGES REQUESTED** | Minor issues that should be fixed but nothing fundamentally wrong          | Fix issues, then re-run this reviewer |
+| ❌ **REJECTED**          | Build fails, tests fail, safety issues, or significant deviation from plan | Fix issues, then re-run this reviewer |
 
 ## Rules
 

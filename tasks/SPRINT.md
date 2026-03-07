@@ -15,7 +15,6 @@ Started: 2026-03-06
 ---
 
 ## Queue
-### T-2026-003 — Configure Prettier for code formatting [medium, S] (dep: T-2026-002)
 ### T-2026-005 — Set up Playwright for end-to-end testing [medium, S] (dep: T-2026-001)
 ### T-2026-008 — Create global base styles and CSS reset [medium, S] (dep: T-2026-007)
 ### T-2026-014 — Create shared UI component library barrel exports [medium, S] (dep: T-2026-001)

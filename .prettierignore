@@ -1,0 +1,6 @@
+dist/
+node_modules/
+refs/
+coverage/
+.angular/
+tasks/

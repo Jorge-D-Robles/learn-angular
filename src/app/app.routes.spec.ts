@@ -76,9 +76,7 @@ describe('routes', () => {
     });
 
     it('should resolve MinigamePlayPage', async () => {
-      const route = routes.find(
-        (r) => r.path === 'minigames/:gameId/level/:levelId',
-      );
+      const route = routes.find((r) => r.path === 'minigames/:gameId/level/:levelId');
       const component = await (route?.loadComponent as () => Promise<unknown>)();
       expect(component).toBeDefined();
     });
