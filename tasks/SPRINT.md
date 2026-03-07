@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-049**: Create SpeedRunService for timed challenge mode (Assigned: claude, Status: in-progress)
 
 
 

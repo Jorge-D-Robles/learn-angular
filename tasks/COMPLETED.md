@@ -57,3 +57,4 @@
 [2026-03-07] T-2026-180: Scaffold features/minigames directory structure — scaffolded features/minigames directories with 14 barrel files for all 12 minigames (claude)
 [2026-03-07] T-2026-181: Scaffold data directory structure for levels, missions, and tutorials — scaffolded data directories for levels, missions (6 phases), and tutorials (claude)
 [2026-03-07] T-2026-048: Create EndlessModeService for procedural level generation — created EndlessModeService with session management, difficulty scaling, and high score persistence (claude)
+[2026-03-07] T-2026-049: Create SpeedRunService for timed challenge mode — created SpeedRunService with session management, split times, par comparison, and best time persistence (claude)
