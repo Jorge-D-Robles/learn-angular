@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-159**: Create LevelResultsComponent for post-level completion display (Assigned: claude, Status: in-progress)
 
 
 
