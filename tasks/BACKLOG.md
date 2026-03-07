@@ -476,8 +476,8 @@ Acceptance criteria:
 
 ### T-2026-170
 - Title: Create global ErrorHandler integration for uncaught errors
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -496,6 +496,7 @@ Acceptance criteria:
 - [ ] Registered as `{ provide: ErrorHandler, useClass: GlobalErrorHandler }` in app.config.ts
 - [ ] `src/app/core/error/index.ts` barrel export created
 - [ ] Unit tests for: error capture, signal update, structured logging
+- Started: 2026-03-07
 
 ### T-2026-172
 - Title: Create SvgWireRendererComponent for SVG bezier curve wire rendering

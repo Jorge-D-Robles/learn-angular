@@ -1,4 +1,8 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import {
+  ApplicationConfig,
+  ErrorHandler,
+  provideBrowserGlobalErrorListeners,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {
   LucideIconConfig,
@@ -7,11 +11,13 @@ import {
 } from 'lucide-angular';
 
 import { routes } from './app.routes';
+import { GlobalErrorHandler } from './core/error';
 import { APP_ICONS } from './shared/icons';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
     provideRouter(routes),
     {
       provide: LUCIDE_ICONS,
