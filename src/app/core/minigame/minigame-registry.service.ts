@@ -1,9 +1,11 @@
 import { Injectable, Type } from '@angular/core';
 import { DifficultyTier, type MinigameConfig, type MinigameId } from './minigame.types';
+import type { MinigameEngine } from './minigame-engine';
 
 interface RegistryEntry {
   readonly config: MinigameConfig;
   readonly componentType: Type<any> | null;
+  readonly engineFactory: (() => MinigameEngine<unknown>) | null;
 }
 
 /** All 12 minigame configs, pre-populated from docs/minigames/*.md specs. */
@@ -116,13 +118,17 @@ export class MinigameRegistryService {
 
   constructor() {
     for (const config of DEFAULT_MINIGAME_CONFIGS) {
-      this.registry.set(config.id, { config, componentType: null });
+      this.registry.set(config.id, { config, componentType: null, engineFactory: null });
     }
   }
 
-  /** Registers (or re-registers) a minigame with its config and component type. */
-  register(config: MinigameConfig, componentType: Type<any> | null): void {
-    this.registry.set(config.id, { config, componentType });
+  /** Registers (or re-registers) a minigame with its config, component type, and optional engine factory. */
+  register(
+    config: MinigameConfig,
+    componentType: Type<any> | null,
+    engineFactory?: (() => MinigameEngine<unknown>) | null,
+  ): void {
+    this.registry.set(config.id, { config, componentType, engineFactory: engineFactory ?? null });
   }
 
   /** Returns the config for the given game ID, or undefined if not found. */
@@ -141,6 +147,17 @@ export class MinigameRegistryService {
       return undefined;
     }
     return entry.componentType;
+  }
+
+  /**
+   * Returns the engine factory for the given game ID.
+   * - `null` = game is registered but has no engine factory yet
+   * - `undefined` = game ID is not in the registry
+   */
+  getEngineFactory(gameId: MinigameId): (() => MinigameEngine<unknown>) | null | undefined {
+    const entry = this.registry.get(gameId);
+    if (entry === undefined) return undefined;
+    return entry.engineFactory;
   }
 
   /** Returns all registered minigame configs as a new array. */

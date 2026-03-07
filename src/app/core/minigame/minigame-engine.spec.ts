@@ -523,7 +523,25 @@ describe('MinigameEngine', () => {
     });
   });
 
-  // --- 11. Computed state signal ---
+  // --- 11. Config getter ---
+
+  describe('Config getter', () => {
+    it('should expose engine config via public getter', () => {
+      expect(engine.config).toEqual({
+        initialLives: 3,
+        timerDuration: null,
+      });
+    });
+
+    it('should expose custom config values', () => {
+      const customEngine = new TestEngine({ initialLives: 5, timerDuration: 60 });
+      expect(customEngine.config.initialLives).toBe(5);
+      expect(customEngine.config.timerDuration).toBe(60);
+      customEngine.destroy();
+    });
+  });
+
+  // --- 12. Computed state signal ---
 
   describe('Computed state signal', () => {
     it('should aggregate all signals into a MinigameState object', () => {

@@ -1,13 +1,30 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
+import { of, throwError } from 'rxjs';
 import { MinigamePlayPage } from './minigame-play';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
+import { LevelLoaderService } from '../../core/levels/level-loader.service';
+import { LevelCompletionService, type LevelCompletionSummary } from '../../core/minigame/level-completion.service';
+import { MinigameEngine, type ActionResult } from '../../core/minigame/minigame-engine';
 import type { MinigameConfig } from '../../core/minigame/minigame.types';
-import { DifficultyTier } from '../../core/minigame/minigame.types';
+import { DifficultyTier, MinigameStatus } from '../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
+
+// --- Test engine subclass ---
+
+class TestEngine extends MinigameEngine<unknown> {
+  constructor() { super({ initialLives: 3, timerDuration: null }); }
+  protected onLevelLoad(): void { /* stub */ }
+  protected onStart(): void { /* stub */ }
+  protected onComplete(): void { /* stub */ }
+  protected validateAction(): ActionResult {
+    return { valid: true, scoreChange: 10, livesChange: 0 };
+  }
+}
+
+// --- Test component ---
 
 @Component({
   selector: 'app-test-dummy',
@@ -15,12 +32,37 @@ import type { LevelDefinition } from '../../core/levels/level.types';
 })
 class DummyGameComponent {}
 
+// --- Test data ---
+
+const TEST_LEVEL_DEF: LevelDefinition<unknown> = {
+  levelId: 'ma-basic-01',
+  gameId: 'module-assembly',
+  tier: DifficultyTier.Basic,
+  order: 1,
+  title: 'Test Level',
+  conceptIntroduced: 'Test concept',
+  description: 'A test level',
+  data: { difficulty: 1 },
+};
+
+const TEST_COMPLETION_SUMMARY: LevelCompletionSummary = {
+  score: 50,
+  starRating: 2,
+  xpEarned: 30,
+  bonuses: { perfect: false, streak: false },
+  isNewBestScore: true,
+  rankUpOccurred: false,
+};
+
+// --- Mock factories ---
+
 function mockRegistry(overrides: Partial<MinigameRegistryService> = {}) {
   return {
     provide: MinigameRegistryService,
     useValue: {
       getComponent: vi.fn().mockReturnValue(undefined),
       getConfig: vi.fn().mockReturnValue(undefined),
+      getEngineFactory: vi.fn().mockReturnValue(null),
       ...overrides,
     },
   };
@@ -37,15 +79,41 @@ function mockLevelProgression(overrides: Partial<LevelProgressionService> = {}) 
   };
 }
 
+function mockLevelLoader(overrides: Partial<LevelLoaderService> = {}) {
+  return {
+    provide: LevelLoaderService,
+    useValue: {
+      loadLevel: vi.fn().mockReturnValue(of(TEST_LEVEL_DEF)),
+      ...overrides,
+    },
+  };
+}
+
+function mockLevelCompletion(overrides: Partial<LevelCompletionService> = {}) {
+  return {
+    provide: LevelCompletionService,
+    useValue: {
+      completeLevel: vi.fn().mockReturnValue(TEST_COMPLETION_SUMMARY),
+      ...overrides,
+    },
+  };
+}
+
+// --- Setup helper ---
+
 async function setup(options: {
   params?: Record<string, string>;
   registry?: Partial<MinigameRegistryService>;
   levelProgression?: Partial<LevelProgressionService>;
-}) {
+  levelLoader?: Partial<LevelLoaderService>;
+  levelCompletion?: Partial<LevelCompletionService>;
+} = {}) {
   const {
-    params = { gameId: 'module-assembly', levelId: '1' },
+    params = { gameId: 'module-assembly', levelId: 'ma-basic-01' },
     registry = {},
     levelProgression = {},
+    levelLoader = {},
+    levelCompletion = {},
   } = options;
 
   await TestBed.configureTestingModule({
@@ -54,6 +122,8 @@ async function setup(options: {
       provideRouter([]),
       mockRegistry(registry),
       mockLevelProgression(levelProgression),
+      mockLevelLoader(levelLoader),
+      mockLevelCompletion(levelCompletion),
     ],
   }).compileComponents();
 
@@ -197,5 +267,350 @@ describe('MinigamePlayPage', () => {
     });
     const comingSoon = element.querySelector('.play-state--coming-soon');
     expect(comingSoon?.textContent).toContain('Module Assembly');
+  });
+
+  // --- 11. Engine lifecycle: loads level on init ---
+  it('should load level and create engine when viewState is ready with factory', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(factory).toHaveBeenCalled();
+    expect(component.engine()).toBe(testEngine);
+    expect(testEngine.status()).toBe(MinigameStatus.Playing);
+    testEngine.destroy();
+  });
+
+  // --- 12. Engine stays null when no factory registered ---
+  it('should leave engine null when no engine factory is registered', async () => {
+    const { component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(null),
+      },
+    });
+    expect(component.engine()).toBeNull();
+  });
+
+  // --- 13. Level load error ---
+  it('should handle level load error gracefully', async () => {
+    const factory = vi.fn().mockReturnValue(new TestEngine());
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelLoader: {
+        loadLevel: vi.fn().mockReturnValue(throwError(() => new Error('Not found'))),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Engine should stay null since load failed
+    expect(component.engine()).toBeNull();
+  });
+
+  // --- 14. Engine score binding ---
+  it('should bind engine score to shell', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, element } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Submit an action to earn score
+    testEngine.submitAction('test');
+    fixture.detectChanges();
+
+    const scoreEl = element.querySelector('.shell-hud__score');
+    expect(scoreEl?.textContent?.trim()).toBe('10');
+    testEngine.destroy();
+  });
+
+  // --- 15. Engine status binding ---
+  it('should bind engine status to shell', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.engine()?.status()).toBe(MinigameStatus.Playing);
+    testEngine.destroy();
+  });
+
+  // --- 16. Pause event ---
+  it('should call engine.pause() on pauseGame event', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, element } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const pauseBtn = element.querySelector('.shell-hud__pause') as HTMLButtonElement;
+    pauseBtn.click();
+    fixture.detectChanges();
+
+    expect(testEngine.status()).toBe(MinigameStatus.Paused);
+    testEngine.destroy();
+  });
+
+  // --- 17. Resume event ---
+  it('should call engine.resume() on resumeGame event', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, element } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Pause first
+    testEngine.pause();
+    fixture.detectChanges();
+
+    // Click resume
+    const resumeBtn = element.querySelector('.shell-overlay__panel button') as HTMLButtonElement;
+    resumeBtn.click();
+    fixture.detectChanges();
+
+    expect(testEngine.status()).toBe(MinigameStatus.Playing);
+    testEngine.destroy();
+  });
+
+  // --- 18. Quit event navigates ---
+  it('should navigate to level select on quit event', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    component.onQuit();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/minigames', 'module-assembly']);
+    testEngine.destroy();
+  });
+
+  // --- 19. Retry event re-initializes engine ---
+  it('should re-initialize and start engine on retry event', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Earn some score, then fail
+    testEngine.submitAction('test');
+    expect(testEngine.score()).toBe(10);
+    testEngine.fail();
+    expect(testEngine.status()).toBe(MinigameStatus.Lost);
+
+    // Retry
+    component.onRetry();
+
+    expect(testEngine.status()).toBe(MinigameStatus.Playing);
+    expect(testEngine.score()).toBe(0);
+    testEngine.destroy();
+  });
+
+  // --- 20. Replay event re-initializes engine ---
+  it('should re-initialize and start engine on replay event', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const completeLevelSpy = vi.fn().mockReturnValue(TEST_COMPLETION_SUMMARY);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: completeLevelSpy },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Complete the game
+    testEngine.complete();
+    fixture.detectChanges();
+
+    // Replay
+    component.onReplay();
+
+    expect(testEngine.status()).toBe(MinigameStatus.Playing);
+    expect(testEngine.score()).toBe(0);
+    testEngine.destroy();
+  });
+
+  // --- 21. Completion calls LevelCompletionService ---
+  it('should call LevelCompletionService.completeLevel() on win', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const completeLevelSpy = vi.fn().mockReturnValue(TEST_COMPLETION_SUMMARY);
+    const { fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: completeLevelSpy },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    testEngine.complete();
+    fixture.detectChanges();
+
+    expect(completeLevelSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        gameId: 'module-assembly',
+        levelId: 'ma-basic-01',
+        score: 0,
+        perfect: true,
+        xpEarned: 0,
+        starRating: 0,
+      }),
+    );
+    testEngine.destroy();
+  });
+
+  // --- 22. Completion summary stored ---
+  it('should store completion summary and bind to shell', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const completeLevelSpy = vi.fn().mockReturnValue(TEST_COMPLETION_SUMMARY);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: completeLevelSpy },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    testEngine.complete();
+    fixture.detectChanges();
+
+    expect(component.completionSummary()).toEqual(TEST_COMPLETION_SUMMARY);
+    testEngine.destroy();
+  });
+
+  // --- 23. Engine destroyed on component destroy ---
+  it('should destroy engine when component is destroyed', async () => {
+    const testEngine = new TestEngine();
+    const destroySpy = vi.spyOn(testEngine, 'destroy');
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    fixture.destroy();
+
+    expect(destroySpy).toHaveBeenCalled();
+  });
+
+  // --- 24. NextLevel navigates to level select (placeholder) ---
+  it('should navigate to level select on nextLevel event', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    component.onNextLevel();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/minigames', 'module-assembly']);
+    testEngine.destroy();
+  });
+
+  // --- 25. Completion error handled gracefully ---
+  it('should handle completeLevel error gracefully', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const completeLevelSpy = vi.fn().mockImplementation(() => {
+      throw new Error('Level definition not found');
+    });
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: completeLevelSpy },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Should not throw
+    testEngine.complete();
+    fixture.detectChanges();
+
+    expect(completeLevelSpy).toHaveBeenCalled();
+    expect(component.completionSummary()).toBeNull();
+    testEngine.destroy();
   });
 });

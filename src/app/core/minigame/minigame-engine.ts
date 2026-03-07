@@ -54,6 +54,11 @@ export abstract class MinigameEngine<TLevelData> {
   private readonly _config: MinigameEngineConfig;
   private _timerId: ReturnType<typeof setInterval> | null = null;
 
+  /** Public read-only accessor for the engine configuration. */
+  get config(): MinigameEngineConfig {
+    return this._config;
+  }
+
   protected constructor(config: Partial<MinigameEngineConfig> = {}) {
     this._config = { ...DEFAULT_ENGINE_CONFIG, ...config };
   }

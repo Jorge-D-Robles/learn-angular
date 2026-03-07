@@ -3,6 +3,7 @@ import {
   DEFAULT_MINIGAME_CONFIGS,
 } from './minigame-registry.service';
 import type { MinigameId, MinigameConfig } from './minigame.types';
+import { MinigameEngine, type ActionResult } from './minigame-engine';
 
 describe('MinigameRegistryService', () => {
   let service: MinigameRegistryService;
@@ -143,6 +144,55 @@ describe('MinigameRegistryService', () => {
   it('should be case-sensitive', () => {
     const results = service.getGamesByTopic('components');
     expect(results).toEqual([]);
+  });
+
+  // --- Engine factory tests ---
+
+  describe('Engine factory registration', () => {
+    class StubEngine extends MinigameEngine<unknown> {
+      constructor() { super(); }
+      protected onLevelLoad(): void { /* stub */ }
+      protected onStart(): void { /* stub */ }
+      protected onComplete(): void { /* stub */ }
+      protected validateAction(): ActionResult {
+        return { valid: true, scoreChange: 0, livesChange: 0 };
+      }
+    }
+
+    it('should store engine factory when registered', () => {
+      const factory = () => new StubEngine();
+      const config: MinigameConfig = {
+        id: 'module-assembly',
+        name: 'Module Assembly',
+        description: 'test',
+        angularTopic: 'Components',
+        totalLevels: 18,
+        difficultyTiers: [],
+      };
+      service.register(config, null, factory);
+      expect(service.getEngineFactory('module-assembly')).toBe(factory);
+    });
+
+    it('should default engineFactory to null when registered without factory', () => {
+      const config: MinigameConfig = {
+        id: 'wire-protocol',
+        name: 'Wire Protocol',
+        description: 'test',
+        angularTopic: 'Data Binding',
+        totalLevels: 18,
+        difficultyTiers: [],
+      };
+      service.register(config, null);
+      expect(service.getEngineFactory('wire-protocol')).toBeNull();
+    });
+
+    it('should return undefined for getEngineFactory with unregistered gameId', () => {
+      expect(service.getEngineFactory('nonexistent' as MinigameId)).toBeUndefined();
+    });
+
+    it('should pre-register with null engine factories', () => {
+      expect(service.getEngineFactory('module-assembly')).toBeNull();
+    });
   });
 
   // --- Data integrity tests ---

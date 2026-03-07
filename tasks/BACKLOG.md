@@ -786,8 +786,8 @@ Acceptance criteria:
 
 ### T-2026-223
 - Title: Wire MinigamePlayPage engine lifecycle to MinigameShell inputs and events
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: M
 - Milestone: P1
@@ -809,6 +809,7 @@ Acceptance criteria:
 - [ ] Shell nextLevel event loads next level via LevelNavigationService (or emits for future wiring)
 - [ ] Level completion triggers LevelCompletionService.completeLevel()
 - [ ] Unit tests for: data binding, event handling, level loading, completion flow
+- Started: 2026-03-07
 
 ### T-2026-224
 - Title: Create RankUpNotificationService to trigger rank-up overlay on rank change
