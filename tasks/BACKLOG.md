@@ -731,6 +731,51 @@ Acceptance criteria:
 - [ ] Keyboard accessible: Escape to cancel, Enter to confirm, focus trap within dialog
 - [ ] Unit tests for: rendering, confirm/cancel event emission, keyboard handling, focus trap
 
+### T-2026-112
+- Title: Create barrel export for core/state module
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-015
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/state/game-state.service.ts, src/app/core/state/rank.constants.ts
+
+The `src/app/core/state/` directory contains `game-state.service.ts` and `rank.constants.ts` but lacks an `index.ts` barrel export. All other core subdirectories (persistence, curriculum, levels, progression, minigame) have barrel exports per project conventions. This missing barrel forces consumers to use deep import paths.
+
+Acceptance criteria:
+- [ ] `src/app/core/state/index.ts` barrel export created
+- [ ] Exports `GameStateService`, `GameStateSnapshot` from `game-state.service`
+- [ ] Exports `RANK_THRESHOLDS`, `RankThreshold`, `getRankForXp` from `rank.constants`
+- [ ] Update existing imports in `xp.service.ts` and `game-state.service.spec.ts` to use barrel path
+- [ ] Verify build and all tests pass with updated imports
+
+### T-2026-113
+- Title: Create LevelCompletionService to integrate game completion with progression
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P1
+- Depends: T-2026-017, T-2026-020, T-2026-021, T-2026-028
+- Blocked-by: —
+- Tags: integration, progression, minigame-framework, service
+- Refs: docs/progression.md, docs/overview.md
+
+There is no service that connects the MinigameEngine's level completion event to the progression system. When a player completes a level, multiple services need to be updated: ScoreCalculationService calculates the final score, LevelProgressionService records the level completion and star rating, XpService awards XP based on tier and performance, and GameProgressionService checks if new content should be unlocked. This integration service is the critical glue between the minigame framework and the progression system.
+
+Acceptance criteria:
+- [ ] `LevelCompletionService` at `src/app/core/minigame/level-completion.service.ts`
+- [ ] `completeLevel(gameId, levelId, result: MinigameResult)`: orchestrates the full completion flow
+- [ ] Flow: (1) ScoreCalculationService.calculateScore -> (2) LevelProgressionService.recordCompletion -> (3) XpService.addXp (calculated from tier + perfect bonus) -> (4) returns a LevelCompletionSummary
+- [ ] `LevelCompletionSummary` interface: score, starRating, xpEarned, bonuses (perfect, streak), isNewBestScore, rankUpOccurred
+- [ ] Detects rank-up: compares rank before and after XP addition
+- [ ] Integrates with StreakService.streakMultiplier for XP bonus when available (optional dep)
+- [ ] Does NOT depend on UI components -- pure service orchestration
+- [ ] Unit tests for: standard completion flow, perfect score bonus, rank-up detection, streak multiplier application
+
 ---
 
 ## P2 -- Foundations Bundle
@@ -1300,6 +1345,32 @@ Acceptance criteria:
 - [ ] "Import Progress" button that uploads and restores state from JSON
 - [ ] Unit tests for: setting controls render, toggle interactions, reset with confirmation
 
+### T-2026-114
+- Title: Create StationVisualizationComponent for dashboard module glow map
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-022, T-2026-007
+- Blocked-by: —
+- Tags: ui, dashboard, station-visualization, component
+- Refs: docs/ux/navigation.md, docs/ux/visual-style.md, docs/progression.md
+
+Navigation.md specifies the dashboard includes a "Station visualization with module glow states (0-5 star mastery)." Progression.md defines visual feedback per mastery level: 0=dark/damaged, 1=emergency lighting, 2=dim glow, 3=steady glow, 4=bright glow, 5=golden glow with particle effects. This component renders a visual map of all station modules with glow states driven by mastery data.
+
+Acceptance criteria:
+- [ ] `StationVisualizationComponent` at `src/app/shared/components/station-visualization/`
+- [ ] Input: `masteryData` (Map<string, number> mapping topicId to mastery 0-5)
+- [ ] Renders a station map layout with module nodes for each Angular topic (all 12 minigame topics)
+- [ ] Each module node displays: topic name, current mastery level
+- [ ] Glow colors match visual-style.md mastery glow table: 0=none/dark, 1=dim white, 2=Reactor Blue, 3=Sensor Green, 4=Solar Gold, 5=Solar Gold+pulse
+- [ ] Damaged/dark appearance for 0-star modules, progressively brighter for higher mastery
+- [ ] Clicking a module navigates to its minigame (emits `moduleClicked` event with topicId)
+- [ ] Responsive layout: adapts to available container width
+- [ ] Respects `prefers-reduced-motion` (disable pulse animations)
+- [ ] Unit tests for: glow state per mastery level, module click emission, dark state for 0 mastery
+
 ---
 
 ## P3 -- Navigation Bundle
@@ -1694,6 +1765,48 @@ Acceptance criteria:
 - [ ] Each mission has 3-5 steps
 - [ ] Unit tests verify: all 5 missions have valid content
 
+### T-2026-115
+- Title: Register Power Grid in MinigameRegistry and wire routes
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P5
+- Depends: T-2026-093, T-2026-029, T-2026-042
+- Blocked-by: —
+- Tags: minigame, power-grid, registration, routing
+- Refs: docs/minigames/07-power-grid.md
+
+Register Power Grid with MinigameRegistryService and ensure end-to-end playability.
+
+Acceptance criteria:
+- [ ] Power Grid registered with gameId, config, and component type
+- [ ] Navigating to `/minigames/power-grid/level/1` loads and renders the game
+- [ ] Level data loads correctly for all 18 levels
+- [ ] MinigameShell integration works (score, timer, lives)
+- [ ] E2e smoke test: navigate to level 1, verify game renders
+
+### T-2026-116
+- Title: Register Data Relay in MinigameRegistry and wire routes
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P5
+- Depends: T-2026-096, T-2026-029, T-2026-042
+- Blocked-by: —
+- Tags: minigame, data-relay, registration, routing
+- Refs: docs/minigames/08-data-relay.md
+
+Register Data Relay with MinigameRegistryService and ensure end-to-end playability.
+
+Acceptance criteria:
+- [ ] Data Relay registered with gameId, config, and component type
+- [ ] Navigating to `/minigames/data-relay/level/1` loads and renders the game
+- [ ] Level data loads correctly for all 18 levels
+- [ ] MinigameShell integration works (score, timer, lives)
+- [ ] E2e smoke test: navigate to level 1, verify game renders
+
 ---
 
 ## P6 -- Signals Bundle
@@ -1783,6 +1896,27 @@ Acceptance criteria:
 - [ ] Ch 23-26 (Signals): Sensor Network, Computed Readings, Linked Sensors, Automated Responses
 - [ ] Each mission has 3-5 steps
 - [ ] Unit tests verify: all 4 missions have valid content
+
+### T-2026-117
+- Title: Register Reactor Core in MinigameRegistry and wire routes
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P6
+- Depends: T-2026-100, T-2026-029, T-2026-042
+- Blocked-by: —
+- Tags: minigame, reactor-core, registration, routing
+- Refs: docs/minigames/09-reactor-core.md
+
+Register Reactor Core with MinigameRegistryService and ensure end-to-end playability.
+
+Acceptance criteria:
+- [ ] Reactor Core registered with gameId, config, and component type
+- [ ] Navigating to `/minigames/reactor-core/level/1` loads and renders the game
+- [ ] Level data loads correctly for all 21 levels
+- [ ] MinigameShell integration works (score, timer, lives)
+- [ ] E2e smoke test: navigate to level 1, verify game renders
 
 ---
 
@@ -1936,6 +2070,149 @@ Acceptance criteria:
 - [ ] Ch 27 (Content Projection), Ch 28 (Lifecycle), Ch 29 (Directives), Ch 30 (HTTP), Ch 31 (Interceptors), Ch 32 (Testing), Ch 33 (Animations), Ch 34 (Performance)
 - [ ] Each mission has 3-5 steps
 - [ ] Unit tests verify: all 8 missions have valid content
+
+### T-2026-118
+- Title: Create Deep Space Radio minigame UI component
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: L
+- Milestone: P7
+- Depends: T-2026-103, T-2026-018
+- Blocked-by: —
+- Tags: minigame, deep-space-radio, component, ui
+- Refs: docs/minigames/10-deep-space-radio.md, docs/ux/visual-style.md
+
+Build the visual UI for Deep Space Radio: request builder (method, URL, headers, body), interceptor chain pipeline, transmission simulation visualization, and response viewer.
+
+Acceptance criteria:
+- [ ] `DeepSpaceRadioComponent` at `src/app/features/minigames/deep-space-radio/deep-space-radio.component.ts`
+- [ ] Request editor: method selector (GET/POST/PUT/DELETE), URL input, headers editor, body editor
+- [ ] Interceptor toolbox with draggable interceptor blocks (auth, logging, retry, error, caching)
+- [ ] Interceptor pipeline visualization: ordered chain of processing blocks
+- [ ] Click interceptor to configure behavior (e.g., auth token value, retry count)
+- [ ] Transmit button: animates request as radio wave through interceptor chain
+- [ ] Response viewer: displays response data with status code and type
+- [ ] Radio wave visualization with interceptor modification indicators (key icon for auth, scroll for logging)
+- [ ] Failed transmission: static interference, error codes displayed
+- [ ] Unit tests for: request builder rendering, interceptor placement, pipeline ordering, response display
+
+### T-2026-119
+- Title: Register Deep Space Radio in MinigameRegistry and wire routes
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-118, T-2026-029, T-2026-042
+- Blocked-by: —
+- Tags: minigame, deep-space-radio, registration, routing
+- Refs: docs/minigames/10-deep-space-radio.md
+
+Register Deep Space Radio with MinigameRegistryService and ensure end-to-end playability.
+
+Acceptance criteria:
+- [ ] Deep Space Radio registered with gameId, config, and component type
+- [ ] Navigating to `/minigames/deep-space-radio/level/1` loads and renders the game
+- [ ] Level data loads correctly for all 18 levels
+- [ ] MinigameShell integration works (score, timer, lives)
+- [ ] E2e smoke test: navigate to level 1, verify game renders
+
+### T-2026-120
+- Title: Create System Certification minigame UI component
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: L
+- Milestone: P7
+- Depends: T-2026-105, T-2026-018, T-2026-031
+- Blocked-by: —
+- Tags: minigame, system-certification, component, ui
+- Refs: docs/minigames/11-system-certification.md, docs/ux/visual-style.md
+
+Build the visual UI for System Certification: source code viewer (left), test editor (right), test runner output (bottom), and coverage meter. Professional testing lab aesthetic per the spec.
+
+Acceptance criteria:
+- [ ] `SystemCertificationComponent` at `src/app/features/minigames/system-certification/system-certification.component.ts`
+- [ ] Left panel: source code (read-only, using CodeEditorComponent)
+- [ ] Right panel: test editor (CodeEditorComponent, editable) for writing describe/it/expect blocks
+- [ ] Bottom panel: test runner output with pass/fail indicators per test
+- [ ] Coverage meter gauge (prominent, visual) with percentage display
+- [ ] Coverage overlay mode: toggle to see covered (green), uncovered (red), partial (yellow) lines on source
+- [ ] Hint button that highlights uncovered code path (integrates with HintService)
+- [ ] Passing tests: green checkmarks with animation
+- [ ] Failing tests: red X with error message highlight
+- [ ] Full certification: "CERTIFIED" stamp animation
+- [ ] Unit tests for: panel rendering, test result display, coverage meter updates
+
+### T-2026-121
+- Title: Register System Certification in MinigameRegistry and wire routes
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-120, T-2026-029, T-2026-042
+- Blocked-by: —
+- Tags: minigame, system-certification, registration, routing
+- Refs: docs/minigames/11-system-certification.md
+
+Register System Certification with MinigameRegistryService and ensure end-to-end playability.
+
+Acceptance criteria:
+- [ ] System Certification registered with gameId, config, and component type
+- [ ] Navigating to `/minigames/system-certification/level/1` loads and renders the game
+- [ ] Level data loads correctly for all 18 levels
+- [ ] MinigameShell integration works (score, timer, lives)
+- [ ] E2e smoke test: navigate to level 1, verify game renders
+
+### T-2026-122
+- Title: Create Blast Doors minigame UI component
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: L
+- Milestone: P7
+- Depends: T-2026-107, T-2026-018
+- Blocked-by: —
+- Tags: minigame, blast-doors, component, ui
+- Refs: docs/minigames/12-blast-doors.md, docs/ux/visual-style.md
+
+Build the visual UI for Blast Doors: station cross-section with blast doors, lifecycle timeline with hook slots, directive editor, and simulation controls with scenario playback.
+
+Acceptance criteria:
+- [ ] `BlastDoorsComponent` at `src/app/features/minigames/blast-doors/blast-doors.component.ts`
+- [ ] Station cross-section view with blast doors at entry points
+- [ ] Lifecycle timeline: horizontal bar per door with hook slots (ngOnInit, ngOnChanges, ngOnDestroy, etc.)
+- [ ] Drag behavior blocks into lifecycle hook slots
+- [ ] Arrange hook order: reorder hooks in correct lifecycle execution sequence
+- [ ] Directive editor panel: write custom directive logic for door behaviors
+- [ ] Simulate button: runs scenario and animates door responses in sequence
+- [ ] Door animations: open/close with mechanical detail
+- [ ] Emergency scenario visuals: red lighting, klaxon pulses, countdown timers
+- [ ] Directive effects on doors: glow for highlight, lock icon for access control
+- [ ] Unit tests for: timeline rendering, hook slot drag-and-drop, scenario simulation states
+
+### T-2026-123
+- Title: Register Blast Doors in MinigameRegistry and wire routes
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-122, T-2026-029, T-2026-042
+- Blocked-by: —
+- Tags: minigame, blast-doors, registration, routing
+- Refs: docs/minigames/12-blast-doors.md
+
+Register Blast Doors with MinigameRegistryService and ensure end-to-end playability.
+
+Acceptance criteria:
+- [ ] Blast Doors registered with gameId, config, and component type
+- [ ] Navigating to `/minigames/blast-doors/level/1` loads and renders the game
+- [ ] Level data loads correctly for all 18 levels
+- [ ] MinigameShell integration works (score, timer, lives)
+- [ ] E2e smoke test: navigate to level 1, verify game renders
 
 ---
 
