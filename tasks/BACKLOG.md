@@ -296,29 +296,6 @@ Acceptance criteria:
 - [ ] Pages created at `src/app/pages/endless-mode/`, `src/app/pages/speed-run/`, `src/app/pages/daily-challenge/`
 - [ ] Unit tests for: route resolution, gameId param reading
 
-### T-2026-055
-- Title: Create LockedContentComponent for gated content display
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-007, T-2026-026
-- Blocked-by: —
-- Tags: ui, component, progression
-- Refs: docs/ux/navigation.md, docs/ux/visual-style.md
-
-The minigame hub (navigation.md) shows locked/unlocked state per game. Level select pages show locked levels. Story missions show locked next missions. This shared component displays a "locked" overlay with the unlock requirement.
-
-Acceptance criteria:
-- [ ] `LockedContentComponent` at `src/app/shared/components/locked-content/`
-- [ ] Input: `isLocked` (boolean), `unlockMessage` (string, e.g., "Complete Mission 5 to unlock")
-- [ ] When locked: displays a lock icon, dimmed content, and unlock requirement message
-- [ ] When unlocked: renders ng-content transparently (no visual overlay)
-- [ ] Uses design tokens: Void background with reduced opacity, Corridor text for message
-- [ ] Accessible: aria-disabled when locked, unlock message as aria-label
-- [ ] Unit tests for: locked display, unlocked passthrough, message rendering, accessibility attributes
-
 ### T-2026-056
 - Title: Create ComboTrackerService for combo multiplier mechanics
 - Status: todo
@@ -836,6 +813,225 @@ Acceptance criteria:
 - [ ] "Level Select" event navigates to `/minigames/:gameId`
 - [ ] Previous best score loaded from LevelProgressionService for comparison
 - [ ] Unit tests for: results display on completion, next level loading, replay reset, navigation
+
+### T-2026-180
+- Title: Scaffold features/minigames directory structure
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P1
+- Depends: —
+- Blocked-by: —
+- Tags: infrastructure, scaffolding, directory-structure
+- Refs: docs/minigames/TEMPLATE.md
+
+All P2+ minigame engine and UI tickets reference `src/app/features/minigames/<game-name>/` but no ticket creates this directory hierarchy. Without it, the first P2 minigame ticket will need to create it ad-hoc, violating separation of concerns.
+
+Acceptance criteria:
+- [ ] `src/app/features/` directory created
+- [ ] `src/app/features/minigames/` directory created with subdirectories for all 12 minigames: `module-assembly/`, `wire-protocol/`, `flow-commander/`, `signal-corps/`, `corridor-runner/`, `terminal-hack/`, `power-grid/`, `data-relay/`, `reactor-core/`, `deep-space-radio/`, `system-certification/`, `blast-doors/`
+- [ ] Each subdirectory contains an empty `index.ts` barrel export (`export {};`)
+- [ ] Root barrel `src/app/features/index.ts` created (empty for now)
+- [ ] Build passes with the new empty directories
+
+### T-2026-181
+- Title: Scaffold data directory structure for levels, missions, and tutorials
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P1
+- Depends: —
+- Blocked-by: —
+- Tags: infrastructure, scaffolding, directory-structure
+- Refs: docs/curriculum.md, docs/minigames/TEMPLATE.md
+
+All level data tickets reference `src/app/data/levels/`, story mission tickets reference `src/app/data/missions/phase-N/`, and tutorial tickets reference `src/app/data/tutorials/`. No ticket creates this directory structure.
+
+Acceptance criteria:
+- [ ] `src/app/data/` directory created
+- [ ] `src/app/data/levels/` directory created (empty, will be populated by level data tickets)
+- [ ] `src/app/data/missions/` directory created with phase subdirectories: `phase-1/` through `phase-6/`
+- [ ] `src/app/data/tutorials/` directory created
+- [ ] Root barrel `src/app/data/index.ts` created (empty for now)
+- [ ] Build passes
+
+### T-2026-182
+- Title: Create LevelNavigationService for next/previous level resolution
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-030, T-2026-020
+- Blocked-by: —
+- Tags: minigame-framework, levels, navigation, service
+- Refs: docs/ux/navigation.md, src/app/core/levels/level-loader.service.ts
+
+LevelResultsComponent (T-2026-159) has a "Next Level" button and LevelSelectPage (T-2026-077) needs to highlight the next playable level. But there is no service that resolves what the next or previous level is given a gameId and current levelId, accounting for tier ordering and unlock status. LevelLoaderService loads data but does not provide navigation.
+
+Acceptance criteria:
+- [ ] `LevelNavigationService` at `src/app/core/levels/level-navigation.service.ts`
+- [ ] `getNextLevel(gameId, currentLevelId)`: returns the next LevelDefinition or null if at end
+- [ ] `getPreviousLevel(gameId, currentLevelId)`: returns the previous LevelDefinition or null if at start
+- [ ] `isNextLevelUnlocked(gameId, currentLevelId)`: checks if the next level is unlocked via LevelProgressionService
+- [ ] Respects tier ordering: Basic 1-6 -> Intermediate 7-12 -> Advanced 13-17 -> Boss 18
+- [ ] Exported from levels barrel
+- [ ] Unit tests for: next level resolution, previous level, end-of-game null, cross-tier navigation, unlock check
+
+### T-2026-183
+- Title: Create LevelFailedComponent for post-failure display
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-018, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame-framework, level-failure
+- Refs: docs/ux/navigation.md, docs/ux/visual-style.md
+
+MinigameShell has a failure overlay, but it lacks a rich UI component for the lose state. The failure experience should show what went wrong, offer a retry option, and optionally suggest using a hint. This mirrors LevelResultsComponent (T-2026-159) for the win state.
+
+Acceptance criteria:
+- [ ] `LevelFailedComponent` at `src/app/shared/components/level-failed/`
+- [ ] Selector: `nx-level-failed`
+- [ ] Inputs: `reason` (string, e.g., "3 strikes", "Time expired", "Hull breached"), `score` (number, partial score achieved), `hintsAvailable` (boolean)
+- [ ] Action buttons: "Retry" (emits `retry`), "Use Hint" (emits `useHint`, visible only when hintsAvailable), "Level Select" (emits `quit`)
+- [ ] Station-themed styling with Emergency Red accent
+- [ ] Respects `prefers-reduced-motion`
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: reason display, retry event, hint button visibility, quit event
+
+### T-2026-184
+- Title: Integrate ComboTrackerService with MinigameEngine base class
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-056, T-2026-017
+- Blocked-by: —
+- Tags: integration, minigame-framework, combo, scoring
+- Refs: docs/minigames/01-module-assembly.md, docs/minigames/02-wire-protocol.md
+
+ComboTrackerService (T-2026-056) provides combo multiplier mechanics, but no ticket wires it into the MinigameEngine lifecycle. The base engine class should expose an optional combo tracker that subclass engines can use, resetting it on level start and factoring the multiplier into score calculation.
+
+Acceptance criteria:
+- [ ] MinigameEngine base class accepts optional ComboTrackerService injection
+- [ ] `recordCorrectAction()` on engine delegates to ComboTrackerService.recordCorrect()
+- [ ] `recordIncorrectAction()` on engine delegates to ComboTrackerService.recordIncorrect()
+- [ ] Combo resets when a new level starts (via engine.reset())
+- [ ] `getComboMultiplier()` accessor for subclass engines to use in scoring
+- [ ] Unit tests for: combo tracking through engine, reset on new level, multiplier access
+
+### T-2026-185
+- Title: Integrate XpDiminishingReturnsService with LevelCompletionService
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-164, T-2026-113
+- Blocked-by: —
+- Tags: integration, progression, xp, diminishing-returns
+- Refs: docs/research/gamification-patterns.md, src/app/core/minigame/level-completion.service.ts
+
+XpDiminishingReturnsService (T-2026-164) tracks replay counts and calculates diminished XP multipliers, but no ticket wires it into the LevelCompletionService facade. Without this integration, replaying easy levels always awards full XP.
+
+Acceptance criteria:
+- [ ] LevelCompletionService injects XpDiminishingReturnsService
+- [ ] `completeLevel()` applies the diminishing returns multiplier to the base XP before awarding
+- [ ] First completion of any level always gets full XP (multiplier = 1.0)
+- [ ] Improvement completions (higher star rating) get full XP for the delta
+- [ ] LevelCompletionSummary includes `replayMultiplier` field
+- [ ] Unit tests for: first play full XP, diminished replay XP, improvement exception
+
+### T-2026-186
+- Title: Integrate LevelFailedComponent with MinigameShell failure overlay
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-183, T-2026-018
+- Blocked-by: —
+- Tags: integration, minigame-framework, level-failure, ui
+- Refs: docs/ux/navigation.md
+
+LevelFailedComponent (T-2026-183) provides the failure UI and MinigameShell (T-2026-018) has a failure overlay. This integration ticket wires them together so that when the engine status changes to Lost, the shell renders the failure component with the correct reason, and the component's events (retry, hint, quit) drive shell behavior.
+
+Acceptance criteria:
+- [ ] MinigameShell's failure overlay renders `<nx-level-failed>` component
+- [ ] Failure reason derived from engine state (e.g., lives === 0 -> "3 strikes", timeRemaining === 0 -> "Time expired")
+- [ ] "Retry" event resets engine with same level data
+- [ ] "Use Hint" event registers a hint via HintService, then retries
+- [ ] "Level Select" event navigates to `/minigames/:gameId`
+- [ ] Unit tests for: failure display, retry reset, hint integration, navigation
+
+### T-2026-201
+- Title: Add ComboTrackerService to minigame barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-056
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/minigame/index.ts
+
+ComboTrackerService (T-2026-056) will create `combo-tracker.service.ts` in the minigame directory but no ticket adds it to the minigame barrel export (`src/app/core/minigame/index.ts`). Per project conventions, all services should be exported from their directory barrel.
+
+Acceptance criteria:
+- [ ] `src/app/core/minigame/index.ts` updated to export `ComboTrackerService` and `comboMultiplier` thresholds
+- [ ] Build passes with updated barrel
+- [ ] At least one consumer can import from `'./core/minigame'` barrel path
+
+### T-2026-202
+- Title: Add WireDrawService to minigame barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-158
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/minigame/index.ts
+
+WireDrawService (T-2026-158) will create `wire-draw.service.ts` in the minigame directory but no ticket adds it to the minigame barrel export.
+
+Acceptance criteria:
+- [ ] `src/app/core/minigame/index.ts` updated to export `WireDrawService`
+- [ ] Build passes with updated barrel
+
+### T-2026-203
+- Title: Create SvgPortComponent for wire endpoint rendering
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame-framework, svg, wire-rendering
+- Refs: docs/minigames/02-wire-protocol.md, docs/minigames/04-signal-corps.md, docs/minigames/07-power-grid.md, docs/minigames/09-reactor-core.md
+
+Wire Protocol, Signal Corps, Power Grid, and Reactor Core all have interactive connection ports (source and target endpoints for wires). These ports need consistent styling: color-coded circles, hover glow, active state indication, and accessible keyboard focus indicators. A shared port component prevents each minigame from reimplementing port rendering.
+
+Acceptance criteria:
+- [ ] `SvgPortComponent` at `src/app/shared/components/svg-port/`
+- [ ] Selector: `nx-svg-port`
+- [ ] Inputs: `portId` (string), `x` (number), `y` (number), `color` (string), `label` (string), `type` ('source' | 'target'), `isActive` (boolean), `isConnected` (boolean)
+- [ ] Renders an SVG circle at (x, y) with color fill and optional label
+- [ ] Active state: pulsing glow ring (indicates "currently drawing wire from this port")
+- [ ] Connected state: solid fill with checkmark or dot indicator
+- [ ] Hover state: enlarged circle with border glow
+- [ ] Keyboard accessible: focusable, Enter to activate
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: rendering, active state, connected state, hover, keyboard activation
 
 ---
 
@@ -1719,6 +1915,104 @@ Acceptance criteria:
 - [ ] Each test: verifies score calculation produces expected values for known inputs
 - [ ] All 4 P2 games covered: Module Assembly, Wire Protocol, Flow Commander, Signal Corps
 
+### T-2026-187
+- Title: Create MinigameCardComponent for minigame hub grid
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-034, T-2026-055, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame-hub, shared
+- Refs: docs/ux/navigation.md, docs/ux/visual-style.md
+
+MinigameHubPage (T-2026-076) renders a "grid of minigame cards" showing mastery stars, locked/unlocked state, and quick stats. The existing StationCardComponent is a generic sample component, not purpose-built for minigame display. A dedicated MinigameCardComponent encapsulates the minigame-specific card layout, which is reused in the dashboard quick-play shortcuts.
+
+Acceptance criteria:
+- [ ] `MinigameCardComponent` at `src/app/shared/components/minigame-card/`
+- [ ] Selector: `nx-minigame-card`
+- [ ] Inputs: `config` (MinigameConfig), `mastery` (number, 0-5), `levelsCompleted` (number), `totalLevels` (number), `isLocked` (boolean), `unlockMessage` (string)
+- [ ] Displays: game name, Angular topic, MasteryStarsComponent, completion fraction (e.g., "12/18 levels")
+- [ ] Locked state: uses LockedContentComponent wrapper with dimmed appearance
+- [ ] Unlocked state: hover glow effect with accent color, clickable
+- [ ] Output: `cardClicked` event with gameId
+- [ ] Responsive: adapts width to grid container
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: locked/unlocked rendering, mastery stars, completion stats, click event
+
+### T-2026-188
+- Title: Create StepProgressComponent for story mission step indicator
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-007
+- Blocked-by: —
+- Tags: ui, component, story-missions, shared
+- Refs: docs/ux/navigation.md
+
+StoryMissionPage (T-2026-075) needs a "progress indicator (mission steps)" showing step X of Y. This is a reusable stepper component that displays progress through a sequence of steps with visual completion states.
+
+Acceptance criteria:
+- [ ] `StepProgressComponent` at `src/app/shared/components/step-progress/`
+- [ ] Selector: `nx-step-progress`
+- [ ] Inputs: `totalSteps` (number), `currentStep` (number), `completedSteps` (number[])
+- [ ] Displays: connected dots/nodes for each step, current step highlighted (Reactor Blue), completed steps filled (Sensor Green), future steps dimmed
+- [ ] Compact variant: just dots. Full variant: dots with step labels
+- [ ] Accessible: role="progressbar", aria-valuenow, aria-valuemax
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: dot rendering per step, active step highlight, completed steps, ARIA attributes
+
+### T-2026-189
+- Title: Create MissionUnlockNotification for minigame unlock toast
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-032, T-2026-026
+- Blocked-by: —
+- Tags: ui, notification, story-missions, minigame-unlock
+- Refs: docs/overview.md, docs/ux/visual-style.md
+
+When a story mission is completed and unlocks a minigame (core game loop: Story Mission -> Unlock Minigame), no visual notification informs the player. XP notifications exist (T-2026-032), but minigame unlock is a separate, more significant event that deserves its own notification with the game name and an invitation to play.
+
+Acceptance criteria:
+- [ ] `MissionUnlockNotificationService` at `src/app/core/notifications/mission-unlock-notification.service.ts`
+- [ ] `showUnlock(gameName: string, gameId: MinigameId)`: displays a toast notification for the unlocked minigame
+- [ ] Notification includes: game name, "New Minigame Unlocked!" header, "Play Now" action link
+- [ ] Uses XpNotificationComponent infrastructure or a similar toast pattern
+- [ ] Auto-dismisses after 5 seconds, or on click
+- [ ] GameProgressionService.completeMission() triggers this notification when a new minigame is unlocked
+- [ ] Exported from notifications barrel
+- [ ] Unit tests for: notification display, auto-dismiss, game name rendering
+
+### T-2026-190
+- Title: Create PhaseHeaderComponent for campaign page phase grouping
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-007
+- Blocked-by: —
+- Tags: ui, component, campaign, shared
+- Refs: docs/ux/navigation.md, docs/curriculum.md
+
+CampaignProgressPage (T-2026-141) groups missions by curriculum phase with "Phase headers showing progress (e.g., Phase 1: 7/10 completed)." A reusable phase header component encapsulates the phase name, description, and progress bar.
+
+Acceptance criteria:
+- [ ] `PhaseHeaderComponent` at `src/app/shared/components/phase-header/`
+- [ ] Selector: `nx-phase-header`
+- [ ] Inputs: `phaseNumber` (number), `phaseName` (string), `phaseDescription` (string), `completedCount` (number), `totalCount` (number)
+- [ ] Displays: phase number badge, phase name, description, progress fraction (e.g., "7/10"), progress bar
+- [ ] Collapsed/expanded state for the phase's mission list (content projection)
+- [ ] Station-themed styling: Bulkhead border, Hull background
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: phase info rendering, progress display, collapse/expand toggle
+
 ---
 
 ## P3 -- Navigation Bundle
@@ -1857,6 +2151,46 @@ Acceptance criteria:
 - [ ] `LevelLoaderService.loadLevel('corridor-runner', levelId)` returns correct level data
 - [ ] `LevelLoaderService.getLevelPack('corridor-runner')` returns all 18 levels grouped by tier
 - [ ] Unit tests for: level loading by ID, level pack retrieval
+
+### T-2026-191
+- Title: Create Corridor Runner minigame tutorial data
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P3
+- Depends: T-2026-163, T-2026-081
+- Blocked-by: —
+- Tags: content, tutorial, minigame, corridor-runner
+- Refs: docs/minigames/05-corridor-runner.md
+
+T-2026-168 covers P2 minigame tutorials but not Corridor Runner (P3). This ticket creates the tutorial step data for Corridor Runner so MinigameTutorialOverlayComponent can display first-time play instructions.
+
+Acceptance criteria:
+- [ ] Corridor Runner tutorial data added to `src/app/data/tutorials/minigame-tutorials.data.ts`
+- [ ] 3-4 tutorial steps covering: route config editing, run simulation, hull breach avoidance, URL bar reading
+- [ ] Unit tests for: tutorial data exists, has 3-4 steps, required fields populated
+
+### T-2026-192
+- Title: Create P3 minigame engine integration test for Corridor Runner
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P3
+- Depends: T-2026-084
+- Blocked-by: —
+- Tags: testing, integration, minigame, corridor-runner
+- Refs: docs/minigames/05-corridor-runner.md
+
+P2 has integration tests (T-2026-178) but P3 does not. This ticket creates integration tests for Corridor Runner verifying the engine-shell-level-data pipeline.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/corridor-runner/corridor-runner.integration.spec.ts`
+- [ ] Test: creates engine with real level data (level 1), configures routes, runs simulation, verifies completion
+- [ ] Test: verifies MinigameShell state transitions (ready -> playing -> completed)
+- [ ] Test: verifies LevelCompletionService is called with correct result
+- [ ] Test: verifies scoring produces expected values for known inputs
 
 ---
 
@@ -1997,6 +2331,46 @@ Acceptance criteria:
 - [ ] `LevelLoaderService.loadLevel('terminal-hack', levelId)` returns correct level data
 - [ ] `LevelLoaderService.getLevelPack('terminal-hack')` returns all 21 levels grouped by tier
 - [ ] Unit tests for: level loading by ID, level pack retrieval
+
+### T-2026-193
+- Title: Create Terminal Hack minigame tutorial data
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P4
+- Depends: T-2026-163, T-2026-086
+- Blocked-by: —
+- Tags: content, tutorial, minigame, terminal-hack
+- Refs: docs/minigames/06-terminal-hack.md
+
+T-2026-168 covers P2 minigame tutorials but not Terminal Hack (P4). This ticket creates the tutorial step data for Terminal Hack so MinigameTutorialOverlayComponent can display first-time play instructions.
+
+Acceptance criteria:
+- [ ] Terminal Hack tutorial data added to `src/app/data/tutorials/minigame-tutorials.data.ts`
+- [ ] 3-4 tutorial steps covering: target form reading, code editor usage, live preview, test runner, hint system
+- [ ] Unit tests for: tutorial data exists, has 3-4 steps, required fields populated
+
+### T-2026-194
+- Title: Create P4 minigame engine integration test for Terminal Hack
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P4
+- Depends: T-2026-089
+- Blocked-by: —
+- Tags: testing, integration, minigame, terminal-hack
+- Refs: docs/minigames/06-terminal-hack.md
+
+P2 has integration tests (T-2026-178) but P4 does not. This ticket creates integration tests for Terminal Hack verifying the engine-shell-level-data pipeline.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/terminal-hack/terminal-hack.integration.spec.ts`
+- [ ] Test: creates engine with real level data (level 1), writes form code, runs tests, verifies completion
+- [ ] Test: verifies MinigameShell state transitions (ready -> playing -> completed)
+- [ ] Test: verifies LevelCompletionService is called with correct result
+- [ ] Test: verifies scoring with time, test pass rate, and hint penalty
 
 ---
 
@@ -2235,6 +2609,49 @@ Acceptance criteria:
 - [ ] `LevelLoaderService.getLevelPack('data-relay')` returns all 18 levels grouped by tier
 - [ ] Unit tests for: level loading by ID, level pack retrieval
 
+### T-2026-195
+- Title: Create Power Grid and Data Relay minigame tutorial data
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P5
+- Depends: T-2026-163, T-2026-091, T-2026-094
+- Blocked-by: —
+- Tags: content, tutorial, minigame, power-grid, data-relay
+- Refs: docs/minigames/07-power-grid.md, docs/minigames/08-data-relay.md
+
+T-2026-168 covers P2 minigame tutorials but not Power Grid or Data Relay (P5). This ticket creates tutorial step data for both P5 minigames.
+
+Acceptance criteria:
+- [ ] Power Grid tutorial data added to `src/app/data/tutorials/minigame-tutorials.data.ts`
+- [ ] Power Grid: 3-4 steps covering service-component wiring, scope selection, connection drawing, short circuit avoidance
+- [ ] Data Relay tutorial data added
+- [ ] Data Relay: 3-4 steps covering pipe toolbox, pipe placement, parameter configuration, output comparison
+- [ ] Unit tests for: both games have tutorial data, each has 3-4 steps, required fields populated
+
+### T-2026-196
+- Title: Create P5 minigame engine integration tests for Power Grid and Data Relay
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P5
+- Depends: T-2026-115, T-2026-116
+- Blocked-by: —
+- Tags: testing, integration, minigame, power-grid, data-relay
+- Refs: docs/minigames/07-power-grid.md, docs/minigames/08-data-relay.md
+
+P2 has integration tests (T-2026-178) but P5 does not. This ticket creates integration tests for both P5 minigames verifying the engine-shell-level-data pipeline.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/power-grid/power-grid.integration.spec.ts`
+- [ ] Integration test at `src/app/features/minigames/data-relay/data-relay.integration.spec.ts`
+- [ ] Each test: creates engine with real level data (level 1), performs correct actions, verifies completion
+- [ ] Each test: verifies MinigameShell state transitions
+- [ ] Each test: verifies LevelCompletionService is called with correct result
+- [ ] Both P5 games covered: Power Grid, Data Relay
+
 ---
 
 ## P6 -- Signals Bundle
@@ -2365,6 +2782,46 @@ Acceptance criteria:
 - [ ] `LevelLoaderService.loadLevel('reactor-core', levelId)` returns correct level data
 - [ ] `LevelLoaderService.getLevelPack('reactor-core')` returns all 21 levels grouped by tier
 - [ ] Unit tests for: level loading by ID, level pack retrieval
+
+### T-2026-197
+- Title: Create Reactor Core minigame tutorial data
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P6
+- Depends: T-2026-163, T-2026-098
+- Blocked-by: —
+- Tags: content, tutorial, minigame, reactor-core
+- Refs: docs/minigames/09-reactor-core.md
+
+T-2026-168 covers P2 minigame tutorials but not Reactor Core (P6). This ticket creates the tutorial step data for Reactor Core.
+
+Acceptance criteria:
+- [ ] Reactor Core tutorial data added to `src/app/data/tutorials/minigame-tutorials.data.ts`
+- [ ] 3-4 tutorial steps covering: node toolbox usage, signal/computed/effect placement, wire drawing, simulation controls
+- [ ] Unit tests for: tutorial data exists, has 3-4 steps, required fields populated
+
+### T-2026-198
+- Title: Create P6 minigame engine integration test for Reactor Core
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P6
+- Depends: T-2026-117
+- Blocked-by: —
+- Tags: testing, integration, minigame, reactor-core
+- Refs: docs/minigames/09-reactor-core.md
+
+P2 has integration tests (T-2026-178) but P6 does not. This ticket creates integration tests for Reactor Core verifying the engine-shell-level-data pipeline.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/reactor-core/reactor-core.integration.spec.ts`
+- [ ] Test: creates engine with real level data (level 1), places nodes, draws wires, runs simulation, verifies completion
+- [ ] Test: verifies MinigameShell state transitions
+- [ ] Test: verifies LevelCompletionService is called with correct result
+- [ ] Test: verifies scoring for known graph configurations
 
 ---
 
@@ -2741,6 +3198,51 @@ Acceptance criteria:
 - [ ] Directory structure documented: phase-6 contains Ch 23-26 (signals), remaining advanced chapters in phase-7 or an advanced/ subdirectory
 - [ ] StoryMission type supports the advanced phase chapters
 - [ ] Unit tests verify directory/data consistency with curriculum.md chapter definitions
+
+### T-2026-199
+- Title: Create Deep Space Radio, System Certification, and Blast Doors minigame tutorial data
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-163, T-2026-102, T-2026-104, T-2026-106
+- Blocked-by: —
+- Tags: content, tutorial, minigame, deep-space-radio, system-certification, blast-doors
+- Refs: docs/minigames/10-deep-space-radio.md, docs/minigames/11-system-certification.md, docs/minigames/12-blast-doors.md
+
+T-2026-168 covers P2 minigame tutorials but not the P7 minigames. This ticket creates tutorial step data for all 3 P7 minigames.
+
+Acceptance criteria:
+- [ ] Deep Space Radio tutorial data added to `src/app/data/tutorials/minigame-tutorials.data.ts`
+- [ ] Deep Space Radio: 3-4 steps covering request builder, interceptor placement, transmission, response reading
+- [ ] System Certification tutorial data added
+- [ ] System Certification: 3-4 steps covering source code reading, test writing, coverage meter, hint usage
+- [ ] Blast Doors tutorial data added
+- [ ] Blast Doors: 3-4 steps covering lifecycle timeline, hook slot placement, directive editing, simulation
+- [ ] Unit tests for: all 3 games have tutorial data, each has 3-4 steps, required fields populated
+
+### T-2026-200
+- Title: Create P7 minigame engine integration tests for Deep Space Radio, System Certification, and Blast Doors
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P7
+- Depends: T-2026-119, T-2026-121, T-2026-123
+- Blocked-by: —
+- Tags: testing, integration, minigame, deep-space-radio, system-certification, blast-doors
+- Refs: docs/minigames/10-deep-space-radio.md, docs/minigames/11-system-certification.md, docs/minigames/12-blast-doors.md
+
+P2 has integration tests (T-2026-178) but P7 does not. This ticket creates integration tests for all 3 P7 minigames.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/deep-space-radio/deep-space-radio.integration.spec.ts`
+- [ ] Integration test at `src/app/features/minigames/system-certification/system-certification.integration.spec.ts`
+- [ ] Integration test at `src/app/features/minigames/blast-doors/blast-doors.integration.spec.ts`
+- [ ] Each test: creates engine with real level data, performs correct actions, verifies completion
+- [ ] Each test: verifies MinigameShell state transitions and LevelCompletionService integration
+- [ ] All 3 P7 games covered
 
 ---
 
