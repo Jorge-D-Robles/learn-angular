@@ -3,6 +3,7 @@ import type { MinigameResult } from './minigame.types';
 import { LevelProgressionService } from '../levels/level-progression.service';
 import { XpService } from '../progression/xp.service';
 import { MasteryService } from '../progression/mastery.service';
+import { XpNotificationService } from '../notifications';
 
 /** Options for the level completion flow. */
 export interface LevelCompletionOptions {
@@ -42,6 +43,7 @@ export class LevelCompletionService {
   private readonly levelProgression = inject(LevelProgressionService);
   private readonly xpService = inject(XpService);
   private readonly masteryService = inject(MasteryService);
+  private readonly xpNotification = inject(XpNotificationService);
 
   /**
    * Orchestrates the full completion pipeline for a finished level.
@@ -91,6 +93,19 @@ export class LevelCompletionService {
 
     // 8. Determine if new best score
     const isNewBestScore = result.score > priorBestScore;
+
+    // 9. Trigger XP notification
+    const bonuses: string[] = ['Level Complete'];
+    if (result.perfect === true) {
+      bonuses.push('Perfect!');
+    }
+    if (streakMultiplier > 1.0) {
+      bonuses.push('Streak Bonus');
+    }
+    if (rankUpOccurred) {
+      bonuses.push(`Rank Up: ${rankAfter}`);
+    }
+    this.xpNotification.show(xpEarned, bonuses);
 
     return {
       score: result.score,

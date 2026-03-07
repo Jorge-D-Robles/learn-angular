@@ -9,6 +9,7 @@ import { LevelProgressionService } from '../levels/level-progression.service';
 import { GameStateService } from '../state/game-state.service';
 import { MasteryService } from '../progression/mastery.service';
 import { LevelCompletionService } from './level-completion.service';
+import { XpNotificationService } from '../notifications';
 
 // --- Test fixtures ---
 
@@ -271,5 +272,72 @@ describe('LevelCompletionService', () => {
     expect(() =>
       service.completeLevel(makeResult({ levelId: 'unknown-level' })),
     ).toThrowError(/Level definition not found/);
+  });
+
+  describe('XP notifications', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should trigger XP notification on level completion', () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeLevel(makeResult());
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should pass correct XP amount to notification', () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeLevel(makeResult({ perfect: false }));
+      expect(spy).toHaveBeenCalledWith(15, expect.any(Array));
+    });
+
+    it("should include 'Level Complete' in bonuses", () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeLevel(makeResult());
+      const bonuses = spy.mock.calls[0][1] as readonly string[];
+      expect(bonuses).toContain('Level Complete');
+    });
+
+    it("should include 'Perfect!' bonus when perfect", () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeLevel(makeResult({ perfect: true }));
+      const bonuses = spy.mock.calls[0][1] as readonly string[];
+      expect(bonuses).toContain('Perfect!');
+    });
+
+    it("should not include 'Perfect!' bonus when not perfect", () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeLevel(makeResult({ perfect: false }));
+      const bonuses = spy.mock.calls[0][1] as readonly string[];
+      expect(bonuses).not.toContain('Perfect!');
+    });
+
+    it("should include 'Streak Bonus' when streak multiplier > 1", () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeLevel(makeResult(), { streakMultiplier: 1.3 });
+      const bonuses = spy.mock.calls[0][1] as readonly string[];
+      expect(bonuses).toContain('Streak Bonus');
+    });
+
+    it('should include rank-up info in notification when rank changes', () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      // Start at 490 XP (Cadet). Basic perfect = 30 XP -> 520 -> Ensign
+      TestBed.inject(GameStateService).addXp(490);
+      service.completeLevel(makeResult({ perfect: true }));
+      const bonuses = spy.mock.calls[0][1] as readonly string[];
+      expect(bonuses).toContain('Rank Up: Ensign');
+    });
+
+    it('should not include rank-up info when rank stays same', () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeLevel(makeResult({ perfect: false }));
+      const bonuses = spy.mock.calls[0][1] as readonly string[];
+      const hasRankUp = bonuses.some((b) => b.startsWith('Rank Up'));
+      expect(hasRankUp).toBe(false);
+    });
   });
 });

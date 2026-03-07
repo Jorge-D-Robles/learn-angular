@@ -433,8 +433,8 @@ Acceptance criteria:
 
 ### T-2026-127
 - Title: Wire LevelCompletionService to XpNotificationService
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -452,6 +452,7 @@ Acceptance criteria:
 - [ ] If a rank-up occurs, the notification includes rank-up information
 - [ ] Unit tests for: notification triggered on level completion, correct XP amount in notification
 - [ ] Existing LevelCompletionService and XpNotificationService tests continue to pass
+- Started: 2026-03-07
 
 ### T-2026-128
 - Title: Create LoadingSpinnerComponent for async content states
