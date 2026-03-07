@@ -25,11 +25,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- T-2026-040: Install and configure icon library [MEDIUM, S]
 
 ---
 

@@ -245,28 +245,6 @@ Acceptance criteria:
 - [ ] Accessible: role="progressbar", aria-valuenow, aria-valuemin, aria-valuemax
 - [ ] Unit tests for: percentage calculation, compact vs full rendering, accessibility attributes
 
-### T-2026-040
-- Title: Install and configure icon library
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-001
-- Blocked-by: —
-- Tags: icons, ui, tooling
-- Refs: docs/ux/visual-style.md
-
-Install a consistent icon library (Lucide or Phosphor as recommended by the visual style guide) and create an Angular wrapper for easy use across the app. Navigation components (side nav, bottom nav) and game UI elements all require icons.
-
-Acceptance criteria:
-- [ ] Icon library installed as a dependency (lucide-angular or phosphor-icons)
-- [ ] Icons render correctly in components via a consistent API (e.g., `<lucide-icon name="home">`)
-- [ ] Icon sizes match visual style guide: 16px (inline), 20px (buttons), 24px (navigation), 32px+ (decorative)
-- [ ] Icons inherit color from parent element (works with design token colors)
-- [ ] At least these icons are available: home, map, gamepad, user, settings, star, heart, pause, play, chevron, x-close
-- [ ] Unit test verifies icon component renders without errors
-
 ### T-2026-041
 - Title: Create DailyChallengeService for daily challenge rotation
 - Status: todo
