@@ -575,8 +575,8 @@ Acceptance criteria:
 
 ### T-2026-134
 - Title: Create keyboard shortcut service for minigame controls
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -597,6 +597,7 @@ Acceptance criteria:
 - [ ] Prevents default browser behavior for registered keys
 - [ ] Barrel export from core/minigame
 - [ ] Unit tests for: registration, dispatch, unregister, enable/disable toggle
+- Started: 2026-03-07
 
 ### T-2026-135
 - Title: Create PauseMenuComponent for minigame pause overlay

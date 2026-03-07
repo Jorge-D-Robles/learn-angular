@@ -11,6 +11,8 @@ Started: 2026-03-07
 
 ## Active
 
+- **T-2026-134**: Create keyboard shortcut service for minigame controls (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -45,7 +47,6 @@ Started: 2026-03-07
 
 ## Queue
 
-- **T-2026-134**: Create keyboard shortcut service for minigame controls (Priority: medium, Size: S)
 
 ---
 
