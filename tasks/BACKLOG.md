@@ -391,8 +391,8 @@ Acceptance criteria:
 
 ### T-2026-124
 - Title: Wire top bar to display live rank and XP from services
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P1
@@ -410,6 +410,7 @@ Acceptance criteria:
 - [ ] Settings button navigates to `/settings` route via routerLink
 - [ ] Unit tests for: rank text updates when XP changes, XP bar receives correct inputs
 - [ ] Build and all existing tests pass
+- Started: 2026-03-07
 
 ### T-2026-126
 - Title: Create core module root barrel export

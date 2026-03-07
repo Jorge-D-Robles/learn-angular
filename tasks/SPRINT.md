@@ -11,6 +11,8 @@ Started: 2026-03-07
 
 ## Active
 
+- **T-2026-124**: Wire top bar to display live rank and XP from services (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -46,6 +48,13 @@ Started: 2026-03-07
 
 ## Queue
 
+- **T-2026-135**: Create PauseMenuComponent for minigame pause overlay (Priority: medium, Size: S)
+- **T-2026-136**: Integrate StreakService XP multiplier with XpService (Priority: medium, Size: S)
+- **T-2026-045**: Create level star rating badge component (Priority: medium, Size: S)
+- **T-2026-055**: Create LockedContentComponent for gated content display (Priority: medium, Size: S)
+- **T-2026-128**: Create LoadingSpinnerComponent for async content states (Priority: medium, Size: S)
+- **T-2026-041**: Create DailyChallengeService for daily challenge rotation (Priority: medium, Size: M)
+- **T-2026-047**: Create RefresherChallengeService for mastery restoration (Priority: medium, Size: S)
 
 ---
 

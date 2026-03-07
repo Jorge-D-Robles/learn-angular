@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
+import { GameStateService } from './core/state/game-state.service';
+import { XpService } from './core/progression/xp.service';
 
 describe('App', () => {
   beforeEach(async () => {
@@ -40,21 +42,57 @@ describe('App', () => {
     expect(rank.textContent).toContain('Cadet');
   });
 
-  it('should render the XP bar placeholder', () => {
+  it('should render the XP progress bar component', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    const xpBar = fixture.nativeElement.querySelector('.top-bar__xp');
+    const xpBar = fixture.nativeElement.querySelector('nx-xp-progress-bar');
     expect(xpBar).toBeTruthy();
-    const xpBarInner = fixture.nativeElement.querySelector('.top-bar__xp-bar');
-    expect(xpBarInner).toBeTruthy();
   });
 
-  it('should render the settings button with aria-label', () => {
+  it('should render the XP progress bar with progressbar role', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
+    const xpBar = fixture.nativeElement.querySelector('nx-xp-progress-bar');
+    expect(xpBar.getAttribute('role')).toBe('progressbar');
+  });
+
+  it('should render the XP progress bar with aria-valuenow 0 at default XP', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const xpBar = fixture.nativeElement.querySelector('nx-xp-progress-bar');
+    expect(xpBar.getAttribute('aria-valuenow')).toBe('0');
+  });
+
+  it('should update rank reactively when XP changes', () => {
+    const gameState = TestBed.inject(GameStateService);
+    gameState.resetState();
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    const xpService = TestBed.inject(XpService);
+    xpService.addXp(600);
+    fixture.detectChanges();
+
+    const rank = fixture.nativeElement.querySelector('.top-bar__rank');
+    expect(rank.textContent).toContain('Ensign');
+  });
+
+  it('should render the settings link with aria-label', async () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    await fixture.whenStable();
     const settings = fixture.nativeElement.querySelector('.top-bar__settings');
     expect(settings).toBeTruthy();
     expect(settings.getAttribute('aria-label')).toBe('Settings');
+  });
+
+  it('should render the settings link navigating to /settings', async () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const settings = fixture.nativeElement.querySelector('.top-bar__settings');
+    expect(settings.getAttribute('href')).toBe('/settings');
   });
 
   it('should render the main content area with router outlet', () => {

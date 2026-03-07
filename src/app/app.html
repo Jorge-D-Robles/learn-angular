@@ -2,15 +2,17 @@
   <a class="top-bar__logo" routerLink="/">Nexus Station</a>
 
   <div class="top-bar__status">
-    <span class="top-bar__rank">Cadet</span>
-    <div class="top-bar__xp">
-      <div class="top-bar__xp-bar"></div>
-    </div>
+    <span class="top-bar__rank">{{ currentRank() }}</span>
+    <nx-xp-progress-bar
+      class="top-bar__xp"
+      [currentXp]="rankProgress()"
+      [nextRankXp]="100"
+      [currentRank]="currentRank()" />
   </div>
 
-  <button class="top-bar__settings" type="button" aria-label="Settings">
+  <a class="top-bar__settings" routerLink="/settings" aria-label="Settings">
     <span class="top-bar__settings-icon" aria-hidden="true"></span>
-  </button>
+  </a>
 </header>
 
 <div class="app-body">
