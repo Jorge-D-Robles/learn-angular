@@ -24,27 +24,6 @@ Acceptance criteria:
 - [ ] CI caches `node_modules` for faster runs
 - [ ] Workflow badge can be added to README (URL is valid)
 
-### T-2026-008
-- Title: Create global base styles and CSS reset
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P0
-- Depends: T-2026-007
-- Blocked-by: —
-- Tags: styles, css, global
-- Refs: docs/ux/visual-style.md
-
-Set up global styles using the design tokens: CSS reset, base typography, and foundational styles.
-
-Acceptance criteria:
-- [ ] CSS reset applied (box-sizing border-box, margin/padding reset)
-- [ ] Body uses Void background color and Display text color from tokens
-- [ ] Font stacks from visual style guide are applied (system sans-serif for body, monospace for code)
-- [ ] `prefers-reduced-motion` media query is set up for animation preferences
-- [ ] Global styles file is clean and well-organized with comments
-
 ### T-2026-009
 - Title: Create app shell layout component with top bar
 - Status: todo

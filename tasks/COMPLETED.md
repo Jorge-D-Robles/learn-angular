@@ -9,3 +9,4 @@
 [2026-03-06] T-2026-003: Configure Prettier for code formatting — configured Prettier with trailingComma, eslint-config-prettier, .prettierignore (claude)
 [2026-03-06] T-2026-005: Set up Playwright for end-to-end testing — set up Playwright e2e testing with 2 smoke tests (dashboard + 404 routing) (claude)
 [2026-03-06] T-2026-036: Clean up Angular CLI boilerplate from app template — removed Angular CLI boilerplate from app template, leaving only router-outlet (claude)
+[2026-03-06] T-2026-008: Create global base styles and CSS reset — created global base styles with CSS reset, typography scale, and prefers-reduced-motion support (claude)

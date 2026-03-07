@@ -1,0 +1,130 @@
+// =============================================================================
+// Base Styles — Nexus Station
+// CSS reset, body defaults, typography scale, and motion preferences.
+// Uses CSS custom properties (--nx-*) defined in _tokens.scss.
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// CSS Reset
+// -----------------------------------------------------------------------------
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+// -----------------------------------------------------------------------------
+// Body
+// -----------------------------------------------------------------------------
+body {
+  background-color: var(--nx-color-void);
+  color: var(--nx-color-display);
+  font-family: var(--nx-font-sans);
+  font-size: var(--nx-text-body-size);
+  font-weight: var(--nx-text-body-weight);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// -----------------------------------------------------------------------------
+// Typography
+// -----------------------------------------------------------------------------
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--nx-color-beacon);
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: var(--nx-text-page-title-size);
+  font-weight: var(--nx-text-page-title-weight);
+}
+
+h2 {
+  font-size: var(--nx-text-section-heading-size);
+  font-weight: var(--nx-text-section-heading-weight);
+}
+
+h3 {
+  font-size: var(--nx-text-card-title-size);
+  font-weight: var(--nx-text-card-title-weight);
+}
+
+h4,
+h5,
+h6 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--nx-font-mono);
+  font-size: var(--nx-text-code-size);
+}
+
+pre {
+  overflow-x: auto;
+}
+
+a {
+  color: var(--nx-color-reactor-blue);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 2px solid var(--nx-color-reactor-blue);
+  outline-offset: 2px;
+}
+
+::selection {
+  background-color: rgba(59, 130, 246, 0.3);
+}
+
+// -----------------------------------------------------------------------------
+// Reduced Motion
+// -----------------------------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
