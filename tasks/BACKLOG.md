@@ -28,31 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-023
-- Title: Create SpacedRepetitionService for mastery degradation
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: M
-- Milestone: P1
-- Depends: T-2026-022
-- Blocked-by: —
-- Tags: progression, spaced-repetition, service
-- Refs: docs/progression.md
-
-Service that implements the spaced repetition degradation rules. Topics lose mastery stars over time without practice.
-
-Acceptance criteria:
-- [ ] `SpacedRepetitionService` at `src/app/core/progression/spaced-repetition.service.ts`
-- [ ] Tracks `lastPracticed` timestamp per topic
-- [ ] Degradation starts after 7 days without practice
-- [ ] Full degradation (1 star lost) at 14 days
-- [ ] Maximum degradation: 2 stars (5-star topic bottoms at 3 stars)
-- [ ] `getDegradingTopics()`: returns topics that are currently degrading or have degraded
-- [ ] `recordPractice(topicId)`: updates lastPracticed to now, restoring any degradation in progress
-- [ ] `getEffectiveMastery(topicId)`: returns mastery adjusted for degradation
-- [ ] Unit tests with mocked dates to verify: no degradation before 7 days, partial at 7-14 days, full at 14+ days, cap at 2 stars lost
-
 ### T-2026-033
 - Title: Create rank-up celebration overlay component
 - Status: todo
