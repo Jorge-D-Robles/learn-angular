@@ -40,3 +40,4 @@
 [2026-03-07] T-2026-054: Create DragDropService for shared drag-and-drop mechanics — added DragDropService, DraggableDirective, DropZoneDirective with pointer events, keyboard accessibility, zone predicates, 37 tests (claude)
 [2026-03-07] T-2026-026: Create GameProgressionService for mission/content unlocking — added GameProgressionService with mission availability, minigame unlocking, campaign progress, prerequisite chains, debounced persistence, 27 tests (claude)
 [2026-03-07] T-2026-023: Create SpacedRepetitionService for mastery degradation — added SpacedRepetitionService with degradation tracking, effective mastery computation, 7-day grace period, 2-star cap, debounced persistence, 27 tests (claude)
+[2026-03-07] T-2026-035: Create XP progress bar component — added XpProgressBarComponent with compact/full variants, gradient bar, ARIA progressbar, signal inputs, 19 tests (claude)

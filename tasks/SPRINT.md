@@ -36,11 +36,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-035**: Create XP progress bar component (Priority: medium, Size: S)
 - **T-2026-034**: Create mastery star display component (Priority: medium, Size: S)
 - **T-2026-057**: Create ConfirmDialogComponent for destructive actions (Priority: medium, Size: S)
 - **T-2026-125**: Add XpNotificationComponent to app shell root (Priority: medium, Size: S)

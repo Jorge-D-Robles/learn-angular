@@ -72,29 +72,6 @@ Acceptance criteria:
 - [ ] Accessible: aria-label describes mastery level (e.g., "3 out of 5 stars mastery")
 - [ ] Unit tests for: correct fill count at each level, glow color application, aria-label
 
-### T-2026-035
-- Title: Create XP progress bar component
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-007, T-2026-021
-- Blocked-by: —
-- Tags: ui, xp, progress-bar, component
-- Refs: docs/progression.md, docs/ux/visual-style.md, docs/ux/navigation.md
-
-A progress bar component showing XP progress toward the next rank. Used in the top bar (compact) and profile page (full).
-
-Acceptance criteria:
-- [ ] `XpProgressBarComponent` at `src/app/shared/components/xp-progress-bar/`
-- [ ] Inputs: `currentXp` (number), `nextRankXp` (number), `currentRank` (string), `variant` ('compact' | 'full')
-- [ ] Compact variant: thin bar with percentage, no labels (for top bar)
-- [ ] Full variant: thicker bar with current/next rank labels and XP numbers
-- [ ] Bar gradient from Reactor Blue to Sensor Green (per visual style guide)
-- [ ] Accessible: role="progressbar", aria-valuenow, aria-valuemin, aria-valuemax
-- [ ] Unit tests for: percentage calculation, compact vs full rendering, accessibility attributes
-
 ### T-2026-041
 - Title: Create DailyChallengeService for daily challenge rotation
 - Status: todo
