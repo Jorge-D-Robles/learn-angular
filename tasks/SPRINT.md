@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-034**: Create mastery star display component (Assigned: claude, Status: in-progress)
 
 
 
