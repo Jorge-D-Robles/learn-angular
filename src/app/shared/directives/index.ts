@@ -1,2 +1,2 @@
-// Directives barrel -- exports added as directives are created
-export {};
+export { DraggableDirective } from './draggable.directive';
+export { DropZoneDirective } from './drop-zone.directive';
