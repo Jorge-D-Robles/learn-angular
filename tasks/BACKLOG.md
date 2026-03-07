@@ -156,28 +156,6 @@ Acceptance criteria:
 - [ ] `getEffectiveMastery(topicId)`: returns mastery adjusted for degradation
 - [ ] Unit tests with mocked dates to verify: no degradation before 7 days, partial at 7-14 days, full at 14+ days, cap at 2 stars lost
 
-### T-2026-025
-- Title: Integrate persistence with GameStateService auto-save
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P1
-- Depends: T-2026-024, T-2026-015
-- Blocked-by: —
-- Tags: persistence, state-management, integration
-- Refs: docs/progression.md
-
-Wire up `StatePersistenceService` to `GameStateService` so state is automatically saved when it changes and restored on app startup.
-
-Acceptance criteria:
-- [ ] `GameStateService` loads saved state from localStorage on initialization
-- [ ] State is auto-saved when any state signal changes (using `effect()`)
-- [ ] Debounce saves to avoid excessive writes (at most once per 500ms)
-- [ ] If no saved state exists, initializes with defaults (Cadet rank, 0 XP)
-- [ ] Unit tests verify: load on init, auto-save on mutation, debounce behavior
-- Started: 2026-03-07
-
 ### T-2026-026
 - Title: Create GameProgressionService for mission/content unlocking
 - Status: todo

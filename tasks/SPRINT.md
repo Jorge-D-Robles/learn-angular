@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-025**: Integrate persistence with GameStateService auto-save (Assigned: claude, Status: in-progress)
 
 
 

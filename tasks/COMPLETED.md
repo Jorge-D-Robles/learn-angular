@@ -21,3 +21,4 @@
 [2026-03-07] T-2026-017: Create abstract MinigameEngine base class — created abstract MinigameEngine<TLevelData> with lifecycle state machine, signals, timer, action submission, barrel export, 49 tests (claude)
 [2026-03-07] T-2026-024: Create StatePersistenceService for localStorage save/load — created StatePersistenceService with namespaced localStorage, autoSave via effect(), export/import, Map-backed fake localStorage tests, 17 tests (claude)
 [2026-03-07] T-2026-031: Create code editor component wrapper — created CodeEditorComponent with custom regex tokenizer, Token[] arrays with @for, dark theme, line highlighting, dual-layer textarea editing, 21 tests (claude)
+[2026-03-07] T-2026-025: Integrate persistence with GameStateService auto-save — wired StatePersistenceService into GameStateService with debounced auto-save, load on init, resetState clears persistence, 8 new tests (claude)
