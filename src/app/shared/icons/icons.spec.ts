@@ -61,6 +61,8 @@ class AllIconsTestHost {
     'chevron-down',
     'chevron-left',
     'chevron-up',
+    'circle-alert',
+    'refresh-cw',
     'x',
   ];
 }
@@ -132,6 +134,6 @@ describe('Icon Configuration', () => {
       providers: ICON_PROVIDERS,
     });
     const svgs = element.querySelectorAll('svg');
-    expect(svgs.length).toBe(15);
+    expect(svgs.length).toBe(17);
   });
 });

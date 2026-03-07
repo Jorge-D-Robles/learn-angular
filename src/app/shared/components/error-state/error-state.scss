@@ -1,0 +1,56 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--nx-space-3);
+  padding: var(--nx-space-6);
+  text-align: center;
+}
+
+.error-state__icon {
+  color: var(--nx-color-emergency-red);
+}
+
+.error-state__title {
+  color: var(--nx-color-display);
+  font-size: var(--nx-text-card-title-size, 1.125rem);
+  font-weight: var(--nx-text-card-title-weight, 600);
+  margin: 0;
+}
+
+.error-state__message {
+  color: var(--nx-color-corridor);
+  font-size: var(--nx-text-body-size, 1rem);
+  font-weight: var(--nx-text-body-weight, 400);
+  margin: 0;
+  max-width: 36ch;
+}
+
+.error-state__retry-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nx-space-2);
+  padding: var(--nx-space-2) var(--nx-space-4);
+  background: transparent;
+  color: var(--nx-color-reactor-blue);
+  border: 1px solid var(--nx-color-reactor-blue);
+  border-radius: var(--nx-radius-btn, 6px);
+  font-size: var(--nx-text-body-size, 1rem);
+  cursor: pointer;
+  transition: background var(--nx-duration-fast, 150ms) var(--nx-ease-out, ease-out);
+
+  &:hover {
+    background: color-mix(in srgb, var(--nx-color-reactor-blue) 10%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--nx-color-reactor-blue);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .error-state__retry-btn {
+    transition: none;
+  }
+}

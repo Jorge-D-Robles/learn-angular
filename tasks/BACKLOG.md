@@ -313,8 +313,8 @@ Acceptance criteria:
 
 ### T-2026-131
 - Title: Create ErrorStateComponent for error display
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -333,6 +333,7 @@ Acceptance criteria:
 - [ ] Uses Emergency Red accent color for error icon
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: rendering, retry event emission, non-retryable hides button
+- Started: 2026-03-07
 
 ### T-2026-132
 - Title: Style NotFoundPage with station theme
@@ -866,6 +867,322 @@ Acceptance criteria:
 - [ ] Keyboard accessible: focusable, Enter to activate
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: rendering, active state, connected state, hover, keyboard activation
+
+### T-2026-204
+- Title: Integrate HintService hint button with MinigameShell HUD
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-044, T-2026-018
+- Blocked-by: —
+- Tags: integration, minigame-framework, hints, ui
+- Refs: docs/minigames/TEMPLATE.md, docs/research/gamification-patterns.md, src/app/core/minigame/hint.service.ts
+
+HintService (T-2026-044) provides hint registration, dispensing, and penalty calculation. MinigameShell (T-2026-018) has a HUD with score, timer, and lives, but no hint button. The gamification research states "Hints available but cost points (self-regulating difficulty)." Multiple minigame specs reference a hint system (Terminal Hack: "Hint button -- reveals one element (costs points)"). This ticket wires a hint button into the shell HUD that shows available hint count, dispenses hints on click, and displays the hint content.
+
+Acceptance criteria:
+- [ ] MinigameShell HUD includes a "Hint" button with remaining hint count badge
+- [ ] Hint button calls HintService.dispenseHint() and displays the returned hint text in a tooltip/popover
+- [ ] Hint button is disabled when no hints remain (HintService.remainingHints() === 0)
+- [ ] Hint button shows point cost before dispensing (e.g., "Use Hint (-50 pts)")
+- [ ] Hint button hidden when engine has no hints registered (some minigames may not use hints)
+- [ ] Keyboard shortcut: 'H' key triggers hint (registered via KeyboardShortcutService)
+- [ ] Unit tests for: hint button visibility, dispense interaction, disabled state, keyboard shortcut
+
+### T-2026-205
+- Title: Integrate MinigameTutorialOverlay with MinigameShell first-play detection
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-163, T-2026-018, T-2026-024
+- Blocked-by: —
+- Tags: integration, minigame-framework, tutorial, onboarding
+- Refs: docs/research/gamification-patterns.md, docs/ux/visual-style.md
+
+MinigameTutorialOverlayComponent (T-2026-163) provides step-through tutorial UI and MinigameShell (T-2026-018) manages the minigame lifecycle, but no ticket connects them. The tutorial should show automatically when a player launches a minigame for the first time, blocking engine start until dismissed. The "don't show again" flag is persisted. PauseMenuComponent (T-2026-135) should include a "How to Play" option that reopens the tutorial.
+
+Acceptance criteria:
+- [ ] MinigameShell checks StatePersistenceService for tutorial-seen flag on engine ready
+- [ ] If tutorial not seen, renders MinigameTutorialOverlayComponent before starting engine
+- [ ] Tutorial dismissal sets the flag and starts the engine
+- [ ] PauseMenuComponent includes "How to Play" button that opens the tutorial overlay
+- [ ] Engine is paused while tutorial overlay is active
+- [ ] Unit tests for: first-play detection, tutorial display, dismiss-and-start, pause menu "How to Play"
+
+### T-2026-206
+- Title: Wire DailyChallengeService completion to StreakService
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-041, T-2026-027
+- Blocked-by: —
+- Tags: integration, progression, daily-challenge, streak
+- Refs: docs/progression.md, docs/research/gamification-patterns.md
+
+Progression.md states daily challenges contribute to streaks ("7-day streak rewards") and gamification research says "Daily login streak with increasing bonus." DailyChallengeService (T-2026-041) tracks daily challenge completion and StreakService (T-2026-027) tracks login streaks. But no ticket wires daily challenge completion to trigger StreakService.recordLogin() (or equivalent), ensuring daily challenge play counts as an active day for streak purposes.
+
+Acceptance criteria:
+- [ ] DailyChallengeService.completeChallenge() calls StreakService.recordLogin() to count the day as active
+- [ ] Completing a daily challenge on a new day extends the streak
+- [ ] If StreakService already recorded today, no duplicate call occurs
+- [ ] Unit tests for: streak extension on daily challenge completion, no double-count
+
+### T-2026-207
+- Title: Add LevelNavigationService to levels barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-182
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/levels/index.ts
+
+LevelNavigationService (T-2026-182) will create `level-navigation.service.ts` in the levels directory but no ticket adds it to the levels barrel export. Per project conventions, all services in a directory should be exported from the directory barrel.
+
+Acceptance criteria:
+- [ ] `src/app/core/levels/index.ts` updated to export `LevelNavigationService`
+- [ ] Build passes with updated barrel
+
+### T-2026-208
+- Title: Add XpDiminishingReturnsService to progression barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-164
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/progression/index.ts
+
+XpDiminishingReturnsService (T-2026-164) will create `xp-diminishing-returns.service.ts` in the progression directory but no ticket adds it to the barrel export.
+
+Acceptance criteria:
+- [ ] `src/app/core/progression/index.ts` updated to export `XpDiminishingReturnsService`
+- [ ] Build passes with updated barrel
+
+### T-2026-209
+- Title: Add PlayTimeService to progression barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-050
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/progression/index.ts
+
+PlayTimeService (T-2026-050) will create `play-time.service.ts` in the progression directory but no ticket adds it to the barrel export.
+
+Acceptance criteria:
+- [ ] `src/app/core/progression/index.ts` updated to export `PlayTimeService`
+- [ ] Build passes with updated barrel
+
+### T-2026-210
+- Title: Integrate PlayTimeService with MinigameEngine session tracking
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-050, T-2026-017
+- Blocked-by: —
+- Tags: integration, progression, stats, minigame-framework
+- Refs: docs/ux/navigation.md, src/app/core/progression/play-time.service.ts
+
+PlayTimeService (T-2026-050) tracks per-minigame play time, and the profile page (navigation.md) shows "Play time stats." But no ticket wires PlayTimeService into the MinigameEngine lifecycle so that time is automatically recorded when a player starts and completes a level. Without this, play time must be manually tracked by each minigame.
+
+Acceptance criteria:
+- [ ] MinigameEngine.start() calls PlayTimeService.startSession() or records start timestamp
+- [ ] MinigameEngine completion/failure calls PlayTimeService.recordMinigameTime(gameId, duration)
+- [ ] Duration calculated as elapsed time between start and end (excluding paused time)
+- [ ] Paused time excluded: engine.pause() stops the timer, engine.resume() resumes it
+- [ ] Unit tests for: time recording on completion, pause exclusion, per-game accumulation
+
+### T-2026-211
+- Title: Integrate RefresherChallengeService practice with SpacedRepetitionService mastery restoration
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-047, T-2026-023
+- Blocked-by: —
+- Tags: integration, progression, spaced-repetition, refresher
+- Refs: docs/progression.md, src/app/core/progression/refresher-challenge.service.ts, src/app/core/progression/spaced-repetition.service.ts
+
+Progression.md says "Quick refreshers: 3-5 questions, restore 1 star of lost mastery." RefresherChallengeService (T-2026-047) has a recordPractice() method and SpacedRepetitionService (T-2026-023) tracks degradation. But no ticket explicitly verifies that RefresherChallengeService.recordPractice() calls SpacedRepetitionService to reset the degradation timer and restore effective mastery. This integration ticket ensures the two services work together correctly.
+
+Acceptance criteria:
+- [ ] RefresherChallengeService.recordPractice(topicId) calls SpacedRepetitionService.recordPractice(topicId)
+- [ ] After practice, SpacedRepetitionService resets the degradation timer for the topic
+- [ ] Effective mastery returns to stored mastery level after practice
+- [ ] Integration test: degrade a topic, practice it, verify mastery is restored
+- [ ] Unit tests for: practice delegation, degradation timer reset
+
+### T-2026-212
+- Title: Create LifetimeStatsService for aggregate player statistics
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-015, T-2026-024
+- Blocked-by: —
+- Tags: progression, stats, service
+- Refs: docs/ux/navigation.md, docs/progression.md
+
+The profile page (navigation.md) shows detailed stats: rank/XP breakdown, mastery per topic, campaign progress, play time, and streak. Multiple services provide pieces of this data (XpService, MasteryService, GameProgressionService, PlayTimeService, StreakService), but no aggregation service collects them into a single profile-ready snapshot. This service provides a unified API for the ProfilePage to query all stats without importing 6+ services.
+
+Acceptance criteria:
+- [ ] `LifetimeStatsService` at `src/app/core/progression/lifetime-stats.service.ts`
+- [ ] `getProfileStats()`: returns a snapshot of: totalXp, currentRank, rankProgress, topicMasteryMap, missionsCompleted, totalMissions, totalPlayTime, currentStreak, streakMultiplier, levelsCompleted, perfectScores
+- [ ] All data sourced from existing services (XpService, MasteryService, GameProgressionService, PlayTimeService, StreakService, LevelProgressionService)
+- [ ] Computed signals for reactive UI binding
+- [ ] Exported from progression barrel
+- [ ] Unit tests for: stats aggregation, reactive updates when underlying services change
+
+### T-2026-213
+- Title: Add OnboardingService to progression barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-173
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/progression/index.ts
+
+OnboardingService (T-2026-173) will create `onboarding.service.ts` in the progression directory. The ticket says "Exported from progression barrel" but there is no explicit barrel update ticket. Per conventions, ensure it is exported.
+
+Acceptance criteria:
+- [ ] `src/app/core/progression/index.ts` updated to export `OnboardingService` and `OnboardingStep`
+- [ ] Build passes with updated barrel
+
+### T-2026-214
+- Title: Create OnboardingOverlayComponent for first-time user guidance
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: M
+- Milestone: P2
+- Depends: T-2026-173, T-2026-007, T-2026-130
+- Blocked-by: —
+- Tags: ui, component, onboarding, progressive-disclosure
+- Refs: docs/research/gamification-patterns.md, docs/ux/navigation.md
+
+OnboardingService (T-2026-173) tracks onboarding step completion, but no ticket creates the visual overlay that guides first-time users. Gamification research emphasizes "Progressive disclosure -- don't show everything at once." This component renders step-by-step highlights on the dashboard and key pages, pointing users to their first mission, the minigame hub, and the profile page.
+
+Acceptance criteria:
+- [ ] `OnboardingOverlayComponent` at `src/app/shared/components/onboarding-overlay/`
+- [ ] Selector: `nx-onboarding-overlay`
+- [ ] Renders a spotlight/tooltip pointing to the relevant UI element for the current step
+- [ ] Steps: welcome message, "Start your first mission" pointer, "Explore minigames" pointer, "Check your profile" pointer
+- [ ] "Next" / "Skip All" buttons to advance or dismiss
+- [ ] Calls OnboardingService.completeStep() on advance
+- [ ] Respects `prefers-reduced-motion`
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: step rendering, advancement, skip all, service integration
+
+### T-2026-215
+- Title: Wire OnboardingOverlay into DashboardPage for first-time users
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-214, T-2026-078
+- Blocked-by: —
+- Tags: integration, onboarding, dashboard
+- Refs: docs/research/gamification-patterns.md
+
+OnboardingOverlayComponent (T-2026-214) and DashboardPage (T-2026-078) exist separately. This ticket integrates them: the dashboard checks OnboardingService on init and renders the overlay if onboarding is incomplete.
+
+Acceptance criteria:
+- [ ] DashboardPage checks OnboardingService.isOnboardingComplete on init
+- [ ] If not complete, renders OnboardingOverlayComponent
+- [ ] Overlay dismissed -> normal dashboard interaction
+- [ ] Does not show on subsequent visits after completion
+- [ ] Unit tests for: overlay shown on first visit, hidden after completion
+
+### T-2026-216
+- Title: Create MissionCardComponent for campaign page mission list
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-034, T-2026-055, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, campaign, shared
+- Refs: docs/ux/navigation.md, docs/curriculum.md
+
+CampaignProgressPage (T-2026-141) displays all 34 missions with "chapter number, title, Angular topic, completion status, locked state." A dedicated MissionCardComponent encapsulates the individual mission card layout, used both in the campaign page and potentially as a quick-access card on the dashboard.
+
+Acceptance criteria:
+- [ ] `MissionCardComponent` at `src/app/shared/components/mission-card/`
+- [ ] Selector: `nx-mission-card`
+- [ ] Inputs: `mission` (StoryMission), `isCompleted` (boolean), `isLocked` (boolean), `isCurrent` (boolean)
+- [ ] Displays: chapter number badge, mission title, Angular topic, completion checkmark or lock icon
+- [ ] Current mission: highlighted border with "Continue" badge
+- [ ] Locked state: dimmed with LockedContentComponent-style overlay
+- [ ] Output: `missionClicked` event with chapterId
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: completed/locked/current rendering, click event
+
+### T-2026-217
+- Title: Create RefresherChallengePage for mastery restoration gameplay
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-047, T-2026-023, T-2026-034
+- Blocked-by: —
+- Tags: page, refresher, spaced-repetition, ui
+- Refs: docs/progression.md, docs/ux/navigation.md
+
+Progression.md defines refresher challenges as "Quick refreshers: 3-5 questions, restore 1 star of lost mastery." RefresherChallengeService (T-2026-047) provides the logic, DegradationAlertComponent (T-2026-161) has a "Practice Now" button, but there is no page/route where the refresher challenge is actually played. This ticket creates the page that loads refresher challenge content and allows the player to complete it.
+
+Acceptance criteria:
+- [ ] Route `/refresher/:topicId` added to `app.routes.ts` with lazy-loaded RefresherChallengePage
+- [ ] `RefresherChallengePage` at `src/app/pages/refresher/refresher.ts`
+- [ ] Loads challenge content from RefresherChallengeService for the specified topic
+- [ ] Displays 3-5 micro-level challenges or questions
+- [ ] On completion, calls RefresherChallengeService.recordPractice() to restore mastery
+- [ ] Shows mastery restoration result (e.g., "Components mastery: 2 -> 3 stars")
+- [ ] "Back to Dashboard" navigation on completion
+- [ ] Unit tests for: content loading, challenge completion, mastery restoration display
+
+### T-2026-218
+- Title: Create DailyChallengeCompletionHandler to award bonus XP
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-041, T-2026-021, T-2026-032
+- Blocked-by: —
+- Tags: integration, daily-challenge, xp, notifications
+- Refs: docs/progression.md, docs/overview.md
+
+Progression.md specifies "Daily challenge completion: 50 bonus XP." DailyChallengeService (T-2026-041) tracks completion and XpService (T-2026-021) manages XP, but no ticket connects daily challenge completion to the 50 XP bonus award and notification. Without this integration, daily challenges are tracked but don't award their bonus XP.
+
+Acceptance criteria:
+- [ ] DailyChallengeService completion flow awards 50 bonus XP via XpService.addXp()
+- [ ] XpNotificationService shows "+50 Daily Challenge" notification on completion
+- [ ] Bonus XP only awarded once per day (completing same challenge again does not re-award)
+- [ ] Unit tests for: bonus XP award, notification display, no double-award
 
 ---
 
@@ -3271,6 +3588,96 @@ Acceptance criteria:
 - [ ] Streak display: shows current daily streak and multiplier
 - [ ] Integrates with DailyChallengeService for challenge data and completion
 - [ ] Unit tests for: challenge display, completed state, streak display, countdown timer
+
+### T-2026-219
+- Title: Create LeaderboardComponent for per-minigame score display
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P8
+- Depends: T-2026-110, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, leaderboard, replayability
+- Refs: docs/research/gamification-patterns.md, docs/progression.md
+
+LeaderboardService (T-2026-110) provides per-minigame leaderboard data, but no ticket creates the visual component. Gamification research says "Show player's rank relative to nearby ranks (not just top 10)" and "Speed run leaderboards are competitive; mastery is personal." The level select page (T-2026-077) has "Replay mode tabs" that would display leaderboards. This component renders the leaderboard table with mode tabs.
+
+Acceptance criteria:
+- [ ] `LeaderboardComponent` at `src/app/shared/components/leaderboard/`
+- [ ] Selector: `nx-leaderboard`
+- [ ] Inputs: `gameId` (MinigameId), `mode` ('story' | 'endless' | 'speedrun')
+- [ ] Displays top 10 entries: rank, player name, score, time, date
+- [ ] Highlights player's entry with accent color
+- [ ] Mode tabs to switch between story/endless/speedrun views
+- [ ] Empty state when no entries exist
+- [ ] Solar Gold styling for #1 position, silver for #2, bronze for #3
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: entry rendering, mode switching, player highlight, empty state, medal styling
+
+### T-2026-220
+- Title: Create CosmeticGalleryComponent for cosmetic browsing and equipping
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: M
+- Milestone: P8
+- Depends: T-2026-111, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, cosmetics, replayability
+- Refs: docs/progression.md
+
+CosmeticService (T-2026-111) provides cosmetic data (skins, themes, badges) and equip/unequip functionality, but no ticket creates the visual gallery. Progression.md specifies "station module skins, UI themes, achievement badges" as cosmetic categories. The profile or settings page needs a gallery where players can browse and equip cosmetics.
+
+Acceptance criteria:
+- [ ] `CosmeticGalleryComponent` at `src/app/shared/components/cosmetic-gallery/`
+- [ ] Selector: `nx-cosmetic-gallery`
+- [ ] Displays cosmetics grouped by type (skin, theme, badge)
+- [ ] Unlocked items: full color with "Equip" button
+- [ ] Locked items: dimmed with unlock condition text (e.g., "Reach Captain rank")
+- [ ] Currently equipped item: highlighted with checkmark
+- [ ] Filter tabs by type
+- [ ] Progress indicator: "X of Y unlocked" per type
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: unlocked/locked rendering, equip interaction, filter tabs
+
+### T-2026-221
+- Title: Wire DegradationAlertComponent "Practice Now" to refresher challenge route
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-161, T-2026-217
+- Blocked-by: —
+- Tags: integration, spaced-repetition, refresher, navigation
+- Refs: docs/progression.md, docs/ux/navigation.md
+
+DegradationAlertComponent (T-2026-161) has a "Practice Now" button that emits a `practiceRequested` event with topicId. RefresherChallengePage (T-2026-217) handles the actual practice flow at `/refresher/:topicId`. But no ticket wires the button event to router navigation to the refresher page.
+
+Acceptance criteria:
+- [ ] DashboardPage (or parent) listens to DegradationAlertComponent.practiceRequested event
+- [ ] On practiceRequested, navigates to `/refresher/:topicId`
+- [ ] ProfilePage also wires the same navigation for its degradation display
+- [ ] Unit tests for: navigation on practice request
+
+### T-2026-222
+- Title: Add StoryMissionContentService to curriculum barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-166
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/curriculum/index.ts
+
+StoryMissionContentService (T-2026-166) states "Exported from curriculum barrel" in its acceptance criteria, but the barrel update is embedded in that ticket. Per conventions, this explicit barrel ticket ensures the export is not missed and is independently verifiable.
+
+Acceptance criteria:
+- [ ] `src/app/core/curriculum/index.ts` updated to export `StoryMissionContentService` and `StoryMissionContent`
+- [ ] Build passes with updated barrel
 
 ### T-2026-179
 - Title: Apply streak bonus to story mission XP in GameProgressionService

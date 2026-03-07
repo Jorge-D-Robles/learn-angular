@@ -1,5 +1,6 @@
 export { CodeEditorComponent } from './code-editor/code-editor';
 export { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog';
+export { ErrorStateComponent } from './error-state/error-state';
 export { LevelStarsComponent } from './level-stars/level-stars';
 export { LoadingSpinnerComponent } from './loading-spinner/loading-spinner';
 export { LockedContentComponent } from './locked-content/locked-content';
