@@ -221,28 +221,6 @@ Acceptance criteria:
 - [ ] `maxCombo` signal: highest combo achieved in current session
 - [ ] Unit tests for: increment, reset on incorrect, multiplier thresholds, max tracking
 
-### T-2026-112
-- Title: Create barrel export for core/state module
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-015
-- Blocked-by: —
-- Tags: infrastructure, barrel-export, conventions
-- Refs: src/app/core/state/game-state.service.ts, src/app/core/state/rank.constants.ts
-
-The `src/app/core/state/` directory contains `game-state.service.ts` and `rank.constants.ts` but lacks an `index.ts` barrel export. All other core subdirectories (persistence, curriculum, levels, progression, minigame) have barrel exports per project conventions. This missing barrel forces consumers to use deep import paths.
-
-Acceptance criteria:
-- [ ] `src/app/core/state/index.ts` barrel export created
-- [ ] Exports `GameStateService`, `GameStateSnapshot` from `game-state.service`
-- [ ] Exports `RANK_THRESHOLDS`, `RankThreshold`, `getRankForXp` from `rank.constants`
-- [ ] Update existing imports in `xp.service.ts` and `game-state.service.spec.ts` to use barrel path
-- [ ] Verify build and all tests pass with updated imports
-- Started: 2026-03-07
-
 ### T-2026-126
 - Title: Create core module root barrel export
 - Status: todo
