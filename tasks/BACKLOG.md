@@ -741,27 +741,6 @@ Acceptance criteria:
 - [ ] Previous best score loaded from LevelProgressionService for comparison
 - [ ] Unit tests for: results display on completion, next level loading, replay reset, navigation
 
-### T-2026-180
-- Title: Scaffold features/minigames directory structure
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P1
-- Depends: —
-- Blocked-by: —
-- Tags: infrastructure, scaffolding, directory-structure
-- Refs: docs/minigames/TEMPLATE.md
-
-All P2+ minigame engine and UI tickets reference `src/app/features/minigames/<game-name>/` but no ticket creates this directory hierarchy. Without it, the first P2 minigame ticket will need to create it ad-hoc, violating separation of concerns.
-
-Acceptance criteria:
-- [ ] `src/app/features/` directory created
-- [ ] `src/app/features/minigames/` directory created with subdirectories for all 12 minigames: `module-assembly/`, `wire-protocol/`, `flow-commander/`, `signal-corps/`, `corridor-runner/`, `terminal-hack/`, `power-grid/`, `data-relay/`, `reactor-core/`, `deep-space-radio/`, `system-certification/`, `blast-doors/`
-- [ ] Each subdirectory contains an empty `index.ts` barrel export (`export {};`)
-- [ ] Root barrel `src/app/features/index.ts` created (empty for now)
-- [ ] Build passes with the new empty directories
-
 ### T-2026-181
 - Title: Scaffold data directory structure for levels, missions, and tutorials
 - Status: todo
