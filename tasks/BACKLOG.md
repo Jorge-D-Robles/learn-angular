@@ -78,29 +78,6 @@ Acceptance criteria:
 - [ ] Prerequisite chain follows curriculum.md dependency order (Ch 1 -> Ch 2 -> ... -> Ch 34)
 - [ ] Unit tests for: mission availability chain, minigame unlock on mission completion, campaign progress calculation
 
-### T-2026-030
-- Title: Create LevelLoaderService for loading level data
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-019, T-2026-029
-- Blocked-by: —
-- Tags: levels, data-loading, service
-- Refs: docs/minigames/TEMPLATE.md
-
-Service that loads level data for a given minigame and level ID. Initially loads from static JSON/TS files; designed to be swappable for server-side loading later.
-
-Acceptance criteria:
-- [ ] `LevelLoaderService` at `src/app/core/levels/level-loader.service.ts`
-- [ ] `loadLevel(gameId, levelId)`: returns a `LevelDefinition` (or throws if not found)
-- [ ] `loadLevelPack(gameId)`: returns all levels for a minigame
-- [ ] `getLevelsByTier(gameId, tier)`: returns levels filtered by difficulty tier
-- [ ] Initial implementation loads from static TypeScript files (e.g., `src/app/data/levels/`)
-- [ ] Returns `Observable<LevelDefinition>` or `Promise<LevelDefinition>` for future async compatibility
-- [ ] Unit tests with mock level data: load by ID, load pack, filter by tier, not-found error
-
 ### T-2026-032
 - Title: Create XP notification toast component
 - Status: todo

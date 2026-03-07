@@ -34,3 +34,4 @@
 [2026-03-07] T-2026-113: Create LevelCompletionService to integrate game completion with progression — created LevelCompletionService facade orchestrating score→progress→XP→mastery flow, added getLevelDefinition accessor, 19 tests (claude)
 [2026-03-07] T-2026-042: Wire MinigameRegistryService to router for dynamic component loading — wired MinigameRegistryService to router with NgComponentOutlet, 4-state view (not-found/not-ready/locked/ready), forward-compatible lock check, 10 tests (claude)
 [2026-03-07] T-2026-027: Create StreakService for daily login streak tracking — created StreakService with two-counter design (display/multiplier), local date logic, gap detection, auto-save, 23 tests (claude)
+[2026-03-07] T-2026-030: Create LevelLoaderService for loading level data — created LevelLoaderService with registry Map, Observable API, LevelProgressionService integration, 13 tests (claude)
