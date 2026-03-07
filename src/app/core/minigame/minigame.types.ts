@@ -96,4 +96,6 @@ export interface MinigameResult {
   readonly timeElapsed: number;
   /** XP awarded for this completion. */
   readonly xpEarned: number;
+  /** Star rating earned (0-5). */
+  readonly starRating: number;
 }

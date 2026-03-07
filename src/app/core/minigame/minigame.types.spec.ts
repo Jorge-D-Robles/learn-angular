@@ -218,6 +218,7 @@ describe('MinigameResult', () => {
       perfect: true,
       timeElapsed: 42,
       xpEarned: 40,
+      starRating: 4,
     };
 
     expect(result.gameId).toBe('wire-protocol');
@@ -226,5 +227,6 @@ describe('MinigameResult', () => {
     expect(result.perfect).toBe(true);
     expect(result.timeElapsed).toBe(42);
     expect(result.xpEarned).toBe(40);
+    expect(result.starRating).toBe(4);
   });
 });
