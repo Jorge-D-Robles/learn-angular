@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-203**: Create SvgPortComponent for wire endpoint rendering (Assigned: claude, Status: in-progress)
 
 
 
