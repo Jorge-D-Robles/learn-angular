@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-016**: Define minigame lifecycle interfaces and types (Assigned: claude, Status: in-progress)
 
 
 ---

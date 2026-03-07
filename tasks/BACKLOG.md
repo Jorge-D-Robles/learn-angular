@@ -28,31 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-016
-- Title: Define minigame lifecycle interfaces and types
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: M
-- Milestone: P1
-- Depends: T-2026-001
-- Blocked-by: —
-- Tags: minigame-framework, types, architecture
-- Refs: docs/overview.md, docs/minigames/TEMPLATE.md, docs/minigames/01-module-assembly.md
-
-Define the TypeScript interfaces and types for the minigame framework. These are the contracts that all 12 minigames will implement.
-
-Acceptance criteria:
-- [ ] `MinigameConfig` interface: id, name, description, angularTopic, totalLevels, difficultyTiers
-- [ ] `MinigameLevel` interface: id, gameId, tier (basic/intermediate/advanced/boss), conceptIntroduced, description, data (generic)
-- [ ] `MinigameState` interface: currentLevel, score, lives, timeRemaining, status (playing/paused/won/lost)
-- [ ] `MinigameResult` interface: levelId, score, perfect (boolean), timeElapsed, xpEarned
-- [ ] `DifficultyTier` enum: Basic, Intermediate, Advanced, Boss
-- [ ] `MinigameStatus` enum: Loading, Playing, Paused, Won, Lost
-- [ ] All types are exported from `src/app/core/minigame/minigame.types.ts`
-- [ ] Types are well-documented with JSDoc comments
-- Started: 2026-03-07
-
 ### T-2026-017
 - Title: Create abstract MinigameEngine base class
 - Status: todo
