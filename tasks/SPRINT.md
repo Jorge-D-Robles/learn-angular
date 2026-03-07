@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-179**: Apply streak bonus to story mission XP in GameProgressionService (Assigned: claude, Status: in-progress)
 
 
 

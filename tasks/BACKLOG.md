@@ -3536,27 +3536,6 @@ Acceptance criteria:
 - [ ] `src/app/core/curriculum/index.ts` updated to export `StoryMissionContentService` and `StoryMissionContent`
 - [ ] Build passes with updated barrel
 
-### T-2026-179
-- Title: Apply streak bonus to story mission XP in GameProgressionService
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-136
-- Blocked-by: —
-- Tags: progression, streak, xp, story-missions
-- Refs: src/app/core/progression/game-progression.service.ts, src/app/core/progression/xp.service.ts
-
-Follow-up from T-2026-136. GameProgressionService.completeMission() calls xpService.addXp(xpService.calculateStoryXp()) with no streak logic. It should use xpService.applyStreakBonus() to apply the streak multiplier to story mission XP, matching the pattern established in LevelCompletionService.
-
-Acceptance criteria:
-- [ ] GameProgressionService.completeMission() uses xpService.applyStreakBonus(storyXp) to apply streak bonus
-- [ ] Story mission XP notifications show streak bonus breakdown (e.g., "+5 Streak Bonus")
-- [ ] Unit tests verify streak bonus is applied to story mission XP
-- [ ] Unit tests verify notification format with streak bonus
-- Started: 2026-03-07
-
 ### T-2026-180
 - Title: Add multiple-choice question support to RefresherChallengeService
 - Status: todo
