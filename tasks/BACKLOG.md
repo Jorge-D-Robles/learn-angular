@@ -741,28 +741,6 @@ Acceptance criteria:
 - [ ] Previous best score loaded from LevelProgressionService for comparison
 - [ ] Unit tests for: results display on completion, next level loading, replay reset, navigation
 
-### T-2026-181
-- Title: Scaffold data directory structure for levels, missions, and tutorials
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P1
-- Depends: —
-- Blocked-by: —
-- Tags: infrastructure, scaffolding, directory-structure
-- Refs: docs/curriculum.md, docs/minigames/TEMPLATE.md
-
-All level data tickets reference `src/app/data/levels/`, story mission tickets reference `src/app/data/missions/phase-N/`, and tutorial tickets reference `src/app/data/tutorials/`. No ticket creates this directory structure.
-
-Acceptance criteria:
-- [ ] `src/app/data/` directory created
-- [ ] `src/app/data/levels/` directory created (empty, will be populated by level data tickets)
-- [ ] `src/app/data/missions/` directory created with phase subdirectories: `phase-1/` through `phase-6/`
-- [ ] `src/app/data/tutorials/` directory created
-- [ ] Root barrel `src/app/data/index.ts` created (empty for now)
-- [ ] Build passes
-
 ### T-2026-182
 - Title: Create LevelNavigationService for next/previous level resolution
 - Status: todo

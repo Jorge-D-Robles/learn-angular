@@ -51,11 +51,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-181**: Scaffold data directory structure for levels, missions, and tutorials (Priority: high, Size: S)
 - **T-2026-048**: Create EndlessModeService for procedural level generation (Priority: medium, Size: M)
 - **T-2026-049**: Create SpeedRunService for timed challenge mode (Priority: medium, Size: S)
 - **T-2026-131**: Create ErrorStateComponent for error display (Priority: medium, Size: S)
