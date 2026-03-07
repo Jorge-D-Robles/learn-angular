@@ -28,31 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-017
-- Title: Create abstract MinigameEngine base class
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: M
-- Milestone: P1
-- Depends: T-2026-016
-- Blocked-by: —
-- Tags: minigame-framework, architecture, engine
-- Refs: docs/overview.md, docs/minigames/TEMPLATE.md
-
-Create the abstract base class that all minigame engines extend. This provides the lifecycle hooks, state management, and scoring logic that every minigame shares.
-
-Acceptance criteria:
-- [ ] Abstract class `MinigameEngine<TLevelData>` exists at `src/app/core/minigame/minigame-engine.ts`
-- [ ] Manages `MinigameState` via signals (score, lives, status, timeRemaining)
-- [ ] Lifecycle methods: `initialize(level)`, `start()`, `pause()`, `resume()`, `complete()`, `fail()`
-- [ ] Abstract methods subclasses must implement: `onLevelLoad(data: TLevelData)`, `onStart()`, `onComplete()`, `validateAction(action)`
-- [ ] `submitAction(action)` method that calls `validateAction`, updates score, and emits result
-- [ ] Timer management: optional countdown timer with configurable duration
-- [ ] Exposes read-only signals for UI binding: `score()`, `lives()`, `status()`, `timeRemaining()`
-- [ ] Unit tests verify lifecycle transitions (initialize -> start -> complete, initialize -> start -> fail)
-- Started: 2026-03-07
-
 ### T-2026-018
 - Title: Create MinigameShell container component
 - Status: todo
