@@ -1,0 +1,275 @@
+import { TestBed } from '@angular/core/testing';
+import {
+  DifficultyTier,
+  type MinigameId,
+  type MinigameResult,
+} from './minigame.types';
+import type { LevelDefinition } from '../levels/level.types';
+import { LevelProgressionService } from '../levels/level-progression.service';
+import { GameStateService } from '../state/game-state.service';
+import { MasteryService } from '../progression/mastery.service';
+import { LevelCompletionService } from './level-completion.service';
+
+// --- Test fixtures ---
+
+const TEST_GAME_ID: MinigameId = 'module-assembly';
+
+const testLevels: LevelDefinition<unknown>[] = [
+  {
+    levelId: 'ma-basic-01',
+    gameId: TEST_GAME_ID,
+    tier: DifficultyTier.Basic,
+    order: 1,
+    title: 'L1',
+    conceptIntroduced: 'c1',
+    description: 'd1',
+    data: {},
+  },
+  {
+    levelId: 'ma-basic-02',
+    gameId: TEST_GAME_ID,
+    tier: DifficultyTier.Basic,
+    order: 2,
+    title: 'L2',
+    conceptIntroduced: 'c2',
+    description: 'd2',
+    data: {},
+  },
+  {
+    levelId: 'ma-inter-01',
+    gameId: TEST_GAME_ID,
+    tier: DifficultyTier.Intermediate,
+    order: 1,
+    title: 'L3',
+    conceptIntroduced: 'c3',
+    description: 'd3',
+    data: {},
+  },
+  {
+    levelId: 'ma-adv-01',
+    gameId: TEST_GAME_ID,
+    tier: DifficultyTier.Advanced,
+    order: 1,
+    title: 'L4',
+    conceptIntroduced: 'c4',
+    description: 'd4',
+    data: {},
+  },
+  {
+    levelId: 'ma-boss-01',
+    gameId: TEST_GAME_ID,
+    tier: DifficultyTier.Boss,
+    order: 1,
+    title: 'L5',
+    conceptIntroduced: 'c5',
+    description: 'd5',
+    data: {},
+  },
+];
+
+function makeResult(overrides: Partial<MinigameResult> = {}): MinigameResult {
+  return {
+    gameId: TEST_GAME_ID,
+    levelId: 'ma-basic-01',
+    score: 100,
+    perfect: false,
+    timeElapsed: 30,
+    xpEarned: 0,
+    starRating: 1,
+    ...overrides,
+  };
+}
+
+function createFakeStorage(): Storage {
+  const store = new Map<string, string>();
+  return {
+    getItem: (key: string) => store.get(key) ?? null,
+    setItem: (key: string, value: string) => store.set(key, value),
+    removeItem: (key: string) => {
+      store.delete(key);
+    },
+    clear: () => store.clear(),
+    key: (i: number) => [...store.keys()][i] ?? null,
+    get length() {
+      return store.size;
+    },
+  } as Storage;
+}
+
+describe('LevelCompletionService', () => {
+  let service: LevelCompletionService;
+  let levelProgression: LevelProgressionService;
+  let fakeStorage: Storage;
+  let originalLocalStorage: Storage;
+
+  beforeEach(() => {
+    fakeStorage = createFakeStorage();
+    originalLocalStorage = window.localStorage;
+
+    Object.defineProperty(window, 'localStorage', {
+      value: fakeStorage,
+      writable: true,
+      configurable: true,
+    });
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({});
+
+    levelProgression = TestBed.inject(LevelProgressionService);
+    levelProgression.registerLevels(testLevels);
+    service = TestBed.inject(LevelCompletionService);
+  });
+
+  afterEach(() => {
+    Object.defineProperty(window, 'localStorage', {
+      value: originalLocalStorage,
+      writable: true,
+      configurable: true,
+    });
+  });
+
+  // 1. Basic DI smoke test
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+
+  // 2. Summary has correct score
+  it('should return a LevelCompletionSummary with correct score', () => {
+    const summary = service.completeLevel(makeResult({ score: 100 }));
+    expect(summary.score).toBe(100);
+  });
+
+  // 3. XP from tier (Basic = 15) for non-perfect
+  it('should calculate XP from tier (Basic = 15) for non-perfect', () => {
+    const summary = service.completeLevel(
+      makeResult({ perfect: false }),
+    );
+    expect(summary.xpEarned).toBe(15);
+  });
+
+  // 4. XP with perfect bonus (Basic = 30)
+  it('should calculate XP with perfect bonus (Basic = 30)', () => {
+    const summary = service.completeLevel(
+      makeResult({ perfect: true }),
+    );
+    expect(summary.xpEarned).toBe(30);
+    expect(summary.bonuses.perfect).toBe(true);
+  });
+
+  // 5. XP for Intermediate tier (20 base, 40 perfect)
+  it('should calculate XP for Intermediate tier (20 base, 40 perfect)', () => {
+    const nonPerfect = service.completeLevel(
+      makeResult({ levelId: 'ma-inter-01', perfect: false }),
+    );
+    expect(nonPerfect.xpEarned).toBe(20);
+
+    const perfect = service.completeLevel(
+      makeResult({ levelId: 'ma-inter-01', perfect: true }),
+    );
+    expect(perfect.xpEarned).toBe(40);
+  });
+
+  // 6. XP for Boss tier (150 base, 300 perfect)
+  it('should calculate XP for Boss tier (150 base, 300 perfect)', () => {
+    const nonPerfect = service.completeLevel(
+      makeResult({ levelId: 'ma-boss-01', perfect: false }),
+    );
+    expect(nonPerfect.xpEarned).toBe(150);
+
+    const perfect = service.completeLevel(
+      makeResult({ levelId: 'ma-boss-01', perfect: true }),
+    );
+    expect(perfect.xpEarned).toBe(300);
+  });
+
+  // 7. Apply streak multiplier to XP
+  it('should apply streak multiplier to XP', () => {
+    const summary = service.completeLevel(
+      makeResult({ perfect: false }),
+      { streakMultiplier: 1.3 },
+    );
+    expect(summary.xpEarned).toBe(Math.round(15 * 1.3)); // 20
+    expect(summary.bonuses.streak).toBe(true);
+  });
+
+  // 8. Default streak multiplier to 1.0
+  it('should default streak multiplier to 1.0', () => {
+    const summary = service.completeLevel(
+      makeResult({ perfect: false }),
+    );
+    expect(summary.xpEarned).toBe(15);
+    expect(summary.bonuses.streak).toBe(false);
+  });
+
+  // 9. Detect rank-up
+  it('should detect rank-up', () => {
+    // Start at 490 XP (Cadet). Basic perfect = 30 XP -> 520 -> Ensign
+    TestBed.inject(GameStateService).addXp(490);
+    const summary = service.completeLevel(
+      makeResult({ perfect: true }),
+    );
+    expect(summary.rankUpOccurred).toBe(true);
+  });
+
+  // 10. No rank-up when rank stays same
+  it('should not flag rank-up when rank stays same', () => {
+    // Start at 0 XP. Basic non-perfect = 15 XP -> still Cadet
+    const summary = service.completeLevel(
+      makeResult({ perfect: false }),
+    );
+    expect(summary.rankUpOccurred).toBe(false);
+  });
+
+  // 11. isNewBestScore on first completion
+  it('should detect isNewBestScore on first completion', () => {
+    const summary = service.completeLevel(
+      makeResult({ score: 100 }),
+    );
+    expect(summary.isNewBestScore).toBe(true);
+  });
+
+  // 12. isNewBestScore when score improves
+  it('should detect isNewBestScore when score improves', () => {
+    service.completeLevel(makeResult({ score: 100 }));
+    const summary = service.completeLevel(makeResult({ score: 200 }));
+    expect(summary.isNewBestScore).toBe(true);
+  });
+
+  // 13. Not isNewBestScore when score is lower
+  it('should not flag isNewBestScore when score is lower', () => {
+    service.completeLevel(makeResult({ score: 200 }));
+    const summary = service.completeLevel(makeResult({ score: 100 }));
+    expect(summary.isNewBestScore).toBe(false);
+  });
+
+  // 14. Record completion in LevelProgressionService
+  it('should record completion in LevelProgressionService', () => {
+    service.completeLevel(makeResult({ levelId: 'ma-basic-01' }));
+    const progress = levelProgression.getLevel('ma-basic-01');
+    expect(progress).not.toBeNull();
+    expect(progress!.completed).toBe(true);
+  });
+
+  // 15. Update mastery via MasteryService
+  it('should update mastery via MasteryService', () => {
+    const mastery = TestBed.inject(MasteryService);
+    const spy = vi.spyOn(mastery, 'updateMastery');
+    service.completeLevel(makeResult());
+    expect(spy).toHaveBeenCalledWith(TEST_GAME_ID);
+  });
+
+  // 16. Return star rating from the result
+  it('should return star rating from the result', () => {
+    const summary = service.completeLevel(
+      makeResult({ starRating: 3 }),
+    );
+    expect(summary.starRating).toBe(3);
+  });
+
+  // 17. Throw for unregistered level
+  it('should throw for unregistered level', () => {
+    expect(() =>
+      service.completeLevel(makeResult({ levelId: 'unknown-level' })),
+    ).toThrowError(/Level definition not found/);
+  });
+});

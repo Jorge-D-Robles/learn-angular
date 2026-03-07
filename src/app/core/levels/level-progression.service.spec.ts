@@ -323,6 +323,26 @@ describe('LevelProgressionService', () => {
     });
   });
 
+  // --- getLevelDefinition ---
+
+  describe('getLevelDefinition', () => {
+    beforeEach(() => {
+      service.registerLevels(testLevels);
+    });
+
+    it('should return definition for registered level', () => {
+      const def = service.getLevelDefinition('ma-basic-01');
+      expect(def).not.toBeNull();
+      expect(def!.levelId).toBe('ma-basic-01');
+      expect(def!.gameId).toBe(TEST_GAME_ID);
+      expect(def!.tier).toBe(DifficultyTier.Basic);
+    });
+
+    it('should return null for unknown levelId', () => {
+      expect(service.getLevelDefinition('nonexistent')).toBeNull();
+    });
+  });
+
   // --- resetProgress ---
 
   describe('resetProgress', () => {

@@ -145,6 +145,11 @@ export class LevelProgressionService {
     return completedCount / tierLevels.length;
   }
 
+  /** Returns the level definition for a given levelId, or null if not registered. */
+  getLevelDefinition(levelId: string): LevelDefinition | null {
+    return this._levels().find((l) => l.levelId === levelId) ?? null;
+  }
+
   /** Returns progress for a single level, or null if no progress recorded. */
   getLevel(levelId: string): LevelProgress | null {
     return this._progress().get(levelId) ?? null;
