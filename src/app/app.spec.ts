@@ -81,4 +81,24 @@ describe('App', () => {
     expect(main).toBeTruthy();
     expect(main.classList.contains('content')).toBe(true);
   });
+
+  it('should render the app-body wrapper', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const appBody = fixture.nativeElement.querySelector('div.app-body');
+    expect(appBody).toBeTruthy();
+    const sideNav = appBody.querySelector('app-side-nav');
+    expect(sideNav).toBeTruthy();
+    const content = appBody.querySelector('main.content');
+    expect(content).toBeTruthy();
+  });
+
+  it('should render the side nav component', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const sideNav = fixture.nativeElement.querySelector(
+      '.app-body app-side-nav',
+    );
+    expect(sideNav).toBeTruthy();
+  });
 });

@@ -24,28 +24,6 @@ Acceptance criteria:
 - [ ] CI caches `node_modules` for faster runs
 - [ ] Workflow badge can be added to README (URL is valid)
 
-### T-2026-010
-- Title: Add side navigation for desktop layout
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P0
-- Depends: T-2026-009
-- Blocked-by: —
-- Tags: navigation, layout, component, ui
-- Refs: docs/ux/navigation.md
-
-Add a side navigation panel for desktop (> 1024px) with links: Dashboard, Current Mission, Minigames, Profile. Uses `routerLink` directives and `routerLinkActive` for active state.
-
-Acceptance criteria:
-- [ ] `SideNavComponent` renders four navigation links (Dashboard, Current Mission, Minigames, Profile)
-- [ ] Navigation links use `routerLink` and `routerLinkActive`
-- [ ] Side nav is visible only on desktop (> 1024px), hidden on tablet and mobile
-- [ ] Active link is visually highlighted using accent color from design tokens
-- [ ] Side nav uses Hull background color with Bulkhead border
-- [ ] Unit tests verify links render and active state logic
-
 ### T-2026-011
 - Title: Add bottom navigation for mobile layout
 - Status: todo

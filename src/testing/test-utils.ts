@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Type, Provider } from '@angular/core';
+import { Type, Provider, EnvironmentProviders } from '@angular/core';
 
 /**
  * Options for createComponent helper.
  */
 export interface CreateComponentOptions {
   imports?: Type<unknown>[];
-  providers?: Provider[];
+  providers?: (Provider | EnvironmentProviders)[];
   /** Whether to call detectChanges after creation. Defaults to true. */
   detectChanges?: boolean;
 }

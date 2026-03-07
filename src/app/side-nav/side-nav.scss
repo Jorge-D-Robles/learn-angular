@@ -1,0 +1,50 @@
+// Side Navigation — desktop only (> 1024px)
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  flex-shrink: 0;
+  background-color: var(--nx-color-hull);
+  border-right: 1px solid var(--nx-color-bulkhead);
+  overflow-y: auto;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  padding: var(--nx-space-4) 0;
+}
+
+a {
+  display: block;
+  padding: var(--nx-space-3) var(--nx-space-4);
+  color: var(--nx-color-corridor);
+  text-decoration: none;
+  font-size: var(--nx-text-body-size);
+  font-weight: var(--nx-text-body-weight);
+  border-left: 3px solid transparent;
+  transition:
+    color var(--nx-duration-fast) var(--nx-ease-out),
+    background-color var(--nx-duration-fast) var(--nx-ease-out),
+    border-color var(--nx-duration-fast) var(--nx-ease-out);
+
+  &:hover {
+    color: var(--nx-color-display);
+    background-color: var(--nx-color-bulkhead);
+  }
+
+  &.active {
+    color: var(--nx-color-reactor-blue);
+    border-left-color: var(--nx-color-reactor-blue);
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Responsive — hide on tablet and mobile (<= 1024px)
+// ---------------------------------------------------------------------------
+@media (max-width: 1024px) {
+  :host {
+    display: none;
+  }
+}
