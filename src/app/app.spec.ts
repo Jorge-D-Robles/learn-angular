@@ -110,4 +110,12 @@ describe('App', () => {
     );
     expect(bottomNav).toBeTruthy();
   });
+
+  it('should render the xp notification component', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const xpNotification =
+      fixture.nativeElement.querySelector('nx-xp-notification');
+    expect(xpNotification).toBeTruthy();
+  });
 });

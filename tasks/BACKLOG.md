@@ -413,8 +413,8 @@ Acceptance criteria:
 
 ### T-2026-125
 - Title: Add XpNotificationComponent to app shell root
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -431,6 +431,7 @@ Acceptance criteria:
 - [ ] XP notifications display correctly when XP is awarded from any route
 - [ ] Notifications stack and auto-dismiss as designed
 - [ ] Unit test: verify XpNotificationComponent is present in app template
+- Started: 2026-03-07
 
 ### T-2026-126
 - Title: Create core module root barrel export
