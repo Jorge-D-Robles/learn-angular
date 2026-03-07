@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-057**: Create ConfirmDialogComponent for destructive actions (Assigned: claude, Status: in-progress)
 
 
 
