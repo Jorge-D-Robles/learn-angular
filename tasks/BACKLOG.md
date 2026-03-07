@@ -2,26 +2,6 @@
 
 ## P0 -- Setup & Design
 
-### T-2026-002
-- Title: Configure ESLint with Angular-specific rules
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P0
-- Depends: T-2026-001
-- Blocked-by: —
-- Tags: tooling, lint, code-quality
-- Refs: docs/overview.md
-
-Set up ESLint using `angular-eslint` with a reasonable default configuration for an Angular 21 project.
-
-Acceptance criteria:
-- [ ] `ng lint` runs without errors on the scaffolded project
-- [ ] ESLint config includes `@angular-eslint/recommended` rules
-- [ ] TypeScript-specific rules are enabled (no-explicit-any warn, no-unused-vars error)
-- [ ] ESLint config file is committed (`.eslintrc.json` or `eslint.config.js`)
-
 ### T-2026-003
 - Title: Configure Prettier for code formatting
 - Status: todo

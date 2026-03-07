@@ -15,7 +15,6 @@ Started: 2026-03-06
 ---
 
 ## Queue
-### T-2026-002 — Configure ESLint with Angular-specific rules [high, S] (dep: T-2026-001)
 ### T-2026-004 — Verify and configure Vitest test runner [high, S] (dep: T-2026-001)
 ### T-2026-007 — Define design tokens as SCSS variables and CSS custom properties [high, M] (dep: T-2026-001)
 ### T-2026-012 — Configure application routing with lazy-loaded route stubs [high, M] (dep: T-2026-001)
