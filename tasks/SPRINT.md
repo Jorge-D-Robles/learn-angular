@@ -15,7 +15,7 @@ Started: 2026-03-06
 ---
 
 ## Queue
-### T-2026-005 — Set up Playwright for end-to-end testing [medium, S] (dep: T-2026-001)
+### T-2026-036 — Clean up Angular CLI boilerplate from app template [high, S] (dep: T-2026-001)
 ### T-2026-008 — Create global base styles and CSS reset [medium, S] (dep: T-2026-007)
 ### T-2026-014 — Create shared UI component library barrel exports [medium, S] (dep: T-2026-001)
 ### T-2026-009 — Create app shell layout component with top bar [high, M] (dep: T-2026-007, T-2026-008)
@@ -28,4 +28,4 @@ Started: 2026-03-06
 
 ## Done This Sprint
 
-*(none yet)*
+- T-2026-005: Set up Playwright e2e testing with 2 smoke tests

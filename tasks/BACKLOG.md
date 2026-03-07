@@ -2,26 +2,6 @@
 
 ## P0 -- Setup & Design
 
-### T-2026-005
-- Title: Set up Playwright for end-to-end testing
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P0
-- Depends: T-2026-001
-- Blocked-by: —
-- Tags: testing, tooling, e2e, playwright
-- Refs: docs/overview.md
-
-Add Playwright for end-to-end testing with a basic smoke test.
-
-Acceptance criteria:
-- [ ] Playwright is installed and configured (`playwright.config.ts` exists)
-- [ ] A basic smoke test exists that navigates to `/` and verifies the page loads
-- [ ] `npx playwright test` runs and passes the smoke test
-- [ ] Playwright test directory is at `e2e/`
-
 ### T-2026-006
 - Title: Configure CI pipeline with GitHub Actions
 - Status: todo
@@ -151,6 +131,48 @@ Acceptance criteria:
 - [ ] Route parameter components (MissionPage, LevelSelectPage, MinigamePlayPage) display their route params
 - [ ] NotFoundPage displays a "Hull Breach - Section Not Found" message
 - [ ] All components have basic unit tests
+
+### T-2026-036
+- Title: Clean up Angular CLI boilerplate from app template
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P0
+- Depends: T-2026-001
+- Blocked-by: —
+- Tags: cleanup, template, app-shell
+- Refs: src/app/app.html
+
+The `app.html` file still contains the default Angular CLI placeholder template (giant SVG logo, "Hello, learn-angular" heading, etc.) alongside the `<router-outlet>`. The boilerplate `<main>` block should be removed, leaving only `<router-outlet />`.
+
+Acceptance criteria:
+- [ ] `app.html` contains only `<router-outlet />` (and any app shell wrapper needed)
+- [ ] No Angular CLI boilerplate content remains
+- [ ] All existing tests still pass
+- [ ] E2e tests still pass
+
+### T-2026-037
+- Title: Investigate Angular 21 Vite dev server routing bug
+- Status: todo
+- Assigned: human
+- Priority: medium
+- Size: S
+- Milestone: P0
+- Depends: —
+- Blocked-by: —
+- Tags: bug, investigation, angular, vite, routing
+- Refs: playwright.config.ts
+
+Angular 21's Vite-based dev server (`ng serve` in development mode) has a bug where the Router's `ROUTES` multi-provider is not populated — `router.config` is an empty array at runtime, causing no route components to render. The production build and `ng serve --configuration production` both work correctly. This is an Angular 21 / Vite dev server regression, not a project configuration issue.
+
+Current workaround: e2e tests use `ng serve --configuration production` in `playwright.config.ts`.
+
+Acceptance criteria:
+- [ ] Root cause identified (Angular issue tracker link if available)
+- [ ] Determine if this is a known Angular 21 bug or a project config issue
+- [ ] If fixable: apply fix and update playwright.config.ts to use plain `ng serve`
+- [ ] If not fixable: document the workaround and link to the upstream issue
 
 ### T-2026-014
 - Title: Create shared UI component library barrel exports

@@ -4,6 +4,7 @@
 /tmp/
 /coverage/
 /e2e/test-output/
+/playwright-report/
 /.angular/
 .angular/
 
