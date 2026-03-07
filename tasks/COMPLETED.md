@@ -48,3 +48,4 @@
 [2026-03-07] T-2026-134: Create keyboard shortcut service for minigame controls — added KeyboardShortcutService with register/unregister/dispatch, isEnabled signal, case normalization, 10 tests (claude)
 [2026-03-07] T-2026-124: Wire top bar to display live rank and XP from services — wired top bar to live XpService signals: dynamic rank, XpProgressBarComponent, settings routerLink, 698 tests (claude)
 [2026-03-07] T-2026-135: Create PauseMenuComponent for minigame pause overlay — pause menu overlay with keyboard nav, quit confirmation, and shortcuts display (claude)
+[2026-03-07] T-2026-136: Integrate StreakService XP multiplier with XpService — streak multiplier auto-applied to level XP via applyStreakBonus method (claude)

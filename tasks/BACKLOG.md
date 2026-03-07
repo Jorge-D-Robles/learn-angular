@@ -551,28 +551,6 @@ Acceptance criteria:
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: rendering at each state, multiplier display, aria-label
 
-### T-2026-136
-- Title: Integrate StreakService XP multiplier with XpService
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-027, T-2026-021
-- Blocked-by: —
-- Tags: integration, progression, streak, xp
-- Refs: docs/progression.md
-
-Progression.md specifies "+10% per consecutive day, caps at +50% (5 days)" streak bonus on XP. StreakService tracks streaks and XpService calculates XP, but they are not connected. XP awards should be multiplied by the streak bonus.
-
-Acceptance criteria:
-- [ ] XpService's `addXp()` or `calculateLevelXp()` applies streak multiplier from StreakService
-- [ ] Multiplier formula: `1 + (streak.multiplier)` where multiplier is 0.1 per day, capped at 0.5
-- [ ] XP notification shows base XP and streak bonus separately (e.g., "20 XP + 6 streak bonus")
-- [ ] No streak bonus for 0-day streaks (multiplier = 1.0x)
-- [ ] Unit tests for: XP calculation with streak, cap at 50%, no bonus at 0 streak
-- [ ] Existing XpService tests updated to account for streak integration
-
 ### T-2026-158
 - Title: Create WireDrawService for wire-drawing interaction mechanics
 - Status: todo
@@ -2982,3 +2960,23 @@ Acceptance criteria:
 - [ ] Streak display: shows current daily streak and multiplier
 - [ ] Integrates with DailyChallengeService for challenge data and completion
 - [ ] Unit tests for: challenge display, completed state, streak display, countdown timer
+
+### T-2026-179
+- Title: Apply streak bonus to story mission XP in GameProgressionService
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-136
+- Blocked-by: —
+- Tags: progression, streak, xp, story-missions
+- Refs: src/app/core/progression/game-progression.service.ts, src/app/core/progression/xp.service.ts
+
+Follow-up from T-2026-136. GameProgressionService.completeMission() calls xpService.addXp(xpService.calculateStoryXp()) with no streak logic. It should use xpService.applyStreakBonus() to apply the streak multiplier to story mission XP, matching the pattern established in LevelCompletionService.
+
+Acceptance criteria:
+- [ ] GameProgressionService.completeMission() uses xpService.applyStreakBonus(storyXp) to apply streak bonus
+- [ ] Story mission XP notifications show streak bonus breakdown (e.g., "+5 Streak Bonus")
+- [ ] Unit tests verify streak bonus is applied to story mission XP
+- [ ] Unit tests verify notification format with streak bonus
