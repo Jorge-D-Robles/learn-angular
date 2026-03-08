@@ -649,29 +649,6 @@ Acceptance criteria:
 - [ ] No runtime behavior change
 - [ ] Existing tests pass
 
-### T-2026-301
-- Title: Wire PlayMode context into MinigamePlayPage and replay mode pages
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-289, T-2026-223
-- Blocked-by: —
-- Tags: integration, play-mode, minigame-play, context
-- Refs: src/app/pages/minigame-play/minigame-play.ts, src/app/core/minigame/minigame.types.ts
-
-T-2026-289 added PlayMode enum and `setPlayMode()` to MinigameEngine, but MinigamePlayPage never calls `setPlayMode()`. The engine always runs in PlayMode.Story regardless of whether the player is in story mode, endless mode, speed run, or daily challenge. This means replay mode pages cannot differentiate behavior (e.g., no diminishing returns in endless mode, different scoring in speed run).
-
-Acceptance criteria:
-- [ ] MinigamePlayPage calls `engine.setPlayMode(PlayMode.Story)` during level initialization
-- [ ] EndlessModePage sets `PlayMode.Endless` when initializing its engine
-- [ ] SpeedRunPage sets `PlayMode.SpeedRun` when initializing its engine
-- [ ] DailyChallengePage sets `PlayMode.DailyChallenge` when initializing its engine
-- [ ] PlayMode is available to downstream services (e.g., LevelCompletionService can check if replay mode to skip diminishing returns)
-- [ ] Unit tests for: play mode set on each page type
-- Started: 2026-03-08
-
 ### T-2026-302
 - Title: Add MinigameScoreConfig to MinigameConfig for per-game scoring parameters
 - Status: todo

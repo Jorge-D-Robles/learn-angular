@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-301**: Wire PlayMode context into MinigamePlayPage and replay mode pages (Assigned: claude, Status: in-progress)
 
 
 
