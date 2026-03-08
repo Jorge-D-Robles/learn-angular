@@ -122,32 +122,6 @@ Acceptance criteria:
 
 ## P2 -- Foundations Bundle
 
-### T-2026-060
-- Title: Create Module Assembly minigame UI component
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P2
-- Depends: T-2026-059, T-2026-018, T-2026-054
-- Blocked-by: —
-- Tags: minigame, module-assembly, component, ui
-- Refs: docs/minigames/01-module-assembly.md, docs/ux/visual-style.md
-
-Build the visual UI for Module Assembly: conveyor belt with scrolling parts, component blueprint with labeled slots, drag-and-drop interaction, and visual feedback for correct/incorrect placements.
-
-Acceptance criteria:
-- [ ] `ModuleAssemblyComponent` at `src/app/features/minigames/module-assembly/module-assembly.component.ts`
-- [ ] Conveyor belt renders scrolling parts from right to left at configurable speed
-- [ ] Blueprint area displays labeled slots (@Component, selector, template, styles, class body, imports)
-- [ ] Parts are draggable (using DragDropService) from belt to slots
-- [ ] Color coding: decorators (purple), template (blue), styles (green), class (orange)
-- [ ] Correct placement: snap animation + particle burst
-- [ ] Wrong placement: red flash + bounce back to belt
-- [ ] Completed component: "powers up" glow effect
-- [ ] Keyboard support: number keys to select slot, spacebar to grab next part
-- [ ] Unit tests for: part rendering, drag-to-slot interaction, visual feedback states
-
 ### T-2026-061
 - Title: Register Module Assembly in MinigameRegistry and wire routes
 - Status: todo
@@ -2153,6 +2127,359 @@ Acceptance criteria:
 - [ ] Spinner replaced with level list once data is available
 - [ ] ErrorStateComponent shown if level data fails to load
 - [ ] Unit tests for: loading state shown, spinner replaced on data load, error state on failure
+
+### T-2026-410
+- Title: Wire ConveyorBeltService into ModuleAssemblyEngine initialize and tick lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-059, T-2026-244
+- Blocked-by: —
+- Tags: integration, minigame, module-assembly, conveyor-belt, engine
+- Refs: docs/minigames/01-module-assembly.md, src/app/features/minigames/module-assembly/module-assembly.engine.ts, src/app/features/minigames/module-assembly/conveyor-belt.service.ts
+
+ModuleAssemblyEngine (T-2026-059, completed) manages belt state internally with a simple parts array. ConveyorBeltService (T-2026-244, completed) provides a richer belt model with BeltPart positions, tick-based movement, exhaustion detection, and staggered reset. The engine should delegate belt management to ConveyorBeltService so the UI component (T-2026-060) can bind to ConveyorBeltService signals for animated belt rendering. Without this wiring, the UI must duplicate belt position logic or the engine and service fall out of sync.
+
+Acceptance criteria:
+- [ ] ModuleAssemblyEngine accepts optional ConveyorBeltService via config or injection
+- [ ] Engine.initialize() calls ConveyorBeltService.loadParts() with level data parts
+- [ ] Engine tick/timer delegates belt advancement to ConveyorBeltService.tick()
+- [ ] Engine.submitAction('place-part') removes the part from ConveyorBeltService
+- [ ] Engine.submitAction('reject-decoy') removes the part from ConveyorBeltService
+- [ ] ConveyorBeltService.isExhausted signal drives engine win/lose evaluation
+- [ ] Existing engine unit tests updated; 6+ new integration tests for service delegation
+- [ ] Barrel export unchanged (service already exported)
+
+### T-2026-411
+- Title: Create FlowCommanderSimulationService for pipeline cargo routing
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P2
+- Depends: T-2026-255
+- Blocked-by: —
+- Tags: minigame, flow-commander, service, simulation
+- Refs: docs/minigames/03-flow-commander.md, src/app/features/minigames/flow-commander/pipeline.types.ts
+
+Flow Commander spec describes a pipeline simulation: "Press 'Run' to watch items flow through the system" and "Condition editor starts as a dropdown builder, graduates to raw expression input at advanced levels." The engine (T-2026-067) bundles simulation, gate evaluation, and routing into one L-size class. Extracting the pipeline simulation into a standalone service reduces engine complexity and makes the simulation independently testable. This follows the ConveyorBeltService pattern established for Module Assembly.
+
+Acceptance criteria:
+- [ ] `FlowCommanderSimulationService` at `src/app/features/minigames/flow-commander/flow-commander-simulation.service.ts`
+- [ ] `loadPipeline(topology: PipelineGraph)`: initializes the simulation graph from level data
+- [ ] `placeGate(junctionId: string, gateType: GateType, condition: string)`: places a gate at a junction
+- [ ] `removeGate(junctionId: string)`: removes a gate from a junction
+- [ ] `simulate(): SimulationResult`: runs all cargo items through the pipeline, returning per-item routing results
+- [ ] `evaluateCondition(condition: string, item: CargoPod): boolean`: evaluates a gate condition against an item
+- [ ] `getGateState(): Signal<Map<string, PlacedGate>>`: signal of current gate placements
+- [ ] `getSimulationResult(): Signal<SimulationResult | null>`: signal of last simulation result
+- [ ] `reset()`: clears all gates and simulation results
+- [ ] Exported from flow-commander barrel
+- [ ] Unit tests for: gate placement, condition evaluation against cargo properties, multi-gate routing, @if filtering, @for duplication, @switch branching, empty pipeline, dead-end detection
+
+### T-2026-412
+- Title: Create SignalCorpsWaveService for noise wave simulation and blocking
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P2
+- Depends: T-2026-256
+- Blocked-by: —
+- Tags: minigame, signal-corps, service, simulation, tower-defense
+- Refs: docs/minigames/04-signal-corps.md, src/app/features/minigames/signal-corps/signal-corps.types.ts
+
+Signal Corps spec describes wave-based tower defense: "Noise waves approach from the edges; configured towers emit blocking signals" and "Wave spawning is configurable per level for difficulty scaling." The engine (T-2026-071) is L-size and bundles wave spawning, approach timing, blocking evaluation, and damage tracking. Extracting the wave simulation into a standalone service reduces engine complexity and enables independent testing of wave mechanics. This follows the ConveyorBeltService pattern.
+
+Acceptance criteria:
+- [ ] `SignalCorpsWaveService` at `src/app/features/minigames/signal-corps/signal-corps-wave.service.ts`
+- [ ] `loadWaves(waves: NoiseWave[], config: WaveConfig)`: initializes waves from level data
+- [ ] `startWave(waveIndex: number)`: begins spawning noise signals for the wave
+- [ ] `tick(deltaMs: number)`: advances all active noise signals toward towers
+- [ ] `evaluateBlocking(towers: TowerConfig[]): BlockingResult`: checks which signals are blocked by correctly configured towers
+- [ ] `applyDamage(unblocked: NoiseSignal[]): number`: calculates station damage from unblocked signals
+- [ ] `isWaveComplete(): boolean`: returns true when all signals in current wave are resolved
+- [ ] `activeSignals: Signal<NoiseSignal[]>`: signal of currently active noise signals with positions
+- [ ] `stationHealth: Signal<number>`: signal of remaining station health (100 to 0)
+- [ ] `reset()`: resets all wave state and health
+- [ ] Exported from signal-corps barrel
+- [ ] Unit tests for: wave spawning, signal approach timing, blocking by correct tower config, damage from unblocked signals, wave completion, multi-wave progression, health depletion to zero
+
+### T-2026-413
+- Title: Create WireProtocolValidationService for binding type correctness checking
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-258
+- Blocked-by: —
+- Tags: minigame, wire-protocol, service, validation
+- Refs: docs/minigames/02-wire-protocol.md, src/app/features/minigames/wire-protocol/wire-protocol.types.ts
+
+Wire Protocol spec says "Validation checks type correctness AND source-target compatibility" and describes 4 wire types: interpolation (blue), property (green), event (orange), two-way (purple). Pre-wired connections can be intentionally wrong with "common beginner mistakes (e.g., using {{ }} where [ ] is needed)." The engine (T-2026-063) bundles validation into its L-size class. Extracting wire validation into a standalone service makes validation rules testable in isolation and reusable by the UI for instant feedback.
+
+Acceptance criteria:
+- [ ] `WireProtocolValidationService` at `src/app/features/minigames/wire-protocol/wire-protocol-validation.service.ts`
+- [ ] `validateWire(wire: Wire): WireValidationResult`: checks source-target compatibility and wire type correctness
+- [ ] `isCorrectBindingType(source: Port, target: Port, wireType: WireType): boolean`: determines if the wire type matches the binding semantics
+- [ ] `getExpectedWireType(source: Port, target: Port): WireType`: returns the correct wire type for a source-target pair
+- [ ] `validateAll(wires: Wire[], expectedWires: CorrectWire[]): VerificationResult`: checks all wires against solution, returns per-wire pass/fail
+- [ ] `getCommonMistake(source: Port, target: Port, incorrectType: WireType): string | null`: returns a hint describing the common mistake
+- [ ] Handles all 4 binding types: interpolation, property, event, twoWay
+- [ ] Exported from wire-protocol barrel
+- [ ] Unit tests for: each binding type validation, source-target compatibility, common mistake detection, full verification pass/fail, pre-wired incorrect detection
+
+### T-2026-414
+- Title: Create integration test for P2 level pack registration via provideLevelData factory
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-137, T-2026-138, T-2026-139, T-2026-140
+- Blocked-by: —
+- Tags: testing, integration, level-data, p2, infrastructure
+- Refs: src/app/data/levels/provide-level-data.ts, src/app/core/levels/level-loader.service.ts
+
+T-2026-137 (completed) registered Module Assembly level data, and T-2026-138/139/140 will register Wire Protocol, Flow Commander, and Signal Corps. The provideLevelData factory and LevelLoaderService have unit tests, but no integration test verifies that all 4 P2 level packs coexist correctly: no ID collisions, all 72 levels (4 x 18) accessible, tier grouping correct across games.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/data/levels/p2-level-packs.integration.spec.ts`
+- [ ] Test: registers all 4 P2 level packs via provideLevelData in a single TestBed
+- [ ] Test: LevelLoaderService.getLevelPack() returns correct pack for each of the 4 gameIds
+- [ ] Test: total of 72 levels accessible across all 4 games (18 each)
+- [ ] Test: no level ID collisions between games
+- [ ] Test: each pack has 4 tiers (basic, intermediate, advanced, boss)
+- [ ] Test: loadLevel() returns correct game-specific level data type for each game
+- [ ] Uses real LevelLoaderService and real level data constants
+
+### T-2026-415
+- Title: Create integration test for ConveyorBeltService + ModuleAssemblyEngine coordinated lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-410
+- Blocked-by: —
+- Tags: testing, integration, module-assembly, conveyor-belt, engine
+- Refs: docs/minigames/01-module-assembly.md, src/app/features/minigames/module-assembly/
+
+After T-2026-410 wires ConveyorBeltService into the engine, this integration test verifies the coordinated lifecycle: loading parts, tick-based belt advancement, part removal on placement/rejection, exhaustion triggering win/lose evaluation, and reset on retry.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/module-assembly/conveyor-engine.integration.spec.ts`
+- [ ] Test: engine.initialize() populates ConveyorBeltService with level parts
+- [ ] Test: belt tick advances part positions; parts reaching end trigger missed-part penalty
+- [ ] Test: placing a part via engine removes it from ConveyorBeltService
+- [ ] Test: rejecting a decoy via engine removes it from ConveyorBeltService
+- [ ] Test: ConveyorBeltService.isExhausted() triggers engine level evaluation
+- [ ] Test: engine.reset() resets ConveyorBeltService to initial state
+- [ ] Uses real ModuleAssemblyEngine and real ConveyorBeltService with level 1 data
+
+### T-2026-416
+- Title: Wire CodeEditorComponent into StoryMissionPage for interactive code examples
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-075, T-2026-031
+- Blocked-by: —
+- Tags: integration, story-missions, code-editor, ui
+- Refs: docs/ux/navigation.md, docs/curriculum.md, src/app/shared/components/code-editor/
+
+Navigation.md specifies story missions include "Interactive code examples (read-only, with highlights)." StoryMissionPage (T-2026-075) lists this as an acceptance criterion, and CodeEditorComponent (T-2026-031, completed) provides syntax highlighting with line highlighting. No ticket explicitly wires CodeEditorComponent into StoryMissionPage for rendering code snippets within mission steps. Without this, mission steps display plain text where Angular code examples should appear.
+
+Acceptance criteria:
+- [ ] StoryMissionPage renders CodeEditorComponent in read-only mode for mission steps that contain code examples
+- [ ] Code snippets from StoryMissionContent steps passed to CodeEditorComponent `code` input
+- [ ] `readOnly` input set to true to prevent editing
+- [ ] `highlightedLines` input bound to step-specific highlight ranges (e.g., highlighting the @Component decorator in Ch 1)
+- [ ] Multiple code blocks per step supported (some steps show before/after examples)
+- [ ] Code blocks use consistent sizing that does not overflow mobile viewport
+- [ ] Unit tests for: code editor renders in read-only mode, highlighted lines applied, multiple code blocks per step
+
+### T-2026-417
+- Title: Add CurriculumService dependency to story mission completion handler
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-407, T-2026-259
+- Blocked-by: —
+- Tags: integration, story-missions, curriculum, unlock-resolution
+- Refs: docs/curriculum.md, docs/overview.md, src/app/core/curriculum/curriculum.service.ts
+
+T-2026-259 (story mission completion handler) specifies "If mission unlocks a minigame, MissionUnlockNotificationService.showUnlock() triggered." But T-2026-259 does not list CurriculumService (T-2026-407, completed) as a dependency and has no acceptance criterion for HOW the handler determines which minigame a chapter unlocks. CurriculumService.getMinigameForChapter() provides this mapping. This ticket ensures the completion handler uses CurriculumService for unlock resolution rather than hardcoding the mapping.
+
+Acceptance criteria:
+- [ ] Story mission completion handler injects CurriculumService
+- [ ] Uses `CurriculumService.getMinigameForChapter(chapterId)` to determine which minigame (if any) to unlock
+- [ ] Chapters that don't unlock a minigame (Ch 9, 10, 27, 33, 34 per curriculum.md) skip the unlock step
+- [ ] Chapters that unlock "new levels" for an existing minigame (Ch 2, 3, 6, 8, etc.) are handled appropriately
+- [ ] Unit tests for: unlock called with correct minigameId, no unlock for non-unlocking chapters, "new levels" chapters handled
+
+### T-2026-418
+- Title: Create FlowCommanderGateConfigComponent for gate condition editing panel
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-255, T-2026-160, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, flow-commander, gate-config
+- Refs: docs/minigames/03-flow-commander.md, src/app/features/minigames/flow-commander/pipeline.types.ts
+
+Flow Commander spec describes gate configuration: "Click gate to configure its condition" with a "Condition editor -- simplified expression builder (not raw code at first)." The UI component (T-2026-068) is already Size L. Extracting the gate configuration panel into a standalone sub-component reduces T-2026-068's complexity. The panel wraps ExpressionBuilderComponent (T-2026-160, completed) with gate-specific context: gate type display (@if/@for/@switch icon), condition preview, available item properties, and apply/cancel buttons.
+
+Acceptance criteria:
+- [ ] `FlowCommanderGateConfigComponent` at `src/app/features/minigames/flow-commander/gate-config/gate-config.ts`
+- [ ] Input: `gateType` (GateType), `currentCondition` (string), `availableProperties` (string[]), `tierMode` ('guided' | 'raw')
+- [ ] Displays gate type icon and label (@if Filter, @for Duplicator, @switch Router)
+- [ ] Renders ExpressionBuilderComponent in guided mode for basic/intermediate tiers, raw mode for advanced
+- [ ] @for gate: shows track expression field in addition to iteration source
+- [ ] @switch gate: shows case value fields for each output lane
+- [ ] Output: `conditionApplied` event with configured condition string
+- [ ] Output: `cancelled` event
+- [ ] Station-themed panel styling: Hull background, Bulkhead border
+- [ ] Exported from flow-commander barrel
+- [ ] Unit tests for: gate type display, guided vs raw mode switching, condition apply event, cancel event, @switch case fields
+
+### T-2026-419
+- Title: Create SignalCorpsTowerConfigComponent for tower input/output declaration panel
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P2
+- Depends: T-2026-256, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, signal-corps, tower-config
+- Refs: docs/minigames/04-signal-corps.md, src/app/features/minigames/signal-corps/signal-corps.types.ts
+
+Signal Corps spec describes tower configuration: "Click tower -- open configuration panel" where the player declares inputs and outputs with name, type, required flag, and transforms. The UI component (T-2026-072) is already Size L. Extracting the tower configuration panel into a standalone sub-component reduces T-2026-072's complexity. The panel provides forms for adding/editing input() and output() declarations.
+
+Acceptance criteria:
+- [ ] `SignalCorpsTowerConfigComponent` at `src/app/features/minigames/signal-corps/tower-config/tower-config.ts`
+- [ ] Input: `tower` (TowerConfig), `parentProperties` (string[]), `parentHandlers` (string[])
+- [ ] Input declarations section: add/remove input() with name (text), type (dropdown: string, number, boolean, object), required toggle, transform dropdown (none, numberAttribute, booleanAttribute)
+- [ ] Output declarations section: add/remove output() with name (text), payload type (dropdown)
+- [ ] Wiring section: connect parent properties to tower inputs, connect tower outputs to parent handlers
+- [ ] Input ports glow blue, output ports glow orange (per visual-style.md)
+- [ ] Validation: highlights missing required fields, duplicate names, type mismatches
+- [ ] Output: `configApplied` event with updated TowerConfig
+- [ ] Output: `cancelled` event
+- [ ] Station-themed panel styling: Hull background, defense grid accent
+- [ ] Exported from signal-corps barrel
+- [ ] Unit tests for: input declaration add/remove, output declaration add/remove, required toggle, transform selection, validation errors, config apply event
+
+### T-2026-420
+- Title: Create WireProtocolBindingTypeSelectorComponent for wire type toggling
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-258, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, wire-protocol, binding-type
+- Refs: docs/minigames/02-wire-protocol.md, src/app/features/minigames/wire-protocol/wire-protocol.types.ts
+
+Wire Protocol spec describes a "Wire type selector -- toggle between binding types (keyboard: 1-4)" with color-coded types: blue (interpolation), green (property), orange (event), purple (two-way). The UI component (T-2026-064) is Size L. Extracting the binding type selector into a standalone sub-component reduces complexity and provides keyboard shortcut integration.
+
+Acceptance criteria:
+- [ ] `BindingTypeSelectorComponent` at `src/app/features/minigames/wire-protocol/binding-type-selector/binding-type-selector.ts`
+- [ ] Renders 4 toggle buttons for wire types: Interpolation (blue, key 1), Property (green, key 2), Event (orange, key 3), Two-Way (purple, key 4)
+- [ ] Input: `selectedType` (WireType), `availableTypes` (WireType[]) for levels that don't use all types
+- [ ] Output: `typeSelected` event with WireType
+- [ ] Keyboard shortcuts: number keys 1-4 select the corresponding type
+- [ ] Active type highlighted with glow border matching wire color
+- [ ] Unavailable types dimmed and non-interactive
+- [ ] ARIA: role="radiogroup", each button is role="radio" with aria-checked
+- [ ] Color coding matches visual-style.md: Reactor Blue, Sensor Green, Alert Orange, Comm Purple
+- [ ] Exported from wire-protocol barrel
+- [ ] Unit tests for: type selection via click, keyboard shortcut selection, active state highlight, unavailable type dimming, ARIA attributes
+
+### T-2026-421
+- Title: Create integration test for Flow Commander pipeline simulation with gate routing
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-411
+- Blocked-by: —
+- Tags: testing, integration, flow-commander, simulation
+- Refs: docs/minigames/03-flow-commander.md, src/app/features/minigames/flow-commander/
+
+After T-2026-411 creates FlowCommanderSimulationService, this integration test verifies the full simulation pipeline: loading a pipeline graph, placing gates with conditions, running the simulation, and validating item routing against target zones.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/flow-commander/pipeline-simulation.integration.spec.ts`
+- [ ] Test: @if gate filters items correctly (matching items pass, non-matching blocked)
+- [ ] Test: @for gate duplicates items for each entry in a list
+- [ ] Test: @switch gate routes items to correct output lanes based on value
+- [ ] Test: multi-gate pipeline routes items through sequential gates
+- [ ] Test: items reaching wrong targets counted as failures
+- [ ] Test: items reaching dead-ends counted as lost
+- [ ] Test: simulation with no gates results in all items reaching default target
+- [ ] Uses real FlowCommanderSimulationService with sample pipeline data
+
+### T-2026-422
+- Title: Create integration test for Signal Corps wave blocking with configured towers
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-412
+- Blocked-by: —
+- Tags: testing, integration, signal-corps, wave-simulation
+- Refs: docs/minigames/04-signal-corps.md, src/app/features/minigames/signal-corps/
+
+After T-2026-412 creates SignalCorpsWaveService, this integration test verifies the wave simulation: noise signals approaching, towers blocking based on correct input/output configuration, unblocked signals dealing damage, and station health depleting to zero.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/signal-corps/wave-simulation.integration.spec.ts`
+- [ ] Test: correctly configured tower blocks matching noise signal
+- [ ] Test: misconfigured tower (wrong input type) lets noise through
+- [ ] Test: unconfigured tower provides no blocking
+- [ ] Test: unblocked signal deals damage to station health
+- [ ] Test: station health reaching 0 triggers game over state
+- [ ] Test: all signals blocked in a wave triggers wave completion
+- [ ] Test: multi-wave progression with increasing difficulty
+- [ ] Uses real SignalCorpsWaveService with sample wave data
+
+### T-2026-423
+- Title: Create integration test for Wire Protocol binding type validation across all wire types
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-413
+- Blocked-by: —
+- Tags: testing, integration, wire-protocol, validation
+- Refs: docs/minigames/02-wire-protocol.md, src/app/features/minigames/wire-protocol/
+
+After T-2026-413 creates WireProtocolValidationService, this integration test verifies wire type validation across all 4 binding types and common mistake detection.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/wire-protocol/wire-validation.integration.spec.ts`
+- [ ] Test: interpolation wire between property source and {{ }} target validates correctly
+- [ ] Test: property wire between property source and [property] target validates correctly
+- [ ] Test: event wire between method source and (event) target validates correctly
+- [ ] Test: two-way wire between model source and [(ngModel)] target validates correctly
+- [ ] Test: wrong wire type (interpolation where property needed) returns validation failure with common mistake hint
+- [ ] Test: validateAll() returns per-wire pass/fail for a set of mixed correct and incorrect wires
+- [ ] Test: pre-wired incorrect connection detected as wrong on verification
+- [ ] Uses real WireProtocolValidationService with sample port/wire data
 
 ---
 
