@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-299**: Add error state rendering to MinigamePlayPage on level load failure (Assigned: claude, Status: in-progress)
 
 
 

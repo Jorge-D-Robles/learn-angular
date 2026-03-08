@@ -649,29 +649,6 @@ Acceptance criteria:
 - [ ] No runtime behavior change
 - [ ] Existing tests pass
 
-### T-2026-299
-- Title: Add error state rendering to MinigamePlayPage on level load failure
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-223, T-2026-131
-- Blocked-by: —
-- Tags: error-handling, minigame-play, ui
-- Refs: src/app/pages/minigame-play/minigame-play.ts, src/app/shared/components/error-state/error-state.ts
-
-MinigamePlayPage's level loading effect has an error handler that only calls `console.error('Failed to load level:', err)`. No visual feedback is shown to the player when a level fails to load (e.g., invalid level ID, missing level data). ErrorStateComponent (T-2026-131) exists but is not used here. The player sees a blank screen on failure.
-
-Acceptance criteria:
-- [ ] Add `loadError` signal to MinigamePlayPage (initially null, set on load failure)
-- [ ] Add a new `@case ('error')` to the viewState switch that renders ErrorStateComponent
-- [ ] ErrorStateComponent retry action re-triggers level loading
-- [ ] Error message includes the game name and level ID for context
-- [ ] `console.error` call remains for debugging but is supplemented by visual state
-- [ ] Unit tests for: error state rendering on load failure, retry action
-- Started: 2026-03-08
-
 ### T-2026-300
 - Title: Integrate HintService penalty into LevelCompletionService score flow
 - Status: todo

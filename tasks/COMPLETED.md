@@ -116,3 +116,4 @@
 [2026-03-08] T-2026-297: Fix top bar XP progress bar hardcoded nextRankXp value — replaced hardcoded nextRankXp with dynamic rankXpRange/rankXpProgress computed signals, 3 new tests (claude)
 [2026-03-08] T-2026-298: Compute star rating via ScoreCalculationService in MinigamePlayPage — compute star rating via ScoreCalculationService in MinigamePlayPage (claude)
 [2026-03-08] T-2026-308: Fix flaky DailyChallengeService streak extension test — fixed flaky streak extension test by seeding localStorage directly and replacing toLocaleDateString with manual formatter (claude)
+[2026-03-08] T-2026-299: Add error state rendering to MinigamePlayPage on level load failure — added error state rendering with ErrorStateComponent, retry support, and contextual error messages (claude)
