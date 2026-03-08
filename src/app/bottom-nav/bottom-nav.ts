@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { GameProgressionService } from '../core/progression/game-progression.service';
 
 @Component({
   selector: 'app-bottom-nav',
@@ -15,14 +16,13 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         <span class="bottom-nav__icon bottom-nav__icon--dashboard" aria-hidden="true"></span>
         <span class="bottom-nav__label">Dashboard</span>
       </a>
-      <!-- TODO: Replace /mission/1 with dynamic current mission (T-2026-026) -->
       <a
-        routerLink="/mission/1"
+        [routerLink]="missionLink()"
         routerLinkActive="active"
         class="bottom-nav__tab"
       >
         <span class="bottom-nav__icon bottom-nav__icon--mission" aria-hidden="true"></span>
-        <span class="bottom-nav__label">Mission</span>
+        <span class="bottom-nav__label">{{ missionLabel() }}</span>
       </a>
       <a
         routerLink="/minigames"
@@ -44,4 +44,15 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   `,
   styleUrl: './bottom-nav.scss',
 })
-export class BottomNavComponent {}
+export class BottomNavComponent {
+  private readonly progression = inject(GameProgressionService);
+
+  readonly missionLink = computed(() => {
+    const mission = this.progression.currentMission();
+    return mission ? `/mission/${mission.chapterId}` : '/campaign';
+  });
+
+  readonly missionLabel = computed(() => {
+    return this.progression.currentMission() ? 'Mission' : 'Complete';
+  });
+}
