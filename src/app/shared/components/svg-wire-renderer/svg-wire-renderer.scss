@@ -25,6 +25,11 @@
   }
 }
 
+.svg-wire__preview {
+  stroke-dasharray: 8 4;
+  opacity: 0.5;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .svg-wire__flow {
     animation: none;

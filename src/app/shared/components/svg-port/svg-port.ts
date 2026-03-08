@@ -1,4 +1,5 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, OnDestroy, output } from '@angular/core';
+import { WireDrawService } from '../../../core/minigame/wire-draw.service';
 
 @Component({
   selector: '[nx-svg-port]',
@@ -67,7 +68,9 @@ import { Component, computed, input, output } from '@angular/core';
     '(keydown.space)': 'onActivate($event)',
   },
 })
-export class SvgPortComponent {
+export class SvgPortComponent implements OnDestroy {
+  private readonly wireDrawService = inject(WireDrawService, { optional: true });
+
   readonly portId = input.required<string>();
   readonly x = input(0);
   readonly y = input(0);
@@ -90,8 +93,35 @@ export class SvgPortComponent {
     return `${this.type()} port: ${lbl}${state}${active}`;
   });
 
+  constructor() {
+    if (this.wireDrawService) {
+      const service = this.wireDrawService;
+      effect(() => {
+        service.registerPort({
+          id: this.portId(),
+          type: this.type(),
+          x: this.x(),
+          y: this.y(),
+        });
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.wireDrawService?.unregisterPort(this.portId());
+  }
+
   onActivate(event?: Event): void {
     event?.preventDefault();
     this.activated.emit(this.portId());
+
+    if (this.wireDrawService) {
+      const phase = this.wireDrawService.phase();
+      if (phase === 'idle' && this.type() === 'source') {
+        this.wireDrawService.startWire(this.portId());
+      } else if (phase === 'drawing' && this.type() === 'target') {
+        this.wireDrawService.completeWire(this.portId());
+      }
+    }
   }
 }

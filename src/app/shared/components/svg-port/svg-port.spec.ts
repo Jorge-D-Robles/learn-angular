@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
+import { WireDrawService } from '../../../core/minigame/wire-draw.service';
 import { createComponent } from '../../../../testing/test-utils';
 import { SvgPortComponent } from './svg-port';
 
@@ -204,5 +206,109 @@ describe('SvgPortComponent', () => {
     await fixture.whenStable();
 
     expect(host.querySelector('.svg-port__active-ring')).toBeTruthy();
+  });
+
+  // --- WireDrawService integration (6 tests) ---
+
+  describe('WireDrawService integration', () => {
+    let service: WireDrawService;
+
+    async function setupWithService(overrides: Partial<TestHost> = {}) {
+      const result = await setup(overrides);
+      service = TestBed.inject(WireDrawService);
+      return result;
+    }
+
+    afterEach(() => {
+      service?.reset();
+    });
+
+    it('registers with WireDrawService on init', async () => {
+      await setupWithService({ portId: 'p1', x: 50, y: 75, type: 'source' });
+      const registerSpy = vi.spyOn(service, 'registerPort');
+
+      // The effect already ran during setup. Verify port is registered by
+      // checking it can be used for startWire.
+      service.startWire('p1');
+      expect(service.phase()).toBe('drawing');
+
+      registerSpy.mockRestore();
+    });
+
+    it('unregisters from WireDrawService on destroy', async () => {
+      const { fixture } = await setupWithService({ portId: 'p1', x: 50, y: 75, type: 'source' });
+      const unregisterSpy = vi.spyOn(service, 'unregisterPort');
+
+      fixture.destroy();
+
+      expect(unregisterSpy).toHaveBeenCalledWith('p1');
+      unregisterSpy.mockRestore();
+    });
+
+    it('re-registers when position changes', async () => {
+      const { fixture } = await setupWithService({ portId: 'p1', x: 50, y: 75, type: 'source' });
+      const registerSpy = vi.spyOn(service, 'registerPort');
+
+      fixture.componentInstance.x = 100;
+      fixture.componentInstance.y = 150;
+      fixture.changeDetectorRef.markForCheck();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(registerSpy).toHaveBeenCalledWith({
+        id: 'p1',
+        type: 'source',
+        x: 100,
+        y: 150,
+      });
+      registerSpy.mockRestore();
+    });
+
+    it('works without WireDrawService', async () => {
+      const { fixture, element } = await createComponent(TestHost, {
+        detectChanges: false,
+        providers: [{ provide: WireDrawService, useValue: null }],
+      });
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(getHost(element)).toBeTruthy();
+    });
+
+    it('calls startWire on activated for source port', async () => {
+      const { element, component } = await setupWithService({
+        portId: 'p1',
+        type: 'source',
+      });
+      const startSpy = vi.spyOn(service, 'startWire');
+      const host = getHost(element);
+
+      host.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+      expect(startSpy).toHaveBeenCalledWith('p1');
+      expect(component.onActivated).toHaveBeenCalledWith('p1');
+      startSpy.mockRestore();
+    });
+
+    it('calls completeWire on activated for target port during drawing', async () => {
+      const { element, component } = await setupWithService({
+        portId: 'p1',
+        type: 'target',
+      });
+
+      // Set up drawing state: register a source port and start drawing
+      service.registerPort({ id: 'src-1', type: 'source', x: 0, y: 0 });
+      service.startWire('src-1');
+      expect(service.phase()).toBe('drawing');
+
+      const completeSpy = vi.spyOn(service, 'completeWire');
+      const host = getHost(element);
+
+      host.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+      expect(completeSpy).toHaveBeenCalledWith('p1');
+      expect(component.onActivated).toHaveBeenCalledWith('p1');
+      completeSpy.mockRestore();
+    });
   });
 });

@@ -86,6 +86,11 @@ export class WireDrawService {
     this._ports.delete(id);
   }
 
+  /** Look up a registered port by id. Returns undefined for unknown ids. */
+  getPort(id: string): WirePort | undefined {
+    return this._ports.get(id);
+  }
+
   /** Begin a wire from a source port. No-op if already drawing, port unknown, or port is a target. */
   startWire(sourcePortId: string): void {
     if (this._phase() === 'drawing') {
