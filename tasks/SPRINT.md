@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-258**: Create WireProtocol port and wire data model (Assigned: claude, Status: in-progress)
 
 
 

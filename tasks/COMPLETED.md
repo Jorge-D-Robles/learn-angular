@@ -174,3 +174,4 @@
 [2026-03-08] T-2026-383: Create integration test for persistence round-trip of LevelProgressionService — added integration test for LevelProgressionService persistence round-trip (claude)
 [2026-03-08] T-2026-376: Update architecture.md persistence table with LevelProgressionService key — added LevelProgressionService to architecture.md persistence table (claude)
 [2026-03-08] T-2026-257: Create ModuleAssembly part and blueprint data model — canonical domain model types, color constant, utility functions, 16 tests (claude)
+[2026-03-08] T-2026-258: Create WireProtocol port and wire data model — domain model types, WireType enum, color constant, 3 utility functions, 22 tests (claude)
