@@ -30,8 +30,8 @@ Acceptance criteria:
 
 ### T-2026-129
 - Title: Create EmptyStateComponent for no-content pages
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -50,6 +50,7 @@ Acceptance criteria:
 - [ ] Station-themed styling: muted colors, centered layout
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: rendering with all inputs, content projection slot
+- Started: 2026-03-08
 
 ### T-2026-130
 - Title: Create TooltipDirective for contextual help

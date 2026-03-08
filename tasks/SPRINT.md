@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-129**: Create EmptyStateComponent for no-content pages (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -20,7 +22,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-129**: Create EmptyStateComponent for no-content pages (Priority: low, Size: S)
 - **T-2026-130**: Create TooltipDirective for contextual help (Priority: low, Size: S)
 - **T-2026-210**: Integrate PlayTimeService with MinigameEngine session tracking (Priority: low, Size: S)
 - **T-2026-286**: Add Playwright E2E job to GitHub Actions CI workflow (Priority: low, Size: S)
