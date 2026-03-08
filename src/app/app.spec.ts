@@ -237,6 +237,42 @@ describe('App', () => {
     expect(overlay).toBeFalsy();
   });
 
+  // ---------------------------------------------------------------------------
+  // Skip-to-content link (a11y)
+  // ---------------------------------------------------------------------------
+  it('should render the skip-to-content link', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const skipLink = fixture.nativeElement.querySelector('.skip-link');
+    expect(skipLink).toBeTruthy();
+    expect(skipLink.textContent.trim()).toBe('Skip to main content');
+  });
+
+  it('should target #main-content anchor', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const skipLink = fixture.nativeElement.querySelector('.skip-link');
+    expect(skipLink.getAttribute('href')).toContain('#main-content');
+  });
+
+  it('should have main-content id on the main element', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const main = fixture.nativeElement.querySelector('main.content');
+    expect(main.getAttribute('id')).toBe('main-content');
+    expect(main.getAttribute('tabindex')).toBe('-1');
+  });
+
+  it('should render skip link before the top bar in DOM order', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const skipLink = fixture.nativeElement.querySelector('.skip-link');
+    const header = fixture.nativeElement.querySelector('header');
+    // DOCUMENT_POSITION_FOLLOWING means header comes after skipLink
+    const position = skipLink.compareDocumentPosition(header);
+    expect(position & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it('should hide overlay when RankUpNotificationService.dismiss() is called', () => {
     const gameState = TestBed.inject(GameStateService);
     gameState.resetState();

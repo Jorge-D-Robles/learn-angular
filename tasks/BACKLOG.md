@@ -462,8 +462,8 @@ Acceptance criteria:
 
 ### T-2026-354
 - Title: Add skip-to-content link for keyboard accessibility
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -481,6 +481,7 @@ Acceptance criteria:
 - [ ] Link text: "Skip to main content"
 - [ ] Styled with station theme (Reactor Blue background when focused)
 - [ ] Unit tests for: link renders, link targets correct anchor, link visible on focus
+- Started: 2026-03-08
 
 ### T-2026-355
 - Title: Add ARIA landmark roles to app shell layout regions
@@ -4664,4 +4665,278 @@ Acceptance criteria:
 - [ ] Verifies MinigameShell HUD elements render (score, timer, hints, pause)
 - [ ] Verifies pause/resume interaction
 - [ ] Tests run via `npm run e2e`
+
+### T-2026-362
+- Title: Add route title metadata to all route definitions for a11y and browser tab
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-012
+- Blocked-by: —
+- Tags: accessibility, a11y, routing, infrastructure
+- Refs: docs/ux/navigation.md, src/app/app.routes.ts
+
+WCAG 2.1 AA and good UX require meaningful page titles. Angular's router supports a `title` property on route definitions, which can drive both `document.title` updates and screen reader announcements (needed by T-2026-356). Currently no route in `app.routes.ts` has a `title` property. Without titles, the browser tab always shows the app name regardless of current page, and T-2026-356 has no title metadata to announce.
+
+Acceptance criteria:
+- [ ] All routes in `app.routes.ts` have a `title` property matching their purpose
+- [ ] Title values: "Dashboard" (home), "Mission :chapterId" (mission), "Minigames" (hub), "Level Select" (game levels), "Play" (gameplay), "Endless Mode", "Speed Run", "Daily Challenge", "Profile", "Settings", "Not Found"
+- [ ] Dynamic route titles use Angular's route `title` resolver or string template where needed
+- [ ] `document.title` updates automatically on navigation via Angular's built-in `TitleStrategy`
+- [ ] Unit tests for: title presence on each route, document.title update on navigation
+
+### T-2026-363
+- Title: Add canDeactivate guard to MinigamePlayPage for quit confirmation during active game
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-223, T-2026-057
+- Blocked-by: —
+- Tags: routing, guard, minigame, ux, quit-confirmation
+- Refs: docs/ux/navigation.md, src/app/pages/minigame-play/minigame-play.ts
+
+Navigation.md implies a quit confirmation when leaving a minigame mid-play. PauseMenuComponent has a quit button with confirmation, but nothing prevents the player from clicking the browser back button, a nav link, or typing a URL while a game is in progress. A `canDeactivate` route guard should intercept navigation away from MinigamePlayPage when the engine status is Playing or Paused, and show a confirmation dialog before allowing departure.
+
+Acceptance criteria:
+- [ ] `MinigamePlayGuard` functional `canDeactivate` guard at `src/app/core/guards/minigame-play.guard.ts`
+- [ ] Guard checks if the MinigamePlayPage engine status is Playing or Paused
+- [ ] If active game: shows ConfirmDialogComponent with "Quit current game? Progress will be lost."
+- [ ] If game is in Loading, Won, or Lost status: allows navigation without prompt
+- [ ] Guard registered on the `minigames/:gameId/level/:levelId` route in `app.routes.ts`
+- [ ] Unit tests for: guard allows when game is won/lost, guard prompts when game is active, guard allows after confirm
+
+### T-2026-364
+- Title: Create integration test for combo tracking through full score and XP pipeline
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-184, T-2026-290, T-2026-185
+- Blocked-by: —
+- Tags: testing, integration, combo, scoring, xp
+- Refs: docs/architecture.md, src/app/core/minigame/combo-tracker.service.ts, src/app/core/minigame/score-calculation.service.ts
+
+T-2026-184 integrated ComboTrackerService into MinigameEngine, T-2026-290 added combo multiplier to ScoreCalculationService, and T-2026-185 wired diminishing returns into LevelCompletionService. No integration test verifies the full pipeline: engine tracks combo -> combo multiplier applies to score -> score feeds XP calculation -> diminishing returns modify replay XP.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/combo-score-xp.integration.spec.ts`
+- [ ] Test: submit 5 consecutive correct actions -> verify combo multiplier > 1.0
+- [ ] Test: calculate score with active combo -> verify score is higher than without combo
+- [ ] Test: complete level with combo -> verify XP awarded reflects combo-boosted score
+- [ ] Test: replay same level -> verify XP is reduced by diminishing returns
+- [ ] Uses real ComboTrackerService, ScoreCalculationService, and LevelCompletionService
+
+### T-2026-365
+- Title: Wire EmptyStateComponent into MinigameHubPage for no-unlocked-games state
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-129, T-2026-076
+- Blocked-by: —
+- Tags: ui, integration, empty-state, minigame-hub
+- Refs: docs/ux/navigation.md, src/app/pages/minigame-hub/minigame-hub.ts
+
+MinigameHubPage (T-2026-076) renders a grid of minigame cards, but no ticket handles the empty state when a new player has no unlocked minigames. EmptyStateComponent (T-2026-129) provides the visual pattern. Without this, a first-time user sees a blank grid with no guidance.
+
+Acceptance criteria:
+- [ ] MinigameHubPage shows EmptyStateComponent when no minigames are unlocked
+- [ ] Empty state message: "No minigames unlocked yet. Complete your first mission to unlock a minigame!"
+- [ ] Action button navigates to `/campaign` or `/mission/1`
+- [ ] Empty state hidden as soon as any minigame is unlocked
+- [ ] Unit tests for: empty state rendering when no games unlocked, hidden when games exist
+
+### T-2026-366
+- Title: Wire EmptyStateComponent into LevelSelectPage for no-level-data state
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-129, T-2026-077
+- Blocked-by: —
+- Tags: ui, integration, empty-state, level-select
+- Refs: docs/ux/navigation.md, src/app/pages/level-select/level-select.ts
+
+LevelSelectPage (T-2026-077) displays levels grouped by tier, but no ticket handles the state when level data has not been registered for a game. EmptyStateComponent (T-2026-129) provides the visual pattern. Without this, a player navigating to an unbuilt game's level select sees blank content.
+
+Acceptance criteria:
+- [ ] LevelSelectPage shows EmptyStateComponent when the game has no registered level data
+- [ ] Empty state message: "Levels coming soon for [game name]"
+- [ ] "Back to Minigames" button navigates to `/minigames`
+- [ ] Unit tests for: empty state when no level data, hidden when levels exist
+
+### T-2026-367
+- Title: Apply TooltipDirective to shared components for contextual help
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-130, T-2026-034, T-2026-046, T-2026-055
+- Blocked-by: —
+- Tags: ui, accessibility, tooltip, ux
+- Refs: docs/ux/visual-style.md, docs/research/gamification-patterns.md
+
+TooltipDirective (T-2026-130) provides contextual help on hover/focus, but no ticket applies it to shared components where users need explanations. Gamification research emphasizes "Progressive disclosure" and "immediate feedback." Tooltips on mastery stars ("3 stars: Advanced levels completed"), tier badges ("Boss: Final challenge"), and locked content ("Complete Mission 5 to unlock") reduce confusion for new players.
+
+Acceptance criteria:
+- [ ] MasteryStarsComponent: tooltip on each star count explaining what the level means (from progression.md mastery table)
+- [ ] TierBadgeComponent: tooltip showing tier description ("Basic: Introductory concepts")
+- [ ] LockedContentComponent: tooltip showing unlock requirement when hoverable
+- [ ] LevelStarsComponent: tooltip showing star thresholds (e.g., "3 stars: 90%+ score")
+- [ ] Unit tests for: tooltip renders on hover/focus for each component
+
+### T-2026-368
+- Title: Create integration test for replay XP diminishing returns across multiple level completions
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-185, T-2026-164
+- Blocked-by: —
+- Tags: testing, integration, diminishing-returns, replay, xp
+- Refs: docs/progression.md, src/app/core/progression/xp-diminishing-returns.service.ts
+
+T-2026-185 wired XpDiminishingReturnsService into LevelCompletionService, and T-2026-164 created the service. No integration test verifies the multi-play scenario: first play yields full XP, second play yields reduced XP, and star improvement on replay partially restores XP. Progression.md's design intends "players can replay easier levels for XP but get diminishing returns."
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/diminishing-returns.integration.spec.ts`
+- [ ] Test: complete level first time -> verify full XP awarded
+- [ ] Test: replay same level with same score -> verify XP is reduced (< 100% of first play)
+- [ ] Test: replay same level with higher star rating -> verify partial XP restoration
+- [ ] Test: verify diminishing returns persist across service restarts (loaded from localStorage)
+- [ ] Uses real LevelCompletionService and XpDiminishingReturnsService
+
+### T-2026-369
+- Title: Create E2E test for side nav and bottom nav responsive navigation
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-010, T-2026-011, T-2026-346
+- Blocked-by: —
+- Tags: testing, e2e, navigation, responsive, a11y
+- Refs: docs/ux/navigation.md, playwright.config.ts
+
+Navigation.md specifies side nav for desktop (>1024px) and bottom nav for mobile (<768px). T-2026-010 and T-2026-011 created these components, but no E2E test verifies: (1) side nav is visible and bottom nav hidden at desktop width, (2) bottom nav is visible and side nav hidden at mobile width, (3) clicking nav items navigates to the correct route with routerLinkActive highlighting.
+
+Acceptance criteria:
+- [ ] Playwright test at `e2e/navigation.spec.ts`
+- [ ] Test at desktop viewport (1280px): side nav visible, bottom nav hidden, all 4 nav links work
+- [ ] Test at mobile viewport (375px): bottom nav visible, side nav hidden, all 4 nav tabs work
+- [ ] Test: routerLinkActive class applied to active nav item after navigation
+- [ ] Test: current mission link resolves correctly (dynamic via GameProgressionService)
+- [ ] Tests run in CI (GitHub Actions)
+
+### T-2026-370
+- Title: Add MinigamePlayGuard to guards barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-363, T-2026-347
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/guards/index.ts
+
+T-2026-363 creates MinigamePlayGuard and T-2026-347 creates the guards barrel. This ticket ensures MinigamePlayGuard is included in the barrel alongside MissionGuard and MinigameLevelGuard.
+
+Acceptance criteria:
+- [ ] `src/app/core/guards/index.ts` updated to export `MinigamePlayGuard`
+- [ ] Build passes with updated barrel
+
+### T-2026-371
+- Title: Create integration test for SettingsService theme preference applying body class
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-143, T-2026-039
+- Blocked-by: —
+- Tags: testing, integration, settings, theme
+- Refs: docs/ux/visual-style.md, src/app/core/settings/settings.service.ts
+
+T-2026-143 wires SettingsPage theme preference to a document body class but no integration test verifies the chain: change theme via SettingsService -> body class updates -> CSS custom properties switch. This is a user-facing visual change that should be verified.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/theme-switching.integration.spec.ts`
+- [ ] Test: default theme -> body has `theme-dark` class
+- [ ] Test: change to station theme -> body has `theme-station` class, `theme-dark` removed
+- [ ] Test: change to light theme -> body has `theme-light` class, `theme-station` removed
+- [ ] Test: theme persists after simulated reload (SettingsService loads from persistence)
+- [ ] Uses real SettingsService with document body access
+
+### T-2026-372
+- Title: Add route title resolution to replay mode routes for consistent browser tab titles
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-362, T-2026-053
+- Blocked-by: —
+- Tags: accessibility, routing, replay-modes
+- Refs: docs/ux/navigation.md, src/app/app.routes.ts
+
+T-2026-362 adds static title metadata to main routes, but replay mode routes (`/minigames/:gameId/endless`, `/speedrun`, `/daily`) need dynamic titles that include the game name (e.g., "Module Assembly - Endless Mode"). Without dynamic titles, all replay mode tabs show the same generic title.
+
+Acceptance criteria:
+- [ ] Replay mode routes use Angular route title resolvers or `ResolveFn<string>` to compute dynamic titles
+- [ ] Endless mode title: "[Game Name] - Endless Mode"
+- [ ] Speed run title: "[Game Name] - Speed Run"
+- [ ] Daily challenge title: "[Game Name] - Daily Challenge"
+- [ ] Game name sourced from MinigameRegistryService via route params
+- [ ] Unit tests for: title resolver returns correct game name, fallback for unknown gameId
+
+### T-2026-373
+- Title: Create integration test for DailyChallengeService topic rotation prioritizing degrading topics
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-041, T-2026-023
+- Blocked-by: —
+- Tags: testing, integration, daily-challenge, spaced-repetition
+- Refs: docs/progression.md, docs/research/gamification-patterns.md
+
+Progression.md specifies "Daily challenge mode: Automatically rotates through degrading topics." DailyChallengeService (T-2026-041) uses a "degrading topic priority" algorithm that checks SpacedRepetitionService for topics needing review. No integration test verifies that degrading topics are actually prioritized in the daily challenge rotation.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/daily-challenge-rotation.integration.spec.ts`
+- [ ] Test: with no degraded topics, daily challenge selects from general pool
+- [ ] Test: with degraded topics, daily challenge preferentially selects degraded topic's minigame
+- [ ] Test: verify rotation doesn't repeat the same game on consecutive days (when alternatives exist)
+- [ ] Uses real DailyChallengeService and SpacedRepetitionService
+
+### T-2026-374
+- Title: Wire LoadingSpinnerComponent into LevelSelectPage during level data loading
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-128, T-2026-077
+- Blocked-by: —
+- Tags: ui, loading, level-select, ux
+- Refs: docs/ux/navigation.md, src/app/pages/level-select/level-select.ts
+
+LevelSelectPage (T-2026-077) loads level data from LevelLoaderService when navigated to. During the loading period, no visual indicator is shown. LoadingSpinnerComponent (T-2026-128) provides the station-themed spinner but no ticket wires it into the level select page.
+
+Acceptance criteria:
+- [ ] LevelSelectPage shows LoadingSpinnerComponent while level data loads
+- [ ] Spinner replaced with level list once data is available
+- [ ] ErrorStateComponent shown if level data fails to load
+- [ ] Unit tests for: loading state shown, spinner replaced on data load, error state on failure
 
