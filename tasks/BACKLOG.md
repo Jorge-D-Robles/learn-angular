@@ -242,25 +242,6 @@ Acceptance criteria:
 - [ ] Both barrels included in `src/app/core/index.ts` re-exports (depends on T-2026-126)
 - [ ] Build passes with no circular dependencies
 
-### T-2026-201
-- Title: Add ComboTrackerService to minigame barrel export
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-056
-- Blocked-by: —
-- Tags: infrastructure, barrel-export, conventions
-- Refs: src/app/core/minigame/index.ts
-
-ComboTrackerService (T-2026-056) will create `combo-tracker.service.ts` in the minigame directory but no ticket adds it to the minigame barrel export (`src/app/core/minigame/index.ts`). Per project conventions, all services should be exported from their directory barrel.
-
-Acceptance criteria:
-- [ ] `src/app/core/minigame/index.ts` updated to export `ComboTrackerService` and `comboMultiplier` thresholds
-- [ ] Build passes with updated barrel
-- [ ] At least one consumer can import from `'./core/minigame'` barrel path
-
 ### T-2026-205
 - Title: Integrate MinigameTutorialOverlay with MinigameShell first-play detection
 - Status: todo
@@ -358,42 +339,6 @@ Acceptance criteria:
 - [ ] `src/app/core/index.ts` includes re-export from `./error`
 - [ ] Build passes with no circular dependencies
 - [ ] GlobalErrorHandler and ErrorInfo importable from core barrel
-
-### T-2026-230
-- Title: Add LifetimeStatsService to progression barrel export
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-212
-- Blocked-by: —
-- Tags: infrastructure, barrel-export, conventions
-- Refs: src/app/core/progression/index.ts
-
-LifetimeStatsService (T-2026-212) states "Exported from progression barrel" in its acceptance criteria, but per conventions an explicit barrel ticket ensures the export is independently verifiable.
-
-Acceptance criteria:
-- [ ] `src/app/core/progression/index.ts` updated to export `LifetimeStatsService`
-- [ ] Build passes with updated barrel
-
-### T-2026-231
-- Title: Add RankUpNotificationService to notifications barrel export
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-224
-- Blocked-by: —
-- Tags: infrastructure, barrel-export, conventions
-- Refs: src/app/core/notifications/index.ts
-
-RankUpNotificationService (T-2026-224) will create a new file in the notifications directory. Per conventions, all services should be exported from their directory barrel.
-
-Acceptance criteria:
-- [ ] `src/app/core/notifications/index.ts` updated to export `RankUpNotificationService`
-- [ ] Build passes with updated barrel
 
 ### T-2026-213
 - Title: Add OnboardingService to progression barrel export
@@ -735,8 +680,8 @@ Acceptance criteria:
 
 ### T-2026-310
 - Title: Remove stale completed tickets from BACKLOG.md
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P1
@@ -752,6 +697,7 @@ Acceptance criteria:
 - [ ] Open ticket "Add multiple-choice question support to RefresherChallengeService" (currently T-2026-180) reassigned to a new ticket ID to resolve the collision with the completed T-2026-180
 - [ ] No ticket IDs appear in both BACKLOG.md and COMPLETED.md after cleanup
 - [ ] Verification: `grep -oE 'T-2026-[0-9]+' tasks/BACKLOG.md | sort -u` has no overlap with `grep -oE 'T-2026-[0-9]+' tasks/COMPLETED.md | sort -u`
+- Started: 2026-03-08
 
 ### T-2026-311
 - Title: Create integration test for MinigameEngine auto-pause on page visibility change
@@ -4352,7 +4298,7 @@ Acceptance criteria:
 - [ ] `src/app/core/curriculum/index.ts` updated to export `StoryMissionContentService` and `StoryMissionContent`
 - [ ] Build passes with updated barrel
 
-### T-2026-180
+### T-2026-320
 - Title: Add multiple-choice question support to RefresherChallengeService
 - Status: todo
 - Assigned: unassigned

@@ -11,13 +11,13 @@ Started: 2026-03-08
 
 ## Active
 
-*(none — pick from Queue)*
+- **T-2026-310**: Remove stale completed tickets from BACKLOG.md (Assigned: claude, Status: in-progress)
+
 
 ---
 
 ## Queue
 
-- **T-2026-310**: Remove stale completed tickets from BACKLOG.md (Priority: high, Size: S)
 - **T-2026-309**: Reset HintService on minigame retry to prevent penalty carry-over (Priority: medium, Size: S)
 - **T-2026-311**: Create integration test for MinigameEngine auto-pause on page visibility change (Priority: medium, Size: S)
 - **T-2026-319**: Wire registry scoreConfig.maxScore into MinigamePlayPage buildMinigameResult (Priority: medium, Size: S)
