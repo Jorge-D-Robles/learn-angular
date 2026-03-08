@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-251**: Wire StreakRewardService milestone check to StreakService daily play recording (Assigned: claude, Status: in-progress)
 
 
 

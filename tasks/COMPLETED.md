@@ -153,3 +153,4 @@
 [2026-03-08] T-2026-328: Wire AudioService to XpNotificationService for XP award sound — wired AudioService to play SoundEffect.levelUp on level-up XP notifications via isLevelUp option (claude)
 [2026-03-08] T-2026-337: Wire ScoreBreakdownComponent into LevelResultsComponent for itemized scoring — replaced inline XP breakdown with ScoreBreakdownComponent across 3-layer component chain (claude)
 [2026-03-08] T-2026-307: Add StreakBadgeComponent to top bar for at-a-glance streak visibility — added compact StreakBadgeComponent to top bar with conditional rendering and mobile hiding (claude)
+[2026-03-08] T-2026-251: Wire StreakRewardService milestone check to StreakService daily play recording — wired StreakRewardService.checkMilestoneReward into recordDailyPlay via lazy Injector pattern (claude)

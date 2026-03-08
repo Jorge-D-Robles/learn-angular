@@ -191,27 +191,6 @@ Acceptance criteria:
 - [ ] `src/app/core/progression/index.ts` updated to export `StreakRewardService`
 - [ ] Build passes with updated barrel
 
-### T-2026-251
-- Title: Wire StreakRewardService milestone check to StreakService daily play recording
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-249, T-2026-027
-- Blocked-by: —
-- Tags: integration, streak, rewards
-- Refs: docs/progression.md
-
-StreakRewardService (T-2026-249) checks for milestones and StreakService (T-2026-027) records daily play. No ticket connects them: when StreakService.recordDailyPlay() updates the streak count, StreakRewardService.checkMilestoneReward() should be called to evaluate and award milestone bonuses.
-
-Acceptance criteria:
-- [ ] After StreakService.recordDailyPlay() updates streak, StreakRewardService is notified
-- [ ] If a milestone is reached, bonus XP is awarded and notification shown
-- [ ] Integration test: record 7 consecutive days, verify 100 XP bonus awarded
-- [ ] Unit tests for: milestone trigger on streak update, no trigger when below milestone
-- Started: 2026-03-08
-
 ### T-2026-291
 - Title: Create DailyChallenge-to-StreakReward integration test
 - Status: todo
