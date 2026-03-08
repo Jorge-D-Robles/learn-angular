@@ -29,11 +29,11 @@ Started: 2026-03-08
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-061**: Register Module Assembly in MinigameRegistry and wire routes (Priority: high, Size: S)
 - **T-2026-063**: Create Wire Protocol minigame engine (Priority: high, Size: L)
 - **T-2026-067**: Create Flow Commander minigame engine (Priority: high, Size: L)
 - **T-2026-071**: Create Signal Corps minigame engine (Priority: high, Size: L)

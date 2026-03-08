@@ -122,28 +122,6 @@ Acceptance criteria:
 
 ## P2 -- Foundations Bundle
 
-### T-2026-061
-- Title: Register Module Assembly in MinigameRegistry and wire routes
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-060, T-2026-029, T-2026-042
-- Blocked-by: —
-- Tags: minigame, module-assembly, registration, routing
-- Refs: docs/minigames/01-module-assembly.md, docs/curriculum.md
-
-Register Module Assembly with the MinigameRegistryService and ensure it loads correctly via the routing system. This is the integration ticket that makes the minigame playable end-to-end.
-
-Acceptance criteria:
-- [ ] Module Assembly registered in MinigameRegistryService with gameId, config, and component type
-- [ ] Navigating to `/minigames/module-assembly/level/1` loads and renders the game
-- [ ] Level data loads from the level data file (T-2026-058)
-- [ ] MinigameShell wraps the game UI with score, timer, lives
-- [ ] Level completion triggers XP award and progression update
-- [ ] E2e smoke test: navigate to level 1, verify game renders
-
 ### T-2026-063
 - Title: Create Wire Protocol minigame engine
 - Status: todo
