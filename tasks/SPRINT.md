@@ -78,11 +78,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-226**: Integrate SvgWireRendererComponent with WireDrawService state (Priority: medium, Size: S)
 - **T-2026-227**: Update side nav "Current Mission" link to use dynamic mission resolution (Priority: medium, Size: S)
 - **T-2026-228**: Update bottom nav "Mission" link to use dynamic mission resolution (Priority: medium, Size: S)
 - **T-2026-207**: Add LevelNavigationService to levels barrel export (Priority: low, Size: S)

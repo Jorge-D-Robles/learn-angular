@@ -631,28 +631,6 @@ Acceptance criteria:
 - [ ] Overlay dismiss event calls RankUpNotificationService.dismiss()
 - [ ] Unit tests for: overlay visibility on rank up, dismiss hides overlay
 
-### T-2026-226
-- Title: Integrate SvgWireRendererComponent with WireDrawService state
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-172, T-2026-158, T-2026-203
-- Blocked-by: —
-- Tags: integration, minigame-framework, wire-rendering, svg
-- Refs: docs/minigames/02-wire-protocol.md, docs/minigames/04-signal-corps.md
-
-SvgWireRendererComponent (T-2026-172) accepts wire data as inputs and WireDrawService (T-2026-158) manages wire state (active wires, port positions, drawing state). SvgPortComponent (T-2026-203) renders wire endpoints. These three pieces need an integration ticket to ensure the renderer consumes WireDrawService's wire state signal, and SvgPorts register their positions with WireDrawService so bezier curves connect to the correct coordinates.
-
-Acceptance criteria:
-- [ ] SvgWireRendererComponent reads wire data from WireDrawService.activeWires signal
-- [ ] SvgPortComponent registers its position with WireDrawService on init and on position change
-- [ ] Wire start/end coordinates derived from registered port positions
-- [ ] In-progress wire (being drawn) rendered as a dashed/semi-transparent bezier following pointer
-- [ ] Wire removal via WireDrawService.removeWire() updates the renderer reactively
-- [ ] Unit tests for: wire rendering from service state, port position registration, live drawing preview
-
 ### T-2026-227
 - Title: Update side nav "Current Mission" link to use dynamic mission resolution
 - Status: todo

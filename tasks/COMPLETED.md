@@ -82,3 +82,4 @@
 [2026-03-07] T-2026-211: Integrate RefresherChallengeService practice with SpacedRepetitionService mastery restoration — added 6 integration tests verifying RefresherChallengeService + SpacedRepetitionService degradation-reset-restoration flow (claude)
 [2026-03-07] T-2026-216: Create MissionCardComponent for campaign page mission list — created MissionCardComponent with chapter badge, status indicators, and 15 unit tests (claude)
 [2026-03-07] T-2026-218: Create DailyChallengeCompletionHandler to award bonus XP — already implemented in T-2026-041: DailyChallengeService.completeChallenge() awards 50 bonus XP with notification and idempotency (claude)
+[2026-03-07] T-2026-226: Integrate SvgWireRendererComponent with WireDrawService state — integrated SvgWireRenderer and SvgPort with WireDrawService via optional DI, with preview wire support and 12 new tests (claude)
