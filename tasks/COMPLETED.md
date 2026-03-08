@@ -100,3 +100,4 @@
 [2026-03-07] T-2026-056: Create ComboTrackerService for combo multiplier mechanics — created ComboTrackerService with combo signals, multiplier thresholds, and 30 unit tests (claude)
 [2026-03-07] T-2026-201: Add ComboTrackerService to minigame barrel export — barrel export already added in T-2026-056 (unassigned)
 [2026-03-07] T-2026-164: Create XpDiminishingReturnsService for replay XP scaling — created XpDiminishingReturnsService with diminishing multipliers, star improvement detection, and persistence (claude)
+[2026-03-07] T-2026-249: Create StreakRewardService for 7-day streak milestones — created StreakRewardService with 7/14/30-day milestone rewards, XP awards, and persistence (claude)

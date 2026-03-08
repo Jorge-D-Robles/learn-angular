@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-249**: Create StreakRewardService for 7-day streak milestones (Assigned: claude, Status: in-progress)
 
 
 
