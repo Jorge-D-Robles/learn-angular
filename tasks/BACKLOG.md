@@ -193,28 +193,6 @@ Acceptance criteria:
 - [ ] "Back to Dashboard" navigation on completion
 - [ ] Unit tests for: content loading, challenge completion, mastery restoration display
 
-### T-2026-242
-- Title: Wire SettingsService animationSpeed to AnimationService duration multiplier
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-052, T-2026-039
-- Blocked-by: —
-- Tags: integration, settings, animation, ui
-- Refs: docs/ux/navigation.md, docs/ux/visual-style.md
-
-Navigation.md Settings page specifies "Animation speed" as a user preference. SettingsService (completed) has an animationSpeed field and AnimationService (T-2026-052) defines ANIMATION_DURATIONS constants. But no ticket wires the animation speed setting to actually scale animation durations. Without this, the speed selector is cosmetic only.
-
-Acceptance criteria:
-- [ ] AnimationService reads SettingsService.settings().animationSpeed
-- [ ] Animation durations scaled by speed setting: 'normal' = 1x, 'fast' = 0.5x, 'off' = 0ms
-- [ ] All reusable animation triggers use scaled durations
-- [ ] Changing the setting reactively updates animation behavior
-- [ ] Unit tests for: duration scaling at each speed setting, reactive updates
-- Started: 2026-03-08
-
 ### T-2026-250
 - Title: Add StreakRewardService to progression barrel export
 - Status: todo

@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-242**: Wire SettingsService animationSpeed to AnimationService duration multiplier (Assigned: claude, Status: in-progress)
 
 
 
