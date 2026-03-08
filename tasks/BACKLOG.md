@@ -798,28 +798,6 @@ Acceptance criteria:
 - [ ] Changing the setting reactively updates animation behavior
 - [ ] Unit tests for: duration scaling at each speed setting, reactive updates
 
-### T-2026-248
-- Title: Create P1 MinigameShell + engine lifecycle E2E smoke test
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-223, T-2026-175
-- Blocked-by: —
-- Tags: testing, e2e, minigame-framework, core-engine
-- Refs: docs/overview.md, playwright.config.ts
-
-The existing E2E tests only cover basic routing (dashboard + 404). No E2E test validates that the minigame framework core works: navigating to a minigame route, seeing the shell render with HUD elements (score, timer), and verifying the page structure. This is critical before P2 builds real minigames on top.
-
-Acceptance criteria:
-- [ ] Playwright test at `e2e/minigame-shell.spec.ts`
-- [ ] Test: navigate to `/minigames/module-assembly/level/1` (or any registered game)
-- [ ] Test: verify MinigameShell renders with HUD elements (score display, timer, hint button)
-- [ ] Test: verify loading/error states render correctly for invalid gameId
-- [ ] Test runs in CI (GitHub Actions)
-- [ ] Uses production build (matching existing e2e config)
-
 ### T-2026-249
 - Title: Create StreakRewardService for 7-day streak milestones
 - Status: todo
@@ -2469,6 +2447,52 @@ Acceptance criteria:
 - [ ] `getMissionContent(11)` through `getMissionContent(13)` return valid content
 - [ ] Unit tests for: content loading for each chapter
 
+### T-2026-266
+- Title: Create Corridor Runner route configuration and map data model
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P3
+- Depends: T-2026-019
+- Blocked-by: —
+- Tags: minigame, corridor-runner, data-model, routing
+- Refs: docs/minigames/05-corridor-runner.md
+
+Corridor Runner's tech notes say "Route config is validated against a schema matching Angular's Routes type" and "Map layout is data-driven: nodes (modules) + edges (corridors)." P2 minigames have data model tickets (T-2026-255 through T-2026-258) but Corridor Runner does not. This ticket defines the type-safe data model before level data or engine can be built.
+
+Acceptance criteria:
+- [ ] `RouteConfig` interface at `src/app/features/minigames/corridor-runner/corridor-runner.types.ts`
+- [ ] `RouteEntry`: path, component (string), redirectTo, pathMatch, children (recursive), canActivate, resolve, loadComponent
+- [ ] `MapNode`: id, label, position (x, y), moduleType, isAccessible
+- [ ] `MapEdge`: sourceId, targetId, corridorType
+- [ ] `StationMap`: nodes[], edges[]
+- [ ] `TestNavigation`: startUrl, expectedDestination, description
+- [ ] `HullBreachResult`: url, reason (no-match | guard-blocked)
+- [ ] Exported from corridor-runner barrel
+- [ ] Unit tests for: route config validation, map connectivity helpers
+
+### T-2026-267
+- Title: Create P3 end-to-end smoke test for Corridor Runner game loop
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P3
+- Depends: T-2026-084
+- Blocked-by: —
+- Tags: testing, e2e, corridor-runner, game-loop
+- Refs: docs/minigames/05-corridor-runner.md, playwright.config.ts
+
+P2 has an end-to-end smoke test (T-2026-142) covering the full game loop. P3 has integration tests (T-2026-192) but no E2E test that validates the Corridor Runner is playable via browser navigation.
+
+Acceptance criteria:
+- [ ] Playwright test at `e2e/corridor-runner.spec.ts`
+- [ ] Test: navigate to `/minigames/corridor-runner/level/1`, verify game renders with config phase UI
+- [ ] Test: verify MinigameShell HUD is present (score, timer)
+- [ ] Test: verify code editor component renders in config phase
+- [ ] Test runs in CI (GitHub Actions)
+
 ---
 
 ## P4 -- Forms Bundle
@@ -2667,6 +2691,51 @@ Acceptance criteria:
 - [ ] Phase 3 mission content (Ch 14-17) registered with StoryMissionContentService
 - [ ] `getMissionContent(14)` through `getMissionContent(17)` return valid content
 - [ ] Unit tests for: content loading for each chapter
+
+### T-2026-268
+- Title: Create Terminal Hack form specification and test case data model
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P4
+- Depends: T-2026-019
+- Blocked-by: —
+- Tags: minigame, terminal-hack, data-model, forms
+- Refs: docs/minigames/06-terminal-hack.md
+
+Terminal Hack's tech notes say "Levels define: target form spec, test cases, available form elements, time limit." P2 minigames have data model tickets but Terminal Hack does not. The engine (T-2026-087) and level data (T-2026-086) need these types before they can be built.
+
+Acceptance criteria:
+- [ ] `TargetFormSpec` interface at `src/app/features/minigames/terminal-hack/terminal-hack.types.ts`
+- [ ] `FormElement`: id, elementType (text | select | checkbox | radio | textarea), label, validations[]
+- [ ] `FormValidationRule`: type (required | pattern | email | min | max | minLength | maxLength | custom), params
+- [ ] `TestCase`: id, inputValues (Record<string, any>), expectedOutput, description
+- [ ] `AvailableFormTool`: toolType (ngModel | FormControl | FormGroup | FormArray | FormBuilder | Validator), available (boolean)
+- [ ] `TerminalHackScoring`: speed, testPassRate, hintsUsed, isPerfect
+- [ ] Exported from terminal-hack barrel
+- [ ] Unit tests for: form element type validation, test case structure validation
+
+### T-2026-269
+- Title: Create P4 end-to-end smoke test for Terminal Hack game loop
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P4
+- Depends: T-2026-089
+- Blocked-by: —
+- Tags: testing, e2e, terminal-hack, game-loop
+- Refs: docs/minigames/06-terminal-hack.md, playwright.config.ts
+
+P2 has an end-to-end smoke test (T-2026-142) but P4 does not. This E2E test validates Terminal Hack renders and is playable via browser navigation.
+
+Acceptance criteria:
+- [ ] Playwright test at `e2e/terminal-hack.spec.ts`
+- [ ] Test: navigate to `/minigames/terminal-hack/level/1`, verify game renders with target form preview and code editor
+- [ ] Test: verify MinigameShell HUD is present (score, timer, hint button)
+- [ ] Test: verify live preview panel renders
+- [ ] Test runs in CI (GitHub Actions)
 
 ---
 
@@ -2967,6 +3036,78 @@ Acceptance criteria:
 - [ ] `getMissionContent(18)` through `getMissionContent(22)` return valid content
 - [ ] Unit tests for: content loading for each chapter
 
+### T-2026-270
+- Title: Create Power Grid service and injection scope data model
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P5
+- Depends: T-2026-019
+- Blocked-by: —
+- Tags: minigame, power-grid, data-model, dependency-injection
+- Refs: docs/minigames/07-power-grid.md
+
+Power Grid's tech notes say "Grid is a directed acyclic graph (services -> components, services -> services)" and level data includes "services[], components[], validConnections[], scopeRules[]." P2 minigames have data model tickets but Power Grid does not. The engine (T-2026-092) and level data (T-2026-091) need these types.
+
+Acceptance criteria:
+- [ ] `ServiceNode` interface at `src/app/features/minigames/power-grid/power-grid.types.ts`
+- [ ] `ServiceNode`: id, name, type (string), providedIn ('root' | 'component' | 'module'), methods[], state
+- [ ] `ComponentNode`: id, name, requiredInjections[], providers[] (optional component-level providers)
+- [ ] `InjectionScope` enum: root, component, hierarchical, factory
+- [ ] `PowerConnection`: serviceId, componentId, scope, isCorrect
+- [ ] `ScopeRule`: serviceId, allowedScopes[], defaultScope
+- [ ] `ShortCircuit`: description, involvedNodes[]
+- [ ] Exported from power-grid barrel
+- [ ] Unit tests for: connection validation, scope rule checking
+
+### T-2026-271
+- Title: Create Data Relay pipe and stream data model
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P5
+- Depends: T-2026-019
+- Blocked-by: —
+- Tags: minigame, data-relay, data-model, pipes
+- Refs: docs/minigames/08-data-relay.md
+
+Data Relay's tech notes say "Pipes are applied as actual Angular pipe transforms" and level data includes "streams[], availablePipes[], targetOutputs[], testData[]." P2 minigames have data model tickets but Data Relay does not. The engine (T-2026-095) and level data (T-2026-094) need these types.
+
+Acceptance criteria:
+- [ ] `DataStream` interface at `src/app/features/minigames/data-relay/data-relay.types.ts`
+- [ ] `DataStream`: id, rawInput (any), requiredOutput (string), placedPipes[]
+- [ ] `PipeBlock`: id, pipeType (uppercase | lowercase | date | decimal | currency | percent | slice | custom), params (string[]), position
+- [ ] `PipeCategory` enum: text, number, date, custom
+- [ ] `TestDataPair`: input (any), expectedOutput (string)
+- [ ] `CustomPipeSpec`: name, transformFn (description), pureness (pure | impure)
+- [ ] `StreamResult`: streamId, actualOutput (string), isCorrect (boolean)
+- [ ] Exported from data-relay barrel
+- [ ] Unit tests for: pipe type validation, test data structure validation
+
+### T-2026-272
+- Title: Create P5 end-to-end smoke test for Power Grid and Data Relay
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P5
+- Depends: T-2026-115, T-2026-116
+- Blocked-by: —
+- Tags: testing, e2e, power-grid, data-relay, game-loop
+- Refs: docs/minigames/07-power-grid.md, docs/minigames/08-data-relay.md, playwright.config.ts
+
+P2 has an end-to-end smoke test (T-2026-142) but P5 does not. This E2E test validates both P5 minigames render and are playable via browser navigation.
+
+Acceptance criteria:
+- [ ] Playwright test at `e2e/power-grid.spec.ts`
+- [ ] Test: navigate to `/minigames/power-grid/level/1`, verify game renders with grid board and service/component nodes
+- [ ] Playwright test at `e2e/data-relay.spec.ts`
+- [ ] Test: navigate to `/minigames/data-relay/level/1`, verify game renders with data streams and pipe toolbox
+- [ ] Tests verify MinigameShell HUD is present
+- [ ] Tests run in CI (GitHub Actions)
+
 ---
 
 ## P6 -- Signals Bundle
@@ -3156,6 +3297,53 @@ Acceptance criteria:
 - [ ] Phase 6 mission content (Ch 23-26) registered with StoryMissionContentService
 - [ ] `getMissionContent(23)` through `getMissionContent(26)` return valid content
 - [ ] Unit tests for: content loading for each chapter
+
+### T-2026-273
+- Title: Create Reactor Core signal graph node and edge data model
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P6
+- Depends: T-2026-019
+- Blocked-by: —
+- Tags: minigame, reactor-core, data-model, signals
+- Refs: docs/minigames/09-reactor-core.md
+
+Reactor Core's tech notes say "Graph engine validates: no circular signal dependencies, all computeds have valid sources" and level data includes "requiredNodes[], scenarios[], validGraphs[], constraints[]." P2 minigames have data model tickets but Reactor Core does not. The engine (T-2026-099) and level data (T-2026-098) need these types.
+
+Acceptance criteria:
+- [ ] `SignalNode` interface at `src/app/features/minigames/reactor-core/reactor-core.types.ts`
+- [ ] `NodeType` enum: signal, computed, effect
+- [ ] `SignalNode`: id, type (signal), initialValue, currentValue, position (x, y)
+- [ ] `ComputedNode`: id, type (computed), computationExpr (string), dependencyIds[], currentValue, position
+- [ ] `EffectNode`: id, type (effect), actionDescription, dependencyIds[], position, cleanupFn (optional)
+- [ ] `GraphEdge`: sourceId, targetId
+- [ ] `SimulationScenario`: id, signalChanges (array of {nodeId, newValue}), expectedOutputs (array of {nodeId, expectedValue})
+- [ ] `GraphConstraint`: maxNodes, requiredNodeTypes, forbiddenPatterns
+- [ ] Exported from reactor-core barrel
+- [ ] Unit tests for: graph cycle detection helper, node type validation
+
+### T-2026-274
+- Title: Create P6 end-to-end smoke test for Reactor Core game loop
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P6
+- Depends: T-2026-117
+- Blocked-by: —
+- Tags: testing, e2e, reactor-core, game-loop
+- Refs: docs/minigames/09-reactor-core.md, playwright.config.ts
+
+P2 has an end-to-end smoke test (T-2026-142) but P6 does not. This E2E test validates Reactor Core renders and is playable via browser navigation.
+
+Acceptance criteria:
+- [ ] Playwright test at `e2e/reactor-core.spec.ts`
+- [ ] Test: navigate to `/minigames/reactor-core/level/1`, verify game renders with node toolbox and graph editor
+- [ ] Test: verify MinigameShell HUD is present (score, timer)
+- [ ] Test: verify signal/computed/effect node types are present in the toolbox
+- [ ] Test runs in CI (GitHub Actions)
 
 ---
 
@@ -3597,6 +3785,101 @@ Acceptance criteria:
 - [ ] `getMissionContent(27)` through `getMissionContent(34)` return valid content
 - [ ] Unit tests for: content loading for each chapter
 
+### T-2026-275
+- Title: Create Deep Space Radio endpoint and interceptor data model
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-019
+- Blocked-by: —
+- Tags: minigame, deep-space-radio, data-model, http
+- Refs: docs/minigames/10-deep-space-radio.md
+
+Deep Space Radio's tech notes say "Mock backend defines endpoints with expected request format and response data" and "Interceptor chain is modeled after Angular's actual HttpInterceptor pipeline." P2 minigames have data model tickets but Deep Space Radio does not. The engine (T-2026-103) and level data (T-2026-102) need these types.
+
+Acceptance criteria:
+- [ ] `MockEndpoint` interface at `src/app/features/minigames/deep-space-radio/deep-space-radio.types.ts`
+- [ ] `MockEndpoint`: url, method (GET | POST | PUT | DELETE), expectedHeaders, expectedBody, response, errorResponse
+- [ ] `InterceptorBlock`: id, type (auth | logging | retry | error | caching | custom), config (Record<string, any>), order
+- [ ] `HttpRequestConfig`: method, url, headers (Record<string, string>), body (any), params (Record<string, string>)
+- [ ] `TransmissionResult`: requestConfig, interceptorsApplied[], responseData, statusCode, isSuccess
+- [ ] `TestScenario`: id, description, requestConfig, expectedInterceptorOrder[], expectedResult
+- [ ] Exported from deep-space-radio barrel
+- [ ] Unit tests for: endpoint matching, interceptor ordering validation
+
+### T-2026-276
+- Title: Create System Certification source code and test data model
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-019
+- Blocked-by: —
+- Tags: minigame, system-certification, data-model, testing
+- Refs: docs/minigames/11-system-certification.md
+
+System Certification's tech notes say "Pre-built components are designed with specific testable paths" and level data includes "sourceCode, coverageThreshold, timeLimit, availableTestUtilities." P2 minigames have data model tickets but System Certification does not. The engine (T-2026-105) and level data (T-2026-104) need these types.
+
+Acceptance criteria:
+- [ ] `SourceCodeBlock` interface at `src/app/features/minigames/system-certification/system-certification.types.ts`
+- [ ] `SourceCodeBlock`: lines[], testablePoints[] (line numbers that need coverage), branchPoints[]
+- [ ] `TestUtility` enum: testBed, componentFixture, debugElement, spyObj, fakeAsync, httpTestingController, routerTesting
+- [ ] `CoverageResult`: totalLines, coveredLines, percentage, uncoveredLineNumbers[]
+- [ ] `TestResult`: testName, passed (boolean), errorMessage (optional), coveredLines[]
+- [ ] `CertificationThreshold`: minCoverage (number), timeLimit (seconds), maxRedundantTests
+- [ ] Exported from system-certification barrel
+- [ ] Unit tests for: coverage calculation, test result aggregation
+
+### T-2026-277
+- Title: Create Blast Doors lifecycle and directive data model
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-019
+- Blocked-by: —
+- Tags: minigame, blast-doors, data-model, lifecycle
+- Refs: docs/minigames/12-blast-doors.md
+
+Blast Doors' tech notes say "Lifecycle simulation engine fires hooks in Angular's actual lifecycle order" and level data includes "doors[], hooks[], directives[], scenarios[], expectedBehavior[]." P2 minigames have data model tickets but Blast Doors does not. The engine (T-2026-107) and level data (T-2026-106) need these types.
+
+Acceptance criteria:
+- [ ] `BlastDoor` interface at `src/app/features/minigames/blast-doors/blast-doors.types.ts`
+- [ ] `BlastDoor`: id, position, currentState (open | closed | locked), hookSlots[]
+- [ ] `LifecycleHook` enum: ngOnInit, ngOnChanges, ngOnDestroy, afterNextRender, afterRender
+- [ ] `HookSlot`: hookType (LifecycleHook), behaviorBlock (BehaviorBlock | null), executionOrder
+- [ ] `BehaviorBlock`: id, description, code (string), hookTarget (LifecycleHook)
+- [ ] `DirectiveSpec`: name, type (attribute | structural), inputs[], hostListeners[], hostBindings[], behavior
+- [ ] `DoorScenario`: id, trigger (string), steps[] (array of {event, expectedDoorStates[]})
+- [ ] Exported from blast-doors barrel
+- [ ] Unit tests for: hook ordering validation, scenario step validation
+
+### T-2026-278
+- Title: Create P7 end-to-end smoke test for Advanced Bundle minigames
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-119, T-2026-121, T-2026-123
+- Blocked-by: —
+- Tags: testing, e2e, deep-space-radio, system-certification, blast-doors, game-loop
+- Refs: docs/minigames/10-deep-space-radio.md, docs/minigames/11-system-certification.md, docs/minigames/12-blast-doors.md, playwright.config.ts
+
+P2 has an end-to-end smoke test (T-2026-142) but P7 does not. This E2E test validates all 3 P7 minigames render and are playable via browser navigation.
+
+Acceptance criteria:
+- [ ] Playwright test at `e2e/advanced-bundle.spec.ts`
+- [ ] Test: navigate to `/minigames/deep-space-radio/level/1`, verify request builder and interceptor pipeline render
+- [ ] Test: navigate to `/minigames/system-certification/level/1`, verify source code viewer and test editor render
+- [ ] Test: navigate to `/minigames/blast-doors/level/1`, verify door cross-section and lifecycle timeline render
+- [ ] Tests verify MinigameShell HUD is present
+- [ ] Tests run in CI (GitHub Actions)
+
 ---
 
 ## P8 -- Polish & Replayability
@@ -3883,6 +4166,147 @@ Acceptance criteria:
 - [ ] Mode tabs (story/endless/speedrun) are passed through
 - [ ] Unit tests for: leaderboard tab presence, gameId binding
 
+### T-2026-279
+- Title: Wire AchievementService check triggers into LevelCompletionService and GameProgressionService
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P8
+- Depends: T-2026-109, T-2026-113, T-2026-026
+- Blocked-by: —
+- Tags: integration, achievements, gamification, progression
+- Refs: docs/research/gamification-patterns.md
+
+AchievementService (T-2026-109) defines achievements and a `checkAchievements()` method, but no ticket wires the triggers. Achievements should be evaluated automatically when key progression events occur: level completion, mission completion, rank up, streak milestones, and mastery changes. Without this integration, achievements are never earned during gameplay.
+
+Acceptance criteria:
+- [ ] LevelCompletionService.completeLevel() calls AchievementService.checkAchievements() after recording result
+- [ ] GameProgressionService.completeMission() calls AchievementService.checkAchievements()
+- [ ] XpService rank change triggers achievement check
+- [ ] StreakService milestone triggers achievement check
+- [ ] Achievement notification shown via toast system on new achievement earned
+- [ ] Unit tests for: achievement trigger on level complete, on mission complete, on rank up, on streak milestone
+
+### T-2026-280
+- Title: Wire CosmeticGalleryComponent into ProfilePage
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P8
+- Depends: T-2026-220, T-2026-079
+- Blocked-by: —
+- Tags: integration, ui, profile, cosmetics
+- Refs: docs/progression.md, docs/ux/navigation.md
+
+CosmeticGalleryComponent (T-2026-220) provides the browsing and equipping UI, and ProfilePage (T-2026-079) is where player stats live. Progression.md specifies cosmetic unlocks but no ticket wires the gallery into the profile page where players can view and manage their cosmetics.
+
+Acceptance criteria:
+- [ ] ProfilePage imports and renders `nx-cosmetic-gallery` in a dedicated "Cosmetics" section
+- [ ] Gallery appears below the achievements section
+- [ ] Responsive layout works at all breakpoints
+- [ ] Unit tests for: gallery presence, section heading
+
+### T-2026-281
+- Title: Add AchievementService to progression barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P8
+- Depends: T-2026-109
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/progression/index.ts
+
+AchievementService (T-2026-109) will create `achievement.service.ts` in the progression directory. Per conventions, all services should be exported from their directory barrel.
+
+Acceptance criteria:
+- [ ] `src/app/core/progression/index.ts` updated to export `AchievementService`, `Achievement`, and achievement type enums
+- [ ] Build passes with updated barrel
+
+### T-2026-282
+- Title: Add LeaderboardService to progression barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P8
+- Depends: T-2026-110
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/progression/index.ts
+
+LeaderboardService (T-2026-110) will create `leaderboard.service.ts` in the progression directory. Per conventions, all services should be exported from their directory barrel.
+
+Acceptance criteria:
+- [ ] `src/app/core/progression/index.ts` updated to export `LeaderboardService` and `LeaderboardEntry`
+- [ ] Build passes with updated barrel
+
+### T-2026-283
+- Title: Add CosmeticService to progression barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P8
+- Depends: T-2026-111
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/progression/index.ts
+
+CosmeticService (T-2026-111) will create `cosmetic.service.ts` in the progression directory. Per conventions, all services should be exported from their directory barrel.
+
+Acceptance criteria:
+- [ ] `src/app/core/progression/index.ts` updated to export `CosmeticService` and `CosmeticItem`
+- [ ] Build passes with updated barrel
+
+### T-2026-284
+- Title: Wire EndlessModeService and SpeedRunService into per-minigame replay mode pages
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P8
+- Depends: T-2026-155, T-2026-156, T-2026-048, T-2026-049
+- Blocked-by: —
+- Tags: integration, replay-modes, endless, speed-run
+- Refs: docs/progression.md, docs/minigames/TEMPLATE.md
+
+EndlessModeService (T-2026-048) and SpeedRunService (T-2026-049) manage sessions, but no ticket configures per-minigame parameters. Each minigame spec defines unique endless mode rules (e.g., Module Assembly: "New component every 30 seconds") and speed run par times (e.g., Wire Protocol: "Par time: 4 minutes"). Without per-game config, replay modes use generic defaults.
+
+Acceptance criteria:
+- [ ] `EndlessModeConfig` interface: gameId, spawnInterval, difficultyScaling, highScoreNamespace
+- [ ] `SpeedRunConfig` interface: gameId, parTime, levelSet (levelId[]), bestTimeNamespace
+- [ ] Config data file at `src/app/data/replay-mode-configs.data.ts` with entries for all 12 minigames
+- [ ] EndlessModePage reads config for the current gameId from route params
+- [ ] SpeedRunPage reads config for the current gameId from route params
+- [ ] Par times match each minigame spec (e.g., Module Assembly: 3 min, Wire Protocol: 4 min, etc.)
+- [ ] Unit tests for: config loading per game, par time values match specs
+
+### T-2026-285
+- Title: Create P8 end-to-end smoke test for replay modes
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P8
+- Depends: T-2026-155, T-2026-156, T-2026-157
+- Blocked-by: —
+- Tags: testing, e2e, replay-modes, endless, speed-run, daily-challenge
+- Refs: docs/progression.md, playwright.config.ts
+
+No E2E test validates that replay mode routes render and function. This test covers endless mode, speed run, and daily challenge page rendering.
+
+Acceptance criteria:
+- [ ] Playwright test at `e2e/replay-modes.spec.ts`
+- [ ] Test: navigate to `/minigames/module-assembly/endless`, verify pre-game UI renders with high score and start button
+- [ ] Test: navigate to `/minigames/module-assembly/speedrun`, verify pre-run UI renders with par time and best time
+- [ ] Test: navigate to `/minigames/module-assembly/daily`, verify daily challenge UI renders with topic and XP bonus
+- [ ] Tests verify MinigameShell is NOT present on pre-game screens (replay modes have their own HUD)
+- [ ] Tests run in CI (GitHub Actions)
+
 ### T-2026-221
 - Title: Wire DegradationAlertComponent "Practice Now" to refresher challenge route
 - Status: todo
@@ -3940,3 +4364,43 @@ Acceptance criteria:
 - [ ] RefresherChallengeService mixes micro-levels and multiple-choice questions
 - [ ] REFRESHER_MIN_QUESTIONS enforced as minimum question count
 - [ ] Unit tests for mixed question selection
+
+### T-2026-286
+- Title: Add Playwright E2E job to GitHub Actions CI workflow
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: —
+- Blocked-by: —
+- Tags: ci, e2e, playwright, infrastructure
+- Refs: .github/workflows/ci.yml, playwright.config.ts
+
+The CI workflow has no E2E job. Playwright tests in e2e/ only run locally via `npm run e2e`. This ticket adds a Playwright E2E job to GitHub Actions with browser installation and caching.
+
+Acceptance criteria:
+- [ ] E2E job added to `.github/workflows/ci.yml`
+- [ ] Playwright browsers installed and cached
+- [ ] E2E tests run against production build
+- [ ] Job runs on push/PR (matching existing CI triggers)
+
+### T-2026-287
+- Title: Add MinigameShell HUD E2E tests for P2 minigame components
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-061
+- Blocked-by: —
+- Tags: testing, e2e, minigame-framework, hud
+- Refs: e2e/minigame-shell.spec.ts, src/app/core/minigame/minigame-shell/minigame-shell.ts
+
+Once P2 registers real minigame components (starting with Module Assembly), add E2E tests verifying the MinigameShell HUD renders correctly: score display, timer, hint button, pause button, and lives display.
+
+Acceptance criteria:
+- [ ] E2E test navigates to a registered minigame with a real component
+- [ ] Verifies MinigameShell HUD elements render (score, timer, hints, pause)
+- [ ] Verifies pause/resume interaction
+- [ ] Tests run via `npm run e2e`
