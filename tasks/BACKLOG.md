@@ -631,28 +631,6 @@ Acceptance criteria:
 - [ ] Overlay dismiss event calls RankUpNotificationService.dismiss()
 - [ ] Unit tests for: overlay visibility on rank up, dismiss hides overlay
 
-### T-2026-227
-- Title: Update side nav "Current Mission" link to use dynamic mission resolution
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-026, T-2026-010
-- Blocked-by: —
-- Tags: navigation, side-nav, dynamic-link, integration
-- Refs: docs/ux/navigation.md, src/app/side-nav/side-nav.ts
-
-The side nav's "Current Mission" link is hardcoded to `/mission/1` with a TODO comment referencing T-2026-026 (GameProgressionService). GameProgressionService (completed) provides campaign progress data including the next uncompleted mission. This ticket replaces the hardcoded link with dynamic resolution.
-
-Acceptance criteria:
-- [ ] SideNavComponent injects GameProgressionService
-- [ ] "Current Mission" link points to `/mission/:chapterId` where chapterId is the next uncompleted mission
-- [ ] If all missions complete, link shows "Campaign Complete" or points to `/campaign`
-- [ ] Link text updates reactively when missions are completed
-- [ ] Remove the TODO comment from side-nav.ts
-- [ ] Unit tests for: dynamic link resolution, completed state, reactivity
-
 ### T-2026-228
 - Title: Update bottom nav "Mission" link to use dynamic mission resolution
 - Status: todo

@@ -83,3 +83,4 @@
 [2026-03-07] T-2026-216: Create MissionCardComponent for campaign page mission list — created MissionCardComponent with chapter badge, status indicators, and 15 unit tests (claude)
 [2026-03-07] T-2026-218: Create DailyChallengeCompletionHandler to award bonus XP — already implemented in T-2026-041: DailyChallengeService.completeChallenge() awards 50 bonus XP with notification and idempotency (claude)
 [2026-03-07] T-2026-226: Integrate SvgWireRendererComponent with WireDrawService state — integrated SvgWireRenderer and SvgPort with WireDrawService via optional DI, with preview wire support and 12 new tests (claude)
+[2026-03-07] T-2026-227: Update side nav "Current Mission" link to use dynamic mission resolution — replaced hardcoded mission link with dynamic resolution via GameProgressionService computed signals (claude)
