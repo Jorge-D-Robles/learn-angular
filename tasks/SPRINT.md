@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-307**: Add StreakBadgeComponent to top bar for at-a-glance streak visibility (Assigned: claude, Status: in-progress)
 
 
 

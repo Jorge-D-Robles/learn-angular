@@ -335,29 +335,6 @@ Acceptance criteria:
 - [ ] Build passes with no circular dependencies
 - [ ] ExpressionValidator importable via `'./shared'` barrel path
 
-### T-2026-307
-- Title: Add StreakBadgeComponent to top bar for at-a-glance streak visibility
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-133, T-2026-009
-- Blocked-by: —
-- Tags: ui, streak, top-bar, gamification
-- Refs: docs/research/gamification-patterns.md, docs/ux/navigation.md, src/app/app.html
-
-Gamification research emphasizes streaks as a key engagement mechanic ("Loss aversion makes maintaining streaks compelling"). The top bar shows rank and XP but not streak status. Navigation.md specifies the profile page shows a streak counter, but the top bar -- visible on every page -- could show a compact streak indicator to reinforce daily engagement. StreakBadgeComponent (T-2026-133) provides the visual badge.
-
-Acceptance criteria:
-- [ ] App component injects StreakService for current streak and multiplier
-- [ ] `app.html` renders compact StreakBadgeComponent next to the rank badge in the top bar
-- [ ] Badge only shows when streak is active (>0 days), hidden when no streak
-- [ ] Uses compact/small variant of StreakBadgeComponent
-- [ ] Responsive: hidden on mobile (bottom nav handles navigation; top bar is already tight)
-- [ ] Unit tests for: badge visibility with active streak, hidden with no streak
-- Started: 2026-03-08
-
 ### T-2026-330
 - Title: Update architecture.md to document AudioService and remove stale rankUp note
 - Status: todo
