@@ -755,30 +755,6 @@ Acceptance criteria:
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: dot rendering per step, active step highlight, completed steps, ARIA attributes
 
-### T-2026-189
-- Title: Create MissionUnlockNotification for minigame unlock toast
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P2
-- Depends: T-2026-032, T-2026-026
-- Blocked-by: —
-- Tags: ui, notification, story-missions, minigame-unlock
-- Refs: docs/overview.md, docs/ux/visual-style.md
-
-When a story mission is completed and unlocks a minigame (core game loop: Story Mission -> Unlock Minigame), no visual notification informs the player. XP notifications exist (T-2026-032), but minigame unlock is a separate, more significant event that deserves its own notification with the game name and an invitation to play.
-
-Acceptance criteria:
-- [ ] `MissionUnlockNotificationService` at `src/app/core/notifications/mission-unlock-notification.service.ts`
-- [ ] `showUnlock(gameName: string, gameId: MinigameId)`: displays a toast notification for the unlocked minigame
-- [ ] Notification includes: game name, "New Minigame Unlocked!" header, "Play Now" action link
-- [ ] Uses XpNotificationComponent infrastructure or a similar toast pattern
-- [ ] Auto-dismisses after 5 seconds, or on click
-- [ ] GameProgressionService.completeMission() triggers this notification when a new minigame is unlocked
-- [ ] Exported from notifications barrel
-- [ ] Unit tests for: notification display, auto-dismiss, game name rendering
-
 ### T-2026-190
 - Title: Create PhaseHeaderComponent for campaign page phase grouping
 - Status: todo
@@ -1645,22 +1621,6 @@ Acceptance criteria:
 - [ ] All-complete and no-mission states handled
 - [ ] Unit tests for: component rendering, continue navigation, edge states
 
-### T-2026-351
-- Title: Add MissionUnlockNotificationService to notifications barrel export
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P2
-- Depends: T-2026-189
-- Blocked-by: —
-- Tags: infrastructure, barrel-export, conventions
-- Refs: src/app/core/notifications/index.ts
-
-MissionUnlockNotificationService (T-2026-189) will create a notification service in the notifications directory. Per conventions, all services should be exported from their directory barrel.
-
-Acceptance criteria:
-- [ ] `src/app/core/notifications/index.ts` updated to export `MissionUnlockNotificationService`
 - [ ] Build passes with updated barrel
 
 ### T-2026-352
@@ -2358,6 +2318,51 @@ Acceptance criteria:
 - [ ] Test: pre-wired incorrect connection detected as wrong on verification
 - [ ] Uses real WireProtocolValidationService with sample port/wire data
 
+### T-2026-424
+- Title: Define achievement content data for 15+ predefined achievements
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: —
+- Blocked-by: —
+- Tags: content, data, achievements, gamification
+- Refs: docs/research/gamification-patterns.md, docs/progression.md
+
+T-2026-109 (AchievementService, P8) says "minimum 15 total" achievements across Discovery, Mastery, and Commitment types, but no ticket defines the actual achievement content (names, descriptions, evaluation criteria, icons). Defining the content now allows achievement data to be used for planning UI and testing even before AchievementService is built in P8.
+
+Acceptance criteria:
+- [ ] Achievement data file at `src/app/data/achievements.data.ts`
+- [ ] `AchievementDefinition` interface: id, title, description, type (discovery|mastery|commitment), isHidden, evaluationCriteria (string description)
+- [ ] At least 5 Discovery achievements (e.g., "First Steps: Complete your first mission", "Explorer: Play all 4 P2 minigames", "Speed Demon: Complete a level under 30 seconds")
+- [ ] At least 5 Mastery achievements (e.g., "Perfectionist: Get a perfect score", "Star Collector: Earn 50 total stars", "Topic Master: Reach 5 stars on any topic")
+- [ ] At least 5 Commitment achievements (e.g., "Dedicated: 7-day streak", "Consistent: 14-day streak", "Marathon: 1 hour total play time")
+- [ ] At least 3 hidden achievements
+- [ ] Unit tests for: at least 15 total, all 3 types represented, hidden flag set on 3+
+
+### T-2026-425
+- Title: Define cosmetic items content data for station skins, themes, and badges
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: —
+- Blocked-by: —
+- Tags: content, data, cosmetics, gamification
+- Refs: docs/progression.md
+
+Progression.md specifies "Cosmetic Unlocks (Future): Station module skins, UI themes, Achievement badges. Unlocked at rank milestones and mastery milestones." T-2026-111 (CosmeticService, P8) builds the service but no ticket defines what cosmetic items actually exist. Defining the content data now provides a catalog for planning.
+
+Acceptance criteria:
+- [ ] Cosmetic data file at `src/app/data/cosmetics.data.ts`
+- [ ] `CosmeticDefinition` interface: id, name, type (skin|theme|badge), description, unlockCondition (rank milestone | mastery milestone | achievement), previewImagePath (optional)
+- [ ] At least 4 station module skins (one per rank milestone: Ensign, Commander, Captain, Admiral)
+- [ ] At least 3 UI themes (dark, station, light already exist; add 2+ unlockable variants)
+- [ ] At least 4 achievement-tied badges
+- [ ] Unit tests for: all 3 types represented, valid unlock conditions, minimum counts
+
 ---
 
 ## P3 -- Navigation Bundle
@@ -2602,6 +2607,82 @@ Acceptance criteria:
 - [ ] Test: verify code editor component renders in config phase
 - [ ] Test runs in CI (GitHub Actions)
 
+### T-2026-426
+- Title: Create CorridorRunnerSimulationService for route resolution and navigation testing
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P3
+- Depends: T-2026-266
+- Blocked-by: —
+- Tags: minigame, corridor-runner, service, simulation, routing
+- Refs: docs/minigames/05-corridor-runner.md
+
+Corridor Runner has a two-phase design: Config (route editing) and Run (navigation simulation). The Run phase simulates Angular router resolution: matching routes, resolving redirects, detecting wildcards, handling params, and detecting hull breaches (404s). The engine (T-2026-082) is L-size; extracting the route resolution simulation into a standalone service follows the P2 pattern (ConveyorBeltService, FlowCommanderSimulationService, etc.) and makes the simulation independently testable.
+
+Acceptance criteria:
+- [ ] `CorridorRunnerSimulationService` at `src/app/features/minigames/corridor-runner/corridor-runner-simulation.service.ts`
+- [ ] `loadRouteConfig(routes: RouteEntry[])`: initializes the simulated router from player-edited config
+- [ ] `resolveNavigation(url: string): NavigationResult`: resolves a URL against the route config, returning matched component or hull breach
+- [ ] `resolveRedirects(url: string): string`: follows redirectTo chains until a terminal route
+- [ ] `matchRoute(url: string, routes: RouteEntry[]): MatchResult`: finds the best matching route entry
+- [ ] `extractParams(url: string, routePath: string): Record<string, string>`: extracts route params from URL
+- [ ] `detectHullBreach(url: string): boolean`: returns true if no route matches (404)
+- [ ] Handles: exact paths, wildcard (**), redirectTo, pathMatch ('full' | 'prefix'), children (nested routes), route params (:id)
+- [ ] `reset()`: clears route config
+- [ ] Exported from corridor-runner barrel
+- [ ] Unit tests for: exact path matching, wildcard matching, redirect resolution, param extraction, nested route matching, hull breach detection, pathMatch full vs prefix
+
+### T-2026-427
+- Title: Create integration test for CorridorRunnerSimulationService route resolution
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P3
+- Depends: T-2026-426
+- Blocked-by: —
+- Tags: testing, integration, corridor-runner, simulation
+- Refs: docs/minigames/05-corridor-runner.md
+
+After T-2026-426 creates the simulation service, this integration test verifies the full route resolution pipeline using sample level data: loading route configs, running test navigations, and validating all results match expected destinations.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/corridor-runner/route-simulation.integration.spec.ts`
+- [ ] Test: simple route config with 3 paths resolves all test navigations correctly
+- [ ] Test: redirect chain resolves to final destination
+- [ ] Test: unmatched URL triggers hull breach detection
+- [ ] Test: nested child routes resolve with correct parent/child composition
+- [ ] Test: route params extracted correctly from parameterized URLs
+- [ ] Test: wildcard route catches all unmatched paths
+- [ ] Uses real CorridorRunnerSimulationService with level 1 data
+
+### T-2026-428
+- Title: Create CorridorRunnerRouteEditorComponent for config phase route editing
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P3
+- Depends: T-2026-266, T-2026-031, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, corridor-runner, route-editor
+- Refs: docs/minigames/05-corridor-runner.md
+
+Corridor Runner spec describes a Config phase where the player edits route configurations via a code editor. The UI component (T-2026-083) is already L-size. Extracting the route editor panel into a standalone sub-component follows the P2 pattern (FlowCommanderGateConfigComponent, etc.) and reduces T-2026-083's complexity.
+
+Acceptance criteria:
+- [ ] `RouteEditorComponent` at `src/app/features/minigames/corridor-runner/route-editor/route-editor.ts`
+- [ ] Renders CodeEditorComponent with route config syntax highlighting
+- [ ] Input: `initialConfig` (RouteEntry[]), `availableComponents` (string[])
+- [ ] Autocomplete/validation hints for route properties (path, component, redirectTo, pathMatch, children)
+- [ ] Output: `configChanged` event with updated RouteEntry[] on user edits
+- [ ] Output: `configSubmitted` event when player clicks "Lock Routes" to transition to Run phase
+- [ ] Validation feedback: highlights invalid route entries (missing path, unknown component)
+- [ ] Exported from corridor-runner barrel
+- [ ] Unit tests for: initial config rendering, config change emission, validation feedback, submit event
+
 ---
 
 ## P4 -- Forms Bundle
@@ -2845,6 +2926,79 @@ Acceptance criteria:
 - [ ] Test: verify MinigameShell HUD is present (score, timer, hint button)
 - [ ] Test: verify live preview panel renders
 - [ ] Test runs in CI (GitHub Actions)
+
+### T-2026-429
+- Title: Create TerminalHackFormEvaluationService for form code evaluation and test execution
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P4
+- Depends: T-2026-268
+- Blocked-by: —
+- Tags: minigame, terminal-hack, service, evaluation, forms
+- Refs: docs/minigames/06-terminal-hack.md
+
+Terminal Hack spec describes evaluating player-written form code against test cases with live preview generation. The engine (T-2026-087) is L-size and bundles form evaluation, test case execution, and live preview. Extracting the evaluation logic into a standalone service follows the P2 pattern (FlowCommanderSimulationService, WireProtocolValidationService, etc.) and enables independent testing of form validation mechanics.
+
+Acceptance criteria:
+- [ ] `TerminalHackFormEvaluationService` at `src/app/features/minigames/terminal-hack/terminal-hack-evaluation.service.ts`
+- [ ] `evaluateFormCode(code: string, spec: TargetFormSpec): EvaluationResult`: parses and evaluates player's form code against the target spec
+- [ ] `runTestCases(code: string, testCases: TestCase[]): TestCaseResult[]`: executes each test case against the form and returns pass/fail per case
+- [ ] `generatePreview(code: string): FormPreview`: generates a live preview representation of the form
+- [ ] `validateFormStructure(code: string, requiredElements: FormElement[]): StructureResult`: checks form has all required elements
+- [ ] `getTestPassRate(): number`: returns percentage of passing tests
+- [ ] `reset()`: clears evaluation state
+- [ ] Exported from terminal-hack barrel
+- [ ] Unit tests for: form evaluation pass/fail, test case execution, live preview generation, structure validation, test pass rate calculation
+
+### T-2026-430
+- Title: Create integration test for TerminalHackFormEvaluationService test case execution
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P4
+- Depends: T-2026-429
+- Blocked-by: —
+- Tags: testing, integration, terminal-hack, evaluation
+- Refs: docs/minigames/06-terminal-hack.md
+
+After T-2026-429 creates the evaluation service, this integration test verifies the full form evaluation pipeline: writing form code, running test cases, and validating pass/fail results.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/terminal-hack/form-evaluation.integration.spec.ts`
+- [ ] Test: correct form code passes all test cases
+- [ ] Test: incomplete form code fails specific test cases
+- [ ] Test: form with missing required field fails structure validation
+- [ ] Test: form with incorrect validators fails test cases with specific inputs
+- [ ] Test: test pass rate calculation matches manual count
+- [ ] Uses real TerminalHackFormEvaluationService with level 1 data
+
+### T-2026-431
+- Title: Create TerminalHackCodePanelComponent for target form and code editor split view
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P4
+- Depends: T-2026-268, T-2026-031, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, terminal-hack, code-panel
+- Refs: docs/minigames/06-terminal-hack.md, docs/ux/visual-style.md
+
+Terminal Hack spec describes a split-panel layout: left panel (target form preview, read-only) and right panel (code editor for form code). The UI component (T-2026-088) is L-size. Extracting the split code panel into a standalone sub-component reduces complexity. The component provides the retro terminal aesthetic (green-on-black, scanlines) per the spec.
+
+Acceptance criteria:
+- [ ] `TerminalHackCodePanelComponent` at `src/app/features/minigames/terminal-hack/code-panel/code-panel.ts`
+- [ ] Left panel: renders target form specification as read-only preview with required fields highlighted
+- [ ] Right panel: renders CodeEditorComponent in editable mode for form code
+- [ ] Input: `targetSpec` (TargetFormSpec), `initialCode` (string), `availableTools` (AvailableFormTool[])
+- [ ] Output: `codeChanged` event with updated code string on user edits
+- [ ] Retro terminal aesthetic: green-on-black text, scanline overlay effect, terminal cursor blink
+- [ ] Tool availability hints: disabled tools shown as dimmed in the available tools palette
+- [ ] Exported from terminal-hack barrel
+- [ ] Unit tests for: target spec rendering, code editor rendering, code change emission, retro theme applied, tool hints
 
 ---
 
@@ -3217,6 +3371,156 @@ Acceptance criteria:
 - [ ] Tests verify MinigameShell HUD is present
 - [ ] Tests run in CI (GitHub Actions)
 
+### T-2026-432
+- Title: Create PowerGridScopeConfigComponent for service injection scope selection
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P5
+- Depends: T-2026-270, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, power-grid, scope-config
+- Refs: docs/minigames/07-power-grid.md
+
+Power Grid spec describes a scope selector per service (root/component/hierarchical) and connection drawing between services and components. The UI component (T-2026-093) is L-size. Extracting the scope configuration panel into a standalone sub-component reduces complexity. The panel shows the service details, scope dropdown, and valid connection targets.
+
+Acceptance criteria:
+- [ ] `PowerGridScopeConfigComponent` at `src/app/features/minigames/power-grid/scope-config/scope-config.ts`
+- [ ] Input: `service` (ServiceNode), `scopeRules` (ScopeRule), `availableComponents` (ComponentNode[])
+- [ ] Renders service name, type, and current scope
+- [ ] Scope dropdown: root (blue), component (green), hierarchical (orange), factory (purple)
+- [ ] Shows valid connection targets based on selected scope per scope rules
+- [ ] Output: `scopeChanged` event with new InjectionScope
+- [ ] Output: `connectionRequested` event with {serviceId, componentId, scope}
+- [ ] Short circuit warning: highlights when scope selection creates invalid injection
+- [ ] Exported from power-grid barrel
+- [ ] Unit tests for: scope selection, valid target filtering, short circuit warning, scope rule enforcement
+
+### T-2026-433
+- Title: Create PowerGridInjectionService for DI scope validation and connection checking
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P5
+- Depends: T-2026-270
+- Blocked-by: —
+- Tags: minigame, power-grid, service, validation, dependency-injection
+- Refs: docs/minigames/07-power-grid.md
+
+Power Grid spec describes connection validation, scope checking, and short circuit detection. The engine (T-2026-092) is L-size and bundles all validation logic. Extracting DI scope validation into a standalone service follows the P2 pattern and enables independent testing of Angular DI mechanics.
+
+Acceptance criteria:
+- [ ] `PowerGridInjectionService` at `src/app/features/minigames/power-grid/power-grid-injection.service.ts`
+- [ ] `validateConnection(connection: PowerConnection, scopeRules: ScopeRule[]): ConnectionResult`: checks service-component compatibility and scope correctness
+- [ ] `checkScope(service: ServiceNode, component: ComponentNode, scope: InjectionScope): boolean`: validates the injection scope is allowed
+- [ ] `detectShortCircuit(connections: PowerConnection[]): ShortCircuit[]`: finds circular or invalid injection patterns
+- [ ] `validateAll(connections: PowerConnection[], scopeRules: ScopeRule[]): ValidationResult`: checks all connections, returns per-connection pass/fail
+- [ ] `getValidConnections(service: ServiceNode, components: ComponentNode[], scopeRules: ScopeRule[]): ComponentNode[]`: returns components that can receive the service at its scope
+- [ ] `reset()`: clears validation state
+- [ ] Exported from power-grid barrel
+- [ ] Unit tests for: root scope validation, component scope validation, hierarchical scope, short circuit detection, invalid scope rejection, valid connection filtering
+
+### T-2026-434
+- Title: Create DataRelayPipeConfigComponent for pipe parameter configuration panel
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P5
+- Depends: T-2026-271, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, data-relay, pipe-config
+- Refs: docs/minigames/08-data-relay.md
+
+Data Relay spec describes clicking a placed pipe to configure its parameters (e.g., date format string, decimal digits, currency code). The UI component (T-2026-096) is L-size. Extracting the pipe configuration panel into a standalone sub-component reduces complexity.
+
+Acceptance criteria:
+- [ ] `DataRelayPipeConfigComponent` at `src/app/features/minigames/data-relay/pipe-config/pipe-config.ts`
+- [ ] Input: `pipe` (PipeBlock), `pipeType` (PipeCategory), `availableParams` (string[])
+- [ ] Renders pipe name, type icon, and parameter fields
+- [ ] Parameter inputs vary by pipe type: date format (dropdown), decimal places (number input), currency code (dropdown), custom transform (code editor)
+- [ ] Live preview: shows sample input -> output transformation with current params
+- [ ] Output: `paramsChanged` event with updated params array
+- [ ] Output: `pipeRemoved` event
+- [ ] Exported from data-relay barrel
+- [ ] Unit tests for: parameter rendering by pipe type, param change emission, live preview update, pipe removal
+
+### T-2026-435
+- Title: Create DataRelayTransformService for pipe application and output comparison
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P5
+- Depends: T-2026-271
+- Blocked-by: —
+- Tags: minigame, data-relay, service, transformation, pipes
+- Refs: docs/minigames/08-data-relay.md
+
+Data Relay spec says "Pipes are applied as actual Angular pipe transforms." The engine (T-2026-095) is L-size and bundles pipe application, chaining, and output comparison. Extracting the transformation logic into a standalone service follows the P2 pattern and enables independent testing of pipe mechanics.
+
+Acceptance criteria:
+- [ ] `DataRelayTransformService` at `src/app/features/minigames/data-relay/data-relay-transform.service.ts`
+- [ ] `applyPipe(input: any, pipe: PipeBlock): string`: applies a single pipe transform with params, returning formatted output
+- [ ] `applyChain(input: any, pipes: PipeBlock[]): string`: applies a chain of pipes in sequence
+- [ ] `compareOutput(actual: string, expected: string): boolean`: compares formatted output against target
+- [ ] `evaluateStreams(streams: DataStream[]): StreamResult[]`: evaluates all streams, returning per-stream pass/fail
+- [ ] `getAvailablePipes(category?: PipeCategory): PipeBlock[]`: returns pipe definitions filtered by category
+- [ ] Supports built-in Angular pipes: uppercase, lowercase, date, decimal, currency, percent, slice, json, async
+- [ ] Custom pipe support: evaluates custom transform descriptions
+- [ ] `reset()`: clears transform state
+- [ ] Exported from data-relay barrel
+- [ ] Unit tests for: each built-in pipe application, pipe chaining, output comparison, stream evaluation, custom pipe handling
+
+### T-2026-436
+- Title: Create integration test for PowerGridInjectionService DI scope validation
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P5
+- Depends: T-2026-433
+- Blocked-by: —
+- Tags: testing, integration, power-grid, validation
+- Refs: docs/minigames/07-power-grid.md
+
+After T-2026-433 creates the injection service, this integration test verifies the full DI validation pipeline using sample level data.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/power-grid/injection-validation.integration.spec.ts`
+- [ ] Test: root-scoped service connects to any component successfully
+- [ ] Test: component-scoped service only connects to its providing component
+- [ ] Test: hierarchical scope validates parent-child injection chains
+- [ ] Test: circular injection pattern detected as short circuit
+- [ ] Test: validateAll returns correct pass/fail for mixed connections
+- [ ] Uses real PowerGridInjectionService with sample service/component data
+
+### T-2026-437
+- Title: Create integration test for DataRelayTransformService pipe chain evaluation
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P5
+- Depends: T-2026-435
+- Blocked-by: —
+- Tags: testing, integration, data-relay, transformation
+- Refs: docs/minigames/08-data-relay.md
+
+After T-2026-435 creates the transform service, this integration test verifies the full pipe application pipeline using sample stream data.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/data-relay/transform-chain.integration.spec.ts`
+- [ ] Test: single uppercase pipe transforms "hello" to "HELLO"
+- [ ] Test: date pipe formats Date object with specified format string
+- [ ] Test: pipe chain (uppercase | slice:0:3) produces correct output
+- [ ] Test: currency pipe with locale parameter produces formatted output
+- [ ] Test: stream with all correct pipes passes evaluation
+- [ ] Test: stream with wrong pipe type fails output comparison
+- [ ] Uses real DataRelayTransformService with sample stream data
+
 ---
 
 ## P6 -- Signals Bundle
@@ -3453,6 +3757,85 @@ Acceptance criteria:
 - [ ] Test: verify MinigameShell HUD is present (score, timer)
 - [ ] Test: verify signal/computed/effect node types are present in the toolbox
 - [ ] Test runs in CI (GitHub Actions)
+
+### T-2026-438
+- Title: Create ReactorCoreGraphService for signal graph editing, validation, and change propagation
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P6
+- Depends: T-2026-273
+- Blocked-by: —
+- Tags: minigame, reactor-core, service, graph, signals
+- Refs: docs/minigames/09-reactor-core.md
+
+Reactor Core spec describes a node-based graph editor with cycle detection, change propagation simulation, and scenario execution. The engine (T-2026-099) is L-size. Extracting the graph management and simulation into a standalone service follows the P2 pattern and enables independent testing of signal graph mechanics.
+
+Acceptance criteria:
+- [ ] `ReactorCoreGraphService` at `src/app/features/minigames/reactor-core/reactor-core-graph.service.ts`
+- [ ] `addNode(node: SignalNode | ComputedNode | EffectNode)`: adds a node to the graph
+- [ ] `removeNode(nodeId: string)`: removes a node and its edges
+- [ ] `addEdge(edge: GraphEdge): boolean`: adds a dependency edge, returns false if it would create a cycle
+- [ ] `removeEdge(sourceId: string, targetId: string)`: removes a dependency edge
+- [ ] `validateGraph(): GraphValidationResult`: checks for cycles, orphaned nodes, missing dependencies
+- [ ] `detectCycle(fromId: string, toId: string): boolean`: returns true if adding the edge would create a cycle
+- [ ] `propagateChange(nodeId: string, newValue: any): PropagationResult`: propagates a signal value change through computed nodes and triggers effects
+- [ ] `runScenario(scenario: SimulationScenario): ScenarioResult`: applies signal changes and validates expected outputs
+- [ ] `getGraph(): Signal<{nodes: Map, edges: GraphEdge[]}>`: signal of current graph state
+- [ ] `reset()`: clears graph state
+- [ ] Exported from reactor-core barrel
+- [ ] Unit tests for: node add/remove, edge add/remove, cycle detection, change propagation through computed, effect triggering, scenario execution, graph validation
+
+### T-2026-439
+- Title: Create ReactorCoreNodeConfigComponent for signal/computed/effect node configuration
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P6
+- Depends: T-2026-273, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, reactor-core, node-config
+- Refs: docs/minigames/09-reactor-core.md, docs/ux/visual-style.md
+
+Reactor Core spec describes clicking a node to configure it: signal nodes have initial values, computed nodes have computation expressions, effect nodes have action descriptions. The UI component (T-2026-100) is L-size. Extracting the node configuration panel follows the P2 sub-component pattern.
+
+Acceptance criteria:
+- [ ] `ReactorCoreNodeConfigComponent` at `src/app/features/minigames/reactor-core/node-config/node-config.ts`
+- [ ] Input: `node` (SignalNode | ComputedNode | EffectNode), `availableDependencies` (string[])
+- [ ] Signal node: value input field (number/string/boolean), type selector
+- [ ] Computed node: expression builder for computation formula, dependency selection
+- [ ] Effect node: action description text, dependency selection, optional cleanup toggle
+- [ ] Node type indicator: signal (blue glow), computed (green glow), effect (orange glow) per visual-style.md
+- [ ] Output: `nodeConfigured` event with updated node data
+- [ ] Output: `cancelled` event
+- [ ] Exported from reactor-core barrel
+- [ ] Unit tests for: signal node value editing, computed node expression editing, effect node action editing, type-specific rendering, config apply event
+
+### T-2026-440
+- Title: Create integration test for ReactorCoreGraphService change propagation and scenario execution
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P6
+- Depends: T-2026-438
+- Blocked-by: —
+- Tags: testing, integration, reactor-core, graph, signals
+- Refs: docs/minigames/09-reactor-core.md
+
+After T-2026-438 creates the graph service, this integration test verifies the full signal graph pipeline: building graphs, propagating changes, and executing scenarios.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/reactor-core/graph-propagation.integration.spec.ts`
+- [ ] Test: signal value change propagates to dependent computed node
+- [ ] Test: multi-level propagation (signal -> computed -> computed -> effect)
+- [ ] Test: cycle detection prevents adding circular dependency
+- [ ] Test: scenario execution validates expected outputs after signal changes
+- [ ] Test: removing a dependency edge breaks propagation chain
+- [ ] Test: orphaned computed node detected by graph validation
+- [ ] Uses real ReactorCoreGraphService with sample graph data
 
 ---
 
@@ -3988,6 +4371,231 @@ Acceptance criteria:
 - [ ] Test: navigate to `/minigames/blast-doors/level/1`, verify door cross-section and lifecycle timeline render
 - [ ] Tests verify MinigameShell HUD is present
 - [ ] Tests run in CI (GitHub Actions)
+
+### T-2026-441
+- Title: Create DeepSpaceRadioInterceptorService for HTTP interceptor chain simulation
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P7
+- Depends: T-2026-275
+- Blocked-by: —
+- Tags: minigame, deep-space-radio, service, simulation, http
+- Refs: docs/minigames/10-deep-space-radio.md
+
+Deep Space Radio spec says "Interceptor chain is modeled after Angular's actual HttpInterceptor pipeline" with ordered processing of requests and responses. The engine (T-2026-103) is L-size. Extracting the interceptor chain simulation follows the established pattern.
+
+Acceptance criteria:
+- [ ] `DeepSpaceRadioInterceptorService` at `src/app/features/minigames/deep-space-radio/deep-space-radio-interceptor.service.ts`
+- [ ] `setInterceptorChain(interceptors: InterceptorBlock[])`: sets the ordered interceptor pipeline
+- [ ] `processRequest(request: HttpRequestConfig): ProcessedRequest`: runs request through interceptor chain in order
+- [ ] `processResponse(response: TransmissionResult): ProcessedResponse`: runs response through interceptor chain in reverse order
+- [ ] `validateChain(expected: InterceptorBlock[]): ChainValidationResult`: checks interceptor order against expected configuration
+- [ ] `simulateTransmission(request: HttpRequestConfig, endpoints: MockEndpoint[]): TransmissionResult`: full request lifecycle through interceptors, mock backend, and response
+- [ ] Interceptor types: auth (adds auth header), logging (records request), retry (retries on failure), error (handles error responses), caching (caches responses)
+- [ ] `reset()`: clears chain state
+- [ ] Exported from deep-space-radio barrel
+- [ ] Unit tests for: interceptor chain ordering, auth header injection, retry on 500, error handling, caching hit/miss, request/response processing order
+
+### T-2026-442
+- Title: Create DeepSpaceRadioRequestBuilderComponent for HTTP request configuration UI
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-275, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, deep-space-radio, request-builder
+- Refs: docs/minigames/10-deep-space-radio.md
+
+Deep Space Radio spec describes a request builder with method selector, URL input, headers editor, and body editor. The UI component (T-2026-118) is L-size. Extracting the request builder follows the P2 sub-component pattern.
+
+Acceptance criteria:
+- [ ] `RequestBuilderComponent` at `src/app/features/minigames/deep-space-radio/request-builder/request-builder.ts`
+- [ ] Method selector dropdown: GET, POST, PUT, DELETE with color coding
+- [ ] URL input field with endpoint autocomplete from level data
+- [ ] Headers editor: key-value pairs with add/remove
+- [ ] Body editor: JSON editor for POST/PUT requests (hidden for GET/DELETE)
+- [ ] Input: `availableEndpoints` (MockEndpoint[]), `currentRequest` (HttpRequestConfig | null)
+- [ ] Output: `requestChanged` event with updated HttpRequestConfig
+- [ ] Output: `transmitRequested` event when player clicks "Transmit"
+- [ ] Exported from deep-space-radio barrel
+- [ ] Unit tests for: method selection, URL input, header editing, body visibility by method, transmit event
+
+### T-2026-443
+- Title: Create SystemCertificationTestRunnerService for test execution and coverage calculation
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P7
+- Depends: T-2026-276
+- Blocked-by: —
+- Tags: minigame, system-certification, service, testing, coverage
+- Refs: docs/minigames/11-system-certification.md
+
+System Certification spec describes test execution, coverage calculation, and test quality scoring. The engine (T-2026-105) is L-size. Extracting the test runner and coverage calculator follows the established service extraction pattern.
+
+Acceptance criteria:
+- [ ] `SystemCertificationTestRunnerService` at `src/app/features/minigames/system-certification/system-certification-test-runner.service.ts`
+- [ ] `loadSourceCode(source: SourceCodeBlock)`: initializes the source code to test against
+- [ ] `runTests(testCode: string): TestResult[]`: evaluates player-written test code against source, returns per-test results
+- [ ] `calculateCoverage(testResults: TestResult[]): CoverageResult`: calculates line coverage percentage from test results
+- [ ] `evaluateTestQuality(testResults: TestResult[]): QualityScore`: penalizes redundant tests, rewards covering unique paths
+- [ ] `isThresholdMet(coverage: CoverageResult, threshold: CertificationThreshold): boolean`: checks if coverage meets level requirements
+- [ ] `getUncoveredLines(): number[]`: returns line numbers not yet covered by any test
+- [ ] `reset()`: clears runner state
+- [ ] Exported from system-certification barrel
+- [ ] Unit tests for: test execution pass/fail, coverage calculation, quality scoring, threshold checking, uncovered line detection, redundant test penalty
+
+### T-2026-444
+- Title: Create BlastDoorsLifecycleService for lifecycle hook ordering and scenario simulation
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P7
+- Depends: T-2026-277
+- Blocked-by: —
+- Tags: minigame, blast-doors, service, lifecycle, simulation
+- Refs: docs/minigames/12-blast-doors.md
+
+Blast Doors spec says "Lifecycle simulation engine fires hooks in Angular's actual lifecycle order." The engine (T-2026-107) is L-size. Extracting lifecycle simulation follows the established pattern.
+
+Acceptance criteria:
+- [ ] `BlastDoorsLifecycleService` at `src/app/features/minigames/blast-doors/blast-doors-lifecycle.service.ts`
+- [ ] `loadDoors(doors: BlastDoor[])`: initializes door state from level data
+- [ ] `assignBehavior(doorId: string, hookType: LifecycleHook, behavior: BehaviorBlock)`: places a behavior in a door's hook slot
+- [ ] `removeBehavior(doorId: string, hookType: LifecycleHook)`: removes a behavior from a hook slot
+- [ ] `validateHookOrder(doorId: string): HookOrderResult`: checks if behaviors are in correct Angular lifecycle order
+- [ ] `simulateScenario(scenario: DoorScenario): ScenarioResult`: runs a scenario triggering events and checking door states at each step
+- [ ] `getCorrectHookOrder(): LifecycleHook[]`: returns Angular's lifecycle hook execution order
+- [ ] `applyDirective(doorId: string, directive: DirectiveSpec)`: applies a custom directive to a door
+- [ ] `getDoorStates(): Signal<Map<string, BlastDoor>>`: signal of current door states
+- [ ] `reset()`: clears all door and scenario state
+- [ ] Exported from blast-doors barrel
+- [ ] Unit tests for: behavior assignment to hooks, hook order validation, scenario simulation with correct/incorrect hooks, directive application, door state changes, lifecycle order correctness
+
+### T-2026-445
+- Title: Create BlastDoorsTimelineComponent for lifecycle hook slot drag-and-drop UI
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-277, T-2026-054, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, blast-doors, timeline
+- Refs: docs/minigames/12-blast-doors.md, docs/ux/visual-style.md
+
+Blast Doors spec describes a lifecycle timeline with hook slots where players drag behavior blocks. The UI component (T-2026-122) is L-size. Extracting the timeline follows the P2 sub-component pattern.
+
+Acceptance criteria:
+- [ ] `BlastDoorsTimelineComponent` at `src/app/features/minigames/blast-doors/timeline/timeline.ts`
+- [ ] Renders horizontal timeline bar per door with hook slots: ngOnInit, ngOnChanges, ngOnDestroy, afterNextRender, afterRender
+- [ ] Hook slots accept DraggableDirective drops of BehaviorBlock items
+- [ ] Input: `door` (BlastDoor), `availableBehaviors` (BehaviorBlock[])
+- [ ] Correctly-placed behaviors glow green; incorrectly-placed behaviors pulse red after simulation
+- [ ] Hook slots show Angular lifecycle order labels
+- [ ] Output: `behaviorPlaced` event with {doorId, hookType, behaviorBlock}
+- [ ] Output: `behaviorRemoved` event with {doorId, hookType}
+- [ ] Keyboard accessible: Tab between slots, Space/Enter to place selected behavior
+- [ ] Exported from blast-doors barrel
+- [ ] Unit tests for: slot rendering, drag-drop placement, correct/incorrect visual states, keyboard navigation, event emissions
+
+### T-2026-446
+- Title: Create integration test for DeepSpaceRadioInterceptorService transmission simulation
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-441
+- Blocked-by: —
+- Tags: testing, integration, deep-space-radio, interceptor
+- Refs: docs/minigames/10-deep-space-radio.md
+
+After T-2026-441 creates the interceptor service, this integration test verifies the full transmission simulation pipeline.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/deep-space-radio/interceptor-simulation.integration.spec.ts`
+- [ ] Test: request with auth interceptor adds authorization header
+- [ ] Test: request with retry interceptor retries on 500 response
+- [ ] Test: interceptor chain processes in correct order (auth before logging)
+- [ ] Test: response passes through interceptor chain in reverse order
+- [ ] Test: mock endpoint matches URL and method, returns configured response
+- [ ] Test: missing endpoint returns 404 error response
+- [ ] Uses real DeepSpaceRadioInterceptorService with sample endpoint/interceptor data
+
+### T-2026-447
+- Title: Create integration test for SystemCertificationTestRunnerService coverage calculation
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-443
+- Blocked-by: —
+- Tags: testing, integration, system-certification, coverage
+- Refs: docs/minigames/11-system-certification.md
+
+After T-2026-443 creates the test runner service, this integration test verifies the full test execution and coverage pipeline.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/system-certification/coverage-calculation.integration.spec.ts`
+- [ ] Test: test covering all source lines achieves 100% coverage
+- [ ] Test: test covering half the lines achieves ~50% coverage
+- [ ] Test: redundant tests (covering same lines) receive quality penalty
+- [ ] Test: coverage threshold validation passes/fails correctly
+- [ ] Test: uncovered lines correctly identified
+- [ ] Uses real SystemCertificationTestRunnerService with sample source code
+
+### T-2026-448
+- Title: Create integration test for BlastDoorsLifecycleService hook ordering and scenario simulation
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-444
+- Blocked-by: —
+- Tags: testing, integration, blast-doors, lifecycle
+- Refs: docs/minigames/12-blast-doors.md
+
+After T-2026-444 creates the lifecycle service, this integration test verifies the full lifecycle simulation pipeline.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/blast-doors/lifecycle-simulation.integration.spec.ts`
+- [ ] Test: behaviors placed in correct lifecycle order pass validation
+- [ ] Test: behaviors in wrong order fail validation with specific error
+- [ ] Test: scenario simulation with correct hooks produces expected door states
+- [ ] Test: scenario with missing ngOnInit behavior causes door to remain closed
+- [ ] Test: custom directive application modifies door behavior
+- [ ] Test: ngOnDestroy cleanup runs when door is removed from simulation
+- [ ] Uses real BlastDoorsLifecycleService with sample door/scenario data
+
+### T-2026-449
+- Title: Update architecture.md with P3-P7 minigame patterns and service conventions
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-444, T-2026-443, T-2026-441
+- Blocked-by: —
+- Tags: documentation, architecture, conventions
+- Refs: docs/architecture.md
+
+P1 had architecture documentation tickets (T-2026-043, T-2026-330). As P3-P7 add new minigame service extraction patterns, simulation services, and sub-component conventions, architecture.md should be updated to document these patterns so future developers understand the established conventions.
+
+Acceptance criteria:
+- [ ] architecture.md documents the "service extraction pattern" used across all minigames (engine delegates to standalone service)
+- [ ] Lists all simulation/validation services per minigame (ConveyorBeltService, FlowCommanderSimulationService, etc.)
+- [ ] Documents the sub-component pattern for complex minigame UIs (gate config, tower config, binding selector, etc.)
+- [ ] Updates the persistence table with any new localStorage keys added by P3-P7 services
+- [ ] Documents the route guard pattern (canActivate, canDeactivate) established in P2
 
 ---
 
