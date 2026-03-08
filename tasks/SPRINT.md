@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-354**: Add skip-to-content link for keyboard accessibility (Assigned: claude, Status: in-progress)
 
 
 

@@ -460,29 +460,6 @@ Acceptance criteria:
 - [ ] Existing LevelResultsComponent tests updated for the new child component
 - [ ] Unit tests for: breakdown data binding, new best indicator pass-through
 
-### T-2026-354
-- Title: Add skip-to-content link for keyboard accessibility
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-009
-- Blocked-by: —
-- Tags: accessibility, a11y, keyboard, app-shell
-- Refs: docs/ux/navigation.md, src/app/app.html
-
-WCAG 2.1 AA requires a "skip to main content" link for keyboard users to bypass navigation. The app shell has a top bar, side nav, and bottom nav that keyboard users must tab through on every page. No ticket adds a skip link.
-
-Acceptance criteria:
-- [ ] Visually hidden skip link rendered as first focusable element in app shell
-- [ ] Link target: `#main-content` anchor on the router-outlet container
-- [ ] Link becomes visible on focus (CSS `:focus` styling)
-- [ ] Link text: "Skip to main content"
-- [ ] Styled with station theme (Reactor Blue background when focused)
-- [ ] Unit tests for: link renders, link targets correct anchor, link visible on focus
-- Started: 2026-03-08
-
 ### T-2026-355
 - Title: Add ARIA landmark roles to app shell layout regions
 - Status: todo
