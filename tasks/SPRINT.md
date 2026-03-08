@@ -11,13 +11,12 @@ Started: 2026-03-08
 
 ## Active
 
-*(none — pick from Queue)*
+
 
 ---
 
 ## Queue
 
-- **T-2026-375**: Add persistence to LevelProgressionService for level progress data (Priority: high, Size: M)
 - **T-2026-208**: Add XpDiminishingReturnsService to progression barrel export (Priority: low, Size: S)
 - **T-2026-209**: Add PlayTimeService to progression barrel export (Priority: low, Size: S)
 - **T-2026-229**: Add error module to core barrel export (Priority: low, Size: S)
