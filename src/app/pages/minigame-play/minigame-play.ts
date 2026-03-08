@@ -309,7 +309,7 @@ export class MinigamePlayPage {
     if (levelId) {
       this.hintService.requestHint(levelId);
     }
-    this.onRetry();
+    this.onRetry(false);
   }
 
   onRequestHint(): void {
@@ -327,11 +327,19 @@ export class MinigamePlayPage {
     }
   }
 
-  onRetry(): void {
+  onRetry(resetHints = true): void {
     const eng = this.engine();
     if (eng && this.currentLevelData) {
       this.completionFired = false;
       this.completionSummary.set(null);
+      if (resetHints) {
+        this.hintService.reset();
+        this.activeHintText.set('');
+        if (this.hintDismissTimer) {
+          clearTimeout(this.hintDismissTimer);
+          this.hintDismissTimer = null;
+        }
+      }
       eng.initialize(this.currentLevelData);
       eng.setPlayMode(PlayMode.Story);
       eng.start();

@@ -4339,8 +4339,8 @@ Acceptance criteria:
 
 ### T-2026-309
 - Title: Reset HintService on minigame retry to prevent penalty carry-over
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -4355,6 +4355,7 @@ Acceptance criteria:
 - [ ] `onRetry()` calls `hintService.reset()` before re-initializing the engine
 - [ ] Unit test: after retry, `hintService.hasUsedHints()` returns false
 - [ ] Unit test: after retry with hints used, completing level awards full XP (no carry-over penalty)
+- Started: 2026-03-08
 
 ### T-2026-319
 - Title: Wire registry scoreConfig.maxScore into MinigamePlayPage buildMinigameResult

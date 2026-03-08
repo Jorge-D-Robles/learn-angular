@@ -150,6 +150,7 @@ function mockHintService(overrides: Partial<HintService> = {}) {
       getRemainingHints: vi.fn().mockReturnValue(0),
       requestHint: vi.fn().mockReturnValue(null),
       getNextHintPenalty: vi.fn().mockReturnValue(0),
+      reset: vi.fn(),
       ...overrides,
     },
   };
@@ -1518,6 +1519,106 @@ describe('MinigamePlayPage', () => {
 
     expect(spy).toHaveBeenCalledWith(PlayMode.Story);
     expect(component.engine()!.playMode()).toBe(PlayMode.Story);
+    testEngine.destroy();
+  });
+
+  // --- T-2026-309: Reset HintService on retry ---
+
+  it('should call hintService.reset() before engine.initialize() on retry', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const callOrder: string[] = [];
+    const resetSpy = vi.fn().mockImplementation(() => callOrder.push('reset'));
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      hintService: {
+        reset: resetSpy,
+        getRemainingHints: vi.fn().mockReturnValue(0),
+        requestHint: vi.fn().mockReturnValue(null),
+        getNextHintPenalty: vi.fn().mockReturnValue(0),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Spy on engine.initialize to track call order (call through so engine state transitions properly)
+    const origInitialize = testEngine.initialize.bind(testEngine);
+    vi.spyOn(testEngine, 'initialize').mockImplementation((level) => {
+      callOrder.push('initialize');
+      return origInitialize(level);
+    });
+
+    testEngine.fail();
+    component.onRetry();
+
+    expect(resetSpy).toHaveBeenCalledTimes(1);
+    expect(callOrder).toEqual(['reset', 'initialize']);
+    testEngine.destroy();
+  });
+
+  it('should clear activeHintText and cancel hintDismissTimer on retry', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const resetSpy = vi.fn();
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      hintService: {
+        reset: resetSpy,
+        getRemainingHints: vi.fn().mockReturnValue(0),
+        requestHint: vi.fn().mockReturnValue(null),
+        getNextHintPenalty: vi.fn().mockReturnValue(0),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Simulate displayed hint state
+    component.activeHintText.set('Some hint text');
+    (component as any).hintDismissTimer = setTimeout(vi.fn(), 5000);
+
+    testEngine.fail();
+    component.onRetry();
+
+    expect(component.activeHintText()).toBe('');
+    expect((component as any).hintDismissTimer).toBeNull();
+    testEngine.destroy();
+  });
+
+  it('should call onRetry(false) from onUseHint — does NOT reset hints', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const resetSpy = vi.fn();
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      hintService: {
+        reset: resetSpy,
+        requestHint: vi.fn().mockReturnValue({ hint: { text: 'test' } }),
+        getRemainingHints: vi.fn().mockReturnValue(1),
+        getNextHintPenalty: vi.fn().mockReturnValue(0),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const retrySpy = vi.spyOn(component, 'onRetry');
+
+    testEngine.fail();
+    component.onUseHint();
+
+    expect(retrySpy).toHaveBeenCalledWith(false);
+    expect(resetSpy).not.toHaveBeenCalled();
     testEngine.destroy();
   });
 });
