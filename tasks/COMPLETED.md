@@ -208,3 +208,4 @@
 [2026-03-08] T-2026-065: Register Wire Protocol in MinigameRegistry and wire routes — register Wire Protocol with full provideMinigame registration and E2E smoke test (claude)
 [2026-03-08] T-2026-467: Fix Module Assembly level data to match engine canonical types — fix level data types to match engine canonical types, fix NgComponentOutlet timing bug (claude)
 [2026-03-08] T-2026-069: Register Flow Commander in MinigameRegistry and wire routes — register Flow Commander with provideMinigame, add unit tests and E2E smoke test (claude)
+[2026-03-08] T-2026-073: Register Signal Corps in MinigameRegistry and wire routes — register Signal Corps with provideMinigame, remove provideMinigameEngine, add E2E smoke test (claude)

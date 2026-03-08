@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-073**: Register Signal Corps in MinigameRegistry and wire routes (Assigned: claude, Status: in-progress)
 
 
 

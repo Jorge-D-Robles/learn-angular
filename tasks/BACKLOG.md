@@ -143,28 +143,6 @@ Acceptance criteria:
 - [ ] Engine and/or data model supports the pedagogical distinction
 - [ ] All tests pass
 
-### T-2026-073
-- Title: Register Signal Corps in MinigameRegistry and wire routes
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-072, T-2026-029, T-2026-042
-- Blocked-by: —
-- Tags: minigame, signal-corps, registration, routing
-- Refs: docs/minigames/04-signal-corps.md
-
-Register Signal Corps with MinigameRegistryService and ensure end-to-end playability.
-
-Acceptance criteria:
-- [ ] Signal Corps registered with gameId, config, and component type
-- [ ] Navigating to `/minigames/signal-corps/level/1` loads and renders the game
-- [ ] Level data loads correctly for all 18 levels
-- [ ] MinigameShell integration works (score, timer, lives)
-- [ ] E2e smoke test: navigate to level 1, verify game renders
-- Started: 2026-03-08
-
 ### T-2026-079
 - Title: Create ProfilePage component with player stats
 - Status: todo
