@@ -4,6 +4,7 @@ export { DegradationAlertComponent } from './degradation-alert/degradation-alert
 export { EmptyStateComponent } from './empty-state/empty-state';
 export { ErrorStateComponent } from './error-state/error-state';
 export { ExpressionBuilderComponent } from './expression-builder/expression-builder';
+export { validateExpression, type ValidationResult } from './expression-builder/expression-validator';
 export { LevelFailedComponent } from './level-failed/level-failed';
 export { LevelResultsComponent } from './level-results/level-results';
 export { LevelStarsComponent } from './level-stars/level-stars';

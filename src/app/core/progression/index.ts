@@ -5,4 +5,7 @@ export * from './mastery.service';
 export * from './refresher-challenge.service';
 export * from './spaced-repetition.service';
 export * from './streak.service';
+export * from './play-time.service';
+export * from './streak-reward.service';
+export * from './xp-diminishing-returns.service';
 export * from './xp.service';
