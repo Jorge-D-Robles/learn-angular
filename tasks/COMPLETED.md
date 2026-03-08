@@ -121,3 +121,4 @@
 [2026-03-08] T-2026-301: Wire PlayMode context into MinigamePlayPage and replay mode pages — wired PlayMode.Story into MinigamePlayPage engine lifecycle and added playMode contract to replay mode stub pages (claude)
 [2026-03-08] T-2026-302: Add MinigameScoreConfig to MinigameConfig for per-game scoring parameters — added optional scoreConfig to MinigameConfig with DEFAULT_SCORE_CONFIG neutral weights and per-game overrides (claude)
 [2026-03-08] T-2026-306: Create integration test for MinigamePlayPage completion-to-progression pipeline — created 5 integration tests covering completion-to-progression pipeline with real services (claude)
+[2026-03-08] T-2026-310: Remove stale completed tickets from BACKLOG.md — removed 3 stale completed tickets (T-2026-201, T-2026-230, T-2026-231) and reassigned ID collision T-2026-180 to T-2026-320 (claude)

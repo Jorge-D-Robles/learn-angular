@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-310**: Remove stale completed tickets from BACKLOG.md (Assigned: claude, Status: in-progress)
 
 
 ---

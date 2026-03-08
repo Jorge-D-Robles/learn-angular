@@ -678,27 +678,6 @@ Acceptance criteria:
 - [ ] Responsive: hidden on mobile (bottom nav handles navigation; top bar is already tight)
 - [ ] Unit tests for: badge visibility with active streak, hidden with no streak
 
-### T-2026-310
-- Title: Remove stale completed tickets from BACKLOG.md
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P1
-- Depends: —
-- Blocked-by: —
-- Tags: infrastructure, backlog-hygiene, cleanup
-- Refs: tasks/BACKLOG.md, tasks/COMPLETED.md
-
-T-2026-201 (ComboTrackerService barrel), T-2026-230 (LifetimeStatsService barrel), and T-2026-231 (RankUpNotificationService barrel) are marked as completed in COMPLETED.md but their ticket entries still appear in BACKLOG.md. Per project conventions, completed tickets must be removed entirely from the backlog. Additionally, T-2026-180 has an ID collision: the completed ticket (scaffold features/minigames directory structure) shares its ID with an open ticket (add multiple-choice question support to RefresherChallengeService). The open ticket must be reassigned a new ID.
-
-Acceptance criteria:
-- [ ] T-2026-201, T-2026-230, T-2026-231 entries removed from BACKLOG.md (already in COMPLETED.md)
-- [ ] Open ticket "Add multiple-choice question support to RefresherChallengeService" (currently T-2026-180) reassigned to a new ticket ID to resolve the collision with the completed T-2026-180
-- [ ] No ticket IDs appear in both BACKLOG.md and COMPLETED.md after cleanup
-- [ ] Verification: `grep -oE 'T-2026-[0-9]+' tasks/BACKLOG.md | sort -u` has no overlap with `grep -oE 'T-2026-[0-9]+' tasks/COMPLETED.md | sort -u`
-- Started: 2026-03-08
-
 ### T-2026-311
 - Title: Create integration test for MinigameEngine auto-pause on page visibility change
 - Status: todo
