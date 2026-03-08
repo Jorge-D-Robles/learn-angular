@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-129**: Create EmptyStateComponent for no-content pages (Assigned: claude, Status: in-progress)
 
 
 

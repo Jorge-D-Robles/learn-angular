@@ -28,30 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-129
-- Title: Create EmptyStateComponent for no-content pages
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-007
-- Blocked-by: —
-- Tags: ui, component, shared
-- Refs: docs/ux/visual-style.md, docs/ux/navigation.md
-
-Multiple pages need empty state displays: dashboard with no completed missions, minigame hub with all games locked, profile with no stats. A shared component ensures consistent empty state presentation across the app.
-
-Acceptance criteria:
-- [ ] `EmptyStateComponent` at `src/app/shared/components/empty-state/`
-- [ ] Selector: `nx-empty-state`
-- [ ] Inputs: `icon` (string, icon name), `title` (string), `message` (string)
-- [ ] Content projection slot for optional action button
-- [ ] Station-themed styling: muted colors, centered layout
-- [ ] Exported from shared components barrel
-- [ ] Unit tests for: rendering with all inputs, content projection slot
-- Started: 2026-03-08
-
 ### T-2026-130
 - Title: Create TooltipDirective for contextual help
 - Status: todo

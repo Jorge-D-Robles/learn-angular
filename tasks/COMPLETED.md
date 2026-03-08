@@ -133,3 +133,4 @@
 [2026-03-08] T-2026-324: Create placeholder audio asset files for all SoundEffect types — create placeholder audio asset files for all SoundEffect types (claude)
 [2026-03-08] T-2026-329: Create integration test for AudioService with SettingsService sound toggle — integration test verifying AudioService respects SettingsService soundEnabled toggle (claude)
 [2026-03-08] T-2026-165: Create barrel export for animation core module — added animation barrel export and core re-export (claude)
+[2026-03-08] T-2026-129: Create EmptyStateComponent for no-content pages — shared EmptyStateComponent with icon, title, message inputs and content projection (claude)
