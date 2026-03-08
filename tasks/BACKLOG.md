@@ -144,29 +144,6 @@ Acceptance criteria:
 - [ ] Level completion triggers XP award and progression update
 - [ ] E2e smoke test: navigate to level 1, verify game renders
 
-### T-2026-062
-- Title: Define Wire Protocol level data for 18 levels
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P2
-- Depends: T-2026-019, T-2026-038
-- Blocked-by: —
-- Tags: minigame, wire-protocol, level-data, content
-- Refs: docs/minigames/02-wire-protocol.md, docs/curriculum.md
-
-Define the static level data for all 18 Wire Protocol levels. Each level specifies the component class ports (properties/methods), template ports (binding targets), correct wire connections, wire types, and pre-wired connections (some intentionally wrong).
-
-Acceptance criteria:
-- [ ] Level data file at `src/app/data/levels/wire-protocol.data.ts`
-- [ ] `WireProtocolLevelData` interface: sourcePorts[], targetPorts[], correctWires[], preWired[], wireTypes
-- [ ] 6 Basic levels (interpolation only through all three types)
-- [ ] 6 Intermediate levels (two-way binding through mixed challenge)
-- [ ] 5 Advanced levels (template refs through full rewire)
-- [ ] 1 Boss level ("Array Overhaul" with 5 components, 20+ connections)
-- [ ] Unit tests verify: 18 total levels, all levels have valid wire definitions
-
 ### T-2026-063
 - Title: Create Wire Protocol minigame engine
 - Status: todo

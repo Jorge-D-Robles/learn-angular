@@ -22,11 +22,11 @@ Started: 2026-03-08
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-062**: Define Wire Protocol level data for 18 levels (Priority: high, Size: L)
 - **T-2026-066**: Define Flow Commander level data for 18 levels (Priority: high, Size: L)
 - **T-2026-070**: Define Signal Corps level data for 18 levels (Priority: high, Size: L)
 - **T-2026-074**: Create story mission content for Chapters 1-10 (Priority: high, Size: L)
