@@ -1,0 +1,88 @@
+.rank-up-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 14, 26, 0.85); // --nx-color-void at 85%
+  z-index: 100;
+  animation: overlayFadeIn var(--nx-duration-game, 500ms) var(--nx-ease-out, ease-out);
+}
+
+.rank-up-overlay__panel {
+  background: var(--nx-color-hull);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card);
+  padding: var(--nx-space-8);
+  min-width: 280px;
+  max-width: 400px;
+  text-align: center;
+  animation: panelEntry var(--nx-duration-game, 500ms) var(--nx-ease-out, ease-out);
+}
+
+.rank-up-overlay__icon {
+  color: var(--nx-color-solar-gold);
+  margin-bottom: var(--nx-space-4);
+  filter: drop-shadow(0 0 12px rgba(255, 196, 0, 0.4));
+  animation: iconGlow 2s ease-in-out infinite alternate;
+}
+
+.rank-up-overlay__title {
+  margin: 0 0 var(--nx-space-2);
+  font-size: var(--nx-text-page-title-size, 1.5rem);
+  font-weight: var(--nx-text-page-title-weight, 700);
+  color: var(--nx-color-solar-gold);
+}
+
+.rank-up-overlay__message {
+  margin: 0 0 var(--nx-space-6);
+  font-size: var(--nx-text-body-size, 1rem);
+  color: var(--nx-color-corridor);
+}
+
+.rank-up-overlay__dismiss {
+  padding: var(--nx-space-3) var(--nx-space-6);
+  border-radius: var(--nx-radius-button);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: var(--nx-color-reactor-blue);
+  color: white;
+  transition: opacity var(--nx-duration-fast, 150ms) var(--nx-ease-out, ease-out);
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes panelEntry {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes iconGlow {
+  from { filter: drop-shadow(0 0 12px rgba(255, 196, 0, 0.4)); }
+  to { filter: drop-shadow(0 0 20px rgba(255, 196, 0, 0.6)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rank-up-overlay,
+  .rank-up-overlay__panel {
+    animation: none;
+  }
+
+  .rank-up-overlay__icon {
+    animation: none;
+  }
+
+  .rank-up-overlay__dismiss {
+    transition: none;
+  }
+}

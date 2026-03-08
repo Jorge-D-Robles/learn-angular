@@ -16,6 +16,7 @@ import {
   ChevronUp,
   CircleAlert,
   RefreshCw,
+  Shield,
   X,
 } from 'lucide-angular';
 import type { LucideIcons } from 'lucide-angular';
@@ -35,7 +36,7 @@ export { LucideAngularModule } from 'lucide-angular';
  *   check    -> CircleCheck
  *   chevron  -> ChevronRight/Down/Left/Up
  *   alert    -> CircleAlert   | refresh  -> RefreshCw
- *   x-close  -> X
+ *   x-close  -> X             | shield   -> Shield
  */
 export const APP_ICONS: LucideIcons = {
   CircleCheck,
@@ -55,5 +56,6 @@ export const APP_ICONS: LucideIcons = {
   ChevronUp,
   CircleAlert,
   RefreshCw,
+  Shield,
   X,
 };

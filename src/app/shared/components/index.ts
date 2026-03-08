@@ -11,6 +11,7 @@ export { LockedContentComponent } from './locked-content/locked-content';
 export { MasteryStarsComponent } from './mastery-stars/mastery-stars';
 export { MissionCardComponent } from './mission-card/mission-card';
 export { PauseMenuComponent } from './pause-menu/pause-menu';
+export { RankUpOverlayComponent } from './rank-up-overlay/rank-up-overlay';
 export { StationCardComponent } from './station-card/station-card';
 export { TierBadgeComponent } from './tier-badge/tier-badge';
 export { SvgPortComponent } from './svg-port/svg-port';
