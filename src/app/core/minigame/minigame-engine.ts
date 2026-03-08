@@ -1,5 +1,5 @@
 import { signal, computed, type Signal } from '@angular/core';
-import { MinigameStatus, PlayMode, type MinigameLevel, type MinigameState } from './minigame.types';
+import { MinigameStatus, PlayMode, type MinigameLevel, type MinigameState, type MinigameId } from './minigame.types';
 import type { ComboTrackerService } from './combo-tracker.service';
 
 /** Result returned by a minigame action validation. */
@@ -9,6 +9,11 @@ export interface ActionResult {
   readonly livesChange: number;
 }
 
+/** Interface for tracking play time. Implemented by PlayTimeService. */
+export interface PlayTimeTracker {
+  recordMinigameTime(gameId: MinigameId, durationSeconds: number): void;
+}
+
 /** Configuration for a MinigameEngine instance. */
 export interface MinigameEngineConfig {
   readonly initialLives: number;
@@ -16,6 +21,7 @@ export interface MinigameEngineConfig {
   readonly maxScore: number;
   readonly document?: Document;
   readonly comboTracker?: ComboTrackerService;
+  readonly playTimeTracker?: PlayTimeTracker;
 }
 
 /** Default engine configuration values. */
@@ -59,22 +65,27 @@ export abstract class MinigameEngine<TLevelData> {
   }));
 
   // --- Private fields ---
-  private readonly _config: Omit<MinigameEngineConfig, 'document' | 'comboTracker'>;
+  private readonly _config: Omit<MinigameEngineConfig, 'document' | 'comboTracker' | 'playTimeTracker'>;
   private readonly _comboTracker: ComboTrackerService | undefined;
+  private readonly _playTimeTracker: PlayTimeTracker | undefined;
   private _timerId: ReturnType<typeof setInterval> | null = null;
   private _autoPaused = false;
   private readonly _boundVisibilityHandler: (() => void) | null;
   private readonly _doc: Document | undefined;
+  private _playStartTime: number | null = null;
+  private _accumulatedPlayTime = 0;
+  private _gameIdForPlayTime: MinigameId | null = null;
 
   /** Public read-only accessor for the engine configuration. */
-  get config(): Omit<MinigameEngineConfig, 'document' | 'comboTracker'> {
+  get config(): Omit<MinigameEngineConfig, 'document' | 'comboTracker' | 'playTimeTracker'> {
     return this._config;
   }
 
   protected constructor(config: Partial<MinigameEngineConfig> = {}) {
-    const { document: configDoc, comboTracker, ...restConfig } = { ...DEFAULT_ENGINE_CONFIG, ...config };
+    const { document: configDoc, comboTracker, playTimeTracker, ...restConfig } = { ...DEFAULT_ENGINE_CONFIG, ...config };
     this._config = restConfig;
     this._comboTracker = comboTracker;
+    this._playTimeTracker = playTimeTracker;
     this._doc = configDoc ?? (typeof document !== 'undefined' ? document : undefined);
     this._boundVisibilityHandler = this._doc ? this._onVisibilityChange.bind(this) : null;
   }
@@ -86,6 +97,9 @@ export abstract class MinigameEngine<TLevelData> {
     this._removeVisibilityListener();
     this._autoPaused = false;
     this._clearTimer();
+    this._playStartTime = null;
+    this._accumulatedPlayTime = 0;
+    this._gameIdForPlayTime = level.gameId;
     this._score.set(0);
     this._lives.set(this._config.initialLives);
     this._status.set(MinigameStatus.Loading);
@@ -102,6 +116,7 @@ export abstract class MinigameEngine<TLevelData> {
       return;
     }
     this._status.set(MinigameStatus.Playing);
+    this._playStartTime = Date.now();
     this._addVisibilityListener();
     if (this._config.timerDuration !== null) {
       this._startTimer();
@@ -122,6 +137,10 @@ export abstract class MinigameEngine<TLevelData> {
     if (this._status() !== MinigameStatus.Playing) {
       return;
     }
+    if (this._playStartTime !== null) {
+      this._accumulatedPlayTime += Date.now() - this._playStartTime;
+      this._playStartTime = null;
+    }
     this._status.set(MinigameStatus.Paused);
     this._clearTimer();
     this.onPause();
@@ -134,6 +153,7 @@ export abstract class MinigameEngine<TLevelData> {
     }
     this._autoPaused = false;
     this._status.set(MinigameStatus.Playing);
+    this._playStartTime = Date.now();
     if (this._config.timerDuration !== null) {
       this._startTimer();
     }
@@ -147,6 +167,7 @@ export abstract class MinigameEngine<TLevelData> {
     }
     this._clearTimer();
     this._status.set(MinigameStatus.Won);
+    this._finalizePlayTime();
     this.onComplete();
   }
 
@@ -157,6 +178,7 @@ export abstract class MinigameEngine<TLevelData> {
     }
     this._clearTimer();
     this._status.set(MinigameStatus.Lost);
+    this._finalizePlayTime();
   }
 
   /** Destroys the engine, clearing all timers and resetting state. Not reusable after destroy. */
@@ -164,6 +186,9 @@ export abstract class MinigameEngine<TLevelData> {
     this._removeVisibilityListener();
     this._autoPaused = false;
     this._clearTimer();
+    this._playStartTime = null;
+    this._accumulatedPlayTime = 0;
+    this._gameIdForPlayTime = null;
     this._score.set(0);
     this._lives.set(0);
     this._timeRemaining.set(0);
@@ -202,6 +227,21 @@ export abstract class MinigameEngine<TLevelData> {
   /** Returns the current combo multiplier (1.0 if no comboTracker is configured). */
   getComboMultiplier(): number {
     return this._comboTracker?.comboMultiplier() ?? 1.0;
+  }
+
+  // --- Private play time methods ---
+
+  private _finalizePlayTime(): void {
+    if (this._playStartTime !== null) {
+      this._accumulatedPlayTime += Date.now() - this._playStartTime;
+      this._playStartTime = null;
+    }
+    if (this._playTimeTracker && this._gameIdForPlayTime) {
+      const durationSeconds = this._accumulatedPlayTime / 1000;
+      if (durationSeconds > 0) {
+        this._playTimeTracker.recordMinigameTime(this._gameIdForPlayTime, durationSeconds);
+      }
+    }
   }
 
   // --- Private timer methods ---

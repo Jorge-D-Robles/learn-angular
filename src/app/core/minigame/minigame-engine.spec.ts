@@ -3,6 +3,7 @@ import {
   MinigameEngine,
   type ActionResult,
   type MinigameEngineConfig,
+  type PlayTimeTracker,
 } from './minigame-engine';
 import {
   MinigameStatus,
@@ -928,6 +929,148 @@ describe('MinigameEngine', () => {
       const noComboEngine = new TestEngine();
       expect(() => noComboEngine.recordIncorrectAction()).not.toThrow();
       noComboEngine.destroy();
+    });
+  });
+
+  // --- 16. Play time tracking ---
+
+  describe('Play time tracking', () => {
+    let mockTracker: PlayTimeTracker;
+
+    beforeEach(() => {
+      vi.useFakeTimers();
+      mockTracker = {
+        recordMinigameTime: vi.fn(),
+      };
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should not record play time when no playTimeTracker is configured', () => {
+      const noTrackerEngine = new TestEngine();
+      noTrackerEngine.initialize(createTestLevel());
+      noTrackerEngine.start();
+      vi.setSystemTime(Date.now() + 5000);
+      noTrackerEngine.complete();
+      // No error thrown, no tracker to call
+      noTrackerEngine.destroy();
+    });
+
+    it('should record play time on complete()', () => {
+      const trackedEngine = new TestEngine({ playTimeTracker: mockTracker });
+      trackedEngine.initialize(createTestLevel());
+      const startTime = Date.now();
+      trackedEngine.start();
+      vi.setSystemTime(startTime + 5000);
+      trackedEngine.complete();
+      expect(mockTracker.recordMinigameTime).toHaveBeenCalledWith('module-assembly', 5);
+      trackedEngine.destroy();
+    });
+
+    it('should record play time on fail()', () => {
+      const trackedEngine = new TestEngine({ playTimeTracker: mockTracker });
+      trackedEngine.initialize(createTestLevel());
+      const startTime = Date.now();
+      trackedEngine.start();
+      vi.setSystemTime(startTime + 5000);
+      trackedEngine.fail();
+      expect(mockTracker.recordMinigameTime).toHaveBeenCalledWith('module-assembly', 5);
+      trackedEngine.destroy();
+    });
+
+    it('should exclude paused time from duration', () => {
+      const trackedEngine = new TestEngine({ playTimeTracker: mockTracker });
+      trackedEngine.initialize(createTestLevel());
+      const startTime = Date.now();
+      trackedEngine.start();
+      // Play for 3s
+      vi.setSystemTime(startTime + 3000);
+      trackedEngine.pause();
+      // Paused for 10s
+      vi.setSystemTime(startTime + 13000);
+      trackedEngine.resume();
+      // Play for 2s more
+      vi.setSystemTime(startTime + 15000);
+      trackedEngine.complete();
+      // Duration should be 5s (3 + 2), not 15s
+      expect(mockTracker.recordMinigameTime).toHaveBeenCalledWith('module-assembly', 5);
+      trackedEngine.destroy();
+    });
+
+    it('should accumulate across multiple pause/resume cycles', () => {
+      const trackedEngine = new TestEngine({ playTimeTracker: mockTracker });
+      trackedEngine.initialize(createTestLevel());
+      const startTime = Date.now();
+      trackedEngine.start();
+      // Play 2s
+      vi.setSystemTime(startTime + 2000);
+      trackedEngine.pause();
+      // Paused 5s
+      vi.setSystemTime(startTime + 7000);
+      trackedEngine.resume();
+      // Play 3s
+      vi.setSystemTime(startTime + 10000);
+      trackedEngine.pause();
+      // Paused 5s
+      vi.setSystemTime(startTime + 15000);
+      trackedEngine.resume();
+      // Play 1s
+      vi.setSystemTime(startTime + 16000);
+      trackedEngine.complete();
+      // Duration = 2 + 3 + 1 = 6s
+      expect(mockTracker.recordMinigameTime).toHaveBeenCalledWith('module-assembly', 6);
+      trackedEngine.destroy();
+    });
+
+    it('should reset timing on initialize()', () => {
+      const trackedEngine = new TestEngine({ playTimeTracker: mockTracker });
+      trackedEngine.initialize(createTestLevel());
+      const startTime = Date.now();
+      trackedEngine.start();
+      // Play for 3s
+      vi.setSystemTime(startTime + 3000);
+      // Re-initialize resets timing
+      trackedEngine.initialize(createTestLevel());
+      const newStartTime = Date.now();
+      trackedEngine.start();
+      vi.setSystemTime(newStartTime + 2000);
+      trackedEngine.complete();
+      // Duration should be 2s, not 5s
+      expect(mockTracker.recordMinigameTime).toHaveBeenCalledWith('module-assembly', 2);
+      trackedEngine.destroy();
+    });
+
+    it('should pass the correct gameId from the level', () => {
+      const trackedEngine = new TestEngine({ playTimeTracker: mockTracker });
+      trackedEngine.initialize(createTestLevel({ gameId: 'wire-protocol' }));
+      const startTime = Date.now();
+      trackedEngine.start();
+      vi.setSystemTime(startTime + 3000);
+      trackedEngine.complete();
+      expect(mockTracker.recordMinigameTime).toHaveBeenCalledWith('wire-protocol', 3);
+      trackedEngine.destroy();
+    });
+
+    it('should not record play time on destroy()', () => {
+      const trackedEngine = new TestEngine({ playTimeTracker: mockTracker });
+      trackedEngine.initialize(createTestLevel());
+      const startTime = Date.now();
+      trackedEngine.start();
+      vi.setSystemTime(startTime + 5000);
+      trackedEngine.destroy();
+      expect(mockTracker.recordMinigameTime).not.toHaveBeenCalled();
+    });
+
+    it('should not record zero duration', () => {
+      const trackedEngine = new TestEngine({ playTimeTracker: mockTracker });
+      trackedEngine.initialize(createTestLevel());
+      trackedEngine.start();
+      // No time advance — complete immediately at same timestamp
+      trackedEngine.complete();
+      expect(mockTracker.recordMinigameTime).not.toHaveBeenCalled();
+      trackedEngine.destroy();
     });
   });
 });

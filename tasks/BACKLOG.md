@@ -159,8 +159,8 @@ Acceptance criteria:
 
 ### T-2026-210
 - Title: Integrate PlayTimeService with MinigameEngine session tracking
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -177,6 +177,7 @@ Acceptance criteria:
 - [ ] Duration calculated as elapsed time between start and end (excluding paused time)
 - [ ] Paused time excluded: engine.pause() stops the timer, engine.resume() resumes it
 - [ ] Unit tests for: time recording on completion, pause exclusion, per-game accumulation
+- Started: 2026-03-08
 
 ### T-2026-229
 - Title: Add error module to core barrel export
