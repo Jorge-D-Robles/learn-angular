@@ -11,6 +11,8 @@ Started: 2026-03-07
 
 ## Active
 
+- **T-2026-288**: Add Page Visibility auto-pause to MinigameEngine (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -103,7 +105,6 @@ Started: 2026-03-07
 
 ## Queue
 
-- **T-2026-288**: Add Page Visibility auto-pause to MinigameEngine (Priority: medium, Size: S)
 - **T-2026-289**: Add play mode context signal to MinigameEngine (Priority: medium, Size: S)
 - **T-2026-290**: Integrate ComboTrackerService multiplier into ScoreCalculationService (Priority: medium, Size: S)
 - **T-2026-292**: Add MinigameShell responsive layout for mobile gameplay (Priority: medium, Size: S)

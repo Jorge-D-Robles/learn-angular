@@ -608,8 +608,8 @@ Acceptance criteria:
 
 ### T-2026-288
 - Title: Add Page Visibility auto-pause to MinigameEngine
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -628,6 +628,7 @@ Acceptance criteria:
 - [ ] `_autoPaused` private flag distinguishes auto-pause from manual pause
 - [ ] Visibility listener cleaned up in `destroy()`
 - [ ] Unit tests for: auto-pause on hidden, auto-resume on visible, no auto-resume after manual pause, cleanup on destroy
+- Started: 2026-03-07
 
 ### T-2026-289
 - Title: Add play mode context signal to MinigameEngine

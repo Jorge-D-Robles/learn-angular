@@ -45,6 +45,23 @@ class TestEngine extends MinigameEngine<{ difficulty: number }> {
 
 // --- Test helpers ---
 
+function createMockDocument() {
+  let handler: (() => void) | null = null;
+  const mockDoc = {
+    hidden: false,
+    addEventListener: vi.fn((event: string, fn: () => void) => {
+      if (event === 'visibilitychange') handler = fn;
+    }),
+    removeEventListener: vi.fn((event: string, _fn: () => void) => {
+      if (event === 'visibilitychange') handler = null;
+    }),
+    dispatchVisibilityChange() {
+      handler?.();
+    },
+  };
+  return mockDoc;
+}
+
 function createTestLevel(
   overrides: Partial<MinigameLevel<{ difficulty: number }>> = {},
 ): MinigameLevel<{ difficulty: number }> {
@@ -563,6 +580,133 @@ describe('MinigameEngine', () => {
       const state = engine.state();
       expect(state.status).toBe(MinigameStatus.Playing);
       expect(state.score).toBe(10); // default nextValidationResult scoreChange
+    });
+  });
+
+  // --- 13. Page Visibility auto-pause ---
+
+  describe('Page Visibility auto-pause', () => {
+    it('should auto-pause when document becomes hidden while Playing', () => {
+      const mockDoc = createMockDocument();
+      const visEngine = new TestEngine({ document: mockDoc as unknown as Document });
+      visEngine.initialize(createTestLevel());
+      visEngine.start();
+      expect(visEngine.status()).toBe(MinigameStatus.Playing);
+
+      mockDoc.hidden = true;
+      mockDoc.dispatchVisibilityChange();
+      expect(visEngine.status()).toBe(MinigameStatus.Paused);
+      visEngine.destroy();
+    });
+
+    it('should auto-resume when document becomes visible after auto-pause', () => {
+      const mockDoc = createMockDocument();
+      const visEngine = new TestEngine({ document: mockDoc as unknown as Document });
+      visEngine.initialize(createTestLevel());
+      visEngine.start();
+
+      // Auto-pause
+      mockDoc.hidden = true;
+      mockDoc.dispatchVisibilityChange();
+      expect(visEngine.status()).toBe(MinigameStatus.Paused);
+
+      // Auto-resume
+      mockDoc.hidden = false;
+      mockDoc.dispatchVisibilityChange();
+      expect(visEngine.status()).toBe(MinigameStatus.Playing);
+      visEngine.destroy();
+    });
+
+    it('should NOT auto-resume after manual pause', () => {
+      const mockDoc = createMockDocument();
+      const visEngine = new TestEngine({ document: mockDoc as unknown as Document });
+      visEngine.initialize(createTestLevel());
+      visEngine.start();
+
+      // Manual pause
+      visEngine.pause();
+      expect(visEngine.status()).toBe(MinigameStatus.Paused);
+
+      // Tab becomes visible — should NOT auto-resume
+      mockDoc.hidden = false;
+      mockDoc.dispatchVisibilityChange();
+      expect(visEngine.status()).toBe(MinigameStatus.Paused);
+      visEngine.destroy();
+    });
+
+    it('should not react to visibility changes when not Playing', () => {
+      const mockDoc = createMockDocument();
+      const visEngine = new TestEngine({ document: mockDoc as unknown as Document });
+      visEngine.initialize(createTestLevel());
+      // Status is Loading — hidden event should be a no-op
+      mockDoc.hidden = true;
+      mockDoc.dispatchVisibilityChange();
+      expect(visEngine.status()).toBe(MinigameStatus.Loading);
+      visEngine.destroy();
+    });
+
+    it('should clean up visibility listener on destroy', () => {
+      const mockDoc = createMockDocument();
+      const visEngine = new TestEngine({ document: mockDoc as unknown as Document });
+      visEngine.initialize(createTestLevel());
+      visEngine.start();
+
+      visEngine.destroy();
+      expect(mockDoc.removeEventListener).toHaveBeenCalledWith(
+        'visibilitychange',
+        expect.any(Function),
+      );
+
+      // After destroy, dispatching should be a no-op (handler was removed)
+      mockDoc.hidden = true;
+      mockDoc.dispatchVisibilityChange();
+      expect(visEngine.status()).toBe(MinigameStatus.Lost); // destroy sets Lost
+    });
+
+    it('should clean up visibility listener on re-initialize and re-register on start', () => {
+      const mockDoc = createMockDocument();
+      const visEngine = new TestEngine({ document: mockDoc as unknown as Document });
+      visEngine.initialize(createTestLevel());
+      visEngine.start();
+
+      // Re-initialize mid-game should remove listener
+      visEngine.initialize(createTestLevel());
+      expect(mockDoc.removeEventListener).toHaveBeenCalledWith(
+        'visibilitychange',
+        expect.any(Function),
+      );
+
+      // Start again — listener should be re-registered
+      visEngine.start();
+      mockDoc.hidden = true;
+      mockDoc.dispatchVisibilityChange();
+      expect(visEngine.status()).toBe(MinigameStatus.Paused);
+      visEngine.destroy();
+    });
+
+    it('should pause timer during auto-pause', () => {
+      vi.useFakeTimers();
+      const mockDoc = createMockDocument();
+      const visEngine = new TestEngine({
+        timerDuration: 30,
+        document: mockDoc as unknown as Document,
+      });
+      visEngine.initialize(createTestLevel());
+      visEngine.start();
+      vi.advanceTimersByTime(5000);
+      expect(visEngine.timeRemaining()).toBe(25);
+
+      // Auto-pause
+      mockDoc.hidden = true;
+      mockDoc.dispatchVisibilityChange();
+      expect(visEngine.status()).toBe(MinigameStatus.Paused);
+
+      // Advance time while paused — timer should not decrement
+      vi.advanceTimersByTime(10000);
+      expect(visEngine.timeRemaining()).toBe(25);
+
+      visEngine.destroy();
+      vi.useRealTimers();
     });
   });
 });

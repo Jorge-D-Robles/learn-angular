@@ -12,6 +12,7 @@ export interface ActionResult {
 export interface MinigameEngineConfig {
   readonly initialLives: number;
   readonly timerDuration: number | null;
+  readonly document?: Document;
 }
 
 /** Default engine configuration values. */
@@ -51,22 +52,30 @@ export abstract class MinigameEngine<TLevelData> {
   }));
 
   // --- Private fields ---
-  private readonly _config: MinigameEngineConfig;
+  private readonly _config: Omit<MinigameEngineConfig, 'document'>;
   private _timerId: ReturnType<typeof setInterval> | null = null;
+  private _autoPaused = false;
+  private readonly _boundVisibilityHandler: (() => void) | null;
+  private readonly _doc: Document | undefined;
 
   /** Public read-only accessor for the engine configuration. */
-  get config(): MinigameEngineConfig {
+  get config(): Omit<MinigameEngineConfig, 'document'> {
     return this._config;
   }
 
   protected constructor(config: Partial<MinigameEngineConfig> = {}) {
-    this._config = { ...DEFAULT_ENGINE_CONFIG, ...config };
+    const { document: configDoc, ...restConfig } = { ...DEFAULT_ENGINE_CONFIG, ...config };
+    this._config = restConfig;
+    this._doc = configDoc ?? (typeof document !== 'undefined' ? document : undefined);
+    this._boundVisibilityHandler = this._doc ? this._onVisibilityChange.bind(this) : null;
   }
 
   // --- Lifecycle methods ---
 
   /** Initializes the engine with a level. Resets all state. */
   initialize(level: MinigameLevel<TLevelData>): void {
+    this._removeVisibilityListener();
+    this._autoPaused = false;
     this._clearTimer();
     this._score.set(0);
     this._lives.set(this._config.initialLives);
@@ -82,6 +91,7 @@ export abstract class MinigameEngine<TLevelData> {
       return;
     }
     this._status.set(MinigameStatus.Playing);
+    this._addVisibilityListener();
     if (this._config.timerDuration !== null) {
       this._startTimer();
     }
@@ -102,6 +112,7 @@ export abstract class MinigameEngine<TLevelData> {
     if (this._status() !== MinigameStatus.Paused) {
       return;
     }
+    this._autoPaused = false;
     this._status.set(MinigameStatus.Playing);
     if (this._config.timerDuration !== null) {
       this._startTimer();
@@ -129,6 +140,8 @@ export abstract class MinigameEngine<TLevelData> {
 
   /** Destroys the engine, clearing all timers and resetting state. Not reusable after destroy. */
   destroy(): void {
+    this._removeVisibilityListener();
+    this._autoPaused = false;
     this._clearTimer();
     this._score.set(0);
     this._lives.set(0);
@@ -169,6 +182,32 @@ export abstract class MinigameEngine<TLevelData> {
     if (this._timerId !== null) {
       clearInterval(this._timerId);
       this._timerId = null;
+    }
+  }
+
+  // --- Visibility listener methods ---
+
+  private _onVisibilityChange(): void {
+    if (!this._doc) return;
+    if (this._doc.hidden && this._status() === MinigameStatus.Playing) {
+      this._autoPaused = true;
+      this.pause();
+    } else if (!this._doc.hidden && this._status() === MinigameStatus.Paused && this._autoPaused) {
+      this._autoPaused = false;
+      this.resume();
+    }
+  }
+
+  private _addVisibilityListener(): void {
+    this._removeVisibilityListener();
+    if (this._doc && this._boundVisibilityHandler) {
+      this._doc.addEventListener('visibilitychange', this._boundVisibilityHandler);
+    }
+  }
+
+  private _removeVisibilityListener(): void {
+    if (this._doc && this._boundVisibilityHandler) {
+      this._doc.removeEventListener('visibilitychange', this._boundVisibilityHandler);
     }
   }
 
