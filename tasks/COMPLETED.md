@@ -181,3 +181,4 @@
 [2026-03-08] T-2026-408: Add CurriculumService to curriculum barrel export — subsumed by T-2026-407 which added the barrel export (unassigned)
 [2026-03-08] T-2026-137: Register Module Assembly level data with LevelLoaderService — provideLevelData factory, eager registration via provideAppInitializer, 8 tests (claude)
 [2026-03-08] T-2026-059: Create Module Assembly minigame engine — ModuleAssemblyEngine with belt state, slot tracking, PlacePart/RejectDecoy actions, combo scoring, 36 tests (claude)
+[2026-03-08] T-2026-244: Create ConveyorBeltService for Module Assembly conveyor belt mechanics — ConveyorBeltService with BeltPart positions, tick movement, isExhausted, staggered reset, 33 tests (claude)

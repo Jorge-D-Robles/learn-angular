@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-244**: Create ConveyorBeltService for Module Assembly conveyor belt mechanics (Assigned: claude, Status: in-progress)
 
 
 
