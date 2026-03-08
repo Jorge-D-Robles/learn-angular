@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-311**: Create integration test for MinigameEngine auto-pause on page visibility change (Assigned: claude, Status: in-progress)
 
 
 
