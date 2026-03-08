@@ -28,6 +28,27 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
+### T-2026-360
+- Title: Fix minigame-play test failures caused by missing window.matchMedia mock
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P1
+- Depends: —
+- Blocked-by: —
+- Tags: bug, testing, minigame-play
+- Refs: src/app/pages/minigame-play/
+
+3 test files in `src/app/pages/minigame-play/` fail with `TypeError: window.matchMedia is not a function`. This is a pre-existing issue discovered during T-2026-323 PR review. The tests need a jsdom polyfill for `window.matchMedia` in their test setup.
+
+Acceptance criteria:
+- [ ] All minigame-play test files pass without errors
+- [ ] `window.matchMedia` is properly mocked/polyfilled in test setup
+- [ ] No regressions in other test suites
+
+---
+
 ### T-2026-205
 - Title: Integrate MinigameTutorialOverlay with MinigameShell first-play detection
 - Status: todo
