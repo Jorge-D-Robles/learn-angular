@@ -1135,8 +1135,8 @@ Acceptance criteria:
 
 ### T-2026-244
 - Title: Create ConveyorBeltService for Module Assembly conveyor belt mechanics
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: M
 - Milestone: P2
@@ -1157,6 +1157,7 @@ Acceptance criteria:
 - [ ] `isExhausted` computed signal: true when all parts have scrolled past the belt end
 - [ ] `reset(parts, speed)`: resets belt with new level data
 - [ ] Unit tests for: part movement, speed configuration, exhaustion detection, removal
+- Started: 2026-03-08
 
 ### T-2026-245
 - Title: Wire ExpressionBuilderComponent into Flow Commander gate configuration
