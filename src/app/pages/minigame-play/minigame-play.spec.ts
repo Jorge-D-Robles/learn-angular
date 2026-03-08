@@ -7,7 +7,7 @@ import {
   LucideIconProvider,
   LUCIDE_ICONS,
 } from 'lucide-angular';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { APP_ICONS } from '../../shared/icons';
 import { MinigamePlayPage } from './minigame-play';
 import { MinigameShellComponent } from '../../core/minigame/minigame-shell/minigame-shell';
@@ -1918,5 +1918,114 @@ describe('MinigamePlayPage', () => {
     expect(consumerEl?.textContent).toContain('engine-present');
 
     testEngine.destroy();
+  });
+
+  // --- Loading state tests ---
+
+  it('should show loading state while level data is being fetched', async () => {
+    const subject = new Subject<LevelDefinition<unknown>>();
+    const factory = vi.fn().mockReturnValue(new TestEngine());
+    const { component, element, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelLoader: {
+        loadLevel: vi.fn().mockReturnValue(subject.asObservable()),
+      },
+    });
+
+    fixture.detectChanges();
+
+    expect(component.viewState()).toBe('loading');
+    expect(component.isLoading()).toBe(true);
+    const spinner = element.querySelector('nx-loading-spinner');
+    expect(spinner).toBeTruthy();
+  });
+
+  it('should transition from loading to ready after level data loads', async () => {
+    const subject = new Subject<LevelDefinition<unknown>>();
+    const factory = vi.fn().mockReturnValue(new TestEngine());
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelLoader: {
+        loadLevel: vi.fn().mockReturnValue(subject.asObservable()),
+      },
+    });
+
+    fixture.detectChanges();
+    expect(component.viewState()).toBe('loading');
+
+    subject.next(TEST_LEVEL_DEF);
+    fixture.detectChanges();
+
+    expect(component.viewState()).toBe('ready');
+    expect(component.isLoading()).toBe(false);
+    component.engine()?.destroy();
+  });
+
+  it('should transition from loading to error on load failure', async () => {
+    const subject = new Subject<LevelDefinition<unknown>>();
+    const factory = vi.fn().mockReturnValue(new TestEngine());
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelLoader: {
+        loadLevel: vi.fn().mockReturnValue(subject.asObservable()),
+      },
+    });
+
+    fixture.detectChanges();
+    expect(component.viewState()).toBe('loading');
+
+    subject.error(new Error('Load failed'));
+    fixture.detectChanges();
+
+    expect(component.viewState()).toBe('error');
+    expect(component.isLoading()).toBe(false);
+  });
+
+  it('should show contextual loading message', async () => {
+    const subject = new Subject<LevelDefinition<unknown>>();
+    const factory = vi.fn().mockReturnValue(new TestEngine());
+    const { element, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelLoader: {
+        loadLevel: vi.fn().mockReturnValue(subject.asObservable()),
+      },
+    });
+
+    fixture.detectChanges();
+
+    const loadingDiv = element.querySelector('.play-state--loading');
+    expect(loadingDiv).toBeTruthy();
+    expect(loadingDiv?.textContent).toContain('Loading level...');
+  });
+
+  it('should have null engine during loading state', async () => {
+    const subject = new Subject<LevelDefinition<unknown>>();
+    const factory = vi.fn().mockReturnValue(new TestEngine());
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelLoader: {
+        loadLevel: vi.fn().mockReturnValue(subject.asObservable()),
+      },
+    });
+
+    fixture.detectChanges();
+
+    expect(component.isLoading()).toBe(true);
+    expect(component.engine()).toBeNull();
   });
 });

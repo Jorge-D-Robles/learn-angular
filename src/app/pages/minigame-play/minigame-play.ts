@@ -21,10 +21,11 @@ import { tutorialSeenKey } from '../../shared/components/minigame-tutorial/minig
 import type { ScoreBreakdownItem } from '../../shared/components/score-breakdown/score-breakdown.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-minigame-play',
-  imports: [NgComponentOutlet, MinigameShellComponent, RouterLink, ErrorStateComponent],
+  imports: [NgComponentOutlet, MinigameShellComponent, RouterLink, ErrorStateComponent, LoadingSpinnerComponent],
   template: `
     @switch (viewState()) {
       @case ('not-found') {
@@ -55,6 +56,11 @@ import { ErrorStateComponent } from '../../shared/components/error-state/error-s
             [message]="loadError()!"
             [retryable]="true"
             (retry)="onRetryLoad()" />
+        </div>
+      }
+      @case ('loading') {
+        <div class="play-state play-state--loading">
+          <nx-loading-spinner size="lg" message="Loading level..." />
         </div>
       }
       @case ('ready') {
@@ -109,6 +115,7 @@ export class MinigamePlayPage {
   private readonly parentInjector = inject(Injector);
 
   readonly loadError = signal<string | null>(null);
+  readonly isLoading = signal(false);
   readonly engine = signal<MinigameEngine<unknown> | null>(null);
   readonly completionSummary = signal<LevelCompletionSummary | null>(null);
   readonly showTutorial = signal(false);
@@ -142,7 +149,11 @@ export class MinigamePlayPage {
     return this.registry.getConfig(id as MinigameId);
   });
 
-  readonly viewState = computed<'not-found' | 'not-ready' | 'locked' | 'ready' | 'error'>(() => {
+  /**
+   * Base view state without loading — used by the engine lifecycle effect
+   * to avoid re-triggering when isLoading changes.
+   */
+  private readonly baseViewState = computed<'not-found' | 'not-ready' | 'locked' | 'error' | 'ready'>(() => {
     const component = this.resolvedComponent();
     if (component === undefined) return 'not-found';
     if (component === null) return 'not-ready';
@@ -157,6 +168,13 @@ export class MinigamePlayPage {
 
     if (this.loadError()) return 'error';
 
+    return 'ready';
+  });
+
+  readonly viewState = computed<'not-found' | 'not-ready' | 'locked' | 'loading' | 'ready' | 'error'>(() => {
+    const base = this.baseViewState();
+    if (base !== 'ready') return base;
+    if (this.isLoading()) return 'loading';
     return 'ready';
   });
 
@@ -239,11 +257,12 @@ export class MinigamePlayPage {
   });
 
   constructor() {
-    // Engine lifecycle effect: watches route params and loads the engine
+    // Engine lifecycle effect: watches route params and loads the engine.
+    // Uses baseViewState (not viewState) to avoid re-triggering when isLoading changes.
     effect(() => {
       const gid = this.gameId();
       const lid = this.levelId();
-      const vs = this.viewState();
+      const vs = this.baseViewState();
 
       if (vs !== 'ready' || !gid || !lid) return;
 
@@ -261,9 +280,11 @@ export class MinigamePlayPage {
         if (!factory) return;
 
         const eng = factory();
+        this.isLoading.set(true);
 
         this.loadSub = this.levelLoader.loadLevel(gid as MinigameId, lid).subscribe({
           next: (def: LevelDefinition<unknown>) => {
+            this.isLoading.set(false);
             const level = this.toMinigameLevel(def);
             this.currentLevelData = level;
             eng.initialize(level);
@@ -286,6 +307,7 @@ export class MinigamePlayPage {
             this.keyboardShortcuts.register('h', 'Use Hint', () => this.onRequestHint());
           },
           error: (err: unknown) => {
+            this.isLoading.set(false);
             console.error('Failed to load level:', err);
             const gameName = this.gameConfig()?.name ?? this.gameId();
             const lid = this.levelId();
