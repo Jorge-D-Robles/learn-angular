@@ -202,3 +202,4 @@
 [2026-03-08] T-2026-166: Create StoryMissionContentService for loading and parsing mission content — created StoryMissionContentService with content registry, step tracking, and GameProgressionService integration (claude)
 [2026-03-08] T-2026-237: Create MinigamePlayPage level data loading and engine initialization — added loading spinner state, baseViewState pattern, and registered P2 engine factories via provideMinigameEngine (claude)
 [2026-03-08] T-2026-064: Create Wire Protocol minigame UI component — Wire Protocol UI with split-screen SVG, bezier wires, type selector, verification feedback (claude)
+[2026-03-08] T-2026-068: Create Flow Commander minigame UI component — Flow Commander UI with SVG pipeline, click-to-place gates, cargo animation, condition editor (claude)
