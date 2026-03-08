@@ -354,7 +354,7 @@ describe('LevelCompletionService', () => {
     it('should pass correct XP amount to notification', () => {
       const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
       service.completeLevel(makeResult({ perfect: false }));
-      expect(spy).toHaveBeenCalledWith(15, expect.any(Array));
+      expect(spy).toHaveBeenCalledWith(15, expect.any(Array), 3000, { isLevelUp: true });
     });
 
     it("should include 'Level Complete' in bonuses", () => {

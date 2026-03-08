@@ -359,8 +359,8 @@ Acceptance criteria:
 
 ### T-2026-328
 - Title: Wire AudioService to XpNotificationService for XP award sound
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -375,6 +375,7 @@ Acceptance criteria:
 - [ ] XpNotificationService injects AudioService
 - [ ] `levelUp` sound plays when an XP notification is emitted (on level-up events only, not every XP tick)
 - [ ] Unit tests for: sound plays on level-up XP notification, no sound on regular XP award
+- Started: 2026-03-08
 
 ### T-2026-330
 - Title: Update architecture.md to document AudioService and remove stale rankUp note

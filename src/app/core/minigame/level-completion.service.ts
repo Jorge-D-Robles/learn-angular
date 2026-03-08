@@ -138,7 +138,7 @@ export class LevelCompletionService {
     if (rankUpOccurred) {
       bonuses.push(`Rank Up: ${rankAfter}`);
     }
-    this.xpNotification.show(xpEarned, bonuses);
+    this.xpNotification.show(xpEarned, bonuses, 3000, { isLevelUp: true });
 
     // perfectBonus = XP difference between perfect and non-perfect for this tier
     const perfectBonus = effectivePerfect
