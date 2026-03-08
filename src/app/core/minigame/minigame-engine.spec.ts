@@ -11,6 +11,7 @@ import {
   type MinigameState,
 } from './minigame.types';
 import { DifficultyTier } from './minigame.types';
+import { ComboTrackerService } from './combo-tracker.service';
 
 // --- Test subclass ---
 
@@ -785,6 +786,89 @@ describe('MinigameEngine', () => {
 
       visEngine.destroy();
       vi.useRealTimers();
+    });
+  });
+
+  // --- 15. Combo tracker integration ---
+
+  describe('Combo tracker integration', () => {
+    let tracker: ComboTrackerService;
+    let comboEngine: TestEngine;
+
+    beforeEach(() => {
+      tracker = new ComboTrackerService();
+      comboEngine = new TestEngine({ comboTracker: tracker });
+      comboEngine.initialize(createTestLevel());
+      comboEngine.start();
+    });
+
+    afterEach(() => {
+      comboEngine.destroy();
+    });
+
+    it('should store comboTracker from config and delegate recordCorrectAction()', () => {
+      comboEngine.recordCorrectAction();
+      comboEngine.recordCorrectAction();
+      comboEngine.recordCorrectAction();
+      expect(tracker.currentCombo()).toBe(3);
+    });
+
+    it('should delegate recordIncorrectAction() to comboTracker', () => {
+      comboEngine.recordCorrectAction();
+      comboEngine.recordCorrectAction();
+      comboEngine.recordCorrectAction();
+      expect(tracker.currentCombo()).toBe(3);
+      comboEngine.recordIncorrectAction();
+      expect(tracker.currentCombo()).toBe(0);
+    });
+
+    it('should return comboMultiplier from tracker via getComboMultiplier()', () => {
+      // 5 correct actions should reach 2.0x multiplier per COMBO_THRESHOLDS
+      for (let i = 0; i < 5; i++) {
+        comboEngine.recordCorrectAction();
+      }
+      expect(comboEngine.getComboMultiplier()).toBe(2.0);
+    });
+
+    it('should reset combo tracker on initialize()', () => {
+      for (let i = 0; i < 5; i++) {
+        comboEngine.recordCorrectAction();
+      }
+      expect(tracker.currentCombo()).toBe(5);
+
+      comboEngine.initialize(createTestLevel());
+      expect(tracker.currentCombo()).toBe(0);
+      expect(tracker.maxCombo()).toBe(0);
+      expect(comboEngine.getComboMultiplier()).toBe(1.0);
+    });
+
+    it('should reset combo tracker on re-initialize (new level)', () => {
+      comboEngine.recordCorrectAction();
+      comboEngine.recordCorrectAction();
+      comboEngine.recordCorrectAction();
+      expect(tracker.currentCombo()).toBe(3);
+
+      comboEngine.initialize(createTestLevel({ id: 'new-level-02' }));
+      expect(tracker.currentCombo()).toBe(0);
+      expect(comboEngine.getComboMultiplier()).toBe(1.0);
+    });
+
+    it('should return 1.0 from getComboMultiplier() when no comboTracker configured', () => {
+      const noComboEngine = new TestEngine();
+      expect(noComboEngine.getComboMultiplier()).toBe(1.0);
+      noComboEngine.destroy();
+    });
+
+    it('should no-op recordCorrectAction() when no comboTracker configured', () => {
+      const noComboEngine = new TestEngine();
+      expect(() => noComboEngine.recordCorrectAction()).not.toThrow();
+      noComboEngine.destroy();
+    });
+
+    it('should no-op recordIncorrectAction() when no comboTracker configured', () => {
+      const noComboEngine = new TestEngine();
+      expect(() => noComboEngine.recordIncorrectAction()).not.toThrow();
+      noComboEngine.destroy();
     });
   });
 });

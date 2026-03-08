@@ -1,5 +1,6 @@
 import { signal, computed, type Signal } from '@angular/core';
 import { MinigameStatus, PlayMode, type MinigameLevel, type MinigameState } from './minigame.types';
+import type { ComboTrackerService } from './combo-tracker.service';
 
 /** Result returned by a minigame action validation. */
 export interface ActionResult {
@@ -13,6 +14,7 @@ export interface MinigameEngineConfig {
   readonly initialLives: number;
   readonly timerDuration: number | null;
   readonly document?: Document;
+  readonly comboTracker?: ComboTrackerService;
 }
 
 /** Default engine configuration values. */
@@ -55,20 +57,22 @@ export abstract class MinigameEngine<TLevelData> {
   }));
 
   // --- Private fields ---
-  private readonly _config: Omit<MinigameEngineConfig, 'document'>;
+  private readonly _config: Omit<MinigameEngineConfig, 'document' | 'comboTracker'>;
+  private readonly _comboTracker: ComboTrackerService | undefined;
   private _timerId: ReturnType<typeof setInterval> | null = null;
   private _autoPaused = false;
   private readonly _boundVisibilityHandler: (() => void) | null;
   private readonly _doc: Document | undefined;
 
   /** Public read-only accessor for the engine configuration. */
-  get config(): Omit<MinigameEngineConfig, 'document'> {
+  get config(): Omit<MinigameEngineConfig, 'document' | 'comboTracker'> {
     return this._config;
   }
 
   protected constructor(config: Partial<MinigameEngineConfig> = {}) {
-    const { document: configDoc, ...restConfig } = { ...DEFAULT_ENGINE_CONFIG, ...config };
+    const { document: configDoc, comboTracker, ...restConfig } = { ...DEFAULT_ENGINE_CONFIG, ...config };
     this._config = restConfig;
+    this._comboTracker = comboTracker;
     this._doc = configDoc ?? (typeof document !== 'undefined' ? document : undefined);
     this._boundVisibilityHandler = this._doc ? this._onVisibilityChange.bind(this) : null;
   }
@@ -86,6 +90,7 @@ export abstract class MinigameEngine<TLevelData> {
     this._playMode.set(PlayMode.Story);
     this._currentLevel.set(level.id);
     this._timeRemaining.set(this._config.timerDuration ?? 0);
+    this._comboTracker?.reset();
     this.onLevelLoad(level.data);
   }
 
@@ -176,6 +181,23 @@ export abstract class MinigameEngine<TLevelData> {
       this.fail();
     }
     return result;
+  }
+
+  // --- Combo tracker methods ---
+
+  /** Records a correct action for combo tracking. No-op if no comboTracker is configured. */
+  recordCorrectAction(): void {
+    this._comboTracker?.recordCorrect();
+  }
+
+  /** Records an incorrect action for combo tracking. No-op if no comboTracker is configured. */
+  recordIncorrectAction(): void {
+    this._comboTracker?.recordIncorrect();
+  }
+
+  /** Returns the current combo multiplier (1.0 if no comboTracker is configured). */
+  getComboMultiplier(): number {
+    return this._comboTracker?.comboMultiplier() ?? 1.0;
   }
 
   // --- Private timer methods ---

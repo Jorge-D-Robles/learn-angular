@@ -244,8 +244,8 @@ Acceptance criteria:
 
 ### T-2026-184
 - Title: Integrate ComboTrackerService with MinigameEngine base class
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -263,6 +263,7 @@ Acceptance criteria:
 - [ ] Combo resets when a new level starts (via engine.reset())
 - [ ] `getComboMultiplier()` accessor for subclass engines to use in scoring
 - [ ] Unit tests for: combo tracking through engine, reset on new level, multiplier access
+- Started: 2026-03-08
 
 ### T-2026-185
 - Title: Integrate XpDiminishingReturnsService with LevelCompletionService
@@ -952,6 +953,25 @@ Acceptance criteria:
 - [ ] Uses compact/small variant of StreakBadgeComponent
 - [ ] Responsive: hidden on mobile (bottom nav handles navigation; top bar is already tight)
 - [ ] Unit tests for: badge visibility with active streak, hidden with no streak
+
+### T-2026-308
+- Title: Fix flaky DailyChallengeService streak extension test
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: —
+- Blocked-by: —
+- Tags: bug, testing, daily-challenge, streak
+- Refs: src/app/core/progression/daily-challenge.service.spec.ts
+
+The test "should extend streak when completing daily challenge on consecutive days" in `daily-challenge.service.spec.ts` fails intermittently. The streak assertion appears to be off by 1. This was observed consistently across multiple unrelated ticket implementations, confirming it is a pre-existing bug in the test or the service logic, not a regression.
+
+Acceptance criteria:
+- [ ] Root cause identified (test timing issue, date boundary, or service logic bug)
+- [ ] Fix applied — test passes reliably
+- [ ] No other tests broken by the fix
 
 ---
 
