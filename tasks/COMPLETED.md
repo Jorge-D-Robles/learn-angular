@@ -119,3 +119,4 @@
 [2026-03-08] T-2026-299: Add error state rendering to MinigamePlayPage on level load failure — added error state rendering with ErrorStateComponent, retry support, and contextual error messages (claude)
 [2026-03-08] T-2026-300: Integrate HintService penalty into LevelCompletionService score flow — integrated HintService penalty into LevelCompletionService XP pipeline with proportional fraction-based deduction (claude)
 [2026-03-08] T-2026-301: Wire PlayMode context into MinigamePlayPage and replay mode pages — wired PlayMode.Story into MinigamePlayPage engine lifecycle and added playMode contract to replay mode stub pages (claude)
+[2026-03-08] T-2026-302: Add MinigameScoreConfig to MinigameConfig for per-game scoring parameters — added optional scoreConfig to MinigameConfig with DEFAULT_SCORE_CONFIG neutral weights and per-game overrides (claude)

@@ -649,29 +649,6 @@ Acceptance criteria:
 - [ ] No runtime behavior change
 - [ ] Existing tests pass
 
-### T-2026-302
-- Title: Add MinigameScoreConfig to MinigameConfig for per-game scoring parameters
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-029, T-2026-028
-- Blocked-by: —
-- Tags: scoring, minigame-framework, types, configuration
-- Refs: src/app/core/minigame/minigame.types.ts, src/app/core/minigame/minigame-registry.service.ts, src/app/core/minigame/score-calculation.service.ts
-
-ScoreCalculationService.calculateScore() requires a ScoreConfig (timeWeight, accuracyWeight, comboWeight, maxScore), but MinigameConfig has no scoring configuration. Each minigame spec defines unique scoring formulas (Module Assembly: "time remaining + accuracy + combo", Wire Protocol: "fewer verifications = higher score"). Without per-game ScoreConfig, there is no way to configure scoring weights when computing star ratings in MinigamePlayPage (T-2026-298 needs this).
-
-Acceptance criteria:
-- [ ] Add optional `scoreConfig: ScoreConfig` field to `MinigameConfig` interface
-- [ ] DEFAULT_MINIGAME_CONFIGS updated with sensible default ScoreConfig per minigame (maxScore: 1000, equal weights as defaults)
-- [ ] MinigameRegistryService.getConfig() returns ScoreConfig alongside other config
-- [ ] MinigamePlayPage can read scoreConfig from registry to pass to ScoreCalculationService
-- [ ] Existing tests updated for new field
-- [ ] Build passes with no type errors
-- Started: 2026-03-08
-
 ### T-2026-303
 - Title: Add shared components barrel exports for SvgPort and SvgWireRenderer
 - Status: todo

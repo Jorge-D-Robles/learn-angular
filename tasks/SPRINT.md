@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-302**: Add MinigameScoreConfig to MinigameConfig for per-game scoring parameters (Assigned: claude, Status: in-progress)
 
 
 
