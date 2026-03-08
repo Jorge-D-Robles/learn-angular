@@ -631,26 +631,6 @@ Acceptance criteria:
 - [ ] Overlay dismiss event calls RankUpNotificationService.dismiss()
 - [ ] Unit tests for: overlay visibility on rank up, dismiss hides overlay
 
-### T-2026-228
-- Title: Update bottom nav "Mission" link to use dynamic mission resolution
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-026, T-2026-011
-- Blocked-by: —
-- Tags: navigation, bottom-nav, dynamic-link, integration
-- Refs: docs/ux/navigation.md, src/app/bottom-nav/
-
-The bottom nav (mobile) has a "Mission" tab that likely has the same hardcoded link issue as the side nav. This ticket updates it to use dynamic current mission resolution from GameProgressionService, matching the side nav behavior.
-
-Acceptance criteria:
-- [ ] BottomNavComponent injects GameProgressionService
-- [ ] "Mission" tab points to the next uncompleted mission via GameProgressionService
-- [ ] If all missions complete, tab points to `/campaign`
-- [ ] Unit tests for: dynamic link resolution, completed state
-
 ### T-2026-229
 - Title: Add error module to core barrel export
 - Status: todo
