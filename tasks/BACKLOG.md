@@ -642,8 +642,8 @@ Acceptance criteria:
 
 ### T-2026-137
 - Title: Register Module Assembly level data with LevelLoaderService
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P2
@@ -660,6 +660,7 @@ Acceptance criteria:
 - [ ] `LevelLoaderService.loadLevel('module-assembly', levelId)` returns the correct level data
 - [ ] `LevelLoaderService.getLevelPack('module-assembly')` returns all 18 levels grouped by tier
 - [ ] Unit tests for: level loading by ID, level pack retrieval, tier grouping
+- Started: 2026-03-08
 
 ### T-2026-138
 - Title: Register Wire Protocol level data with LevelLoaderService

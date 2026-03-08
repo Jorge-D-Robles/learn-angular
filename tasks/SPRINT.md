@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-137**: Register Module Assembly level data with LevelLoaderService (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -21,7 +23,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-137**: Register Module Assembly level data with LevelLoaderService (Priority: high, Size: S)
 - **T-2026-059**: Create Module Assembly minigame engine (Priority: high, Size: L)
 - **T-2026-244**: Create ConveyorBeltService for Module Assembly conveyor belt mechanics (Priority: high, Size: M)
 - **T-2026-080**: Create SettingsPage component with user preferences UI (Priority: medium, Size: S)

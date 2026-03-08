@@ -14,6 +14,8 @@ import { routes } from './app.routes';
 import { GlobalErrorHandler } from './core/error';
 import { NexusTitleStrategy } from './core';
 import { APP_ICONS } from './shared/icons';
+import { MODULE_ASSEMBLY_LEVEL_PACK } from './data/levels/module-assembly.data';
+import { provideLevelData } from './data/levels/provide-level-data';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,5 +35,6 @@ export const appConfig: ApplicationConfig = {
         color: 'currentColor',
       }),
     },
+    provideLevelData(MODULE_ASSEMBLY_LEVEL_PACK),
   ],
 };
