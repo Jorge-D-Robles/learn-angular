@@ -94,6 +94,14 @@ Started: 2026-03-07
 
 ## Queue
 
+- **T-2026-224**: Create RankUpNotificationService to trigger rank-up overlay on rank change (Priority: medium, Size: S)
+- **T-2026-126**: Create core module root barrel export (Priority: low, Size: S)
+- **T-2026-050**: Create PlayTimeService for tracking session and total play time (Priority: low, Size: S)
+- **T-2026-056**: Create ComboTrackerService for combo multiplier mechanics (Priority: low, Size: S)
+- **T-2026-164**: Create XpDiminishingReturnsService for replay XP scaling (Priority: low, Size: S)
+- **T-2026-249**: Create StreakRewardService for 7-day streak milestones (Priority: low, Size: S)
+- **T-2026-212**: Create LifetimeStatsService for aggregate player statistics (Priority: low, Size: S)
+- **T-2026-174**: Create TimeFormatPipe for play time display (Priority: low, Size: S)
 
 ---
 
