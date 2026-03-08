@@ -90,4 +90,47 @@ describe('AnimationService', () => {
     settingsService.updateSetting('reducedMotion', false);
     expect(service.isReducedMotion()).toBe(false);
   });
+
+  describe('animationSpeed scaling', () => {
+    it('should return base duration when animationSpeed is normal', () => {
+      settingsService.updateSetting('animationSpeed', 'normal');
+      expect(service.getDuration('uiTransition')).toBe(200);
+      expect(service.getDuration('gameFeedback')).toBe(400);
+      expect(service.getDuration('overlay')).toBe(300);
+    });
+
+    it('should return half duration when animationSpeed is fast', () => {
+      settingsService.updateSetting('animationSpeed', 'fast');
+      expect(service.getDuration('uiTransition')).toBe(100);
+      expect(service.getDuration('gameFeedback')).toBe(200);
+      expect(service.getDuration('overlay')).toBe(150);
+    });
+
+    it('should return 0 when animationSpeed is off', () => {
+      settingsService.updateSetting('animationSpeed', 'off');
+      expect(service.getDuration('uiTransition')).toBe(0);
+      expect(service.getDuration('gameFeedback')).toBe(0);
+      expect(service.getDuration('overlay')).toBe(0);
+    });
+
+    it('should give reducedMotion precedence over animationSpeed fast', () => {
+      settingsService.updateSetting('animationSpeed', 'fast');
+      settingsService.updateSetting('reducedMotion', true);
+      expect(service.getDuration('uiTransition')).toBe(0);
+    });
+
+    it('should give reducedMotion precedence over animationSpeed normal', () => {
+      settingsService.updateSetting('animationSpeed', 'normal');
+      settingsService.updateSetting('reducedMotion', true);
+      expect(service.getDuration('uiTransition')).toBe(0);
+    });
+
+    it('should reactively update when animationSpeed changes', () => {
+      expect(service.getDuration('uiTransition')).toBe(200);
+      settingsService.updateSetting('animationSpeed', 'fast');
+      expect(service.getDuration('uiTransition')).toBe(100);
+      settingsService.updateSetting('animationSpeed', 'normal');
+      expect(service.getDuration('uiTransition')).toBe(200);
+    });
+  });
 });
