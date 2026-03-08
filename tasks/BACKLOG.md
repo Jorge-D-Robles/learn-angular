@@ -153,8 +153,8 @@ Acceptance criteria:
 
 ### T-2026-126
 - Title: Create core module root barrel export
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -170,6 +170,7 @@ Acceptance criteria:
 - [ ] Re-exports from all subdirectory barrels: state, minigame, levels, progression, persistence, curriculum, settings, notifications
 - [ ] Verify build passes (no circular dependency issues)
 - [ ] Update at least one consumer file to use the core barrel import as a smoke test
+- Started: 2026-03-07
 
 ### T-2026-129
 - Title: Create EmptyStateComponent for no-content pages

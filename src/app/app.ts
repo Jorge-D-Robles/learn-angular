@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { BottomNavComponent } from './bottom-nav/bottom-nav';
-import { XpService } from './core/progression/xp.service';
+import { XpService } from './core';
 import { SideNavComponent } from './side-nav/side-nav';
 import { XpNotificationComponent, XpProgressBarComponent } from './shared';
 

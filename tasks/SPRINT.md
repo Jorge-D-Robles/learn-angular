@@ -11,6 +11,8 @@ Started: 2026-03-07
 
 ## Active
 
+- **T-2026-126**: Create core module root barrel export (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -95,7 +97,6 @@ Started: 2026-03-07
 
 ## Queue
 
-- **T-2026-126**: Create core module root barrel export (Priority: low, Size: S)
 - **T-2026-050**: Create PlayTimeService for tracking session and total play time (Priority: low, Size: S)
 - **T-2026-056**: Create ComboTrackerService for combo multiplier mechanics (Priority: low, Size: S)
 - **T-2026-164**: Create XpDiminishingReturnsService for replay XP scaling (Priority: low, Size: S)
