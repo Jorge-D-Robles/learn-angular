@@ -1561,8 +1561,8 @@ Acceptance criteria:
 
 ### T-2026-413
 - Title: Create WireProtocolValidationService for binding type correctness checking
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P2
@@ -1583,6 +1583,7 @@ Acceptance criteria:
 - [ ] Handles all 4 binding types: interpolation, property, event, twoWay
 - [ ] Exported from wire-protocol barrel
 - [ ] Unit tests for: each binding type validation, source-target compatibility, common mistake detection, full verification pass/fail, pre-wired incorrect detection
+- Started: 2026-03-08
 
 ### T-2026-414
 - Title: Create integration test for P2 level pack registration via provideLevelData factory
