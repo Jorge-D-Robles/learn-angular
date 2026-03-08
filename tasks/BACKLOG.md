@@ -1342,8 +1342,8 @@ Acceptance criteria:
 
 ### T-2026-257
 - Title: Create ModuleAssembly part and blueprint data model
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P2
@@ -1364,6 +1364,7 @@ Acceptance criteria:
 - [ ] Color mapping: decorators=purple, template=blue, styles=green, class=orange
 - [ ] Exported from module-assembly barrel
 - [ ] Unit tests for: part-slot type matching, decoy identification
+- Started: 2026-03-08
 
 ### T-2026-258
 - Title: Create WireProtocol port and wire data model
