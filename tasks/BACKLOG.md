@@ -842,30 +842,6 @@ Acceptance criteria:
 
 ## P2 -- Foundations Bundle
 
-### T-2026-058
-- Title: Define Module Assembly level data for 18 levels
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P2
-- Depends: T-2026-019, T-2026-038
-- Blocked-by: —
-- Tags: minigame, module-assembly, level-data, content
-- Refs: docs/minigames/01-module-assembly.md, docs/curriculum.md
-
-Define the static level data for all 18 Module Assembly levels across 4 tiers. Each level specifies the component parts on the conveyor belt, the blueprint slots, decoy parts, belt speed, time limit, and scoring formula.
-
-Acceptance criteria:
-- [ ] Level data file at `src/app/data/levels/module-assembly.data.ts`
-- [ ] `ModuleAssemblyLevelData` interface extending `LevelDefinition` with: parts (belt items), blueprint (slots), decoys, beltSpeed, timeLimit
-- [ ] 6 Basic levels matching docs/minigames/01-module-assembly.md (minimal component through multiple components)
-- [ ] 6 Intermediate levels (imports array through mixed challenge)
-- [ ] 5 Advanced levels (template syntax through rapid fire)
-- [ ] 1 Boss level ("Emergency Module Fabrication" with 5 interconnected components)
-- [ ] Each level references correct Angular concepts from the spec
-- [ ] Unit tests verify: 18 total levels, correct tier grouping, all levels have required fields
-
 ### T-2026-059
 - Title: Create Module Assembly minigame engine
 - Status: todo
