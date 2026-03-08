@@ -1,9 +1,9 @@
 # Current Sprint
 
-Sprint: S02-core-engine
+Sprint: S03-core-integration
 Milestone: P1
-Goal: Build the P1 core engine: minigame framework, progression services, state persistence, and shared UI components
-Started: 2026-03-07
+Goal: Complete P1 core engine integrations, barrel exports, and remaining shared UI components
+Started: 2026-03-08
 
 <!-- Velocity: (recorded at sprint close) -->
 
@@ -11,112 +11,23 @@ Started: 2026-03-07
 
 ## Active
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*(none — pick from Queue)*
 
 ---
 
 ## Queue
 
+- **T-2026-297**: Fix top bar XP progress bar hardcoded nextRankXp value (Priority: high, Size: S)
+- **T-2026-298**: Compute star rating via ScoreCalculationService in MinigamePlayPage (Priority: high, Size: S)
+- **T-2026-308**: Fix flaky DailyChallengeService streak extension test (Priority: medium, Size: S)
+- **T-2026-299**: Add error state rendering to MinigamePlayPage on level load failure (Priority: medium, Size: S)
+- **T-2026-300**: Integrate HintService penalty into LevelCompletionService score flow (Priority: medium, Size: S)
+- **T-2026-301**: Wire PlayMode context into MinigamePlayPage and replay mode pages (Priority: medium, Size: S)
+- **T-2026-302**: Add MinigameScoreConfig to MinigameConfig for per-game scoring parameters (Priority: medium, Size: S)
+- **T-2026-306**: Create integration test for MinigamePlayPage completion-to-progression pipeline (Priority: medium, Size: S)
 
 ---
 
 ## Done This Sprint
 
-- T-2026-016: Define minigame lifecycle interfaces and types
-- T-2026-019: Define level data model and type-safe level schema
-- T-2026-017: Create abstract MinigameEngine base class
-- T-2026-024: Create StatePersistenceService for localStorage save/load
-- T-2026-031: Create code editor component wrapper
+*(none yet)*
