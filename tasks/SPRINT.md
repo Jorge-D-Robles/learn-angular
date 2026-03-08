@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-413**: Create WireProtocolValidationService for binding type correctness checking (Assigned: claude, Status: in-progress)
 
 
 ---
