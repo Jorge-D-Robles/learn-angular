@@ -686,28 +686,6 @@ Acceptance criteria:
 - [ ] `levelUp` sound plays when an XP notification is emitted (on level-up events only, not every XP tick)
 - [ ] Unit tests for: sound plays on level-up XP notification, no sound on regular XP award
 
-### T-2026-329
-- Title: Create integration test for AudioService with SettingsService sound toggle
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-051, T-2026-040
-- Blocked-by: —
-- Tags: test, integration, audio, settings
-- Refs: src/app/core/audio/audio.service.ts, src/app/core/settings/settings.service.ts
-
-AudioService reads SettingsService.soundEnabled to gate playback, but no integration test verifies this cross-service behavior. Unit tests mock SettingsService; an integration test should use the real SettingsService to verify the full toggle flow.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/core/audio/audio-settings.integration.spec.ts`
-- [ ] Test: when soundEnabled is true, AudioService.play() attempts playback (cloneNode is called)
-- [ ] Test: when soundEnabled is false, AudioService.play() does NOT attempt playback
-- [ ] Test: toggling soundEnabled mid-session changes play behavior immediately
-- [ ] Uses real SettingsService (not mocked) with AudioService
-- Started: 2026-03-08
-
 ### T-2026-330
 - Title: Update architecture.md to document AudioService and remove stale rankUp note
 - Status: todo

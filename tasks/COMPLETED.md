@@ -131,3 +131,4 @@
 [2026-03-08] T-2026-052: Create AnimationService for shared transition utilities — create AnimationService for shared transition utilities (claude)
 [2026-03-08] T-2026-321: Create AudioService barrel export and add to core re-export — create AudioService barrel export and add to core re-export (claude)
 [2026-03-08] T-2026-324: Create placeholder audio asset files for all SoundEffect types — create placeholder audio asset files for all SoundEffect types (claude)
+[2026-03-08] T-2026-329: Create integration test for AudioService with SettingsService sound toggle — integration test verifying AudioService respects SettingsService soundEnabled toggle (claude)

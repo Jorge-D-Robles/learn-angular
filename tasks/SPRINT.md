@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-329**: Create integration test for AudioService with SettingsService sound toggle (Assigned: claude, Status: in-progress)
 
 
 
