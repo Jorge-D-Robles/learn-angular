@@ -4351,8 +4351,8 @@ Acceptance criteria:
 
 ### T-2026-286
 - Title: Add Playwright E2E job to GitHub Actions CI workflow
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -4368,6 +4368,7 @@ Acceptance criteria:
 - [ ] Playwright browsers installed and cached
 - [ ] E2E tests run against production build
 - [ ] Job runs on push/PR (matching existing CI triggers)
+- Started: 2026-03-08
 
 ### T-2026-287
 - Title: Add MinigameShell HUD E2E tests for P2 minigame components
