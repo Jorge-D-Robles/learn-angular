@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-382**: Wire tutorial step data from MinigameInstructionsData into MinigameRegistryService configs (Assigned: claude, Status: in-progress)
 
 
 

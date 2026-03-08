@@ -5341,27 +5341,6 @@ Acceptance criteria:
 - [ ] Test: "How to Play" from pause menu shows tutorial without blocking engine restart
 - [ ] Uses real StatePersistenceService with fake localStorage
 
-### T-2026-382
-- Title: Wire tutorial step data from MinigameInstructionsData into MinigameRegistryService configs
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P2
-- Depends: T-2026-168, T-2026-029
-- Blocked-by: —
-- Tags: integration, tutorial, minigame-registry, content
-- Refs: docs/minigames/01-module-assembly.md, src/app/core/minigame/minigame-registry.service.ts, src/app/data/tutorials/minigame-tutorials.data.ts
-
-T-2026-168 creates `MinigameInstructionsData` for all P2 minigames and `MinigameConfig` has an optional `tutorialSteps` field. But no ticket populates each game's config with its tutorial steps. Currently `DEFAULT_MINIGAME_CONFIGS` registers all 12 games without `tutorialSteps`, so the tutorial overlay has no content to display. This ticket wires the tutorial data into the registry so first-play tutorials actually show content.
-
-Acceptance criteria:
-- [ ] Each P2 minigame's `MinigameConfig` includes `tutorialSteps` from the tutorial data file
-- [ ] Tutorial steps populated during `MinigameRegistryService.register()` for Module Assembly, Wire Protocol, Flow Commander, Signal Corps
-- [ ] `MinigamePlayPage.tutorialSteps()` returns non-empty array for registered P2 games
-- [ ] Unit tests for: registry config includes tutorial steps for each P2 game, steps match tutorial data
-- Started: 2026-03-08
-
 ### T-2026-384
 - Title: Create integration test for EndlessModeService high score update on session end
 - Status: todo
