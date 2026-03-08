@@ -1,3 +1,4 @@
+export * from './animation';
 export * from './audio';
 export * from './curriculum';
 export * from './levels';

@@ -150,8 +150,8 @@ Acceptance criteria:
 
 ### T-2026-165
 - Title: Create barrel export for animation core module
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -166,6 +166,7 @@ Acceptance criteria:
 - [ ] `src/app/core/animation/index.ts` exports AnimationService, ANIMATION_DURATIONS, ANIMATION_CLASSES
 - [ ] Animation barrel included in `src/app/core/index.ts` re-exports
 - [ ] Build passes with no circular dependencies
+- Started: 2026-03-08
 
 ### T-2026-205
 - Title: Integrate MinigameTutorialOverlay with MinigameShell first-play detection
