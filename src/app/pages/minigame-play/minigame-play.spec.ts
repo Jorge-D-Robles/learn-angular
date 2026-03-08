@@ -388,8 +388,8 @@ describe('MinigamePlayPage', () => {
     expect(component.engine()).toBeNull();
   });
 
-  // --- 13. Level load error ---
-  it('should handle level load error gracefully', async () => {
+  // --- 13. Level load error sets error viewState ---
+  it('should handle level load error gracefully and set error viewState', async () => {
     const factory = vi.fn().mockReturnValue(new TestEngine());
     const { component, fixture } = await setup({
       registry: {
@@ -406,6 +406,8 @@ describe('MinigamePlayPage', () => {
 
     // Engine should stay null since load failed
     expect(component.engine()).toBeNull();
+    // viewState should be 'error'
+    expect(component.viewState()).toBe('error');
   });
 
   // --- 14. Engine score binding ---
@@ -1354,5 +1356,94 @@ describe('MinigamePlayPage', () => {
       expect.objectContaining({ score: 475, starRating: 3 }),
     );
     scoringEngine.destroy();
+  });
+
+  // --- 47. Error state renders ErrorStateComponent on load failure ---
+  it('should render ErrorStateComponent on level load failure', async () => {
+    const factory = vi.fn().mockReturnValue(new TestEngine());
+    const { component, element, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelLoader: {
+        loadLevel: vi.fn().mockReturnValue(throwError(() => new Error('Not found'))),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // ErrorStateComponent should render
+    expect(element.querySelector('nx-error-state')).toBeTruthy();
+    // viewState should be 'error'
+    expect(component.viewState()).toBe('error');
+    // Error message should contain both game ID and level ID
+    expect(component.loadError()).toContain('ma-basic-01');
+    expect(component.loadError()).toContain('module-assembly');
+  });
+
+  // --- 48. Error state shows game name from config when available ---
+  it('should show game name from config in error message when available', async () => {
+    const config: MinigameConfig = {
+      id: 'module-assembly',
+      name: 'Module Assembly',
+      description: 'Conveyor belt drag-and-drop assembly',
+      angularTopic: 'Components',
+      totalLevels: 18,
+      difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+    };
+    const factory = vi.fn().mockReturnValue(new TestEngine());
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getConfig: vi.fn().mockReturnValue(config),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelLoader: {
+        loadLevel: vi.fn().mockReturnValue(throwError(() => new Error('Not found'))),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.loadError()).toContain('Module Assembly');
+  });
+
+  // --- 49. Retry clears error and re-triggers level loading ---
+  it('should clear error and re-trigger level loading on retry', async () => {
+    const factory = vi.fn().mockReturnValue(new TestEngine());
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelLoader: {
+        loadLevel: vi.fn().mockReturnValue(throwError(() => new Error('Not found'))),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Verify error state first
+    expect(component.viewState()).toBe('error');
+    expect(component.loadError()).not.toBeNull();
+
+    // Change mock to return success on retry
+    (TestBed.inject(LevelLoaderService).loadLevel as ReturnType<typeof vi.fn>).mockReturnValue(of(TEST_LEVEL_DEF));
+
+    // Trigger retry
+    component.onRetryLoad();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Error should be cleared
+    expect(component.loadError()).toBeNull();
+    // viewState should be 'ready' (not 'error')
+    expect(component.viewState()).toBe('ready');
+    // Engine should be loaded successfully
+    expect(component.engine()).not.toBeNull();
   });
 });

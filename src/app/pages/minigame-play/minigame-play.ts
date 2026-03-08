@@ -15,10 +15,11 @@ import { MinigameEngine } from '../../core/minigame/minigame-engine';
 import { ScoreCalculationService } from '../../core/minigame/score-calculation.service';
 import { MinigameStatus, type MinigameId, type MinigameLevel, type MinigameResult } from '../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
+import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 
 @Component({
   selector: 'app-minigame-play',
-  imports: [NgComponentOutlet, MinigameShellComponent, RouterLink],
+  imports: [NgComponentOutlet, MinigameShellComponent, RouterLink, ErrorStateComponent],
   template: `
     @switch (viewState()) {
       @case ('not-found') {
@@ -40,6 +41,15 @@ import type { LevelDefinition } from '../../core/levels/level.types';
           <h2>Level Locked</h2>
           <p>Complete the previous tier to unlock this level.</p>
           <a [routerLink]="['/minigames', gameId()]">Back to Level Select</a>
+        </div>
+      }
+      @case ('error') {
+        <div class="play-state play-state--load-error">
+          <nx-error-state
+            [title]="'Level Load Failed'"
+            [message]="loadError()!"
+            [retryable]="true"
+            (retry)="onRetryLoad()" />
         </div>
       }
       @case ('ready') {
@@ -87,6 +97,7 @@ export class MinigamePlayPage {
   private readonly scoreCalculation = inject(ScoreCalculationService);
   private readonly destroyRef = inject(DestroyRef);
 
+  readonly loadError = signal<string | null>(null);
   readonly engine = signal<MinigameEngine<unknown> | null>(null);
   readonly completionSummary = signal<LevelCompletionSummary | null>(null);
   private currentLevelData: MinigameLevel<unknown> | null = null;
@@ -118,7 +129,7 @@ export class MinigamePlayPage {
     return this.registry.getConfig(id as MinigameId);
   });
 
-  readonly viewState = computed<'not-found' | 'not-ready' | 'locked' | 'ready'>(() => {
+  readonly viewState = computed<'not-found' | 'not-ready' | 'locked' | 'ready' | 'error'>(() => {
     const component = this.resolvedComponent();
     if (component === undefined) return 'not-found';
     if (component === null) return 'not-ready';
@@ -130,6 +141,8 @@ export class MinigamePlayPage {
         return 'locked';
       }
     }
+
+    if (this.loadError()) return 'error';
 
     return 'ready';
   });
@@ -209,6 +222,7 @@ export class MinigamePlayPage {
         this.engine.set(null);
         this.completionFired = false;
         this.completionSummary.set(null);
+        this.loadError.set(null);
 
         const factory = this.registry.getEngineFactory(gid as MinigameId);
         if (!factory) return;
@@ -228,6 +242,11 @@ export class MinigamePlayPage {
           },
           error: (err: unknown) => {
             console.error('Failed to load level:', err);
+            const gameName = this.gameConfig()?.name ?? this.gameId();
+            const lid = this.levelId();
+            this.loadError.set(
+              `Could not load level "${lid}" for ${gameName}. Please try again.`
+            );
           },
         });
       });
@@ -273,6 +292,10 @@ export class MinigamePlayPage {
 
   onQuit(): void {
     this.router.navigate(['/minigames', this.gameId()]);
+  }
+
+  onRetryLoad(): void {
+    this.loadError.set(null);
   }
 
   onUseHint(): void {

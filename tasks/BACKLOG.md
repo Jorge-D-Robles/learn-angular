@@ -651,8 +651,8 @@ Acceptance criteria:
 
 ### T-2026-299
 - Title: Add error state rendering to MinigamePlayPage on level load failure
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -670,6 +670,7 @@ Acceptance criteria:
 - [ ] Error message includes the game name and level ID for context
 - [ ] `console.error` call remains for debugging but is supplemented by visual state
 - [ ] Unit tests for: error state rendering on load failure, retry action
+- Started: 2026-03-08
 
 ### T-2026-300
 - Title: Integrate HintService penalty into LevelCompletionService score flow
