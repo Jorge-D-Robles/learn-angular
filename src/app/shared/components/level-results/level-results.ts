@@ -1,10 +1,12 @@
 import { Component, computed, input, output } from '@angular/core';
 import { MinigameResult } from '../../../core/minigame/minigame.types';
 import { LevelStarsComponent } from '../level-stars/level-stars';
+import { ScoreBreakdownComponent } from '../score-breakdown/score-breakdown';
+import type { ScoreBreakdownItem } from '../score-breakdown/score-breakdown.types';
 
 @Component({
   selector: 'nx-level-results',
-  imports: [LevelStarsComponent],
+  imports: [LevelStarsComponent, ScoreBreakdownComponent],
   template: `
     <div class="level-results" role="dialog" aria-modal="true" aria-labelledby="results-title">
       <div class="level-results__panel">
@@ -21,12 +23,8 @@ import { LevelStarsComponent } from '../level-stars/level-stars';
         }
 
         <div class="level-results__xp-section">
-          <div class="level-results__xp-total">+{{ xpAwarded() }} XP</div>
-          @for (bonus of bonuses(); track bonus.label) {
-            <div class="level-results__xp-row">
-              <span class="level-results__xp-label">{{ bonus.label }}</span>
-              <span class="level-results__xp-amount">+{{ bonus.amount }}</span>
-            </div>
+          @if (scoreBreakdown().length > 0) {
+            <nx-score-breakdown [breakdown]="scoreBreakdown()" />
           }
         </div>
 
@@ -55,8 +53,7 @@ import { LevelStarsComponent } from '../level-stars/level-stars';
 export class LevelResultsComponent {
   readonly result = input.required<MinigameResult>();
   readonly previousBest = input<number | null>(null);
-  readonly xpAwarded = input(0);
-  readonly bonuses = input<readonly { label: string; amount: number }[]>([]);
+  readonly scoreBreakdown = input<readonly ScoreBreakdownItem[]>([]);
   readonly nextLevelLocked = input(false);
 
   readonly nextLevel = output();

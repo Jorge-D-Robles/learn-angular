@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { By } from '@angular/platform-browser';
 import {
   LucideIconConfig,
   LucideIconProvider,
@@ -8,6 +9,8 @@ import { vi } from 'vitest';
 import { createComponent } from '../../../../testing/test-utils';
 import { APP_ICONS } from '../../icons';
 import { MinigameResult } from '../../../core/minigame/minigame.types';
+import { ScoreBreakdownComponent } from '../score-breakdown/score-breakdown';
+import type { ScoreBreakdownItem } from '../score-breakdown/score-breakdown.types';
 import { LevelResultsComponent } from './level-results';
 
 @Component({
@@ -15,8 +18,7 @@ import { LevelResultsComponent } from './level-results';
     <nx-level-results
       [result]="result"
       [previousBest]="previousBest"
-      [xpAwarded]="xpAwarded"
-      [bonuses]="bonuses"
+      [scoreBreakdown]="scoreBreakdown"
       [nextLevelLocked]="nextLevelLocked"
       (nextLevel)="onNextLevel()"
       (replay)="onReplay()"
@@ -35,8 +37,7 @@ class TestHost {
     starRating: 2,
   };
   previousBest: number | null = null;
-  xpAwarded = 100;
-  bonuses: { label: string; amount: number }[] = [];
+  scoreBreakdown: ScoreBreakdownItem[] = [];
   nextLevelLocked = false;
   onNextLevel = vi.fn();
   onReplay = vi.fn();
@@ -93,25 +94,44 @@ describe('LevelResultsComponent', () => {
     expect(filled.length).toBe(2);
   });
 
-  it('should display XP total', async () => {
-    const { element } = await setup({ xpAwarded: 150 });
-    const xpTotal = element.querySelector('.level-results__xp-total');
-    expect(xpTotal?.textContent?.trim()).toBe('+150 XP');
-  });
-
-  it('should render XP breakdown rows', async () => {
-    const { element } = await setup({
-      bonuses: [
-        { label: 'Base', amount: 20 },
-        { label: 'Perfect', amount: 20 },
+  it('should render ScoreBreakdownComponent when scoreBreakdown has items', async () => {
+    const { fixture, element } = await setup({
+      scoreBreakdown: [
+        { label: 'Base XP', value: 100, isBonus: false },
+        { label: 'Perfect!', value: 50, isBonus: true },
       ],
     });
-    const rows = element.querySelectorAll('.level-results__xp-row');
-    expect(rows.length).toBe(2);
-    expect(rows[0].textContent).toContain('Base');
-    expect(rows[0].textContent).toContain('+20');
-    expect(rows[1].textContent).toContain('Perfect');
-    expect(rows[1].textContent).toContain('+20');
+    expect(element.querySelector('nx-score-breakdown')).toBeTruthy();
+    const sbDebug = fixture.debugElement.query(By.directive(ScoreBreakdownComponent));
+    expect(sbDebug).toBeTruthy();
+    const sbInstance = sbDebug.componentInstance as ScoreBreakdownComponent;
+    expect(sbInstance.breakdown()).toEqual([
+      { label: 'Base XP', value: 100, isBonus: false },
+      { label: 'Perfect!', value: 50, isBonus: true },
+    ]);
+  });
+
+  it('should not render ScoreBreakdownComponent when scoreBreakdown is empty', async () => {
+    const { element } = await setup({ scoreBreakdown: [] });
+    expect(element.querySelector('nx-score-breakdown')).toBeFalsy();
+  });
+
+  it('should pass scoreBreakdown items to ScoreBreakdownComponent', async () => {
+    const items: ScoreBreakdownItem[] = [
+      { label: 'Base XP', value: 80, isBonus: false },
+      { label: 'Perfect!', value: 20, isBonus: true },
+      { label: 'Streak Bonus', value: 10, isBonus: true },
+      { label: 'Hint Penalty', value: -5, isBonus: false },
+    ];
+    const { fixture, element } = await setup({ scoreBreakdown: items });
+    const sbDebug = fixture.debugElement.query(By.directive(ScoreBreakdownComponent));
+    const sbInstance = sbDebug.componentInstance as ScoreBreakdownComponent;
+    expect(sbInstance.breakdown()).toEqual(items);
+    // Verify bonus and penalty rows render with correct styling
+    const bonusRows = element.querySelectorAll('.score-breakdown__row--bonus');
+    const penaltyRows = element.querySelectorAll('.score-breakdown__row--penalty');
+    expect(bonusRows.length).toBe(2);
+    expect(penaltyRows.length).toBe(1);
   });
 
   it('should show "New Best!" when score exceeds previousBest', async () => {

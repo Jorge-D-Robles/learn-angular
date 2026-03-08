@@ -17,6 +17,7 @@ import { StatePersistenceService } from '../../core/persistence/state-persistenc
 import { MinigameStatus, PlayMode, type MinigameId, type MinigameLevel, type MinigameResult } from '../../core/minigame/minigame.types';
 import type { TutorialStep } from '../../shared/components/minigame-tutorial/minigame-tutorial.types';
 import { tutorialSeenKey } from '../../shared/components/minigame-tutorial/minigame-tutorial.types';
+import type { ScoreBreakdownItem } from '../../shared/components/score-breakdown/score-breakdown.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 
@@ -64,8 +65,7 @@ import { ErrorStateComponent } from '../../shared/components/error-state/error-s
           [status]="engine()?.status() ?? loadingStatus"
           [result]="resultForDisplay()"
           [previousBest]="previousBest()"
-          [xpAwarded]="completionSummary()?.xpEarned ?? 0"
-          [bonuses]="displayBonuses()"
+          [scoreBreakdown]="displayScoreBreakdown()"
           [nextLevelLocked]="nextLevelLocked()"
           [hintsAvailable]="hintsAvailable()"
           [hintCount]="hintCount()"
@@ -190,20 +190,22 @@ export class MinigamePlayPage {
     return this.buildMinigameResult();
   });
 
-  readonly displayBonuses = computed<readonly { label: string; amount: number }[]>(() => {
+  readonly displayScoreBreakdown = computed<readonly ScoreBreakdownItem[]>(() => {
     const summary = this.completionSummary();
     if (!summary) return [];
-    const bonuses: { label: string; amount: number }[] = [];
+    const items: ScoreBreakdownItem[] = [];
+    const baseXp = Math.max(0, summary.xpEarned - summary.perfectBonus - summary.streakBonus + summary.hintPenalty);
+    items.push({ label: 'Base XP', value: baseXp, isBonus: false });
     if (summary.perfectBonus > 0) {
-      bonuses.push({ label: 'Perfect!', amount: summary.perfectBonus });
+      items.push({ label: 'Perfect!', value: summary.perfectBonus, isBonus: true });
     }
     if (summary.streakBonus > 0) {
-      bonuses.push({ label: 'Streak Bonus', amount: summary.streakBonus });
+      items.push({ label: 'Streak Bonus', value: summary.streakBonus, isBonus: true });
     }
     if (summary.hintPenalty > 0) {
-      bonuses.push({ label: 'Hint Penalty', amount: -summary.hintPenalty });
+      items.push({ label: 'Hint Penalty', value: -summary.hintPenalty, isBonus: false });
     }
-    return bonuses;
+    return items;
   });
 
   readonly previousBest = computed<number | null>(() => {

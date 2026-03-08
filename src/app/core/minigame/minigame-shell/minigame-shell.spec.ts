@@ -10,6 +10,7 @@ import { APP_ICONS } from '../../../shared/icons';
 import { AudioService, SoundEffect } from '../../audio';
 import { LevelFailedComponent } from '../../../shared/components/level-failed/level-failed';
 import { LevelResultsComponent } from '../../../shared/components/level-results/level-results';
+import type { ScoreBreakdownItem } from '../../../shared/components/score-breakdown/score-breakdown.types';
 import { MinigameShellComponent } from './minigame-shell';
 import { PauseMenuComponent } from '../../../shared/components/pause-menu/pause-menu';
 import { MinigameStatus, type MinigameId, type MinigameResult } from '../minigame.types';
@@ -49,8 +50,8 @@ const TEST_RESULT: MinigameResult = {
     [score]="score" [lives]="lives" [maxLives]="maxLives"
     [timeRemaining]="timeRemaining" [timerDuration]="timerDuration"
     [status]="status"
-    [result]="result" [previousBest]="previousBest" [xpAwarded]="xpAwarded"
-    [bonuses]="bonuses" [nextLevelLocked]="nextLevelLocked"
+    [result]="result" [previousBest]="previousBest"
+    [scoreBreakdown]="scoreBreakdown" [nextLevelLocked]="nextLevelLocked"
     [hintsAvailable]="hintsAvailable"
     [hintCount]="hintCount" [hintPenalty]="hintPenalty" [activeHintText]="activeHintText"
     [warningThreshold]="warningThreshold"
@@ -77,8 +78,7 @@ class TestHost {
   status: MinigameStatus = MinigameStatus.Playing;
   result: MinigameResult | null = null;
   previousBest = 0;
-  xpAwarded = 0;
-  bonuses: { label: string; amount: number }[] = [];
+  scoreBreakdown: ScoreBreakdownItem[] = [];
   nextLevelLocked = false;
   hintsAvailable = false;
   hintCount = 0;
@@ -263,7 +263,10 @@ describe('MinigameShellComponent', () => {
     const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
     fixture.componentInstance.result = TEST_RESULT;
-    fixture.componentInstance.xpAwarded = 120;
+    fixture.componentInstance.scoreBreakdown = [
+      { label: 'Base XP', value: 100, isBonus: false },
+      { label: 'Perfect!', value: 20, isBonus: true },
+    ];
     fixture.detectChanges();
     await fixture.whenStable();
     const results = element.querySelector('nx-level-results');
@@ -271,9 +274,10 @@ describe('MinigameShellComponent', () => {
     expect(element.querySelector('.shell-overlay--success')).toBeNull();
     expect(element.querySelector('.shell-overlay__panel')).toBeNull();
     expect(results?.textContent).toContain('500');
-    expect(results?.textContent).toContain('+120 XP');
     expect(results?.textContent).toContain('Next Level');
     expect(results?.textContent).toContain('Replay');
+    // ScoreBreakdownComponent renders the breakdown
+    expect(element.querySelector('nx-score-breakdown')).toBeTruthy();
   });
 
   // --- 14. Failure overlay renders <nx-level-failed> ---

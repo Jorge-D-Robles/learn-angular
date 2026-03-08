@@ -1104,8 +1104,8 @@ describe('MinigamePlayPage', () => {
     testEngine.destroy();
   });
 
-  // --- 36. displayBonuses builds array from completion summary ---
-  it('should build bonuses array with perfect and streak entries', async () => {
+  // --- 36. displayScoreBreakdown builds array with base XP and perfect bonus ---
+  it('should build displayScoreBreakdown with base XP and perfect bonus', async () => {
     const testEngine = new TestEngine();
     const factory = vi.fn().mockReturnValue(testEngine);
     const summaryWithBonuses: LevelCompletionSummary = {
@@ -1128,16 +1128,18 @@ describe('MinigamePlayPage', () => {
     testEngine.complete();
     fixture.detectChanges();
 
-    const bonuses = component.displayBonuses();
-    expect(bonuses).toEqual([
-      { label: 'Perfect!', amount: 15 },
-      { label: 'Streak Bonus', amount: 5 },
+    // baseXp = xpEarned(30) - perfectBonus(15) - streakBonus(5) + hintPenalty(0) = 10
+    const items = component.displayScoreBreakdown();
+    expect(items).toEqual([
+      { label: 'Base XP', value: 10, isBonus: false },
+      { label: 'Perfect!', value: 15, isBonus: true },
+      { label: 'Streak Bonus', value: 5, isBonus: true },
     ]);
     testEngine.destroy();
   });
 
-  // --- 37. displayBonuses omits entries with 0 amounts ---
-  it('should omit perfect entry from bonuses when perfectBonus is 0', async () => {
+  // --- 37. displayScoreBreakdown with only base XP when no bonuses ---
+  it('should build displayScoreBreakdown with only base XP when no bonuses', async () => {
     const testEngine = new TestEngine();
     const factory = vi.fn().mockReturnValue(testEngine);
     const { fixture, component } = await setup({
@@ -1154,13 +1156,16 @@ describe('MinigamePlayPage', () => {
     testEngine.complete();
     fixture.detectChanges();
 
-    const bonuses = component.displayBonuses();
-    expect(bonuses).toEqual([]);
+    // baseXp = xpEarned(30) - perfectBonus(0) - streakBonus(0) + hintPenalty(0) = 30
+    const items = component.displayScoreBreakdown();
+    expect(items).toEqual([
+      { label: 'Base XP', value: 30, isBonus: false },
+    ]);
     testEngine.destroy();
   });
 
-  // --- 37b. displayBonuses includes hint penalty when hintPenalty > 0 ---
-  it('should include hint penalty in displayBonuses when hintPenalty > 0', async () => {
+  // --- 37b. displayScoreBreakdown includes hint penalty ---
+  it('should include hint penalty in displayScoreBreakdown when hintPenalty > 0', async () => {
     const testEngine = new TestEngine();
     const factory = vi.fn().mockReturnValue(testEngine);
     const summaryWithHintPenalty: LevelCompletionSummary = {
@@ -1181,8 +1186,12 @@ describe('MinigamePlayPage', () => {
     testEngine.complete();
     fixture.detectChanges();
 
-    const bonuses = component.displayBonuses();
-    expect(bonuses).toEqual([{ label: 'Hint Penalty', amount: -4 }]);
+    // baseXp = xpEarned(30) - perfectBonus(0) - streakBonus(0) + hintPenalty(4) = 34
+    const items = component.displayScoreBreakdown();
+    expect(items).toEqual([
+      { label: 'Base XP', value: 34, isBonus: false },
+      { label: 'Hint Penalty', value: -4, isBonus: false },
+    ]);
     testEngine.destroy();
   });
 

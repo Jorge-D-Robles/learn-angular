@@ -56,27 +56,6 @@
   border-top: 1px solid var(--nx-color-bulkhead);
 }
 
-.level-results__xp-total {
-  color: var(--nx-color-solar-gold);
-  font-weight: 700;
-  font-size: var(--nx-text-body-large-size, 1.125rem);
-  margin-bottom: var(--nx-space-2);
-}
-
-.level-results__xp-row {
-  display: flex;
-  justify-content: space-between;
-  padding: var(--nx-space-1) 0;
-}
-
-.level-results__xp-label {
-  color: var(--nx-color-display);
-}
-
-.level-results__xp-amount {
-  color: var(--nx-color-corridor);
-}
-
 .level-results__actions {
   display: flex;
   flex-direction: column;

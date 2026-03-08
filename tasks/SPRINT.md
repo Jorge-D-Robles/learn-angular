@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-337**: Wire ScoreBreakdownComponent into LevelResultsComponent for itemized scoring (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -22,7 +24,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-337**: Wire ScoreBreakdownComponent into LevelResultsComponent for itemized scoring (Priority: low, Size: S)
 - **T-2026-307**: Add StreakBadgeComponent to top bar for at-a-glance streak visibility (Priority: low, Size: S)
 - **T-2026-251**: Wire StreakRewardService milestone check to StreakService daily play recording (Priority: low, Size: S)
 

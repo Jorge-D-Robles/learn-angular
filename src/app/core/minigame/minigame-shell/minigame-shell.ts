@@ -5,6 +5,7 @@ import { LevelResultsComponent } from '../../../shared/components/level-results/
 import { MinigameTutorialOverlayComponent } from '../../../shared/components/minigame-tutorial/minigame-tutorial';
 import type { TutorialStep } from '../../../shared/components/minigame-tutorial/minigame-tutorial.types';
 import { PauseMenuComponent } from '../../../shared/components/pause-menu/pause-menu';
+import type { ScoreBreakdownItem } from '../../../shared/components/score-breakdown/score-breakdown.types';
 import { MinigameStatus, PlayMode, type MinigameId, type MinigameResult } from '../minigame.types';
 
 @Component({
@@ -82,8 +83,7 @@ import { MinigameStatus, PlayMode, type MinigameId, type MinigameResult } from '
         <nx-level-results
           [result]="result()!"
           [previousBest]="previousBest()"
-          [xpAwarded]="xpAwarded()"
-          [bonuses]="bonuses()"
+          [scoreBreakdown]="scoreBreakdown()"
           [nextLevelLocked]="nextLevelLocked()"
           (nextLevel)="nextLevel.emit()"
           (replay)="replay.emit()"
@@ -117,8 +117,7 @@ export class MinigameShellComponent {
   readonly status = input(MinigameStatus.Loading);
   readonly result = input<MinigameResult | null>(null);
   readonly previousBest = input<number | null>(null);
-  readonly xpAwarded = input(0);
-  readonly bonuses = input<readonly { label: string; amount: number }[]>([]);
+  readonly scoreBreakdown = input<readonly ScoreBreakdownItem[]>([]);
   readonly nextLevelLocked = input(false);
   readonly hintsAvailable = input(false);
   readonly hintCount = input(0);
