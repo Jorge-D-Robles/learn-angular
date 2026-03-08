@@ -47,6 +47,9 @@ const TEST_RESULT: MinigameResult = {
     [bonuses]="bonuses" [nextLevelLocked]="nextLevelLocked"
     [hintsAvailable]="hintsAvailable"
     [hintCount]="hintCount" [hintPenalty]="hintPenalty" [activeHintText]="activeHintText"
+    [warningThreshold]="warningThreshold"
+    [criticalThreshold]="criticalThreshold"
+    [pulseThreshold]="pulseThreshold"
     (pauseGame)="onPause()" (resumeGame)="onResume()" (restartGame)="onRestart()"
     (quit)="onQuit()" (retry)="onRetry()" (useHint)="onUseHint()"
     (nextLevel)="onNextLevel()" (replay)="onReplay()"
@@ -70,6 +73,9 @@ class TestHost {
   hintCount = 0;
   hintPenalty = 0;
   activeHintText = '';
+  warningThreshold = 0.5;
+  criticalThreshold = 0.25;
+  pulseThreshold = 0.1;
 
   pauseCalled = false;
   resumeCalled = false;
@@ -538,5 +544,126 @@ describe('MinigameShellComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     expect(element.querySelector('.shell-hud__hint-popover')).toBeNull();
+  });
+
+  // --- 37. Timer pulse class applied when below pulse threshold ---
+  it('should apply pulse class when below pulse threshold and Playing', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.timerDuration = 100;
+    fixture.componentInstance.timeRemaining = 5;
+    fixture.componentInstance.status = MinigameStatus.Playing;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const timer = element.querySelector('.shell-hud__timer');
+    expect(timer?.classList.contains('shell-hud__timer--pulse')).toBe(true);
+  });
+
+  // --- 38. Timer pulse class NOT applied when above pulse threshold ---
+  it('should not apply pulse class when above pulse threshold', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.timerDuration = 100;
+    fixture.componentInstance.timeRemaining = 15;
+    fixture.componentInstance.status = MinigameStatus.Playing;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const timer = element.querySelector('.shell-hud__timer');
+    expect(timer?.classList.contains('shell-hud__timer--pulse')).toBe(false);
+  });
+
+  // --- 39. Timer pulse class NOT applied when time is exactly 0 ---
+  it('should not apply pulse class when timeRemaining is 0', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.timerDuration = 100;
+    fixture.componentInstance.timeRemaining = 0;
+    fixture.componentInstance.status = MinigameStatus.Playing;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    // Timer is hidden when timeRemaining is 0 and showTimer depends on timerDuration > 0,
+    // but timerDuration is 100 here so timer shows. ratio=0 means pulse should be false.
+    const timer = element.querySelector('.shell-hud__timer');
+    expect(timer?.classList.contains('shell-hud__timer--pulse')).toBe(false);
+  });
+
+  // --- 40. Timer pulse class NOT applied when paused ---
+  it('should not apply pulse class when status is Paused', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.timerDuration = 100;
+    fixture.componentInstance.timeRemaining = 5;
+    fixture.componentInstance.status = MinigameStatus.Paused;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const timer = element.querySelector('.shell-hud__timer');
+    expect(timer?.classList.contains('shell-hud__timer--pulse')).toBe(false);
+  });
+
+  // --- 41. Custom warning threshold changes color breakpoint ---
+  it('should use custom warningThreshold for color transition', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.warningThreshold = 0.7;
+    fixture.componentInstance.timerDuration = 100;
+    fixture.componentInstance.timeRemaining = 60;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const timer = element.querySelector('.shell-hud__timer') as HTMLElement;
+    // 60% < 70% warning threshold -> should be orange (below warning, above critical)
+    expect(timer.style.color).toContain('alert-orange');
+
+    fixture.componentInstance.timeRemaining = 75;
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    // 75% > 70% warning threshold -> should be green
+    expect(timer.style.color).toContain('sensor-green');
+  });
+
+  // --- 42. Custom critical threshold changes color breakpoint ---
+  it('should use custom criticalThreshold for color transition', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.criticalThreshold = 0.4;
+    fixture.componentInstance.timerDuration = 100;
+    fixture.componentInstance.timeRemaining = 35;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const timer = element.querySelector('.shell-hud__timer') as HTMLElement;
+    // 35% < 40% critical threshold -> should be red
+    expect(timer.style.color).toContain('emergency-red');
+
+    fixture.componentInstance.timeRemaining = 45;
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    // 45% >= 40% critical threshold, < 50% warning -> should be orange
+    expect(timer.style.color).toContain('alert-orange');
+  });
+
+  // --- 43. Custom pulse threshold ---
+  it('should use custom pulseThreshold for pulse class', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.pulseThreshold = 0.2;
+    fixture.componentInstance.timerDuration = 100;
+    fixture.componentInstance.timeRemaining = 15;
+    fixture.componentInstance.status = MinigameStatus.Playing;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const timer = element.querySelector('.shell-hud__timer');
+    // 15% < 20% custom pulse threshold -> should pulse
+    expect(timer?.classList.contains('shell-hud__timer--pulse')).toBe(true);
+  });
+
+  // --- 44. Division by zero safety ---
+  it('should return green color and no pulse when timerDuration is 0', async () => {
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.timerDuration = 0;
+    fixture.componentInstance.timeRemaining = 0;
+    fixture.componentInstance.status = MinigameStatus.Playing;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    // Timer element is hidden when timerDuration is 0 (showTimer is false),
+    // but the computed signals should still be safe.
+    const shellComponent = fixture.debugElement.query(
+      By.directive(MinigameShellComponent),
+    ).componentInstance as MinigameShellComponent;
+    expect(shellComponent.timerColor()).toBe('var(--nx-color-sensor-green)');
+    expect(shellComponent.timerPulse()).toBe(false);
   });
 });

@@ -13,7 +13,9 @@ import { MinigameStatus, type MinigameResult } from '../minigame.types';
       <div class="shell-hud">
         <div class="shell-hud__score">{{ score() }}</div>
         @if (showTimer()) {
-          <div class="shell-hud__timer" [style.color]="timerColor()">
+          <div class="shell-hud__timer"
+               [style.color]="timerColor()"
+               [class.shell-hud__timer--pulse]="timerPulse()">
             {{ timeRemaining() }}s
           </div>
         }
@@ -105,6 +107,9 @@ export class MinigameShellComponent {
   readonly hintCount = input(0);
   readonly hintPenalty = input(0);
   readonly activeHintText = input('');
+  readonly warningThreshold = input(0.5);
+  readonly criticalThreshold = input(0.25);
+  readonly pulseThreshold = input(0.1);
 
   // --- Signal outputs ---
   readonly pauseGame = output();
@@ -136,14 +141,23 @@ export class MinigameShellComponent {
   readonly showTimer = computed(() => this.timerDuration() > 0);
 
   readonly timerColor = computed(() => {
-    const ratio = this.timeRemaining() / this.timerDuration();
-    if (ratio > 0.5) {
+    const duration = this.timerDuration();
+    if (duration <= 0) return 'var(--nx-color-sensor-green)';
+    const ratio = this.timeRemaining() / duration;
+    if (ratio > this.warningThreshold()) {
       return 'var(--nx-color-sensor-green)';
     }
-    if (ratio >= 0.25) {
+    if (ratio >= this.criticalThreshold()) {
       return 'var(--nx-color-alert-orange)';
     }
     return 'var(--nx-color-emergency-red)';
+  });
+
+  readonly timerPulse = computed(() => {
+    const duration = this.timerDuration();
+    if (duration <= 0) return false;
+    const ratio = this.timeRemaining() / duration;
+    return ratio > 0 && ratio < this.pulseThreshold() && this.status() === MinigameStatus.Playing;
   });
 
   readonly livesArray = computed(() =>
