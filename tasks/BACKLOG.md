@@ -4337,26 +4337,6 @@ Acceptance criteria:
 - [ ] Verifies pause/resume interaction
 - [ ] Tests run via `npm run e2e`
 
-### T-2026-309
-- Title: Reset HintService on minigame retry to prevent penalty carry-over
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-300
-- Blocked-by: —
-- Tags: minigame-framework, hint-system, bug
-- Refs: src/app/pages/minigame-play/minigame-play.ts, src/app/core/minigame/hint.service.ts
-
-`MinigamePlayPage.onRetry()` does not call `hintService.reset()`. If a player retries a level, hints from the previous attempt persist, causing the hint penalty to carry over incorrectly.
-
-Acceptance criteria:
-- [ ] `onRetry()` calls `hintService.reset()` before re-initializing the engine
-- [ ] Unit test: after retry, `hintService.hasUsedHints()` returns false
-- [ ] Unit test: after retry with hints used, completing level awards full XP (no carry-over penalty)
-- Started: 2026-03-08
-
 ### T-2026-319
 - Title: Wire registry scoreConfig.maxScore into MinigamePlayPage buildMinigameResult
 - Status: todo

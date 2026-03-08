@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-309**: Reset HintService on minigame retry to prevent penalty carry-over (Assigned: claude, Status: in-progress)
 
 
 
