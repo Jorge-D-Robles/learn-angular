@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-337**: Wire ScoreBreakdownComponent into LevelResultsComponent for itemized scoring (Assigned: claude, Status: in-progress)
 
 
 

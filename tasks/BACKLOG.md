@@ -399,29 +399,6 @@ Acceptance criteria:
 - [ ] Uses real services (minimal mocking -- only HTMLAudioElement needs mocking)
 - [ ] Does not require DOM rendering (service-level integration only)
 
-### T-2026-337
-- Title: Wire ScoreBreakdownComponent into LevelResultsComponent for itemized scoring
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-293, T-2026-159
-- Blocked-by: —
-- Tags: integration, ui, scoring, level-results
-- Refs: docs/progression.md, src/app/shared/components/level-results/, src/app/shared/components/score-breakdown/
-
-LevelResultsComponent (T-2026-159, completed) renders XP breakdown inline. ScoreBreakdownComponent (T-2026-293) extracts the itemized scoring into a reusable component. No ticket wires ScoreBreakdownComponent into LevelResultsComponent to replace the inline breakdown.
-
-Acceptance criteria:
-- [ ] LevelResultsComponent renders ScoreBreakdownComponent for score detail
-- [ ] Breakdown includes: base score, time bonus, accuracy bonus, combo bonus, hint penalty, total
-- [ ] Bonus items styled in Solar Gold, penalties in Emergency Red (via ScoreBreakdownComponent)
-- [ ] "New Best!" indicator shows when applicable
-- [ ] Existing LevelResultsComponent tests updated for the new child component
-- [ ] Unit tests for: breakdown data binding, new best indicator pass-through
-- Started: 2026-03-08
-
 ### T-2026-355
 - Title: Add ARIA landmark roles to app shell layout regions
 - Status: todo
