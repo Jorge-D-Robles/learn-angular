@@ -1,20 +1,129 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
+import { GameProgressionService } from '../../core/progression/game-progression.service';
+import { CurriculumService } from '../../core/curriculum/curriculum.service';
+import type { ChapterId } from '../../core/curriculum/curriculum.types';
+import type { CodeExampleStep, ConceptStep } from '../../core/curriculum/story-mission-content.types';
+import { PHASE_1_MISSIONS } from '../../data/missions/phase-1';
+import { CodeEditorComponent, LockedContentComponent } from '../../shared/components';
 
 @Component({
   selector: 'app-mission',
-  template: `
-    <h1>Mission</h1>
-    <p>Chapter: {{ chapterId() }}</p>
-  `,
+  imports: [CodeEditorComponent, LockedContentComponent],
+  templateUrl: './mission.html',
+  styleUrl: './mission.scss',
 })
 export class MissionPage {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly gameProgression = inject(GameProgressionService);
+  private readonly curriculum = inject(CurriculumService);
 
   readonly chapterId = toSignal(
-    this.route.paramMap.pipe(map((params) => params.get('chapterId') ?? '')),
+    this.route.paramMap.pipe(map((p) => p.get('chapterId') ?? '')),
     { initialValue: '' },
   );
+
+  readonly chapterIdNum = computed(() => parseInt(this.chapterId(), 10) || 0);
+
+  readonly missionContent = computed(
+    () => PHASE_1_MISSIONS.find((m) => m.chapterId === this.chapterIdNum()) ?? null,
+  );
+
+  readonly missionMeta = computed(
+    () => this.curriculum.getChapter(this.chapterIdNum() as ChapterId),
+  );
+
+  readonly isAvailable = computed(
+    () => this.gameProgression.isMissionAvailable(this.chapterIdNum() as ChapterId),
+  );
+
+  readonly isCompleted = computed(
+    () => this.gameProgression.isMissionCompleted(this.chapterIdNum() as ChapterId),
+  );
+
+  readonly currentStep = signal(0);
+  readonly stepsViewed = signal(1);
+
+  readonly totalSteps = computed(() => this.missionContent()?.steps.length ?? 0);
+
+  readonly currentStepData = computed(
+    () => this.missionContent()?.steps[this.currentStep()] ?? null,
+  );
+
+  readonly isFirstStep = computed(() => this.currentStep() === 0);
+  readonly isLastStep = computed(() => this.currentStep() === this.totalSteps() - 1);
+
+  readonly canComplete = computed(
+    () =>
+      this.isLastStep() &&
+      this.stepsViewed() >= (this.missionContent()?.completionCriteria.minStepsViewed ?? Infinity),
+  );
+
+  readonly missionCompleted = signal(false);
+
+  readonly unlocksMinigame = computed(
+    () => this.missionMeta()?.unlocksMinigame ?? null,
+  );
+
+  readonly prerequisiteMessage = computed(() => {
+    const deps = this.curriculum.getPrerequisites(this.chapterIdNum() as ChapterId);
+    const completedMissions = this.gameProgression.completedMissions();
+    const unmet = deps.find((depId) => !completedMissions.has(depId));
+    if (unmet === undefined) return '';
+    const chapter = this.curriculum.getChapter(unmet);
+    return chapter ? `Complete "${chapter.title}" first` : `Complete chapter ${unmet} first`;
+  });
+
+  readonly collapsedConcept = signal(false);
+  readonly errorMessage = signal<string | null>(null);
+
+  readonly codeExample = computed(() => {
+    const step = this.currentStepData();
+    return step?.stepType === 'code-example' ? (step as CodeExampleStep) : null;
+  });
+
+  readonly concept = computed(() => {
+    const step = this.currentStepData();
+    return step?.stepType === 'concept' ? (step as ConceptStep) : null;
+  });
+
+  nextStep(): void {
+    if (!this.isLastStep()) {
+      this.currentStep.update((s) => s + 1);
+      this.stepsViewed.update((v) => Math.min(v + 1, this.totalSteps()));
+      this.collapsedConcept.set(false);
+      this.errorMessage.set(null);
+    }
+  }
+
+  previousStep(): void {
+    if (!this.isFirstStep()) {
+      this.currentStep.update((s) => s - 1);
+      this.collapsedConcept.set(false);
+      this.errorMessage.set(null);
+    }
+  }
+
+  completeMission(): void {
+    try {
+      this.gameProgression.completeMission(this.chapterIdNum() as ChapterId);
+      this.missionCompleted.set(true);
+    } catch (e) {
+      this.errorMessage.set(e instanceof Error ? e.message : 'Failed to complete mission');
+    }
+  }
+
+  launchMinigame(): void {
+    const gameId = this.unlocksMinigame();
+    if (gameId) {
+      this.router.navigate(['/minigames', gameId]);
+    }
+  }
+
+  toggleConceptPanel(): void {
+    this.collapsedConcept.update((c) => !c);
+  }
 }
