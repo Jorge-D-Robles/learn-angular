@@ -352,7 +352,10 @@ describe('MinigamePlayPage', () => {
   // --- 7. Ready state renders component via NgComponentOutlet ---
   it('should show "ready" state and render component via NgComponentOutlet', async () => {
     const { element } = await setup({
-      registry: { getComponent: vi.fn().mockReturnValue(DummyGameComponent) },
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(() => new TestEngine()),
+      },
     });
     const dummyGame = element.querySelector('.dummy-game');
     expect(dummyGame).toBeTruthy();
@@ -375,7 +378,10 @@ describe('MinigamePlayPage', () => {
   // --- 9. Content projection inside MinigameShellComponent ---
   it('should render game content inside MinigameShellComponent content projection', async () => {
     const { element } = await setup({
-      registry: { getComponent: vi.fn().mockReturnValue(DummyGameComponent) },
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(() => new TestEngine()),
+      },
     });
     const shell = element.querySelector('app-minigame-shell');
     expect(shell).toBeTruthy();

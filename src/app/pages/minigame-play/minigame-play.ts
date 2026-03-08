@@ -93,7 +93,9 @@ import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner
           (tutorialDismissed)="onTutorialDismissed()"
           (howToPlay)="onHowToPlay()"
         >
-          <ng-container *ngComponentOutlet="resolvedComponent()!; injector: engineInjector()" />
+          @if (engine()) {
+            <ng-container *ngComponentOutlet="resolvedComponent()!; injector: engineInjector()" />
+          }
         </app-minigame-shell>
       }
     }

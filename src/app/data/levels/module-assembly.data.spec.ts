@@ -1,44 +1,60 @@
 import { DifficultyTier } from '../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
+import type {
+  ModuleAssemblyLevelData,
+  ComponentPart,
+  BlueprintSlot,
+  ComponentBlueprint,
+  DecoyInfo,
+  PartSlotType,
+} from '../../features/minigames/module-assembly/module-assembly.types';
 import {
   MODULE_ASSEMBLY_LEVELS,
   MODULE_ASSEMBLY_LEVEL_PACK,
-  type BlueprintSlotType,
-  type ComponentPart,
-  type BlueprintSlot,
-  type ComponentBlueprint,
-  type ModuleAssemblyLevelData,
 } from './module-assembly.data';
 
 // --- Compile-time type checks ---
 
-const _slotType: BlueprintSlotType = 'decorator';
+const _slotType: PartSlotType = 'decorator';
 
 const _part: ComponentPart = {
   id: 'p1',
-  code: '@Component({})',
-  slotType: 'decorator',
+  content: '@Component({})',
+  type: 'decorator',
   isDecoy: false,
+  correctSlotId: 'slot-0',
 };
 
 const _slot: BlueprintSlot = {
+  id: 'slot-0',
   slotType: 'template',
   label: 'Template',
-  required: true,
-  acceptsPartIds: ['p1'],
+  isRequired: true,
+  isOptional: false,
 };
 
 const _blueprint: ComponentBlueprint = {
-  componentName: 'TestComponent',
+  name: 'TestComponent',
   slots: [_slot],
+  expectedParts: ['p1'],
+};
+
+const _decoy: DecoyInfo = {
+  originalPart: {
+    id: 'd1',
+    content: 'bad code',
+    type: 'template',
+    isDecoy: true,
+    correctSlotId: null,
+  },
+  mutation: 'Decoy variant of template',
 };
 
 const _levelData: ModuleAssemblyLevelData = {
-  blueprints: [_blueprint],
+  blueprint: _blueprint,
   parts: [_part],
+  decoys: [_decoy],
   beltSpeed: 40,
-  timeLimit: 60,
-  maxStrikes: 3,
 };
 
 const _levelDef: LevelDefinition<ModuleAssemblyLevelData> = {
@@ -52,7 +68,7 @@ const _levelDef: LevelDefinition<ModuleAssemblyLevelData> = {
   data: _levelData,
 };
 
-void [_slotType, _part, _slot, _blueprint, _levelData, _levelDef];
+void [_slotType, _part, _slot, _blueprint, _decoy, _levelData, _levelDef];
 
 // --- Runtime tests ---
 
@@ -134,9 +150,9 @@ describe('Required fields', () => {
     }
   });
 
-  it('should have at least 1 blueprint in every level', () => {
+  it('should have a blueprint with at least 1 slot in every level', () => {
     for (const level of MODULE_ASSEMBLY_LEVELS) {
-      expect(level.data.blueprints.length).toBeGreaterThanOrEqual(1);
+      expect(level.data.blueprint.slots.length).toBeGreaterThanOrEqual(1);
     }
   });
 
@@ -152,48 +168,30 @@ describe('Required fields', () => {
     }
   });
 
-  it('should have timeLimit > 0 for every level', () => {
+  it('should have blueprint.name be a non-empty string', () => {
     for (const level of MODULE_ASSEMBLY_LEVELS) {
-      expect(level.data.timeLimit).toBeGreaterThan(0);
-    }
-  });
-
-  it('should have maxStrikes > 0 for every level', () => {
-    for (const level of MODULE_ASSEMBLY_LEVELS) {
-      expect(level.data.maxStrikes).toBeGreaterThan(0);
+      expect(level.data.blueprint.name.length).toBeGreaterThan(0);
     }
   });
 });
 
 describe('Data integrity', () => {
-  it('should have every blueprint slot acceptsPartIds entry reference an existing non-decoy part', () => {
+  it('should have every non-decoy part correctSlotId reference an existing slot id', () => {
     for (const level of MODULE_ASSEMBLY_LEVELS) {
-      const nonDecoyIds = new Set(
-        level.data.parts.filter(p => !p.isDecoy).map(p => p.id),
-      );
-      for (const blueprint of level.data.blueprints) {
-        for (const slot of blueprint.slots) {
-          for (const partId of slot.acceptsPartIds) {
-            expect(nonDecoyIds.has(partId)).toBe(true);
-          }
-        }
+      const slotIds = new Set(level.data.blueprint.slots.map(s => s.id));
+      const nonDecoyParts = level.data.parts.filter(p => !p.isDecoy);
+      for (const part of nonDecoyParts) {
+        expect(slotIds.has(part.correctSlotId!)).toBe(true);
       }
     }
   });
 
-  it('should have every non-decoy part referenced by at least one blueprint slot', () => {
+  it('should have every non-decoy part in blueprint.expectedParts', () => {
     for (const level of MODULE_ASSEMBLY_LEVELS) {
-      const referencedIds = new Set<string>();
-      for (const blueprint of level.data.blueprints) {
-        for (const slot of blueprint.slots) {
-          for (const partId of slot.acceptsPartIds) {
-            referencedIds.add(partId);
-          }
-        }
-      }
+      const expectedSet = new Set(level.data.blueprint.expectedParts);
       const nonDecoyParts = level.data.parts.filter(p => !p.isDecoy);
       for (const part of nonDecoyParts) {
-        expect(referencedIds.has(part.id)).toBe(true);
+        expect(expectedSet.has(part.id)).toBe(true);
       }
     }
   });
@@ -205,19 +203,106 @@ describe('Data integrity', () => {
     }
   });
 
-  it('should have exactly 5 blueprints in the Boss level', () => {
+  it('should have exactly 25 merged slots in the Boss level (ma-boss-01)', () => {
     const boss = MODULE_ASSEMBLY_LEVELS.find(l => l.tier === DifficultyTier.Boss)!;
-    expect(boss.data.blueprints.length).toBe(5);
+    expect(boss.data.blueprint.slots.length).toBe(25);
   });
 
-  it('should have exactly 2 blueprints in level 6 (multiple components)', () => {
+  it('should have exactly 6 merged slots in level 6 (ma-basic-06)', () => {
     const level6 = MODULE_ASSEMBLY_LEVELS.find(l => l.levelId === 'ma-basic-06')!;
-    expect(level6.data.blueprints.length).toBe(2);
+    expect(level6.data.blueprint.slots.length).toBe(6);
   });
 
-  it('should have 3 blueprints in level 16 (multi-component assembly)', () => {
+  it('should have exactly 12 merged slots in level 16 (ma-advanced-04)', () => {
     const level16 = MODULE_ASSEMBLY_LEVELS.find(l => l.levelId === 'ma-advanced-04')!;
-    expect(level16.data.blueprints.length).toBe(3);
+    expect(level16.data.blueprint.slots.length).toBe(12);
+  });
+
+  it('should have unique slot ids within each level', () => {
+    for (const level of MODULE_ASSEMBLY_LEVELS) {
+      const ids = level.data.blueprint.slots.map(s => s.id);
+      expect(new Set(ids).size).toBe(ids.length);
+    }
+  });
+
+  it('should have all slots with isOptional === !isRequired', () => {
+    for (const level of MODULE_ASSEMBLY_LEVELS) {
+      for (const slot of level.data.blueprint.slots) {
+        expect(slot.isOptional).toBe(!slot.isRequired);
+      }
+    }
+  });
+
+  it('should have all part types be valid PartSlotType values (no kebab-case)', () => {
+    const validTypes: readonly string[] = ['decorator', 'selector', 'template', 'styles', 'classBody', 'imports'];
+    for (const level of MODULE_ASSEMBLY_LEVELS) {
+      for (const part of level.data.parts) {
+        expect(validTypes).toContain(part.type);
+      }
+    }
+  });
+
+  it('should have a decoys array for every level', () => {
+    for (const level of MODULE_ASSEMBLY_LEVELS) {
+      expect(level.data.decoys).toBeDefined();
+      expect(Array.isArray(level.data.decoys)).toBe(true);
+    }
+  });
+
+  it('should have every decoy in the decoys array also in the parts array with isDecoy: true', () => {
+    for (const level of MODULE_ASSEMBLY_LEVELS) {
+      for (const decoy of level.data.decoys) {
+        const matchingPart = level.data.parts.find(p => p.id === decoy.originalPart.id);
+        expect(matchingPart).toBeDefined();
+        expect(matchingPart!.isDecoy).toBe(true);
+      }
+    }
+  });
+
+  it('should have expectedParts match non-decoy part ids', () => {
+    for (const level of MODULE_ASSEMBLY_LEVELS) {
+      const nonDecoyIds = level.data.parts
+        .filter(p => !p.isDecoy)
+        .map(p => p.id)
+        .sort();
+      const expected = [...level.data.blueprint.expectedParts].sort();
+      expect(expected).toEqual(nonDecoyIds);
+    }
+  });
+
+  it('should have all non-decoy parts have a non-null correctSlotId', () => {
+    for (const level of MODULE_ASSEMBLY_LEVELS) {
+      const nonDecoyParts = level.data.parts.filter(p => !p.isDecoy);
+      for (const part of nonDecoyParts) {
+        expect(part.correctSlotId).not.toBeNull();
+      }
+    }
+  });
+
+  it('should have all decoy parts have correctSlotId === null', () => {
+    for (const level of MODULE_ASSEMBLY_LEVELS) {
+      const decoyParts = level.data.parts.filter(p => p.isDecoy);
+      for (const part of decoyParts) {
+        expect(part.correctSlotId).toBeNull();
+      }
+    }
+  });
+
+  it('should not have any non-decoy part mapped to more than one slot', () => {
+    for (const level of MODULE_ASSEMBLY_LEVELS) {
+      const nonDecoyParts = level.data.parts.filter(p => !p.isDecoy);
+      const partSlotMapping = new Map<string, Set<string>>();
+      for (const part of nonDecoyParts) {
+        if (part.correctSlotId) {
+          const slots = partSlotMapping.get(part.id) ?? new Set();
+          slots.add(part.correctSlotId);
+          partSlotMapping.set(part.id, slots);
+        }
+      }
+      for (const [, slots] of partSlotMapping) {
+        expect(slots.size).toBe(1);
+      }
+    }
   });
 });
 
@@ -255,5 +340,26 @@ describe('Concept spot checks', () => {
     const boss = MODULE_ASSEMBLY_LEVELS.find(l => l.tier === DifficultyTier.Boss)!;
     expect(boss.parTime).toBeDefined();
     expect(boss.parTime).toBeGreaterThan(0);
+  });
+
+  it('should have level 1 blueprint.name be EmergencyShelter', () => {
+    const level1 = MODULE_ASSEMBLY_LEVELS.find(l => l.levelId === 'ma-basic-01')!;
+    expect(level1.data.blueprint.name).toBe('EmergencyShelter');
+  });
+
+  it('should have level 1 with 3 slots', () => {
+    const level1 = MODULE_ASSEMBLY_LEVELS.find(l => l.levelId === 'ma-basic-01')!;
+    expect(level1.data.blueprint.slots.length).toBe(3);
+  });
+
+  it('should have level 1 with 3 parts', () => {
+    const level1 = MODULE_ASSEMBLY_LEVELS.find(l => l.levelId === 'ma-basic-01')!;
+    expect(level1.data.parts.length).toBe(3);
+  });
+
+  it('should have level 1 parts use content not code', () => {
+    const level1 = MODULE_ASSEMBLY_LEVELS.find(l => l.levelId === 'ma-basic-01')!;
+    expect(typeof level1.data.parts[0].content).toBe('string');
+    expect(level1.data.parts[0].content.length).toBeGreaterThan(0);
   });
 });
