@@ -649,29 +649,6 @@ Acceptance criteria:
 - [ ] No runtime behavior change
 - [ ] Existing tests pass
 
-### T-2026-297
-- Title: Fix top bar XP progress bar hardcoded nextRankXp value
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P1
-- Depends: T-2026-124
-- Blocked-by: —
-- Tags: bug, ui, xp, top-bar
-- Refs: src/app/app.html, src/app/app.ts, src/app/core/progression/xp.service.ts
-
-The top bar XP progress bar binds `[nextRankXp]="100"` as a hardcoded literal. XpService provides `xpToNextRank` as a computed signal that returns the actual XP gap to the next rank (500 for Cadet->Ensign, 1000 for Ensign->Lieutenant, etc.). Without this fix, the XP bar always shows progress out of 100 regardless of actual rank thresholds, making progression feel broken.
-
-Acceptance criteria:
-- [ ] `App` component exposes `xpToNextRank` from `XpService.xpToNextRank` signal
-- [ ] `app.html` binds `[nextRankXp]="xpToNextRank()"` instead of hardcoded `100`
-- [ ] XP bar correctly shows progress relative to actual rank thresholds
-- [ ] At max rank (Fleet Admiral), xpToNextRank is 0 and bar shows 100%
-- [ ] Existing unit tests updated to verify dynamic binding
-- [ ] No visual regression on top bar layout
-- Started: 2026-03-08
-
 ### T-2026-298
 - Title: Compute star rating via ScoreCalculationService in MinigamePlayPage
 - Status: todo

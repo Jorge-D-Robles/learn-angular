@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-297**: Fix top bar XP progress bar hardcoded nextRankXp value (Assigned: claude, Status: in-progress)
 
 
 ---
