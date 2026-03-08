@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-256**: Create SignalCorps tower configuration data model (Assigned: claude, Status: in-progress)
 
 
 
