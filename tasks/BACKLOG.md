@@ -723,6 +723,183 @@ Acceptance criteria:
 - [ ] Integration test: record 7 consecutive days, verify 100 XP bonus awarded
 - [ ] Unit tests for: milestone trigger on streak update, no trigger when below milestone
 
+### T-2026-288
+- Title: Add Page Visibility auto-pause to MinigameEngine
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-017
+- Blocked-by: —
+- Tags: minigame-framework, engine, ux, fair-play
+- Refs: docs/research/gamification-patterns.md, src/app/core/minigame/minigame-engine.ts
+
+Gamification research says "Immediate feedback" and all minigame specs have timer-based scoring. When a player switches browser tabs during timed gameplay, the engine timer continues counting down, which is unfair and unexpected. The engine should auto-pause when the document becomes hidden and auto-resume when it becomes visible again. This prevents timer-based cheating in the opposite direction too (pausing by switching tabs is also unfair for speed runs).
+
+Acceptance criteria:
+- [ ] MinigameEngine listens to `document.visibilitychange` event when status is `Playing`
+- [ ] When `document.hidden` becomes true and status is `Playing`, engine auto-pauses (calls `pause()`)
+- [ ] When `document.hidden` becomes false and status is `Paused` (from auto-pause), engine auto-resumes
+- [ ] Manual pause (via pause menu) is NOT auto-resumed on tab focus -- only auto-pauses are auto-resumed
+- [ ] `_autoPaused` private flag distinguishes auto-pause from manual pause
+- [ ] Visibility listener cleaned up in `destroy()`
+- [ ] Unit tests for: auto-pause on hidden, auto-resume on visible, no auto-resume after manual pause, cleanup on destroy
+
+### T-2026-289
+- Title: Add play mode context signal to MinigameEngine
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-017
+- Blocked-by: —
+- Tags: minigame-framework, engine, replay-modes
+- Refs: docs/progression.md, docs/minigames/TEMPLATE.md, src/app/core/minigame/minigame-engine.ts
+
+Each minigame spec defines different behavior for story mode, endless mode, speed run, and daily challenge. The engine base class has no concept of which mode it's running in. Without this, subclass engines and the MinigameShell cannot conditionally adjust behavior (e.g., endless mode has no level completion, speed run tracks splits, daily challenge limits to one attempt). MinigamePlayPage, EndlessModePage, SpeedRunPage, and DailyChallengePage each need to set this context.
+
+Acceptance criteria:
+- [ ] `PlayMode` enum at `src/app/core/minigame/minigame.types.ts`: story, endless, speedRun, dailyChallenge
+- [ ] MinigameEngine has `playMode` signal (readonly) defaulting to `PlayMode.story`
+- [ ] `setPlayMode(mode: PlayMode)`: sets the mode before `start()` is called
+- [ ] Mode can only be set when status is `Loading` (throws otherwise)
+- [ ] MinigameShell reads `engine.playMode()` for mode-specific HUD adjustments
+- [ ] Exported from minigame barrel
+- [ ] Unit tests for: default mode, mode setting, mode immutability after start
+
+### T-2026-290
+- Title: Integrate ComboTrackerService multiplier into ScoreCalculationService formula
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-056, T-2026-028
+- Blocked-by: —
+- Tags: scoring, combo, integration, minigame-framework
+- Refs: docs/minigames/01-module-assembly.md, src/app/core/minigame/score-calculation.service.ts, src/app/core/minigame/combo-tracker.service.ts
+
+Module Assembly spec says scoring includes "combo multiplier for consecutive correct placements." ComboTrackerService (T-2026-056) tracks combo state and ScoreCalculationService (T-2026-028) calculates final scores. But the score formula does not incorporate the combo multiplier. T-2026-184 wires combo tracking into the engine lifecycle, but this separate ticket ensures the scoring formula itself accounts for the combo multiplier when calculating the final level score.
+
+Acceptance criteria:
+- [ ] ScoreCalculationService.calculateScore() accepts optional `comboMultiplier` parameter (default 1.0)
+- [ ] Formula incorporates combo multiplier: `baseScore * accuracy * comboMultiplier`
+- [ ] LevelCompletionService passes current combo multiplier to ScoreCalculationService
+- [ ] Combo multiplier of 1.0 produces identical results to current behavior (backward compatible)
+- [ ] Unit tests for: score with combo multiplier, default multiplier, combo boost on perfect play
+
+### T-2026-291
+- Title: Create DailyChallenge-to-StreakReward integration test
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-206, T-2026-251
+- Blocked-by: —
+- Tags: testing, integration, daily-challenge, streak, rewards
+- Refs: docs/progression.md, docs/research/gamification-patterns.md
+
+The full daily challenge pipeline spans 3 services: DailyChallengeService.completeChallenge() -> StreakService.recordDailyPlay() (via T-2026-206) -> StreakRewardService.checkMilestoneReward() (via T-2026-251). No integration test verifies this end-to-end flow. A regression in any link could silently break the streak reward system that progression.md specifies as "7-day streak rewards."
+
+Acceptance criteria:
+- [ ] Integration test file at `src/app/core/integration/daily-streak-reward.integration.spec.ts`
+- [ ] Test: complete daily challenge -> verify streak increments
+- [ ] Test: complete 7 consecutive daily challenges -> verify 100 XP streak reward awarded
+- [ ] Test: verify XpNotificationService receives streak milestone notification
+- [ ] Test: verify reward is not re-awarded on 8th day (idempotent milestone tracking)
+- [ ] All services use real implementations (not mocks) for true integration testing
+
+### T-2026-292
+- Title: Add MinigameShell responsive layout for mobile gameplay
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-018
+- Blocked-by: —
+- Tags: ui, responsive, minigame-framework, mobile
+- Refs: docs/ux/navigation.md, docs/ux/visual-style.md, src/app/core/minigame/minigame-shell/minigame-shell.ts
+
+Navigation.md defines responsive breakpoints: Mobile (<768px), Tablet (768-1024px), Desktop (>1024px). The MinigameShell HUD (score, timer, lives, hint button, pause button) was built without explicit responsive styling. On mobile screens, the HUD elements need to stack or reflow to avoid obscuring the game content area. Multiple minigame UIs (conveyor belt, split-screen, pipeline) also need the content projection area to adapt.
+
+Acceptance criteria:
+- [ ] MinigameShell HUD wraps gracefully at mobile breakpoint (<768px)
+- [ ] HUD elements use smaller font/icon sizes on mobile (20px icons, 0.875rem text)
+- [ ] Score and timer display inline on desktop, stacked on mobile
+- [ ] Hint and pause buttons remain accessible on all screen sizes
+- [ ] Content projection area uses `min-height: 60vh` on mobile to ensure game area is usable
+- [ ] Unit tests for: HUD element presence at both breakpoints (using viewport mocking)
+
+### T-2026-293
+- Title: Create ScoreBreakdownComponent for level completion detail
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-028, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, scoring, shared
+- Refs: docs/ux/visual-style.md, docs/progression.md
+
+LevelResultsComponent (T-2026-159) shows post-level completion with XP breakdown, but the score breakdown (time bonus, accuracy bonus, combo bonus, hint penalty) is rendered inline. Multiple minigame specs define unique scoring formulas (Module Assembly: "time remaining + accuracy + combo", Wire Protocol: "fewer verifications = higher score"). A reusable ScoreBreakdownComponent would show itemized scoring with station-themed styling, usable in both LevelResultsComponent and the replay mode post-game screens.
+
+Acceptance criteria:
+- [ ] `ScoreBreakdownComponent` at `src/app/shared/components/score-breakdown/`
+- [ ] Selector: `nx-score-breakdown`
+- [ ] Input: `breakdown` (array of {label: string, value: number, isBonus: boolean, isNew?: boolean})
+- [ ] Displays each score component as a labeled row with value
+- [ ] Bonus items styled in Solar Gold, penalties in Emergency Red
+- [ ] Total row at bottom with emphasized styling
+- [ ] "New Best!" indicator for items that beat previous records
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: row rendering, bonus/penalty styling, total calculation, new best indicator
+
+### T-2026-294
+- Title: Add DailyChallengeService barrel export to progression module
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-041
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/progression/index.ts
+
+DailyChallengeService (T-2026-041, completed) is exported from the progression barrel (`src/app/core/progression/index.ts`), but its companion type `DailyChallenge` interface may not be exported. Per conventions, all public types from a service should be available via the barrel. Verify and ensure the `DailyChallenge` type is exported alongside the service.
+
+Acceptance criteria:
+- [ ] `DailyChallenge` interface exported from `src/app/core/progression/index.ts`
+- [ ] All public types from DailyChallengeService are importable via barrel path
+- [ ] Build passes with no missing exports
+
+### T-2026-295
+- Title: Create MinigameEngine onPause and onResume lifecycle hooks
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-017
+- Blocked-by: —
+- Tags: minigame-framework, engine, lifecycle
+- Refs: src/app/core/minigame/minigame-engine.ts
+
+MinigameEngine has `onLevelLoad`, `onStart`, and `onComplete` abstract/virtual methods, but no hooks for pause and resume. Subclass engines may need to freeze game-specific state on pause (e.g., Module Assembly stops conveyor belt animation, Flow Commander stops cargo movement) and resume it. Without these hooks, subclass engines cannot react to pause/resume events.
+
+Acceptance criteria:
+- [ ] Add `protected onPause(): void {}` empty virtual method to MinigameEngine
+- [ ] Add `protected onResume(): void {}` empty virtual method to MinigameEngine
+- [ ] `pause()` calls `onPause()` after setting status to Paused
+- [ ] `resume()` calls `onResume()` after setting status to Playing
+- [ ] Existing tests still pass (empty default implementations are backward compatible)
+- [ ] Unit tests for: onPause called on pause, onResume called on resume
+
 ---
 
 ## P2 -- Foundations Bundle
