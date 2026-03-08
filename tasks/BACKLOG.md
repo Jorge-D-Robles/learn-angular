@@ -1607,29 +1607,6 @@ Acceptance criteria:
 - [ ] Test: engine.reset() resets ConveyorBeltService to initial state
 - [ ] Uses real ModuleAssemblyEngine and real ConveyorBeltService with level 1 data
 
-### T-2026-416
-- Title: Wire CodeEditorComponent into StoryMissionPage for interactive code examples
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-075, T-2026-031
-- Blocked-by: —
-- Tags: integration, story-missions, code-editor, ui
-- Refs: docs/ux/navigation.md, docs/curriculum.md, src/app/shared/components/code-editor/
-
-Navigation.md specifies story missions include "Interactive code examples (read-only, with highlights)." StoryMissionPage (T-2026-075) lists this as an acceptance criterion, and CodeEditorComponent (T-2026-031, completed) provides syntax highlighting with line highlighting. No ticket explicitly wires CodeEditorComponent into StoryMissionPage for rendering code snippets within mission steps. Without this, mission steps display plain text where Angular code examples should appear.
-
-Acceptance criteria:
-- [ ] StoryMissionPage renders CodeEditorComponent in read-only mode for mission steps that contain code examples
-- [ ] Code snippets from StoryMissionContent steps passed to CodeEditorComponent `code` input
-- [ ] `readOnly` input set to true to prevent editing
-- [ ] `highlightedLines` input bound to step-specific highlight ranges (e.g., highlighting the @Component decorator in Ch 1)
-- [ ] Multiple code blocks per step supported (some steps show before/after examples)
-- [ ] Code blocks use consistent sizing that does not overflow mobile viewport
-- [ ] Unit tests for: code editor renders in read-only mode, highlighted lines applied, multiple code blocks per step
-
 ### T-2026-418
 - Title: Create FlowCommanderGateConfigComponent for gate condition editing panel
 - Status: todo
