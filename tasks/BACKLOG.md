@@ -490,24 +490,6 @@ Acceptance criteria:
 - [ ] Build passes with updated barrel
 - [ ] At least one consumer can import from `'./core/minigame'` barrel path
 
-### T-2026-202
-- Title: Add WireDrawService to minigame barrel export
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-158
-- Blocked-by: —
-- Tags: infrastructure, barrel-export, conventions
-- Refs: src/app/core/minigame/index.ts
-
-WireDrawService (T-2026-158) will create `wire-draw.service.ts` in the minigame directory but no ticket adds it to the minigame barrel export.
-
-Acceptance criteria:
-- [ ] `src/app/core/minigame/index.ts` updated to export `WireDrawService`
-- [ ] Build passes with updated barrel
-
 ### T-2026-205
 - Title: Integrate MinigameTutorialOverlay with MinigameShell first-play detection
 - Status: todo
