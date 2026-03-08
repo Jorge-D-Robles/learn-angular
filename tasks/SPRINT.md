@@ -18,11 +18,11 @@ Started: 2026-03-08
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-364**: Create integration test for combo tracking through full score and XP pipeline (Priority: low, Size: S)
 - **T-2026-330**: Update architecture.md to document AudioService and remove stale rankUp note (Priority: low, Size: S)
 
 ---

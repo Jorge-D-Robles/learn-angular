@@ -160,3 +160,4 @@
 [2026-03-08] T-2026-304: Create MinigameEngine onLevelComplete hook for subclass cleanup — added onFail lifecycle hook to MinigameEngine for subclass cleanup (claude)
 [2026-03-08] T-2026-331: Create P1 completion integration test for full level completion pipeline with audio — added integration test for full level completion pipeline with audio (claude)
 [2026-03-08] T-2026-291: Create DailyChallenge-to-StreakReward integration test — added DailyChallenge-to-StreakReward integration test covering full pipeline (claude)
+[2026-03-08] T-2026-364: Create integration test for combo tracking through full score and XP pipeline — added integration test for combo tracking through full score and XP pipeline (claude)

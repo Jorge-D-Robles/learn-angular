@@ -271,28 +271,6 @@ Acceptance criteria:
 - [ ] Stale "not yet wired" note about rankUpOccurred is removed or corrected
 - [ ] No other stale notes remain in the core services section
 
-### T-2026-364
-- Title: Create integration test for combo tracking through full score and XP pipeline
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-184, T-2026-290, T-2026-185
-- Blocked-by: —
-- Tags: testing, integration, combo, scoring, xp
-- Refs: docs/architecture.md, src/app/core/minigame/combo-tracker.service.ts, src/app/core/minigame/score-calculation.service.ts
-
-T-2026-184 integrated ComboTrackerService into MinigameEngine, T-2026-290 added combo multiplier to ScoreCalculationService, and T-2026-185 wired diminishing returns into LevelCompletionService. No integration test verifies the full pipeline: engine tracks combo -> combo multiplier applies to score -> score feeds XP calculation -> diminishing returns modify replay XP.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/core/integration/combo-score-xp.integration.spec.ts`
-- [ ] Test: submit 5 consecutive correct actions -> verify combo multiplier > 1.0
-- [ ] Test: calculate score with active combo -> verify score is higher than without combo
-- [ ] Test: complete level with combo -> verify XP awarded reflects combo-boosted score
-- [ ] Test: replay same level -> verify XP is reduced by diminishing returns
-- [ ] Uses real ComboTrackerService, ScoreCalculationService, and LevelCompletionService
-
 ---
 
 ## P2 -- Foundations Bundle
