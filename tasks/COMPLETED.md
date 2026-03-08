@@ -171,3 +171,4 @@
 [2026-03-08] T-2026-303: Add shared components barrel exports for SvgPort and SvgWireRenderer — SvgPort and SvgWireRenderer already in barrel (unassigned)
 [2026-03-08] T-2026-305: Add ExpressionValidator to shared components barrel export — added ExpressionValidator to shared components barrel (unassigned)
 [2026-03-08] T-2026-387: Add SpeedRunService and EndlessModeService barrel exports to minigame module — SpeedRunService and EndlessModeService already in barrel (unassigned)
+[2026-03-08] T-2026-383: Create integration test for persistence round-trip of LevelProgressionService — added integration test for LevelProgressionService persistence round-trip (claude)

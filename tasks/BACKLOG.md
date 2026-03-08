@@ -4661,29 +4661,6 @@ Acceptance criteria:
 - [ ] `MinigamePlayPage.tutorialSteps()` returns non-empty array for registered P2 games
 - [ ] Unit tests for: registry config includes tutorial steps for each P2 game, steps match tutorial data
 
-### T-2026-383
-- Title: Create integration test for persistence round-trip of LevelProgressionService
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-375
-- Blocked-by: —
-- Tags: testing, integration, persistence, levels, progression
-- Refs: docs/architecture.md, src/app/core/levels/level-progression.service.ts
-
-T-2026-375 adds persistence to LevelProgressionService. A dedicated integration test should verify the full round-trip: register levels -> complete levels with scores -> destroy service -> recreate service -> verify progress is restored from localStorage exactly as saved.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/core/integration/level-progression-persistence.integration.spec.ts`
-- [ ] Test: register levels, complete 3 levels with different scores/stars -> verify persisted to localStorage
-- [ ] Test: recreate LevelProgressionService -> verify all 3 level progress entries restored
-- [ ] Test: restored progress includes correct bestScore, starRating, completed flag, attempts count
-- [ ] Test: registering the same levels again does not overwrite restored progress
-- [ ] Test: corrupted localStorage data is silently discarded, service initializes with empty progress
-- [ ] Uses real StatePersistenceService with fake localStorage
-
 ### T-2026-384
 - Title: Create integration test for EndlessModeService high score update on session end
 - Status: todo
@@ -4788,4 +4765,436 @@ T-2026-388 creates StoryMissionGuard and T-2026-347 creates the guards barrel. T
 Acceptance criteria:
 - [ ] `src/app/core/guards/index.ts` updated to export `StoryMissionGuard`
 - [ ] Build passes with updated barrel
+
+### T-2026-390
+- Title: Wire AnimationService entrance animations to LevelResultsComponent and LevelFailedComponent
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-052, T-2026-159, T-2026-183
+- Blocked-by: —
+- Tags: ui, animation, polish, minigame, completion
+- Refs: docs/ux/visual-style.md, src/app/shared/components/level-results/level-results.ts, src/app/shared/components/level-failed/level-failed.ts, src/app/core/animation/animation.service.ts
+
+AnimationService (T-2026-052) provides `slideIn`, `fadeIn`, `scaleIn` animation helpers. LevelResultsComponent (T-2026-159) and LevelFailedComponent (T-2026-183) appear as overlays but have no entrance animations. Visual-style.md specifies "150-250ms for UI transitions, 300-500ms for game feedback." Without entrance animations, overlays appear abruptly.
+
+Acceptance criteria:
+- [ ] LevelResultsComponent uses AnimationService `slideIn('up')` for entrance (300ms)
+- [ ] Star rating elements use staggered `scaleIn` animation (one per star, 150ms delay between)
+- [ ] XP breakdown items use staggered `fadeIn` animation
+- [ ] LevelFailedComponent uses AnimationService `fadeIn` for entrance (250ms)
+- [ ] All animations respect `prefers-reduced-motion` (instant transition fallback)
+- [ ] All animations respect SettingsService `animationSpeed` via AnimationService duration multiplier
+- [ ] Unit tests for: animation triggers on component init, reduced motion fallback
+
+### T-2026-391
+- Title: Create integration test for AnimationService duration scaling with SettingsService animationSpeed
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-242, T-2026-052
+- Blocked-by: —
+- Tags: testing, integration, animation, settings
+- Refs: docs/ux/visual-style.md, src/app/core/animation/animation.service.ts, src/app/core/settings/settings.service.ts
+
+T-2026-242 wired `animationSpeed` setting to scale animation durations via `SPEED_MULTIPLIERS`, but no integration test verifies the chain: change animationSpeed setting -> AnimationService duration multiplier updates -> actual animation durations scale correctly.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/animation-speed.integration.spec.ts`
+- [ ] Test: default animationSpeed ('normal') -> AnimationService uses 1x multiplier
+- [ ] Test: set animationSpeed to 'fast' -> AnimationService uses reduced multiplier
+- [ ] Test: set animationSpeed to 'off' -> AnimationService uses 0 multiplier (instant transitions)
+- [ ] Test: animationSpeed change is reactive (changing setting mid-session updates multiplier)
+- [ ] Uses real AnimationService and SettingsService
+
+### T-2026-392
+- Title: Wire EmptyStateComponent into DashboardPage for zero-progress first-time user state
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-129, T-2026-078
+- Blocked-by: —
+- Tags: ui, integration, empty-state, dashboard, ux, first-time-user
+- Refs: docs/ux/navigation.md, docs/research/gamification-patterns.md, src/app/pages/dashboard/
+
+DashboardPage (T-2026-078) renders several data-dependent sections: station visualization, active mission prompt, quick-play shortcuts, daily challenge, and degradation alerts. For a brand-new user with zero progress (no missions completed, no XP, no mastery), most sections would be empty or show meaningless defaults. Gamification research emphasizes "Progressive disclosure." A dedicated zero-progress state should guide the user toward their first action.
+
+Acceptance criteria:
+- [ ] DashboardPage detects zero-progress state via GameProgressionService (no missions completed)
+- [ ] Zero-progress state renders EmptyStateComponent with: welcome message, "Begin your first mission" call-to-action
+- [ ] Station visualization shows all modules in dark/damaged state (0-star mastery)
+- [ ] Quick-play shortcuts section hidden (no unlocked minigames)
+- [ ] Daily challenge section hidden (no topics to challenge on)
+- [ ] Degradation alerts section hidden (no mastery to degrade)
+- [ ] Active mission prompt still shows "Start Mission 1" (from T-2026-235/T-2026-317)
+- [ ] Unit tests for: zero-progress detection, empty state rendering, section visibility
+
+### T-2026-393
+- Title: Wire LoadingSpinnerComponent into DashboardPage during initial service data loading
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-128, T-2026-078
+- Blocked-by: —
+- Tags: ui, loading, dashboard, ux
+- Refs: docs/ux/navigation.md, src/app/pages/dashboard/
+
+DashboardPage (T-2026-078) queries 5+ services on init (XpService, GameProgressionService, MasteryService, DailyChallengeService, SpacedRepetitionService). During the initial rendering cycle, service signals may not have settled yet, especially if persistence loading is involved. LoadingSpinnerComponent (T-2026-128) provides the station-themed spinner but no ticket applies it to the dashboard.
+
+Acceptance criteria:
+- [ ] DashboardPage shows LoadingSpinnerComponent during initial data resolution
+- [ ] Spinner replaced with dashboard content once all critical signals are available
+- [ ] Loading duration is minimal (signals are synchronous from localStorage) but handles edge cases
+- [ ] Spinner uses the compact variant appropriate for page-level loading
+- [ ] Unit tests for: spinner shown before data ready, spinner replaced on data availability
+
+### T-2026-394
+- Title: Create integration test for Module Assembly level data end-to-end loading pipeline
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-058, T-2026-137
+- Blocked-by: —
+- Tags: testing, integration, module-assembly, level-data, pipeline
+- Refs: docs/minigames/01-module-assembly.md, src/app/data/levels/module-assembly.data.ts, src/app/core/levels/level-loader.service.ts
+
+T-2026-058 created 18 Module Assembly levels with data integrity tests. T-2026-137 registers them with LevelLoaderService. But no integration test verifies the full pipeline: data file imported -> registered with LevelLoaderService -> `loadLevel()` returns correct data -> `loadLevelPack()` returns all 18 levels grouped by tier -> LevelProgressionService has entries for all 18 levels. This is critical validation before P2 engine/UI work begins.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/data/integration/module-assembly-pipeline.integration.spec.ts`
+- [ ] Test: register Module Assembly level pack -> `loadLevel('module-assembly', 'ma-basic-01')` returns valid LevelDefinition
+- [ ] Test: `loadLevelPack('module-assembly')` returns 18 levels across 4 tiers (6 basic, 6 intermediate, 5 advanced, 1 boss)
+- [ ] Test: all 18 levels have non-empty `data` fields with required game-specific properties
+- [ ] Test: LevelProgressionService has entries for all 18 levels after registration
+- [ ] Test: `loadLevel()` with invalid levelId returns empty/error Observable
+- [ ] Uses real LevelLoaderService, LevelProgressionService, and the actual data file
+
+### T-2026-395
+- Title: Create QuickPlayService for selecting recommended minigames for dashboard shortcuts
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-029, T-2026-026, T-2026-050
+- Blocked-by: —
+- Tags: service, dashboard, minigame, recommendation
+- Refs: docs/ux/navigation.md, docs/research/gamification-patterns.md
+
+Navigation.md specifies the dashboard includes "Quick-play minigame shortcuts." T-2026-236 wires these into the dashboard and says "Games selected by: most recently played (if available), or first unlocked games." But no service encapsulates the selection logic. Embedding recommendation logic directly in the page component makes it untestable and couples the dashboard to PlayTimeService internals.
+
+Acceptance criteria:
+- [ ] `QuickPlayService` at `src/app/core/progression/quick-play.service.ts`
+- [ ] `getRecommendedGames(count: number)`: returns up to N MinigameId values
+- [ ] Selection priority: (1) most recently played games (via PlayTimeService), (2) unlocked but unplayed games, (3) games with lowest mastery
+- [ ] Only returns unlocked games (via GameProgressionService)
+- [ ] Returns empty array if no games are unlocked
+- [ ] Exported from progression barrel
+- [ ] Unit tests for: recently played priority, unplayed fallback, lowest mastery fallback, unlocked filter, empty state
+
+### T-2026-396
+- Title: Add QuickPlayService to progression barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-395
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/progression/index.ts
+
+QuickPlayService (T-2026-395) will create `quick-play.service.ts` in the progression directory. Per conventions, ensure it is exported from the barrel.
+
+Acceptance criteria:
+- [ ] `src/app/core/progression/index.ts` updated to export `QuickPlayService`
+- [ ] Build passes with updated barrel
+
+### T-2026-397
+- Title: Wire LoadingSpinnerComponent into ProfilePage during stats loading
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-128, T-2026-079
+- Blocked-by: —
+- Tags: ui, loading, profile, ux
+- Refs: docs/ux/navigation.md, src/app/pages/profile/
+
+ProfilePage (T-2026-079) queries LifetimeStatsService, MasteryService, SpacedRepetitionService, and StreakService. No loading indicator is shown while stats are being resolved. Same pattern as the dashboard loading state.
+
+Acceptance criteria:
+- [ ] ProfilePage shows LoadingSpinnerComponent during initial data resolution
+- [ ] Spinner replaced with profile content once all critical signals are available
+- [ ] Unit tests for: spinner shown before data ready, spinner replaced on data availability
+
+### T-2026-398
+- Title: Wire LoadingSpinnerComponent into CampaignPage during mission data loading
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-128, T-2026-141
+- Blocked-by: —
+- Tags: ui, loading, campaign, ux
+- Refs: docs/ux/navigation.md, src/app/pages/campaign/
+
+CampaignPage (T-2026-141) renders all 34 missions grouped by 6 curriculum phases with completion status from GameProgressionService. No loading state ticket exists for this page.
+
+Acceptance criteria:
+- [ ] CampaignPage shows LoadingSpinnerComponent during initial data resolution
+- [ ] Spinner replaced with campaign content once mission and progression data are available
+- [ ] Unit tests for: spinner shown before data ready, spinner replaced on data availability
+
+### T-2026-399
+- Title: Create MinigameHubPage responsive layout test for mobile stacked view
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-076
+- Blocked-by: —
+- Tags: testing, responsive, minigame-hub, ui, mobile
+- Refs: docs/ux/navigation.md, docs/ux/visual-style.md, src/app/pages/minigame-hub/minigame-hub.scss
+
+Navigation.md specifies responsive breakpoints: "Mobile: < 768px - stacked layouts." MinigameHubPage (T-2026-076) renders a grid of minigame cards but no ticket tests or validates the responsive layout at mobile width. Cards should stack vertically on mobile rather than rendering in a grid that overflows.
+
+Acceptance criteria:
+- [ ] MinigameHubPage SCSS has responsive breakpoint at 768px
+- [ ] At mobile width: cards stack in single column, filters stack vertically
+- [ ] At tablet width: 2-column grid
+- [ ] At desktop width: 3-4 column grid
+- [ ] Unit test or visual regression test for: card layout at each breakpoint
+
+### T-2026-400
+- Title: Create DashboardPage responsive layout with stacked sections for mobile
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-078
+- Blocked-by: —
+- Tags: ui, responsive, dashboard, mobile
+- Refs: docs/ux/navigation.md, docs/ux/visual-style.md
+
+Navigation.md specifies responsive breakpoints: "Mobile: < 768px - stacked layouts." DashboardPage (T-2026-078) has multiple sections (station visualization, mission prompt, quick-play, daily challenge, degradation alerts) that must stack vertically on mobile. Without explicit responsive styling, sections may overlap or overflow on small screens.
+
+Acceptance criteria:
+- [ ] DashboardPage SCSS has responsive breakpoint at 768px
+- [ ] At mobile width: all sections stack in single column, full width
+- [ ] At tablet width: 2-column layout for cards (mission prompt + daily challenge side by side)
+- [ ] At desktop width: station visualization centered, cards in multi-column grid below
+- [ ] Quick-play shortcuts become horizontally scrollable row on mobile
+- [ ] Unit tests or E2E tests validate no horizontal overflow at 375px viewport width
+
+### T-2026-401
+- Title: Create ProfilePage responsive layout with card stacking for mobile
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-079
+- Blocked-by: —
+- Tags: ui, responsive, profile, mobile
+- Refs: docs/ux/navigation.md, docs/ux/visual-style.md
+
+Navigation.md specifies responsive breakpoints for all pages. ProfilePage (T-2026-079) has rank display, mastery table, streak counter, and play time stats. The mastery table (T-2026-315) already has responsive card layout, but the overall page layout needs mobile optimization.
+
+Acceptance criteria:
+- [ ] ProfilePage SCSS has responsive breakpoint at 768px
+- [ ] At mobile width: sections stack vertically, rank badge centered, stats in 2-column grid
+- [ ] Mastery table switches to card layout (handled by MasteryTableComponent)
+- [ ] Play time and streak sections full width on mobile
+- [ ] Unit tests or E2E tests validate no horizontal overflow at 375px viewport width
+
+### T-2026-402
+- Title: Wire QuickPlayService into DashboardPage via T-2026-236 dependency
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-395, T-2026-236
+- Blocked-by: —
+- Tags: integration, dashboard, quick-play, recommendation
+- Refs: docs/ux/navigation.md, src/app/pages/dashboard/
+
+T-2026-236 wires quick-play minigame shortcuts into DashboardPage with selection logic described inline ("Games selected by: most recently played or first unlocked"). T-2026-395 extracts this logic into QuickPlayService. This ticket ensures DashboardPage uses QuickPlayService rather than implementing selection logic inline.
+
+Acceptance criteria:
+- [ ] DashboardPage injects QuickPlayService
+- [ ] Quick-play section populated from `QuickPlayService.getRecommendedGames(4)`
+- [ ] Cards rendered using MinigameCardComponent (T-2026-187)
+- [ ] Card click navigates to `/minigames/:gameId` (level select)
+- [ ] Section hidden when `getRecommendedGames()` returns empty array
+- [ ] Unit tests for: service integration, section visibility, navigation
+
+### T-2026-403
+- Title: Create integration test for full story mission to minigame unlock to level play pipeline
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-259, T-2026-137, T-2026-059
+- Blocked-by: —
+- Tags: testing, integration, game-loop, critical-path
+- Refs: docs/overview.md, docs/curriculum.md
+
+Overview.md's core game loop is: Story Mission -> Unlock Minigame -> Master Minigame -> Next Story Mission. T-2026-332 covers the cross-cutting story-to-minigame flow but depends on T-2026-088 (Terminal Hack UI, P4). No integration test covers the P2-scope flow: complete Ch 1 story mission -> Module Assembly unlocks -> register level data -> load level 1 -> engine initializes -> play through -> complete level -> XP awarded -> mastery updated. This is the critical path validation for P2 delivery.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/p2-game-loop.integration.spec.ts`
+- [ ] Test: complete story mission Ch 1 -> GameProgressionService.completeMission(1) succeeds
+- [ ] Test: after Ch 1 complete, Module Assembly minigame is unlocked
+- [ ] Test: register Module Assembly levels -> load level 'ma-basic-01' -> valid data returned
+- [ ] Test: create ModuleAssemblyEngine (when available), initialize with level data -> engine starts
+- [ ] Test: complete level via engine -> LevelCompletionService.completeLevel() awards XP
+- [ ] Test: MasteryService mastery for 'module-assembly' is updated
+- [ ] Test: verify diminishing returns recorded for the completed level
+- [ ] Uses real services (GameProgressionService, XpService, MasteryService, LevelCompletionService, LevelLoaderService)
+
+### T-2026-404
+- Title: Wire AudioService achievement sound to SoundEffect enum placeholder
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-051
+- Blocked-by: —
+- Tags: audio, infrastructure, preparation
+- Refs: docs/research/gamification-patterns.md, src/app/core/audio/audio.service.ts
+
+T-2026-386 (P8) will wire AudioService to play an achievement sound, but the `SoundEffect` enum currently has only 9 values and does not include `achievement`. Adding the enum value and placeholder audio file now prevents a breaking change when achievement functionality is built in P8. The AudioService architecture pre-loads all sounds; adding the entry early ensures the enum and asset are ready.
+
+Acceptance criteria:
+- [ ] `SoundEffect` enum extended with `achievement` value
+- [ ] `SOUND_PATHS` constant updated with `achievement: 'audio/achievement.mp3'`
+- [ ] Placeholder `achievement.mp3` created at `public/audio/achievement.mp3` (silent or short tone)
+- [ ] AudioService preloads the new sound with existing sounds
+- [ ] Build passes with no runtime errors
+- [ ] Unit tests for: SoundEffect.achievement exists in SOUND_PATHS, AudioService handles all enum values
+
+### T-2026-405
+- Title: Create integration test for DashboardPage section visibility based on player progress state
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-078, T-2026-392
+- Blocked-by: —
+- Tags: testing, integration, dashboard, progressive-disclosure
+- Refs: docs/research/gamification-patterns.md, docs/ux/navigation.md
+
+Gamification research emphasizes "Progressive disclosure -- don't show everything at once." DashboardPage has 6+ sections that should appear/hide based on player progress: zero-progress state, first-mission state, some-progress state, and full-progress state. No integration test verifies the dashboard adapts its section visibility correctly as the player progresses.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/pages/dashboard/dashboard-visibility.integration.spec.ts`
+- [ ] Test: zero progress -> only welcome state and "Start Mission 1" visible, no quick-play, no daily challenge
+- [ ] Test: one mission completed -> active mission prompt visible, one minigame in quick-play, daily challenge visible
+- [ ] Test: several missions completed -> station visualization shows mixed mastery, full quick-play section
+- [ ] Test: all missions completed -> "Campaign Complete" state, all sections populated
+- [ ] Uses real services with controlled state progression
+
+### T-2026-406
+- Title: Add `SoundEffect.missionComplete` enum value and placeholder audio for story mission completion
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-051
+- Blocked-by: —
+- Tags: audio, infrastructure, story-missions, preparation
+- Refs: docs/overview.md, src/app/core/audio/audio.service.ts
+
+Story missions award 50 XP and are a significant progression event (overview.md: "Play a story mission -> Unlock the minigame"). The current `SoundEffect` enum has `levelUp` for new level unlocks but no distinct sound for mission completion. When T-2026-259 (story mission completion handler) is built, it will need a sound to play. Adding the enum value now prevents a blocking dependency.
+
+Acceptance criteria:
+- [ ] `SoundEffect` enum extended with `missionComplete` value
+- [ ] `SOUND_PATHS` constant updated with `missionComplete: 'audio/missionComplete.mp3'`
+- [ ] Placeholder `missionComplete.mp3` created at `public/audio/missionComplete.mp3`
+- [ ] Build passes with updated enum and paths
+- [ ] Unit tests for: SoundEffect.missionComplete exists in SOUND_PATHS
+
+### T-2026-407
+- Title: Create CurriculumService for chapter-to-minigame mapping lookups
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-038
+- Blocked-by: —
+- Tags: service, curriculum, mapping, story-missions
+- Refs: docs/curriculum.md, src/app/core/curriculum/curriculum.data.ts
+
+Multiple P2 tickets need to look up which minigame a chapter unlocks (T-2026-259 story completion handler, T-2026-189 unlock notification, T-2026-332 integration test). Currently, consumers import `ALL_STORY_MISSIONS` and use `find()` inline (as seen in MinigameHubPage). A dedicated `CurriculumService` centralizes chapter-to-minigame mapping, chapter prerequisite resolution, and phase queries.
+
+Acceptance criteria:
+- [ ] `CurriculumService` at `src/app/core/curriculum/curriculum.service.ts`
+- [ ] `getMinigameForChapter(chapterId: number)`: returns MinigameId | null
+- [ ] `getChapterForMinigame(gameId: MinigameId)`: returns chapterId | null
+- [ ] `getPhaseForChapter(chapterId: number)`: returns CurriculumPhase
+- [ ] `getPrerequisites(chapterId: number)`: returns chapterId[] (from deps field)
+- [ ] `getChapter(chapterId: number)`: returns StoryMission | undefined
+- [ ] All methods are pure lookups against the CURRICULUM constant (no state)
+- [ ] Exported from curriculum barrel
+- [ ] Unit tests for: chapter-minigame mapping, phase lookup, prerequisite resolution, edge cases (invalid chapter, chapters without minigames)
+
+### T-2026-408
+- Title: Add CurriculumService to curriculum barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-407
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/curriculum/index.ts
+
+CurriculumService (T-2026-407) will create `curriculum.service.ts` in the curriculum directory. Per conventions, ensure it is exported from the barrel.
+
+Acceptance criteria:
+- [ ] `src/app/core/curriculum/index.ts` updated to export `CurriculumService`
+- [ ] Build passes with updated barrel
+
+### T-2026-409
+- Title: Create SettingsPage SCSS with responsive layout for mobile
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-080
+- Blocked-by: —
+- Tags: ui, responsive, settings, mobile
+- Refs: docs/ux/navigation.md, docs/ux/visual-style.md
+
+Navigation.md specifies responsive breakpoints for all pages. SettingsPage (T-2026-080) has toggle controls, selectors, and buttons. At mobile width, controls should stack vertically with full-width buttons. Without responsive styling, form controls may not be usable on small screens.
+
+Acceptance criteria:
+- [ ] SettingsPage SCSS has responsive breakpoint at 768px
+- [ ] At mobile width: all controls stack vertically, toggle buttons full width
+- [ ] "Reset All Progress" button full width on mobile with adequate touch target (44px minimum)
+- [ ] Export/Import buttons side by side on desktop, stacked on mobile
+- [ ] Unit tests validate no layout overflow at 375px viewport
 
