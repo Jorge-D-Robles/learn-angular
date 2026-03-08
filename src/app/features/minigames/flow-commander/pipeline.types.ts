@@ -80,6 +80,35 @@ export interface FlowCommanderLevelData {
 }
 
 // ---------------------------------------------------------------------------
+// Gate placement and simulation result types
+// ---------------------------------------------------------------------------
+
+/** A gate placed at a gate-slot node by the player. */
+export interface PlacedGate {
+  readonly nodeId: string;
+  readonly gateType: GateType;
+  readonly condition: string;
+}
+
+/** Routing result for a single cargo item after simulation. */
+export interface ItemRoutingResult {
+  readonly item: CargoItem;
+  readonly path: readonly string[];
+  readonly destinationNodeId: string | null;
+  readonly targetZoneId: string | null;
+  readonly correct: boolean;
+}
+
+/** Aggregate simulation result for all cargo items. */
+export interface SimulationResult {
+  readonly itemResults: readonly ItemRoutingResult[];
+  readonly allCorrect: boolean;
+  readonly correctCount: number;
+  readonly incorrectCount: number;
+  readonly lostCount: number;
+}
+
+// ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 

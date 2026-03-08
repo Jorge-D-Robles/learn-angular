@@ -13,30 +13,14 @@ import type {
 import { evaluateCondition, extractForCount, evaluateSwitchExpression } from './flow-commander.evaluator';
 
 // ---------------------------------------------------------------------------
-// Types
+// Re-export types that were moved to pipeline.types.ts for use by consumers
 // ---------------------------------------------------------------------------
+export type { PlacedGate, SimulationResult, ItemRoutingResult } from './pipeline.types';
 
-export interface PlacedGate {
-  readonly nodeId: string;
-  readonly gateType: GateType;
-  readonly condition: string;
-}
-
-export interface ItemRoutingResult {
-  readonly item: CargoItem;
-  readonly path: readonly string[];
-  readonly destinationNodeId: string | null;
-  readonly targetZoneId: string | null;
-  readonly correct: boolean;
-}
-
-export interface SimulationResult {
-  readonly itemResults: readonly ItemRoutingResult[];
-  readonly allCorrect: boolean;
-  readonly correctCount: number;
-  readonly incorrectCount: number;
-  readonly lostCount: number;
-}
+// ---------------------------------------------------------------------------
+// Internal imports of moved types for use within this file
+// ---------------------------------------------------------------------------
+import type { PlacedGate, SimulationResult, ItemRoutingResult } from './pipeline.types';
 
 // ---------------------------------------------------------------------------
 // Action types
