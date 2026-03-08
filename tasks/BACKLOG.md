@@ -28,29 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-132
-- Title: Style NotFoundPage with station theme
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-007, T-2026-013
-- Blocked-by: —
-- Tags: ui, styling, not-found, page
-- Refs: docs/ux/visual-style.md, src/app/pages/not-found/not-found.ts
-
-The 404 Not Found page currently shows plain text. The design docs describe a "Hull Breach" theme for 404 pages (Corridor Runner spec references "Hull Breach" as the 404 concept). This ticket styles the 404 page with station-themed visuals.
-
-Acceptance criteria:
-- [ ] NotFoundPage updated with "Hull Breach" themed styling
-- [ ] Space-station appropriate imagery or CSS art (e.g., warning stripes, breach animation)
-- [ ] "Return to Dashboard" link styled as primary button
-- [ ] Uses design tokens: Emergency Red accent, Void background
-- [ ] Responsive layout for mobile and desktop
-- [ ] Unit tests still pass after styling update
-- Started: 2026-03-08
-
 ### T-2026-133
 - Title: Create StreakBadgeComponent for streak display
 - Status: todo

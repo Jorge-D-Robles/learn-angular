@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-132**: Style NotFoundPage with station theme (Assigned: claude, Status: in-progress)
 
 
 
