@@ -606,28 +606,6 @@ Acceptance criteria:
 - [ ] Integration test: record 7 consecutive days, verify 100 XP bonus awarded
 - [ ] Unit tests for: milestone trigger on streak update, no trigger when below milestone
 
-### T-2026-290
-- Title: Integrate ComboTrackerService multiplier into ScoreCalculationService formula
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-056, T-2026-028
-- Blocked-by: —
-- Tags: scoring, combo, integration, minigame-framework
-- Refs: docs/minigames/01-module-assembly.md, src/app/core/minigame/score-calculation.service.ts, src/app/core/minigame/combo-tracker.service.ts
-
-Module Assembly spec says scoring includes "combo multiplier for consecutive correct placements." ComboTrackerService (T-2026-056) tracks combo state and ScoreCalculationService (T-2026-028) calculates final scores. But the score formula does not incorporate the combo multiplier. T-2026-184 wires combo tracking into the engine lifecycle, but this separate ticket ensures the scoring formula itself accounts for the combo multiplier when calculating the final level score.
-
-Acceptance criteria:
-- [ ] ScoreCalculationService.calculateScore() accepts optional `comboMultiplier` parameter (default 1.0)
-- [ ] Formula incorporates combo multiplier: `baseScore * accuracy * comboMultiplier`
-- [ ] LevelCompletionService passes current combo multiplier to ScoreCalculationService
-- [ ] Combo multiplier of 1.0 produces identical results to current behavior (backward compatible)
-- [ ] Unit tests for: score with combo multiplier, default multiplier, combo boost on perfect play
-- Started: 2026-03-07
-
 ### T-2026-291
 - Title: Create DailyChallenge-to-StreakReward integration test
 - Status: todo

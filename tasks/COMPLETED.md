@@ -108,3 +108,4 @@
 [2026-03-07] T-2026-231: Add RankUpNotificationService to notifications barrel export — barrel export already added in T-2026-225 (unassigned)
 [2026-03-07] T-2026-288: Add Page Visibility auto-pause to MinigameEngine — added auto-pause on tab visibility change with _autoPaused flag, 7 new tests (claude)
 [2026-03-07] T-2026-289: Add play mode context signal to MinigameEngine — added PlayMode enum, playMode signal, setPlayMode() with Loading guard, 15 new tests (claude)
+[2026-03-08] T-2026-290: Integrate ComboTrackerService multiplier into ScoreCalculationService formula — added optional comboMultiplier param to calculateScore(), 7 new tests (claude)
