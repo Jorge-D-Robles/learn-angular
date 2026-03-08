@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { GameProgressionService } from '../core/progression/game-progression.service';
 
 @Component({
   selector: 'app-side-nav',
@@ -13,9 +14,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       >
         Dashboard
       </a>
-      <!-- TODO: Replace /mission/1 with dynamic current mission (T-2026-026) -->
-      <a routerLink="/mission/1" routerLinkActive="active">
-        Current Mission
+      <a [routerLink]="missionLink()" routerLinkActive="active">
+        {{ missionLabel() }}
       </a>
       <a routerLink="/minigames" routerLinkActive="active">Minigames</a>
       <a routerLink="/profile" routerLinkActive="active">Profile</a>
@@ -23,4 +23,15 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   `,
   styleUrl: './side-nav.scss',
 })
-export class SideNavComponent {}
+export class SideNavComponent {
+  private readonly progression = inject(GameProgressionService);
+
+  readonly missionLink = computed(() => {
+    const mission = this.progression.currentMission();
+    return mission ? `/mission/${mission.chapterId}` : '/campaign';
+  });
+
+  readonly missionLabel = computed(() => {
+    return this.progression.currentMission() ? 'Current Mission' : 'Campaign Complete';
+  });
+}
