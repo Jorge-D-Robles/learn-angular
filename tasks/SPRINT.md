@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-126**: Create core module root barrel export (Assigned: claude, Status: in-progress)
 
 
 

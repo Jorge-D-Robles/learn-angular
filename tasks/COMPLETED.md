@@ -95,3 +95,4 @@
 [2026-03-07] T-2026-077: Create LevelSelectPage component for level browsing — level select page with tier groups, star ratings, replay tabs, and 17 tests (claude)
 [2026-03-07] T-2026-033: Create rank-up celebration overlay component — rank-up overlay with auto-dismiss, Shield badge, and 9 tests (claude)
 [2026-03-07] T-2026-224: Create RankUpNotificationService to trigger rank-up overlay on rank change — created RankUpNotificationService with effect-based rank change detection (claude)
+[2026-03-07] T-2026-126: Create core module root barrel export — created core/index.ts barrel re-exporting all 8 subdirectory barrels (claude)
