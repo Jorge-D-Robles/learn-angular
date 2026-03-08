@@ -314,26 +314,6 @@ Acceptance criteria:
 - [ ] Respects `prefers-reduced-motion` (disable pulse animations)
 - [ ] Unit tests for: glow state per mastery level, module click emission, dark state for 0 mastery
 
-### T-2026-138
-- Title: Register Wire Protocol level data with LevelLoaderService
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-062, T-2026-030
-- Blocked-by: —
-- Tags: minigame, wire-protocol, level-data, integration
-- Refs: docs/minigames/02-wire-protocol.md, src/app/core/levels/level-loader.service.ts
-
-Register Wire Protocol level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
-
-Acceptance criteria:
-- [ ] Wire Protocol level pack registered with LevelLoaderService
-- [ ] `LevelLoaderService.loadLevel('wire-protocol', levelId)` returns correct level data
-- [ ] `LevelLoaderService.getLevelPack('wire-protocol')` returns all 18 levels grouped by tier
-- [ ] Unit tests for: level loading by ID, level pack retrieval
-
 ### T-2026-139
 - Title: Register Flow Commander level data with LevelLoaderService
 - Status: todo

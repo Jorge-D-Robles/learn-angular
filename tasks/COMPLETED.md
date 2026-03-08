@@ -196,3 +196,4 @@
 [2026-03-08] T-2026-067: Create Flow Commander minigame engine — Flow Commander engine with BFS simulation, gate routing, and condition evaluation (claude)
 [2026-03-08] T-2026-071: Create Signal Corps minigame engine — implemented Signal Corps tower defense engine with deploy-based evaluation, wave blocking, and scoring (claude)
 [2026-03-08] T-2026-075: Create StoryMissionPage component for mission playback — implemented MissionPage with step navigation, code examples, concept panels, completion flow, and locked state (claude)
+[2026-03-08] T-2026-138: Register Wire Protocol level data with LevelLoaderService — registered Wire Protocol level pack with LevelLoaderService, 6 tests for tier distributions (claude)
