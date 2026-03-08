@@ -293,28 +293,6 @@ Acceptance criteria:
 - [ ] Stale "not yet wired" note about rankUpOccurred is removed or corrected
 - [ ] No other stale notes remain in the core services section
 
-### T-2026-331
-- Title: Create P1 completion integration test for full level completion pipeline with audio
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: M
-- Milestone: P1
-- Depends: T-2026-322, T-2026-327, T-2026-328
-- Blocked-by: —
-- Tags: test, integration, pipeline, audio, progression
-- Refs: docs/architecture.md, src/app/core/minigame/, src/app/core/progression/
-
-The P1 core engine has many services that compose into a pipeline: MinigameEngine -> LevelCompletionService -> ProgressionService -> XpNotificationService -> RankUpNotificationService, with AudioService wired at multiple points. No integration test verifies the full pipeline end-to-end. This test ensures the entire chain fires correctly when a level is completed.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/core/integration/level-completion-pipeline.integration.spec.ts`
-- [ ] Test: completing a level triggers score calculation, XP award, mastery update, and audio
-- [ ] Test: completing a level that causes rank-up triggers rank-up notification and rankUp sound
-- [ ] Test: completing a level with sound disabled triggers no audio but all other effects still fire
-- [ ] Uses real services (minimal mocking -- only HTMLAudioElement needs mocking)
-- [ ] Does not require DOM rendering (service-level integration only)
-
 ### T-2026-364
 - Title: Create integration test for combo tracking through full score and XP pipeline
 - Status: todo
