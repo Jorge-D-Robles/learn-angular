@@ -145,3 +145,4 @@
 [2026-03-08] T-2026-242: Wire SettingsService animationSpeed to AnimationService duration multiplier — wired animationSpeed setting to scale animation durations via SPEED_MULTIPLIERS (claude)
 [2026-03-08] T-2026-293: Create ScoreBreakdownComponent for level completion detail — created ScoreBreakdownComponent with itemized scoring, bonus/penalty styling, total row, and new best indicator (claude)
 [2026-03-08] T-2026-323: Wire AudioService into MinigameShell for UI interaction sounds — wired AudioService for click/hint/tick sounds with effect-based reactive detection (claude)
+[2026-03-08] T-2026-360: Fix minigame-play test failures caused by missing window.matchMedia mock — added global window.matchMedia polyfill in src/testing/setup.ts via angular.json setupFiles (claude)

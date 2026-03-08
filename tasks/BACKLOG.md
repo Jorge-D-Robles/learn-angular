@@ -28,25 +28,24 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-360
-- Title: Fix minigame-play test failures caused by missing window.matchMedia mock
-- Status: in-progress
-- Assigned: claude
+### T-2026-361
+- Title: Fix minigame-play test failures caused by missing HTMLMediaElement.play() in jsdom
+- Status: todo
+- Assigned: unassigned
 - Priority: high
 - Size: S
 - Milestone: P1
 - Depends: —
 - Blocked-by: —
-- Tags: bug, testing, minigame-play
-- Refs: src/app/pages/minigame-play/
+- Tags: bug, testing, minigame-play, audio
+- Refs: src/app/pages/minigame-play/minigame-play.spec.ts, src/testing/setup.ts
 
-3 test files in `src/app/pages/minigame-play/` fail with `TypeError: window.matchMedia is not a function`. This is a pre-existing issue discovered during T-2026-323 PR review. The tests need a jsdom polyfill for `window.matchMedia` in their test setup.
+2 tests in `minigame-play.spec.ts` fail because `AudioService.play()` calls `HTMLAudioElement.play()` which returns undefined in jsdom (should return a Promise). The global test setup file (`src/testing/setup.ts`) should be extended to polyfill `HTMLMediaElement.prototype.play` as a no-op returning `Promise.resolve()`.
 
 Acceptance criteria:
-- [ ] All minigame-play test files pass without errors
-- [ ] `window.matchMedia` is properly mocked/polyfilled in test setup
+- [ ] All minigame-play tests pass (0 failures)
+- [ ] HTMLMediaElement.play polyfill added to src/testing/setup.ts
 - [ ] No regressions in other test suites
-- Started: 2026-03-08
 
 ---
 

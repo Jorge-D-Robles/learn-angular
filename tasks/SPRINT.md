@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-360**: Fix minigame-play test failures caused by missing window.matchMedia mock (Assigned: claude, Status: in-progress)
 
 
 ---
