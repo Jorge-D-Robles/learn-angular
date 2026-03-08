@@ -22,6 +22,21 @@ export const routes: Routes = [
       import('./pages/minigame-play/minigame-play').then((m) => m.MinigamePlayPage),
   },
   {
+    path: 'minigames/:gameId/endless',
+    loadComponent: () =>
+      import('./pages/endless-mode/endless-mode').then((m) => m.EndlessModePage),
+  },
+  {
+    path: 'minigames/:gameId/speedrun',
+    loadComponent: () =>
+      import('./pages/speed-run/speed-run').then((m) => m.SpeedRunPage),
+  },
+  {
+    path: 'minigames/:gameId/daily',
+    loadComponent: () =>
+      import('./pages/daily-challenge/daily-challenge').then((m) => m.DailyChallengePage),
+  },
+  {
     path: 'profile',
     loadComponent: () => import('./pages/profile/profile').then((m) => m.ProfilePage),
   },

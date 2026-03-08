@@ -10,13 +10,16 @@ describe('routes', () => {
     'minigames',
     'minigames/:gameId',
     'minigames/:gameId/level/:levelId',
+    'minigames/:gameId/endless',
+    'minigames/:gameId/speedrun',
+    'minigames/:gameId/daily',
     'profile',
     'settings',
     '**',
   ];
 
-  it('should have 8 routes', () => {
-    expect(routes.length).toBe(8);
+  it('should have 11 routes', () => {
+    expect(routes.length).toBe(11);
   });
 
   it('should define all expected paths', () => {
@@ -42,6 +45,9 @@ describe('routes', () => {
       'minigames',
       'minigames/:gameId',
       'minigames/:gameId/level/:levelId',
+      'minigames/:gameId/endless',
+      'minigames/:gameId/speedrun',
+      'minigames/:gameId/daily',
       'profile',
       'settings',
     ];
@@ -89,6 +95,24 @@ describe('routes', () => {
 
     it('should resolve SettingsPage', async () => {
       const route = routes.find((r) => r.path === 'settings');
+      const component = await (route?.loadComponent as () => Promise<unknown>)();
+      expect(component).toBeDefined();
+    });
+
+    it('should resolve EndlessModePage', async () => {
+      const route = routes.find((r) => r.path === 'minigames/:gameId/endless');
+      const component = await (route?.loadComponent as () => Promise<unknown>)();
+      expect(component).toBeDefined();
+    });
+
+    it('should resolve SpeedRunPage', async () => {
+      const route = routes.find((r) => r.path === 'minigames/:gameId/speedrun');
+      const component = await (route?.loadComponent as () => Promise<unknown>)();
+      expect(component).toBeDefined();
+    });
+
+    it('should resolve DailyChallengePage', async () => {
+      const route = routes.find((r) => r.path === 'minigames/:gameId/daily');
       const component = await (route?.loadComponent as () => Promise<unknown>)();
       expect(component).toBeDefined();
     });
