@@ -15,6 +15,8 @@ export type { TutorialStep } from './minigame-tutorial/minigame-tutorial.types';
 export { MissionCardComponent } from './mission-card/mission-card';
 export { PauseMenuComponent } from './pause-menu/pause-menu';
 export { RankUpOverlayComponent } from './rank-up-overlay/rank-up-overlay';
+export { ScoreBreakdownComponent } from './score-breakdown/score-breakdown';
+export type { ScoreBreakdownItem } from './score-breakdown/score-breakdown.types';
 export { StationCardComponent } from './station-card/station-card';
 export { StreakBadgeComponent } from './streak-badge/streak-badge';
 export { TierBadgeComponent } from './tier-badge/tier-badge';

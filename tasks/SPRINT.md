@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-293**: Create ScoreBreakdownComponent for level completion detail (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -22,7 +24,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-293**: Create ScoreBreakdownComponent for level completion detail (Priority: low, Size: S)
 - **T-2026-323**: Wire AudioService into MinigameShell for UI interaction sounds (Priority: low, Size: S)
 
 ---

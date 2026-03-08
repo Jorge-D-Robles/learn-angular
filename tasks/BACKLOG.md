@@ -255,8 +255,8 @@ Acceptance criteria:
 
 ### T-2026-293
 - Title: Create ScoreBreakdownComponent for level completion detail
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -277,6 +277,7 @@ Acceptance criteria:
 - [ ] "New Best!" indicator for items that beat previous records
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: row rendering, bonus/penalty styling, total calculation, new best indicator
+- Started: 2026-03-08
 
 ### T-2026-294
 - Title: Add DailyChallengeService barrel export to progression module
