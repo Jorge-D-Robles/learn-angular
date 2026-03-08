@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-174**: Create TimeFormatPipe for play time display (Assigned: claude, Status: in-progress)
 
 
 

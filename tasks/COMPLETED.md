@@ -103,3 +103,4 @@
 [2026-03-07] T-2026-249: Create StreakRewardService for 7-day streak milestones — created StreakRewardService with 7/14/30-day milestone rewards, XP awards, and persistence (claude)
 [2026-03-07] T-2026-212: Create LifetimeStatsService for aggregate player statistics — created LifetimeStatsService facade aggregating 6 services into ProfileStats computed signal (claude)
 [2026-03-07] T-2026-230: Add LifetimeStatsService to progression barrel export — barrel export already added in T-2026-212 (unassigned)
+[2026-03-07] T-2026-174: Create TimeFormatPipe for play time display — created TimeFormatPipe with long/short/timer formats and 26 unit tests (claude)
