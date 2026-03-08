@@ -1,4 +1,5 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output } from '@angular/core';
+import { AudioService, SoundEffect } from '../../audio';
 import { LevelFailedComponent } from '../../../shared/components/level-failed/level-failed';
 import { LevelResultsComponent } from '../../../shared/components/level-results/level-results';
 import { PauseMenuComponent } from '../../../shared/components/pause-menu/pause-menu';
@@ -48,7 +49,7 @@ import { MinigameStatus, PlayMode, type MinigameResult } from '../minigame.types
             }
           </div>
         }
-        <button class="shell-hud__pause" type="button" (click)="pauseGame.emit()" aria-label="Pause">
+        <button class="shell-hud__pause" type="button" (click)="onPauseClick()" aria-label="Pause">
         </button>
       </div>
 
@@ -60,7 +61,7 @@ import { MinigameStatus, PlayMode, type MinigameResult } from '../minigame.types
       <!-- Pause Overlay -->
       @if (status() === paused) {
         <nx-pause-menu
-          (resume)="resumeGame.emit()"
+          (resume)="onResumeClick()"
           (restart)="restartGame.emit()"
           (quit)="quit.emit()" />
       }
@@ -93,6 +94,8 @@ import { MinigameStatus, PlayMode, type MinigameResult } from '../minigame.types
   styleUrl: './minigame-shell.scss',
 })
 export class MinigameShellComponent {
+  private readonly audio = inject(AudioService);
+
   // --- Signal inputs ---
   readonly playMode = input(PlayMode.Story);
   readonly score = input(0);
@@ -166,4 +169,35 @@ export class MinigameShellComponent {
   readonly livesArray = computed(() =>
     Array.from({ length: this.maxLives() }, (_, i) => ({ filled: i < this.lives() })),
   );
+
+  constructor() {
+    let previousHintText = this.activeHintText();
+
+    effect(() => {
+      const currentHintText = this.activeHintText();
+      if (currentHintText && !previousHintText) {
+        this.audio.play(SoundEffect.hint);
+      }
+      previousHintText = currentHintText;
+    });
+
+    effect(() => {
+      const time = this.timeRemaining();
+      const status = this.status();
+      const duration = this.timerDuration();
+      if (duration > 0 && status === MinigameStatus.Playing && time > 0 && time <= 5) {
+        this.audio.play(SoundEffect.tick);
+      }
+    });
+  }
+
+  onPauseClick(): void {
+    this.audio.play(SoundEffect.click);
+    this.pauseGame.emit();
+  }
+
+  onResumeClick(): void {
+    this.audio.play(SoundEffect.click);
+    this.resumeGame.emit();
+  }
 }

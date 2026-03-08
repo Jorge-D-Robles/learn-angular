@@ -379,8 +379,8 @@ Acceptance criteria:
 
 ### T-2026-323
 - Title: Wire AudioService into MinigameShell for UI interaction sounds
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -397,6 +397,7 @@ Acceptance criteria:
 - [ ] `hint` sound plays when hint is revealed
 - [ ] `tick` sound plays during timer countdown (last 5 seconds only, to avoid annoyance)
 - [ ] Unit tests for: click on pause, hint sound, tick during countdown
+- Started: 2026-03-08
 
 ### T-2026-327
 - Title: Wire AudioService to RankUpNotificationService for rank-up sound

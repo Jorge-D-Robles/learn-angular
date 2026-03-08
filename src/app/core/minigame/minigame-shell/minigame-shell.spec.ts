@@ -7,6 +7,7 @@ import {
 } from 'lucide-angular';
 import { createComponent } from '../../../../testing/test-utils';
 import { APP_ICONS } from '../../../shared/icons';
+import { AudioService, SoundEffect } from '../../audio';
 import { LevelFailedComponent } from '../../../shared/components/level-failed/level-failed';
 import { LevelResultsComponent } from '../../../shared/components/level-results/level-results';
 import { MinigameShellComponent } from './minigame-shell';
@@ -27,6 +28,9 @@ const ICON_PROVIDERS = [
     }),
   },
 ];
+
+const mockAudio = { play: vi.fn(), preload: vi.fn() };
+const AUDIO_PROVIDER = { provide: AudioService, useValue: mockAudio };
 
 const TEST_RESULT: MinigameResult = {
   gameId: 'module-assembly',
@@ -115,20 +119,20 @@ describe('MinigameShellComponent', () => {
 
   // --- 1. Component creation ---
   it('should create the component', async () => {
-    const { component } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS] });
+    const { component } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER] });
     expect(component).toBeTruthy();
   });
 
   // --- 2. Content projection ---
   it('should project content into shell-content', async () => {
-    const { element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS] });
+    const { element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER] });
     const projected = element.querySelector('.shell-content .game-content');
     expect(projected?.textContent).toContain('Game here');
   });
 
   // --- 3. Score display ---
   it('should display the score value', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.score = 150;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -138,7 +142,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 4. Score updates ---
   it('should update displayed score when input changes', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.score = 100;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -153,7 +157,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 5. Lives display ---
   it('should display correct filled and empty lives', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.lives = 2;
     fixture.componentInstance.maxLives = 3;
     fixture.detectChanges();
@@ -166,7 +170,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 6. Timer hidden when timerDuration is 0 ---
   it('should hide timer when timerDuration is 0', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.timerDuration = 0;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -176,7 +180,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 7. Timer shown when timerDuration > 0 ---
   it('should show timer when timerDuration is greater than 0', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.timerDuration = 60;
     fixture.componentInstance.timeRemaining = 30;
     fixture.detectChanges();
@@ -187,7 +191,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 8. Timer color green (>50%) ---
   it('should use green timer color when more than 50% time remains', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.timerDuration = 60;
     fixture.componentInstance.timeRemaining = 40;
     fixture.detectChanges();
@@ -198,7 +202,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 9. Timer color orange (25-50%) ---
   it('should use orange timer color when 25-50% time remains', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.timerDuration = 60;
     fixture.componentInstance.timeRemaining = 20;
     fixture.detectChanges();
@@ -209,7 +213,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 10. Timer color red (<25%) ---
   it('should use red timer color when less than 25% time remains', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.timerDuration = 60;
     fixture.componentInstance.timeRemaining = 10;
     fixture.detectChanges();
@@ -220,7 +224,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 11. No overlay during Playing ---
   it('should not show any overlay during Playing status', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Playing;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -231,7 +235,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 12. Pause overlay renders PauseMenuComponent ---
   it('should render nx-pause-menu when status is Paused', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Paused;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -241,7 +245,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 13. Completion overlay renders nx-level-results ---
   it('should render nx-level-results when status is Won', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
     fixture.componentInstance.result = TEST_RESULT;
     fixture.componentInstance.xpAwarded = 120;
@@ -259,7 +263,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 14. Failure overlay renders <nx-level-failed> ---
   it('should show failure overlay when status is Lost', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Lost;
     fixture.componentInstance.score = 80;
     fixture.componentInstance.lives = 0;
@@ -272,7 +276,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 15. Star rating delegated to LevelResultsComponent (stars rendered inside nx-level-results) ---
   it('should render stars inside nx-level-results when status is Won', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
     fixture.componentInstance.result = TEST_RESULT;
     fixture.detectChanges();
@@ -285,7 +289,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 16. Pause button emits ---
   it('should emit pause when pause button is clicked', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS] });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER] });
     const pauseBtn = element.querySelector('.shell-hud__pause') as HTMLButtonElement;
     pauseBtn.click();
     fixture.detectChanges();
@@ -294,7 +298,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 17. Resume event forwarding from PauseMenuComponent ---
   it('should emit resumeGame when resume event fires from pause menu', async () => {
-    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Paused;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -305,7 +309,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 18. Quit event forwarding from PauseMenuComponent ---
   it('should emit quit when quit event fires from pause menu', async () => {
-    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Paused;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -316,7 +320,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 18b. Restart event forwarding from PauseMenuComponent ---
   it('should emit restartGame when restart event fires from pause menu', async () => {
-    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Paused;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -327,7 +331,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 18c. No pause menu when playing ---
   it('should not render nx-pause-menu when status is Playing', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Playing;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -336,7 +340,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 19. Retry event forwarding from LevelFailedComponent ---
   it('should emit retry when retry event fires from level-failed', async () => {
-    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Lost;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -347,7 +351,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 20. Quit event forwarding from LevelFailedComponent ---
   it('should emit quit when quit event fires from level-failed', async () => {
-    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Lost;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -358,7 +362,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 21. Next Level event forwarding from LevelResultsComponent ---
   it('should emit nextLevel when nextLevel event fires from level-results', async () => {
-    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
     fixture.componentInstance.result = TEST_RESULT;
     fixture.detectChanges();
@@ -370,7 +374,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 22. Replay event forwarding from LevelResultsComponent ---
   it('should emit replay when replay event fires from level-results', async () => {
-    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
     fixture.componentInstance.result = TEST_RESULT;
     fixture.detectChanges();
@@ -382,7 +386,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 22b. Quit event forwarding from LevelResultsComponent ---
   it('should emit quit when quit event fires from level-results', async () => {
-    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
     fixture.componentInstance.result = TEST_RESULT;
     fixture.detectChanges();
@@ -394,7 +398,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 23. Failure reason '3 strikes' when lives are 0 ---
   it("should derive failure reason as '3 strikes' when lives are 0", async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Lost;
     fixture.componentInstance.lives = 0;
     fixture.detectChanges();
@@ -404,7 +408,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 24. Failure reason 'Time expired' ---
   it("should derive failure reason as 'Time expired' when timer has expired", async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Lost;
     fixture.componentInstance.lives = 2;
     fixture.componentInstance.timerDuration = 60;
@@ -416,7 +420,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 25. Failure reason 'Mission failed' fallback ---
   it("should derive failure reason as 'Mission failed' for generic failure", async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Lost;
     fixture.componentInstance.lives = 1;
     fixture.componentInstance.timerDuration = 0;
@@ -427,7 +431,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 26. UseHint event forwarding from LevelFailedComponent ---
   it('should emit useHint when useHint event fires from level-failed', async () => {
-    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Lost;
     fixture.componentInstance.hintsAvailable = true;
     fixture.detectChanges();
@@ -439,7 +443,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 27. hintsAvailable passed through to level-failed ---
   it('should pass hintsAvailable to level-failed component', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Lost;
     fixture.componentInstance.hintsAvailable = true;
     fixture.detectChanges();
@@ -451,7 +455,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 28. Hint button hidden when hintCount is 0 and no active hint ---
   it('should hide hint button when hintCount is 0 and no activeHintText', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.hintCount = 0;
     fixture.componentInstance.activeHintText = '';
     fixture.detectChanges();
@@ -461,7 +465,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 29. Hint button visible when hintCount > 0 ---
   it('should show hint button when hintCount > 0', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.hintCount = 3;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -470,7 +474,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 30. Hint badge shows remaining count ---
   it('should show remaining hint count in badge', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.hintCount = 2;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -480,7 +484,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 31. Hint cost label shown ---
   it('should show hint cost label when hintPenalty > 0 and hintCount > 0', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.hintCount = 1;
     fixture.componentInstance.hintPenalty = 50;
     fixture.detectChanges();
@@ -491,7 +495,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 32. Hint cost label hidden when hintCount is 0 ---
   it('should hide hint cost label when hintCount is 0', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.hintCount = 0;
     fixture.componentInstance.activeHintText = 'still showing';
     fixture.componentInstance.hintPenalty = 50;
@@ -502,7 +506,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 33. Hint button disabled when hintCount is 0 but activeHintText is showing ---
   it('should disable hint button when hintCount is 0 but activeHintText is showing', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.hintCount = 0;
     fixture.componentInstance.activeHintText = 'some text';
     fixture.detectChanges();
@@ -514,7 +518,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 34. Click emits requestHint output ---
   it('should emit requestHint when hint button is clicked', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.hintCount = 2;
     fixture.detectChanges();
     await fixture.whenStable();
@@ -526,7 +530,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 35. Hint popover shown when activeHintText is set ---
   it('should show hint popover when activeHintText is set', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.hintCount = 1;
     fixture.componentInstance.activeHintText = 'Try this';
     fixture.detectChanges();
@@ -538,7 +542,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 36. Hint popover hidden when activeHintText is empty ---
   it('should hide hint popover when activeHintText is empty', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.hintCount = 2;
     fixture.componentInstance.activeHintText = '';
     fixture.detectChanges();
@@ -548,7 +552,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 37. Timer pulse class applied when below pulse threshold ---
   it('should apply pulse class when below pulse threshold and Playing', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.timerDuration = 100;
     fixture.componentInstance.timeRemaining = 5;
     fixture.componentInstance.status = MinigameStatus.Playing;
@@ -560,7 +564,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 38. Timer pulse class NOT applied when above pulse threshold ---
   it('should not apply pulse class when above pulse threshold', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.timerDuration = 100;
     fixture.componentInstance.timeRemaining = 15;
     fixture.componentInstance.status = MinigameStatus.Playing;
@@ -572,7 +576,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 39. Timer pulse class NOT applied when time is exactly 0 ---
   it('should not apply pulse class when timeRemaining is 0', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.timerDuration = 100;
     fixture.componentInstance.timeRemaining = 0;
     fixture.componentInstance.status = MinigameStatus.Playing;
@@ -586,7 +590,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 40. Timer pulse class NOT applied when paused ---
   it('should not apply pulse class when status is Paused', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.timerDuration = 100;
     fixture.componentInstance.timeRemaining = 5;
     fixture.componentInstance.status = MinigameStatus.Paused;
@@ -598,7 +602,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 41. Custom warning threshold changes color breakpoint ---
   it('should use custom warningThreshold for color transition', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.warningThreshold = 0.7;
     fixture.componentInstance.timerDuration = 100;
     fixture.componentInstance.timeRemaining = 60;
@@ -618,7 +622,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 42. Custom critical threshold changes color breakpoint ---
   it('should use custom criticalThreshold for color transition', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.criticalThreshold = 0.4;
     fixture.componentInstance.timerDuration = 100;
     fixture.componentInstance.timeRemaining = 35;
@@ -638,7 +642,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 43. Custom pulse threshold ---
   it('should use custom pulseThreshold for pulse class', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.pulseThreshold = 0.2;
     fixture.componentInstance.timerDuration = 100;
     fixture.componentInstance.timeRemaining = 15;
@@ -652,7 +656,7 @@ describe('MinigameShellComponent', () => {
 
   // --- 44. Division by zero safety ---
   it('should return green color and no pulse when timerDuration is 0', async () => {
-    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS, AUDIO_PROVIDER], detectChanges: false });
     fixture.componentInstance.timerDuration = 0;
     fixture.componentInstance.timeRemaining = 0;
     fixture.componentInstance.status = MinigameStatus.Playing;
@@ -670,7 +674,7 @@ describe('MinigameShellComponent', () => {
   // --- 45. Primary group wraps score and timer ---
   it('should wrap score and timer in shell-hud__primary group', async () => {
     const { fixture, element } = await createComponent(TestHost, {
-      providers: [...ICON_PROVIDERS],
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
       detectChanges: false,
     });
     fixture.componentInstance.timerDuration = 60;
@@ -687,11 +691,138 @@ describe('MinigameShellComponent', () => {
   // --- 46. Primary group contains score even when timer is hidden ---
   it('should contain score in shell-hud__primary even without timer', async () => {
     const { element } = await createComponent(TestHost, {
-      providers: [...ICON_PROVIDERS],
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
     });
     const primary = element.querySelector('.shell-hud__primary');
     expect(primary).toBeTruthy();
     expect(primary?.querySelector('.shell-hud__score')).toBeTruthy();
     expect(primary?.querySelector('.shell-hud__timer')).toBeNull();
+  });
+
+  // --- Audio integration tests ---
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  // --- 47. Click sound on pause button press ---
+  it('should play click sound when pause button is clicked', async () => {
+    const { fixture, element } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
+    });
+    mockAudio.play.mockClear();
+    const pauseBtn = element.querySelector('.shell-hud__pause') as HTMLButtonElement;
+    pauseBtn.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(mockAudio.play).toHaveBeenCalledWith(SoundEffect.click);
+  });
+
+  // --- 48. Click sound on resume from pause menu ---
+  it('should play click sound when resume event fires from pause menu', async () => {
+    const { fixture } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
+      detectChanges: false,
+    });
+    fixture.componentInstance.status = MinigameStatus.Paused;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    mockAudio.play.mockClear();
+    fixture.debugElement.query(By.directive(PauseMenuComponent)).triggerEventHandler('resume');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(mockAudio.play).toHaveBeenCalledWith(SoundEffect.click);
+  });
+
+  // --- 49. Hint sound when hint text is revealed ---
+  it('should play hint sound when hint text changes from empty to non-empty', async () => {
+    const { fixture } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
+      detectChanges: false,
+    });
+    fixture.componentInstance.hintCount = 1;
+    fixture.componentInstance.activeHintText = '';
+    fixture.detectChanges();
+    await fixture.whenStable();
+    mockAudio.play.mockClear();
+    fixture.componentInstance.activeHintText = 'Try this approach';
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(mockAudio.play).toHaveBeenCalledWith(SoundEffect.hint);
+  });
+
+  // --- 50. No hint sound when hint text is cleared ---
+  it('should not play hint sound when hint text changes from non-empty to empty', async () => {
+    const { fixture } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
+      detectChanges: false,
+    });
+    fixture.componentInstance.hintCount = 1;
+    fixture.componentInstance.activeHintText = 'Try this';
+    fixture.detectChanges();
+    await fixture.whenStable();
+    mockAudio.play.mockClear();
+    fixture.componentInstance.activeHintText = '';
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(mockAudio.play).not.toHaveBeenCalledWith(SoundEffect.hint);
+  });
+
+  // --- 51. Tick sound during last 5 seconds ---
+  it('should play tick sound when timeRemaining is 5 and status is Playing', async () => {
+    const { fixture } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
+      detectChanges: false,
+    });
+    fixture.componentInstance.timerDuration = 60;
+    fixture.componentInstance.timeRemaining = 5;
+    fixture.componentInstance.status = MinigameStatus.Playing;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(mockAudio.play).toHaveBeenCalledWith(SoundEffect.tick);
+  });
+
+  // --- 52. No tick sound when timeRemaining > 5 ---
+  it('should not play tick sound when timeRemaining is greater than 5', async () => {
+    const { fixture } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
+      detectChanges: false,
+    });
+    fixture.componentInstance.timerDuration = 60;
+    fixture.componentInstance.timeRemaining = 10;
+    fixture.componentInstance.status = MinigameStatus.Playing;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(mockAudio.play).not.toHaveBeenCalledWith(SoundEffect.tick);
+  });
+
+  // --- 53. No tick sound when timeRemaining is 0 ---
+  it('should not play tick sound when timeRemaining is 0', async () => {
+    const { fixture } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
+      detectChanges: false,
+    });
+    fixture.componentInstance.timerDuration = 60;
+    fixture.componentInstance.timeRemaining = 0;
+    fixture.componentInstance.status = MinigameStatus.Playing;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(mockAudio.play).not.toHaveBeenCalledWith(SoundEffect.tick);
+  });
+
+  // --- 54. No tick sound when paused ---
+  it('should not play tick sound when status is Paused', async () => {
+    const { fixture } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
+      detectChanges: false,
+    });
+    fixture.componentInstance.timerDuration = 60;
+    fixture.componentInstance.timeRemaining = 3;
+    fixture.componentInstance.status = MinigameStatus.Paused;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(mockAudio.play).not.toHaveBeenCalledWith(SoundEffect.tick);
   });
 });
