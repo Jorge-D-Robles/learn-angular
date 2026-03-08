@@ -30,11 +30,13 @@ export class ScoreCalculationService {
     timeRemaining: number,
     accuracy: number,
     combo: number,
+    comboMultiplier = 1.0,
   ): number {
     const raw =
-      timeRemaining * config.timeWeight +
-      accuracy * config.accuracyWeight +
-      combo * config.comboWeight;
+      (timeRemaining * config.timeWeight +
+        accuracy * config.accuracyWeight +
+        combo * config.comboWeight) *
+      comboMultiplier;
     return Math.round(Math.max(0, Math.min(raw, config.maxScore)));
   }
 

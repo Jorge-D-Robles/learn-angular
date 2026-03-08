@@ -608,8 +608,8 @@ Acceptance criteria:
 
 ### T-2026-290
 - Title: Integrate ComboTrackerService multiplier into ScoreCalculationService formula
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -626,6 +626,7 @@ Acceptance criteria:
 - [ ] LevelCompletionService passes current combo multiplier to ScoreCalculationService
 - [ ] Combo multiplier of 1.0 produces identical results to current behavior (backward compatible)
 - [ ] Unit tests for: score with combo multiplier, default multiplier, combo boost on perfect play
+- Started: 2026-03-07
 
 ### T-2026-291
 - Title: Create DailyChallenge-to-StreakReward integration test
@@ -736,6 +737,265 @@ Acceptance criteria:
 - [ ] `resume()` calls `onResume()` after setting status to Playing
 - [ ] Existing tests still pass (empty default implementations are backward compatible)
 - [ ] Unit tests for: onPause called on pause, onResume called on resume
+
+### T-2026-296
+- Title: Migrate ReplayMode type to use PlayMode enum
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-289
+- Blocked-by: —
+- Tags: refactor, minigame-framework, types
+- Refs: src/app/pages/level-select/level-select.ts, src/app/core/minigame/minigame.types.ts
+
+The `ReplayMode` type alias in `level-select.ts` uses a string union `'story' | 'endless' | 'speedrun' | 'daily'` that diverges from the canonical `PlayMode` enum (e.g., `'speedrun'` vs `PlayMode.SpeedRun = 'speedRun'`). Replace `ReplayMode` with `PlayMode` to unify the mode representation across the codebase.
+
+Acceptance criteria:
+- [ ] `ReplayMode` type alias removed from `level-select.ts`
+- [ ] All usages replaced with `PlayMode` enum from `src/app/core/minigame/minigame.types.ts`
+- [ ] String values updated to match enum values (`'speedrun'` → `PlayMode.SpeedRun`, `'daily'` → `PlayMode.DailyChallenge`)
+- [ ] No runtime behavior change
+- [ ] Existing tests pass
+
+### T-2026-297
+- Title: Fix top bar XP progress bar hardcoded nextRankXp value
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P1
+- Depends: T-2026-124
+- Blocked-by: —
+- Tags: bug, ui, xp, top-bar
+- Refs: src/app/app.html, src/app/app.ts, src/app/core/progression/xp.service.ts
+
+The top bar XP progress bar binds `[nextRankXp]="100"` as a hardcoded literal. XpService provides `xpToNextRank` as a computed signal that returns the actual XP gap to the next rank (500 for Cadet->Ensign, 1000 for Ensign->Lieutenant, etc.). Without this fix, the XP bar always shows progress out of 100 regardless of actual rank thresholds, making progression feel broken.
+
+Acceptance criteria:
+- [ ] `App` component exposes `xpToNextRank` from `XpService.xpToNextRank` signal
+- [ ] `app.html` binds `[nextRankXp]="xpToNextRank()"` instead of hardcoded `100`
+- [ ] XP bar correctly shows progress relative to actual rank thresholds
+- [ ] At max rank (Fleet Admiral), xpToNextRank is 0 and bar shows 100%
+- [ ] Existing unit tests updated to verify dynamic binding
+- [ ] No visual regression on top bar layout
+
+### T-2026-298
+- Title: Compute star rating via ScoreCalculationService in MinigamePlayPage
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P1
+- Depends: T-2026-223, T-2026-028
+- Blocked-by: —
+- Tags: bug, scoring, minigame-play, integration
+- Refs: src/app/pages/minigame-play/minigame-play.ts, src/app/core/minigame/score-calculation.service.ts
+
+MinigamePlayPage.buildMinigameResult() hardcodes `starRating: 0` instead of computing it from the actual score via ScoreCalculationService.getStarRating(). This means LevelCompletionService receives a 0-star result for every completed level, breaking star-based progression (mastery stars, level unlock logic, and LevelResultsComponent display).
+
+Acceptance criteria:
+- [ ] MinigamePlayPage injects ScoreCalculationService
+- [ ] `buildMinigameResult()` calls `ScoreCalculationService.getStarRating(score, maxScore)` to compute star rating
+- [ ] maxScore derived from game config or level definition (needs a source -- may require MinigameConfig to include a `defaultMaxScore` or level data to carry it)
+- [ ] Star rating correctly propagates to LevelResultsComponent display
+- [ ] Unit tests for: star rating computation with known score/maxScore, 1-star/2-star/3-star thresholds
+
+### T-2026-299
+- Title: Add error state rendering to MinigamePlayPage on level load failure
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-223, T-2026-131
+- Blocked-by: —
+- Tags: error-handling, minigame-play, ui
+- Refs: src/app/pages/minigame-play/minigame-play.ts, src/app/shared/components/error-state/error-state.ts
+
+MinigamePlayPage's level loading effect has an error handler that only calls `console.error('Failed to load level:', err)`. No visual feedback is shown to the player when a level fails to load (e.g., invalid level ID, missing level data). ErrorStateComponent (T-2026-131) exists but is not used here. The player sees a blank screen on failure.
+
+Acceptance criteria:
+- [ ] Add `loadError` signal to MinigamePlayPage (initially null, set on load failure)
+- [ ] Add a new `@case ('error')` to the viewState switch that renders ErrorStateComponent
+- [ ] ErrorStateComponent retry action re-triggers level loading
+- [ ] Error message includes the game name and level ID for context
+- [ ] `console.error` call remains for debugging but is supplemented by visual state
+- [ ] Unit tests for: error state rendering on load failure, retry action
+
+### T-2026-300
+- Title: Integrate HintService penalty into LevelCompletionService score flow
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-113, T-2026-044
+- Blocked-by: —
+- Tags: integration, hints, scoring, progression
+- Refs: src/app/core/minigame/level-completion.service.ts, src/app/core/minigame/hint.service.ts, docs/research/gamification-patterns.md
+
+Gamification research says "Hints available but cost points (self-regulating difficulty)." HintService (T-2026-044) tracks penalties per hint used, but LevelCompletionService does not deduct hint penalties from the XP award or score. Without this integration, using hints has no cost, removing the self-regulating difficulty mechanic.
+
+Acceptance criteria:
+- [ ] LevelCompletionService injects HintService
+- [ ] `completeLevel()` reads total hint penalty for the completed level via HintService
+- [ ] Hint penalty deducted from base XP before streak multiplier is applied
+- [ ] LevelCompletionSummary includes `hintPenalty` field (number, 0 if no hints used)
+- [ ] Perfect score detection accounts for hint usage (no hints + full lives = perfect)
+- [ ] XpNotification includes hint penalty info when hints were used
+- [ ] Unit tests for: XP with no hints, XP with 1 hint penalty, XP with max hints, perfect flag with hints
+
+### T-2026-301
+- Title: Wire PlayMode context into MinigamePlayPage and replay mode pages
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-289, T-2026-223
+- Blocked-by: —
+- Tags: integration, play-mode, minigame-play, context
+- Refs: src/app/pages/minigame-play/minigame-play.ts, src/app/core/minigame/minigame.types.ts
+
+T-2026-289 added PlayMode enum and `setPlayMode()` to MinigameEngine, but MinigamePlayPage never calls `setPlayMode()`. The engine always runs in PlayMode.Story regardless of whether the player is in story mode, endless mode, speed run, or daily challenge. This means replay mode pages cannot differentiate behavior (e.g., no diminishing returns in endless mode, different scoring in speed run).
+
+Acceptance criteria:
+- [ ] MinigamePlayPage calls `engine.setPlayMode(PlayMode.Story)` during level initialization
+- [ ] EndlessModePage sets `PlayMode.Endless` when initializing its engine
+- [ ] SpeedRunPage sets `PlayMode.SpeedRun` when initializing its engine
+- [ ] DailyChallengePage sets `PlayMode.DailyChallenge` when initializing its engine
+- [ ] PlayMode is available to downstream services (e.g., LevelCompletionService can check if replay mode to skip diminishing returns)
+- [ ] Unit tests for: play mode set on each page type
+
+### T-2026-302
+- Title: Add MinigameScoreConfig to MinigameConfig for per-game scoring parameters
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-029, T-2026-028
+- Blocked-by: —
+- Tags: scoring, minigame-framework, types, configuration
+- Refs: src/app/core/minigame/minigame.types.ts, src/app/core/minigame/minigame-registry.service.ts, src/app/core/minigame/score-calculation.service.ts
+
+ScoreCalculationService.calculateScore() requires a ScoreConfig (timeWeight, accuracyWeight, comboWeight, maxScore), but MinigameConfig has no scoring configuration. Each minigame spec defines unique scoring formulas (Module Assembly: "time remaining + accuracy + combo", Wire Protocol: "fewer verifications = higher score"). Without per-game ScoreConfig, there is no way to configure scoring weights when computing star ratings in MinigamePlayPage (T-2026-298 needs this).
+
+Acceptance criteria:
+- [ ] Add optional `scoreConfig: ScoreConfig` field to `MinigameConfig` interface
+- [ ] DEFAULT_MINIGAME_CONFIGS updated with sensible default ScoreConfig per minigame (maxScore: 1000, equal weights as defaults)
+- [ ] MinigameRegistryService.getConfig() returns ScoreConfig alongside other config
+- [ ] MinigamePlayPage can read scoreConfig from registry to pass to ScoreCalculationService
+- [ ] Existing tests updated for new field
+- [ ] Build passes with no type errors
+
+### T-2026-303
+- Title: Add shared components barrel exports for SvgPort and SvgWireRenderer
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-203, T-2026-172
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/shared/components/index.ts
+
+SvgPortComponent and SvgWireRendererComponent are exported from the shared components barrel (confirmed in code), but their integration was done ad-hoc. This ticket verifies the barrel is clean and adds any missing type exports (e.g., WireDescriptor is exported but SvgPortPosition type may not be).
+
+Note: After checking the barrel, SvgPortComponent and SvgWireRendererComponent ARE already exported. However, the `ExpressionValidator` utility from the expression-builder directory is not exported from the barrel. Let me verify.
+
+Acceptance criteria:
+- [ ] Verify `ExpressionValidator` from `expression-builder/expression-validator.ts` is importable from shared barrel
+- [ ] If not exported, add it to `src/app/shared/components/index.ts`
+- [ ] Verify `WireDescriptor` type is importable from shared barrel (already confirmed)
+- [ ] Build passes with updated barrel
+
+### T-2026-304
+- Title: Create MinigameEngine onLevelComplete hook for subclass cleanup
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-017
+- Blocked-by: —
+- Tags: minigame-framework, engine, lifecycle
+- Refs: src/app/core/minigame/minigame-engine.ts
+
+MinigameEngine has `onComplete()` abstract method called when the game is won, but `fail()` has no corresponding hook. Subclass engines that need to clean up game-specific state on failure (e.g., stop conveyor belt animation, clear pending timers, save partial progress) have no lifecycle hook for the Lost status. Adding `onFail()` as an empty virtual method (like the proposed `onPause`/`onResume` in T-2026-295) would complete the lifecycle hook set.
+
+Acceptance criteria:
+- [ ] Add `protected onFail(): void {}` empty virtual method to MinigameEngine
+- [ ] `fail()` calls `onFail()` after setting status to Lost
+- [ ] Existing tests still pass (empty default implementation is backward compatible)
+- [ ] Unit tests for: onFail called on fail, onFail called on timer expiry, onFail called on lives depleted
+- [ ] Update engine lifecycle documentation in code comments
+
+### T-2026-305
+- Title: Add ExpressionValidator to shared components barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-160
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/shared/components/index.ts, src/app/shared/components/expression-builder/expression-validator.ts
+
+ExpressionBuilderComponent (T-2026-160) created `expression-validator.ts` as a companion utility, but only the component itself is exported from the shared components barrel. Flow Commander (T-2026-245) will need ExpressionValidator for gate condition validation. The utility should be importable from the barrel.
+
+Acceptance criteria:
+- [ ] `src/app/shared/components/index.ts` updated to export `ExpressionValidator` and related types
+- [ ] Build passes with no circular dependencies
+- [ ] ExpressionValidator importable via `'./shared'` barrel path
+
+### T-2026-306
+- Title: Create integration test for MinigamePlayPage completion-to-progression pipeline
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-223, T-2026-113
+- Blocked-by: —
+- Tags: testing, integration, minigame-play, progression
+- Refs: src/app/pages/minigame-play/minigame-play.ts, src/app/core/minigame/level-completion.service.ts
+
+MinigamePlayPage has a completion detection effect that watches for engine status `Won` and calls `LevelCompletionService.completeLevel()`. This critical integration point is not covered by integration tests. T-2026-241 tests the core services pipeline but not the page-level wiring. A regression in the completion effect, the MinigameResult construction, or the effect timing would silently break the entire progression system.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/pages/minigame-play/minigame-play.integration.spec.ts`
+- [ ] Test: engine transitions to Won -> LevelCompletionService.completeLevel() called with correct MinigameResult
+- [ ] Test: completionSummary signal is set after completion
+- [ ] Test: completion only fires once per level (completionFired guard works)
+- [ ] Test: retry resets completionFired flag and allows re-completion
+- [ ] Uses TestBed with real LevelCompletionService (or spy to verify call)
+
+### T-2026-307
+- Title: Add StreakBadgeComponent to top bar for at-a-glance streak visibility
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-133, T-2026-009
+- Blocked-by: —
+- Tags: ui, streak, top-bar, gamification
+- Refs: docs/research/gamification-patterns.md, docs/ux/navigation.md, src/app/app.html
+
+Gamification research emphasizes streaks as a key engagement mechanic ("Loss aversion makes maintaining streaks compelling"). The top bar shows rank and XP but not streak status. Navigation.md specifies the profile page shows a streak counter, but the top bar -- visible on every page -- could show a compact streak indicator to reinforce daily engagement. StreakBadgeComponent (T-2026-133) provides the visual badge.
+
+Acceptance criteria:
+- [ ] App component injects StreakService for current streak and multiplier
+- [ ] `app.html` renders compact StreakBadgeComponent next to the rank badge in the top bar
+- [ ] Badge only shows when streak is active (>0 days), hidden when no streak
+- [ ] Uses compact/small variant of StreakBadgeComponent
+- [ ] Responsive: hidden on mobile (bottom nav handles navigation; top bar is already tight)
+- [ ] Unit tests for: badge visibility with active streak, hidden with no streak
 
 ---
 

@@ -118,6 +118,88 @@ describe('ScoreCalculationService', () => {
       const score = service.calculateScore(config, 50, 15, 10);
       expect(score).toBe(1000);
     });
+
+    describe('comboMultiplier', () => {
+      const config: ScoreConfig = {
+        timeWeight: 3.5,
+        accuracyWeight: 7,
+        comboWeight: 1,
+        maxScore: 1000,
+      };
+
+      const moduleAssemblyConfig: ScoreConfig = {
+        timeWeight: 10,
+        accuracyWeight: 100,
+        comboWeight: 25,
+        maxScore: 1000,
+      };
+
+      it('should produce identical results when comboMultiplier is omitted (backward compatible)', () => {
+        // raw = 3.5*30 + 7*5 + 1*8 = 105 + 35 + 8 = 148
+        const score = service.calculateScore(config, 30, 5, 8);
+        expect(score).toBe(148);
+      });
+
+      it('should produce identical results with explicit 1.0 multiplier', () => {
+        // raw = 3.5*30 + 7*5 + 1*8 = 148; * 1.0 = 148
+        const score = service.calculateScore(config, 30, 5, 8, 1.0);
+        expect(score).toBe(148);
+      });
+
+      it('should scale raw score with 1.5x multiplier', () => {
+        // raw = (10*10) + (3*100) + (2*25) = 100 + 300 + 50 = 450; * 1.5 = 675
+        const score = service.calculateScore(
+          moduleAssemblyConfig,
+          10,
+          3,
+          2,
+          1.5,
+        );
+        expect(score).toBe(675);
+      });
+
+      it('should clamp to maxScore with 2.0x multiplier', () => {
+        // raw = (30*10) + (5*100) + (8*25) = 1000; * 2.0 = 2000, clamped to 1000
+        const score = service.calculateScore(
+          moduleAssemblyConfig,
+          30,
+          5,
+          8,
+          2.0,
+        );
+        expect(score).toBe(1000);
+      });
+
+      it('should apply 3.0x multiplier on small score', () => {
+        // raw = 10 + 100 + 0 = 110; * 3.0 = 330
+        const score = service.calculateScore(
+          moduleAssemblyConfig,
+          1,
+          1,
+          0,
+          3.0,
+        );
+        expect(score).toBe(330);
+      });
+
+      it('should round correctly with fractional multiplied score', () => {
+        // raw = 3.5 + 21 + 1 = 25.5; * 1.5 = 38.25, Math.round = 38
+        const score = service.calculateScore(config, 1, 3, 1, 1.5);
+        expect(score).toBe(38);
+      });
+
+      it('should not rescue negative-input scores with multiplier', () => {
+        // raw = (-50 + 0 + 0) * 2.0 = -100, clamped to 0
+        const score = service.calculateScore(
+          moduleAssemblyConfig,
+          -5,
+          0,
+          0,
+          2.0,
+        );
+        expect(score).toBe(0);
+      });
+    });
   });
 
   // --- isPerfect ---
