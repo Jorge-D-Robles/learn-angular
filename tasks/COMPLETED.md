@@ -198,3 +198,4 @@
 [2026-03-08] T-2026-075: Create StoryMissionPage component for mission playback — implemented MissionPage with step navigation, code examples, concept panels, completion flow, and locked state (claude)
 [2026-03-08] T-2026-138: Register Wire Protocol level data with LevelLoaderService — registered Wire Protocol level pack with LevelLoaderService, 6 tests for tier distributions (claude)
 [2026-03-08] T-2026-139: Register Flow Commander level data with LevelLoaderService — registered Flow Commander level pack with LevelLoaderService, 6 tests for tier distributions (claude)
+[2026-03-08] T-2026-140: Register Signal Corps level data with LevelLoaderService — registered Signal Corps level pack with LevelLoaderService, 6 tests for tier distributions (claude)

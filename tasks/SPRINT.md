@@ -36,11 +36,11 @@ Started: 2026-03-08
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-140**: Register Signal Corps level data with LevelLoaderService (Priority: high, Size: S)
 
 ---
 

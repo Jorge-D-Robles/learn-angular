@@ -314,26 +314,6 @@ Acceptance criteria:
 - [ ] Respects `prefers-reduced-motion` (disable pulse animations)
 - [ ] Unit tests for: glow state per mastery level, module click emission, dark state for 0 mastery
 
-### T-2026-140
-- Title: Register Signal Corps level data with LevelLoaderService
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-070, T-2026-030
-- Blocked-by: —
-- Tags: minigame, signal-corps, level-data, integration
-- Refs: docs/minigames/04-signal-corps.md, src/app/core/levels/level-loader.service.ts
-
-Register Signal Corps level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
-
-Acceptance criteria:
-- [ ] Signal Corps level pack registered with LevelLoaderService
-- [ ] `LevelLoaderService.loadLevel('signal-corps', levelId)` returns correct level data
-- [ ] `LevelLoaderService.getLevelPack('signal-corps')` returns all 18 levels grouped by tier
-- [ ] Unit tests for: level loading by ID, level pack retrieval
-
 ### T-2026-141
 - Title: Create CampaignProgressPage for story mission overview
 - Status: todo
