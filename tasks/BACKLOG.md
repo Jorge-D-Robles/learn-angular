@@ -628,29 +628,6 @@ Acceptance criteria:
 - [ ] All public types from DailyChallengeService are importable via barrel path
 - [ ] Build passes with no missing exports
 
-### T-2026-295
-- Title: Create MinigameEngine onPause and onResume lifecycle hooks
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-017
-- Blocked-by: —
-- Tags: minigame-framework, engine, lifecycle
-- Refs: src/app/core/minigame/minigame-engine.ts
-
-MinigameEngine has `onLevelLoad`, `onStart`, and `onComplete` abstract/virtual methods, but no hooks for pause and resume. Subclass engines may need to freeze game-specific state on pause (e.g., Module Assembly stops conveyor belt animation, Flow Commander stops cargo movement) and resume it. Without these hooks, subclass engines cannot react to pause/resume events.
-
-Acceptance criteria:
-- [ ] Add `protected onPause(): void {}` empty virtual method to MinigameEngine
-- [ ] Add `protected onResume(): void {}` empty virtual method to MinigameEngine
-- [ ] `pause()` calls `onPause()` after setting status to Paused
-- [ ] `resume()` calls `onResume()` after setting status to Playing
-- [ ] Existing tests still pass (empty default implementations are backward compatible)
-- [ ] Unit tests for: onPause called on pause, onResume called on resume
-- Started: 2026-03-08
-
 ### T-2026-296
 - Title: Migrate ReplayMode type to use PlayMode enum
 - Status: todo

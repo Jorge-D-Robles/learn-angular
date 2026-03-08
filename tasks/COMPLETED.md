@@ -112,3 +112,4 @@
 [2026-03-08] T-2026-292: Add MinigameShell responsive layout for mobile gameplay — added responsive HUD layout with mobile breakpoint, flex-wrap, reduced sizes, 2 new tests (claude)
 [2026-03-08] T-2026-184: Integrate ComboTrackerService with MinigameEngine base class — added optional comboTracker to config, 3 public methods, reset in initialize(), 8 new tests (claude)
 [2026-03-08] T-2026-185: Integrate XpDiminishingReturnsService with LevelCompletionService — wired diminishing returns into XP pipeline, split tests 5/6, 10 new tests (claude)
+[2026-03-08] T-2026-295: Create MinigameEngine onPause and onResume lifecycle hooks — added protected onPause/onResume virtual methods with empty defaults, 5 new tests (claude)
