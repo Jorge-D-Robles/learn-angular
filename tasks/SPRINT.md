@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-289**: Add play mode context signal to MinigameEngine (Assigned: claude, Status: in-progress)
 
 
 
