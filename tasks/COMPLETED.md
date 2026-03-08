@@ -98,3 +98,4 @@
 [2026-03-07] T-2026-126: Create core module root barrel export — created core/index.ts barrel re-exporting all 8 subdirectory barrels (claude)
 [2026-03-07] T-2026-050: Create PlayTimeService for tracking session and total play time — created PlayTimeService with session tracking, per-game time, beforeunload persistence (claude)
 [2026-03-07] T-2026-056: Create ComboTrackerService for combo multiplier mechanics — created ComboTrackerService with combo signals, multiplier thresholds, and 30 unit tests (claude)
+[2026-03-07] T-2026-201: Add ComboTrackerService to minigame barrel export — barrel export already added in T-2026-056 (unassigned)
