@@ -640,28 +640,6 @@ Acceptance criteria:
 - [ ] Respects `prefers-reduced-motion` (disable pulse animations)
 - [ ] Unit tests for: glow state per mastery level, module click emission, dark state for 0 mastery
 
-### T-2026-137
-- Title: Register Module Assembly level data with LevelLoaderService
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-058, T-2026-030
-- Blocked-by: —
-- Tags: minigame, module-assembly, level-data, integration
-- Refs: docs/minigames/01-module-assembly.md, src/app/core/levels/level-loader.service.ts
-
-The Module Assembly level data file (T-2026-058) defines the 18 levels, and LevelLoaderService (T-2026-030) provides the loading API. The level data must be registered with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
-
-Acceptance criteria:
-- [ ] Module Assembly level pack registered with LevelLoaderService via its `registerLevelPack()` method
-- [ ] Registration happens at app initialization or on first access (lazy)
-- [ ] `LevelLoaderService.loadLevel('module-assembly', levelId)` returns the correct level data
-- [ ] `LevelLoaderService.getLevelPack('module-assembly')` returns all 18 levels grouped by tier
-- [ ] Unit tests for: level loading by ID, level pack retrieval, tier grouping
-- Started: 2026-03-08
-
 ### T-2026-138
 - Title: Register Wire Protocol level data with LevelLoaderService
 - Status: todo

@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-137**: Register Module Assembly level data with LevelLoaderService (Assigned: claude, Status: in-progress)
 
 
 
