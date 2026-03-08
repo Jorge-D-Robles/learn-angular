@@ -135,3 +135,4 @@
 [2026-03-08] T-2026-165: Create barrel export for animation core module — added animation barrel export and core re-export (claude)
 [2026-03-08] T-2026-129: Create EmptyStateComponent for no-content pages — shared EmptyStateComponent with icon, title, message inputs and content projection (claude)
 [2026-03-08] T-2026-130: Create TooltipDirective for contextual help — tooltip directive with hover/focus/escape, 200ms delay, 4 positions, ARIA accessible (claude)
+[2026-03-08] T-2026-210: Integrate PlayTimeService with MinigameEngine session tracking — PlayTimeTracker interface wired into engine lifecycle with pause-aware timing (claude)

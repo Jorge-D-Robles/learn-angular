@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-210**: Integrate PlayTimeService with MinigameEngine session tracking (Assigned: claude, Status: in-progress)
 
 
 

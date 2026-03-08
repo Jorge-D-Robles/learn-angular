@@ -157,28 +157,6 @@ Acceptance criteria:
 - [ ] `src/app/core/progression/index.ts` updated to export `PlayTimeService`
 - [ ] Build passes with updated barrel
 
-### T-2026-210
-- Title: Integrate PlayTimeService with MinigameEngine session tracking
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-050, T-2026-017
-- Blocked-by: —
-- Tags: integration, progression, stats, minigame-framework
-- Refs: docs/ux/navigation.md, src/app/core/progression/play-time.service.ts
-
-PlayTimeService (T-2026-050) tracks per-minigame play time, and the profile page (navigation.md) shows "Play time stats." But no ticket wires PlayTimeService into the MinigameEngine lifecycle so that time is automatically recorded when a player starts and completes a level. Without this, play time must be manually tracked by each minigame.
-
-Acceptance criteria:
-- [ ] MinigameEngine.start() calls PlayTimeService.startSession() or records start timestamp
-- [ ] MinigameEngine completion/failure calls PlayTimeService.recordMinigameTime(gameId, duration)
-- [ ] Duration calculated as elapsed time between start and end (excluding paused time)
-- [ ] Paused time excluded: engine.pause() stops the timer, engine.resume() resumes it
-- [ ] Unit tests for: time recording on completion, pause exclusion, per-game accumulation
-- Started: 2026-03-08
-
 ### T-2026-229
 - Title: Add error module to core barrel export
 - Status: todo
