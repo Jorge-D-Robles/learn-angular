@@ -104,3 +104,5 @@
 [2026-03-07] T-2026-212: Create LifetimeStatsService for aggregate player statistics — created LifetimeStatsService facade aggregating 6 services into ProfileStats computed signal (claude)
 [2026-03-07] T-2026-230: Add LifetimeStatsService to progression barrel export — barrel export already added in T-2026-212 (unassigned)
 [2026-03-07] T-2026-174: Create TimeFormatPipe for play time display — created TimeFormatPipe with long/short/timer formats and 26 unit tests (claude)
+[2026-03-07] T-2026-225: Wire RankUpOverlayComponent into app shell root — wired RankUpOverlayComponent into app shell with signal-based visibility and dismiss (claude)
+[2026-03-07] T-2026-231: Add RankUpNotificationService to notifications barrel export — barrel export already added in T-2026-225 (unassigned)

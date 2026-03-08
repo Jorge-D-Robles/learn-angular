@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-225**: Wire RankUpOverlayComponent into app shell root (Assigned: claude, Status: in-progress)
 
 
 

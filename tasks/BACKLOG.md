@@ -384,28 +384,6 @@ Acceptance criteria:
 - [ ] Paused time excluded: engine.pause() stops the timer, engine.resume() resumes it
 - [ ] Unit tests for: time recording on completion, pause exclusion, per-game accumulation
 
-### T-2026-225
-- Title: Wire RankUpOverlayComponent into app shell root
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-224, T-2026-033
-- Blocked-by: —
-- Tags: integration, rank-up, app-shell
-- Refs: docs/progression.md, src/app/app.ts, src/app/app.html
-
-T-2026-125 wired XpNotificationComponent into the app shell root. The RankUpOverlayComponent (T-2026-033) needs the same treatment: it must be rendered at the app root level so it can overlay any page when a rank-up occurs. RankUpNotificationService (T-2026-224) provides the trigger signal.
-
-Acceptance criteria:
-- [ ] RankUpOverlayComponent added to app shell template (app.html)
-- [ ] Visibility controlled by RankUpNotificationService.showRankUp signal
-- [ ] Overlay receives new rank data from RankUpNotificationService
-- [ ] Overlay dismiss event calls RankUpNotificationService.dismiss()
-- [ ] Unit tests for: overlay visibility on rank up, dismiss hides overlay
-- Started: 2026-03-07
-
 ### T-2026-229
 - Title: Add error module to core barrel export
 - Status: todo
