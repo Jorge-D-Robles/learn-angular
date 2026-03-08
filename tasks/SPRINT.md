@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-255**: Create FlowCommander pipeline graph data model (Assigned: claude, Status: in-progress)
 
 
 
