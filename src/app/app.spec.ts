@@ -1,13 +1,34 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import {
+  LUCIDE_ICONS,
+  LucideIconConfig,
+  LucideIconProvider,
+} from 'lucide-angular';
 import { App } from './app';
-import { GameStateService, XpService } from './core';
+import { GameStateService, RankUpNotificationService, XpService } from './core';
+import { APP_ICONS } from './shared';
+
+const ICON_PROVIDERS = [
+  {
+    provide: LUCIDE_ICONS,
+    multi: true,
+    useValue: new LucideIconProvider(APP_ICONS),
+  },
+  {
+    provide: LucideIconConfig,
+    useValue: Object.assign(new LucideIconConfig(), {
+      size: 24,
+      color: 'currentColor',
+    }),
+  },
+];
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), ...ICON_PROVIDERS],
     }).compileComponents();
   });
 
@@ -154,5 +175,84 @@ describe('App', () => {
     const xpNotification =
       fixture.nativeElement.querySelector('nx-xp-notification');
     expect(xpNotification).toBeTruthy();
+  });
+
+  it('should NOT render rank-up overlay when no rank up', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const overlay = fixture.nativeElement.querySelector('nx-rank-up-overlay');
+    expect(overlay).toBeFalsy();
+  });
+
+  it('should render the rank-up overlay component when rank up occurs', () => {
+    const gameState = TestBed.inject(GameStateService);
+    gameState.resetState();
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    gameState.addXp(500);
+    TestBed.flushEffects();
+    fixture.detectChanges();
+
+    const overlay = fixture.nativeElement.querySelector('nx-rank-up-overlay');
+    expect(overlay).toBeTruthy();
+  });
+
+  it('should pass new rank to overlay', () => {
+    const gameState = TestBed.inject(GameStateService);
+    gameState.resetState();
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    gameState.addXp(500);
+    TestBed.flushEffects();
+    fixture.detectChanges();
+
+    const title = fixture.nativeElement.querySelector(
+      '.rank-up-overlay__title',
+    );
+    expect(title.textContent).toContain('Ensign');
+  });
+
+  it('should hide overlay when dismiss button is clicked', () => {
+    const gameState = TestBed.inject(GameStateService);
+    gameState.resetState();
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    gameState.addXp(500);
+    TestBed.flushEffects();
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector(
+      '.rank-up-overlay__dismiss',
+    ) as HTMLButtonElement;
+    button.click();
+    fixture.detectChanges();
+
+    const overlay = fixture.nativeElement.querySelector('nx-rank-up-overlay');
+    expect(overlay).toBeFalsy();
+  });
+
+  it('should hide overlay when RankUpNotificationService.dismiss() is called', () => {
+    const gameState = TestBed.inject(GameStateService);
+    gameState.resetState();
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    gameState.addXp(500);
+    TestBed.flushEffects();
+    fixture.detectChanges();
+
+    const rankUpService = TestBed.inject(RankUpNotificationService);
+    rankUpService.dismiss();
+    fixture.detectChanges();
+
+    const overlay = fixture.nativeElement.querySelector('nx-rank-up-overlay');
+    expect(overlay).toBeFalsy();
   });
 });

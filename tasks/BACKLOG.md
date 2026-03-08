@@ -386,8 +386,8 @@ Acceptance criteria:
 
 ### T-2026-225
 - Title: Wire RankUpOverlayComponent into app shell root
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -404,6 +404,7 @@ Acceptance criteria:
 - [ ] Overlay receives new rank data from RankUpNotificationService
 - [ ] Overlay dismiss event calls RankUpNotificationService.dismiss()
 - [ ] Unit tests for: overlay visibility on rank up, dismiss hides overlay
+- Started: 2026-03-07
 
 ### T-2026-229
 - Title: Add error module to core barrel export

@@ -1,18 +1,19 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { BottomNavComponent } from './bottom-nav/bottom-nav';
-import { XpService } from './core';
+import { XpService, RankUpNotificationService } from './core';
 import { SideNavComponent } from './side-nav/side-nav';
-import { XpNotificationComponent, XpProgressBarComponent } from './shared';
+import { RankUpOverlayComponent, XpNotificationComponent, XpProgressBarComponent } from './shared';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterLink, RouterOutlet, BottomNavComponent, SideNavComponent, XpNotificationComponent, XpProgressBarComponent],
+  imports: [RouterLink, RouterOutlet, BottomNavComponent, SideNavComponent, XpNotificationComponent, XpProgressBarComponent, RankUpOverlayComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
   private readonly xpService = inject(XpService);
+  protected readonly rankUpService = inject(RankUpNotificationService);
 
   readonly currentRank = this.xpService.currentRank;
   readonly rankProgress = this.xpService.rankProgress;

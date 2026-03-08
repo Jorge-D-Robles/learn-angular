@@ -26,3 +26,9 @@
 </div>
 
 <nx-xp-notification />
+
+@if (rankUpService.showRankUp()) {
+  <nx-rank-up-overlay
+    [rank]="rankUpService.rankUp()!.newRank"
+    (dismissed)="rankUpService.dismiss()" />
+}
