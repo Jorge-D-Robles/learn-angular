@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-043**: Populate architecture.md with P1 technical decisions (Assigned: claude, Status: in-progress)
 
 
 

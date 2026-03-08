@@ -28,31 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-043
-- Title: Populate architecture.md with P1 technical decisions
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-017, T-2026-024, T-2026-026
-- Blocked-by: —
-- Tags: documentation, architecture
-- Refs: docs/architecture.md
-
-Populate the architecture.md design doc with the actual technical decisions made during P1 implementation. This document is currently a stub that says "will be populated during P1."
-
-Acceptance criteria:
-- [ ] Angular app structure section: directory layout, feature module organization
-- [ ] Minigame framework architecture section: MinigameEngine base class, lifecycle, MinigameShell, registry pattern
-- [ ] State management section: signals-based approach, GameStateService, persistence strategy
-- [ ] Level/content data format section: LevelDefinition schema, level packs, static data files
-- [ ] Code editor integration section: chosen library, component API
-- [ ] Progression persistence section: localStorage strategy, auto-save, export/import
-- [ ] Testing strategy section: unit test patterns, TDD approach, coverage goals
-- [ ] Diagrams or ASCII art for key data flows (minigame lifecycle, state persistence, progression flow)
-- Started: 2026-03-08
-
 ### T-2026-051
 - Title: Create AudioService for sound effect management
 - Status: todo
