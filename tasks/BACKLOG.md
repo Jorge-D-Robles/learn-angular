@@ -357,27 +357,6 @@ Acceptance criteria:
 - [ ] Responsive: hidden on mobile (bottom nav handles navigation; top bar is already tight)
 - [ ] Unit tests for: badge visibility with active streak, hidden with no streak
 
-### T-2026-327
-- Title: Wire AudioService to RankUpNotificationService for rank-up sound
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-051, T-2026-321
-- Blocked-by: —
-- Tags: audio, integration, notifications, rank
-- Refs: docs/progression.md, src/app/core/notifications/rank-up-notification.service.ts
-
-RankUpNotificationService detects rank-up events via an effect() but does not play the `rankUp` sound. Progression.md says rank-up is a "major achievement event" that should have strong audio/visual feedback.
-
-Acceptance criteria:
-- [ ] RankUpNotificationService injects AudioService
-- [ ] `rankUp` sound plays when a rank-up is detected (inside the existing effect)
-- [ ] Sound only plays once per rank-up event (no double-play on re-trigger)
-- [ ] Unit tests for: sound plays on rank-up, sound not played when audio disabled
-- Started: 2026-03-08
-
 ### T-2026-328
 - Title: Wire AudioService to XpNotificationService for XP award sound
 - Status: todo

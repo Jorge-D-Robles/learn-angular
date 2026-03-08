@@ -149,3 +149,4 @@
 [2026-03-08] T-2026-361: Fix minigame-play test failures caused by missing HTMLMediaElement.play() in jsdom — added HTMLMediaElement.play/pause polyfills to global test setup, all 1690 tests passing (claude)
 [2026-03-08] T-2026-205: Integrate MinigameTutorialOverlay with MinigameShell first-play detection — integrated tutorial overlay with first-play detection, pause menu How to Play, and tutorialSeenKey helper (claude)
 [2026-03-08] T-2026-354: Add skip-to-content link for keyboard accessibility — added WCAG 2.1 AA skip-to-content link with clip-path hidden pattern and station theme styling (claude)
+[2026-03-08] T-2026-327: Wire AudioService to RankUpNotificationService for rank-up sound — wired AudioService to play SoundEffect.rankUp in rank-up detection effect (claude)
