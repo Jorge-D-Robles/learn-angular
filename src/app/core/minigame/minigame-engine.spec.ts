@@ -24,6 +24,7 @@ class TestEngine extends MinigameEngine<{ difficulty: number }> {
   onCompleteCalled = false;
   onPauseCalled = false;
   onResumeCalled = false;
+  onFailCalled = false;
   lastValidatedAction: unknown = null;
   nextValidationResult: ActionResult = {
     valid: true,
@@ -49,6 +50,9 @@ class TestEngine extends MinigameEngine<{ difficulty: number }> {
   }
   protected override onResume(): void {
     this.onResumeCalled = true;
+  }
+  protected override onFail(): void {
+    this.onFailCalled = true;
   }
   protected validateAction(action: unknown): ActionResult {
     this.lastValidatedAction = action;
@@ -212,6 +216,54 @@ describe('MinigameEngine', () => {
       expect(timedEngine.timeRemaining()).toBe(25);
       timedEngine.destroy();
       vi.useRealTimers();
+    });
+
+    it('should call onFail on explicit fail()', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      engine.fail();
+      expect(engine.onFailCalled).toBe(true);
+    });
+
+    it('should not call onFail when fail is a no-op (not Playing)', () => {
+      engine.initialize(createTestLevel());
+      // Status is Loading, not Playing
+      engine.fail();
+      expect(engine.onFailCalled).toBe(false);
+    });
+
+    it('should call onFail on timer expiry', () => {
+      vi.useFakeTimers();
+      const timedEngine = new TestEngine({ timerDuration: 3 });
+      timedEngine.initialize(createTestLevel());
+      timedEngine.start();
+      vi.advanceTimersByTime(3000);
+      expect(timedEngine.onFailCalled).toBe(true);
+      timedEngine.destroy();
+      vi.useRealTimers();
+    });
+
+    it('should call onFail on lives depleted', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      engine.nextValidationResult = { valid: true, scoreChange: 0, livesChange: -3 };
+      engine.submitAction('test');
+      expect(engine.onFailCalled).toBe(true);
+    });
+
+    it('should call onFail after status is set to Lost', () => {
+      let statusDuringOnFail: MinigameStatus | null = null;
+      class StatusCapturingEngine extends TestEngine {
+        protected override onFail(): void {
+          statusDuringOnFail = this.status();
+        }
+      }
+      const capturingEngine = new StatusCapturingEngine();
+      capturingEngine.initialize(createTestLevel());
+      capturingEngine.start();
+      capturingEngine.fail();
+      expect(statusDuringOnFail).toBe(MinigameStatus.Lost);
+      capturingEngine.destroy();
     });
   });
 

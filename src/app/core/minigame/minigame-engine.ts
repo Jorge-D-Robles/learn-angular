@@ -192,7 +192,7 @@ export abstract class MinigameEngine<TLevelData> {
     this.onComplete();
   }
 
-  /** Fails the game (loss). Only valid from Playing status. */
+  /** Fails the game (loss). Only valid from Playing status. Calls onFail() after finalization. */
   fail(): void {
     if (this._status() !== MinigameStatus.Playing) {
       return;
@@ -201,6 +201,7 @@ export abstract class MinigameEngine<TLevelData> {
     this._status.set(MinigameStatus.Lost);
     this._soundPlayer?.play(SoundEffect.fail);
     this._finalizePlayTime();
+    this.onFail();
   }
 
   /** Destroys the engine, clearing all timers and resetting state. Not reusable after destroy. */
@@ -327,4 +328,8 @@ export abstract class MinigameEngine<TLevelData> {
   /** Called after the engine is resumed. Override to restore game-specific state. */
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   protected onResume(): void {}
+
+  /** Called after the engine fails (status set to Lost). Override to clean up game-specific state on failure. */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  protected onFail(): void {}
 }
