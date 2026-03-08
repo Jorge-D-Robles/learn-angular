@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-212**: Create LifetimeStatsService for aggregate player statistics (Assigned: claude, Status: in-progress)
 
 
 

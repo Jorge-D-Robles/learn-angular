@@ -410,29 +410,6 @@ Acceptance criteria:
 - [ ] Paused time excluded: engine.pause() stops the timer, engine.resume() resumes it
 - [ ] Unit tests for: time recording on completion, pause exclusion, per-game accumulation
 
-### T-2026-212
-- Title: Create LifetimeStatsService for aggregate player statistics
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-015, T-2026-024
-- Blocked-by: —
-- Tags: progression, stats, service
-- Refs: docs/ux/navigation.md, docs/progression.md
-
-The profile page (navigation.md) shows detailed stats: rank/XP breakdown, mastery per topic, campaign progress, play time, and streak. Multiple services provide pieces of this data (XpService, MasteryService, GameProgressionService, PlayTimeService, StreakService), but no aggregation service collects them into a single profile-ready snapshot. This service provides a unified API for the ProfilePage to query all stats without importing 6+ services.
-
-Acceptance criteria:
-- [ ] `LifetimeStatsService` at `src/app/core/progression/lifetime-stats.service.ts`
-- [ ] `getProfileStats()`: returns a snapshot of: totalXp, currentRank, rankProgress, topicMasteryMap, missionsCompleted, totalMissions, totalPlayTime, currentStreak, streakMultiplier, levelsCompleted, perfectScores
-- [ ] All data sourced from existing services (XpService, MasteryService, GameProgressionService, PlayTimeService, StreakService, LevelProgressionService)
-- [ ] Computed signals for reactive UI binding
-- [ ] Exported from progression barrel
-- [ ] Unit tests for: stats aggregation, reactive updates when underlying services change
-- Started: 2026-03-07
-
 ### T-2026-225
 - Title: Wire RankUpOverlayComponent into app shell root
 - Status: todo
