@@ -5343,8 +5343,8 @@ Acceptance criteria:
 
 ### T-2026-382
 - Title: Wire tutorial step data from MinigameInstructionsData into MinigameRegistryService configs
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P2
@@ -5360,6 +5360,7 @@ Acceptance criteria:
 - [ ] Tutorial steps populated during `MinigameRegistryService.register()` for Module Assembly, Wire Protocol, Flow Commander, Signal Corps
 - [ ] `MinigamePlayPage.tutorialSteps()` returns non-empty array for registered P2 games
 - [ ] Unit tests for: registry config includes tutorial steps for each P2 game, steps match tutorial data
+- Started: 2026-03-08
 
 ### T-2026-384
 - Title: Create integration test for EndlessModeService high score update on session end

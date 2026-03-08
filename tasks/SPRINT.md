@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-382**: Wire tutorial step data from MinigameInstructionsData into MinigameRegistryService configs (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -23,7 +25,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-382**: Wire tutorial step data into MinigameRegistryService configs (Priority: medium, Size: S)
 
 ---
 

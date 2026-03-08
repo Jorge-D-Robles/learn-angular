@@ -1,4 +1,4 @@
-import { ApplicationInitStatus } from '@angular/core';
+import { ApplicationInitStatus, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { ModuleAssemblyComponent } from '../../features/minigames/module-assembly';
@@ -8,6 +8,7 @@ import { WireProtocolEngine } from '../../features/minigames/wire-protocol/wire-
 import { FlowCommanderComponent, FlowCommanderEngine } from '../../features/minigames/flow-commander';
 import { SignalCorpsComponent, SignalCorpsEngine } from '../../features/minigames/signal-corps';
 import type { MinigameId } from '../../core/minigame/minigame.types';
+import { getMinigameTutorial } from '../tutorials/minigame-tutorials.data';
 import { provideMinigame } from './provide-minigame';
 
 describe('provideMinigame', () => {
@@ -60,6 +61,14 @@ describe('provideMinigame', () => {
       ),
     ).toThrowError(/No default config found/);
   });
+
+  it('should include tutorialSteps for module-assembly after registration', () => {
+    const config = registry.getConfig('module-assembly');
+    expect(config!.tutorialSteps).toBeDefined();
+    expect(config!.tutorialSteps!.length).toBe(3);
+    const tutorial = getMinigameTutorial('module-assembly');
+    expect(config!.tutorialSteps![0].title).toBe(tutorial!.steps[0].title);
+  });
 });
 
 describe('provideMinigame — wire-protocol', () => {
@@ -95,6 +104,12 @@ describe('provideMinigame — wire-protocol', () => {
     const config = registry.getConfig('wire-protocol');
     expect(config).toBeDefined();
     expect(config!.name).toBe('Wire Protocol');
+  });
+
+  it('should include tutorialSteps for wire-protocol after registration', () => {
+    const config = registry.getConfig('wire-protocol');
+    expect(config!.tutorialSteps).toBeDefined();
+    expect(config!.tutorialSteps!.length).toBe(4);
   });
 });
 
@@ -132,6 +147,12 @@ describe('provideMinigame — flow-commander', () => {
     expect(config).toBeDefined();
     expect(config!.name).toBe('Flow Commander');
   });
+
+  it('should include tutorialSteps for flow-commander after registration', () => {
+    const config = registry.getConfig('flow-commander');
+    expect(config!.tutorialSteps).toBeDefined();
+    expect(config!.tutorialSteps!.length).toBe(4);
+  });
 });
 
 describe('provideMinigame — signal-corps', () => {
@@ -167,5 +188,39 @@ describe('provideMinigame — signal-corps', () => {
     const config = registry.getConfig('signal-corps');
     expect(config).toBeDefined();
     expect(config!.name).toBe('Signal Corps');
+  });
+
+  it('should include tutorialSteps for signal-corps after registration', () => {
+    const config = registry.getConfig('signal-corps');
+    expect(config!.tutorialSteps).toBeDefined();
+    expect(config!.tutorialSteps!.length).toBe(4);
+  });
+});
+
+describe('provideMinigame — game without tutorial data', () => {
+  let registry: MinigameRegistryService;
+
+  @Component({ selector: 'app-stub', template: '' })
+  class StubComponent {}
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideMinigame(
+          'corridor-runner',
+          StubComponent,
+          () => new ModuleAssemblyEngine(),
+        ),
+      ],
+    });
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    registry = TestBed.inject(MinigameRegistryService);
+  });
+
+  it('should NOT include tutorialSteps for games without tutorial data', () => {
+    const config = registry.getConfig('corridor-runner');
+    expect(config).toBeDefined();
+    expect(config!.tutorialSteps).toBeUndefined();
   });
 });
