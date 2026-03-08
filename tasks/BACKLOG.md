@@ -289,29 +289,6 @@ Acceptance criteria:
 - [ ] MinigameShell integration works (score, timer, lives)
 - [ ] E2e smoke test: navigate to level 1, verify game renders
 
-### T-2026-070
-- Title: Define Signal Corps level data for 18 levels
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P2
-- Depends: T-2026-019, T-2026-038
-- Blocked-by: —
-- Tags: minigame, signal-corps, level-data, content
-- Refs: docs/minigames/04-signal-corps.md, docs/curriculum.md
-
-Define the static level data for all 18 Signal Corps levels. Each level specifies tower configurations, input/output declarations, parent bindings, noise wave patterns, and grid layout.
-
-Acceptance criteria:
-- [ ] Level data file at `src/app/data/levels/signal-corps.data.ts`
-- [ ] `SignalCorpsLevelData` interface: towers[], gridLayout, parentBindings, noiseWaves[], requiredConfigs
-- [ ] 6 Basic levels (single input through multiple towers)
-- [ ] 6 Intermediate levels (input transforms through mixed challenge)
-- [ ] 5 Advanced levels (required inputs through defense optimization)
-- [ ] 1 Boss level ("Full Array Defense" with 8 towers, 3 nesting levels)
-- [ ] Unit tests verify: 18 total levels, valid tower configs, valid wave definitions
-
 ### T-2026-071
 - Title: Create Signal Corps minigame engine
 - Status: todo
