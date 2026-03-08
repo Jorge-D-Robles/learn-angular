@@ -122,34 +122,6 @@ Acceptance criteria:
 
 ## P2 -- Foundations Bundle
 
-### T-2026-059
-- Title: Create Module Assembly minigame engine
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: L
-- Milestone: P2
-- Depends: T-2026-017, T-2026-054, T-2026-058
-- Blocked-by: —
-- Tags: minigame, module-assembly, engine
-- Refs: docs/minigames/01-module-assembly.md
-
-Implement the Module Assembly game engine that extends MinigameEngine. Handles conveyor belt logic, part validation, slot matching, decoy detection, and scoring (time remaining + accuracy + combo).
-
-Acceptance criteria:
-- [ ] `ModuleAssemblyEngine` at `src/app/features/minigames/module-assembly/module-assembly.engine.ts`
-- [ ] Extends `MinigameEngine<ModuleAssemblyLevelData>`
-- [ ] Conveyor belt state: parts queue with configurable scroll speed
-- [ ] Blueprint state: slots with expected part types, filled/empty status
-- [ ] `validateAction(action)`: checks if dragged part matches target slot type
-- [ ] Correct placement: snaps part into slot, increments score, triggers combo
-- [ ] Wrong placement: rejects part (buzz), increments strike counter
-- [ ] Decoy rejection: double-click/quick-reject discards decoys (correct rejection = bonus)
-- [ ] Belt exhaustion: if belt empties with unfilled required slots, level fails
-- [ ] 3 strikes (wrong placements) = level fails
-- [ ] Unit tests for: part validation, slot matching, decoy handling, win/lose conditions, scoring
-- Started: 2026-03-08
-
 ### T-2026-060
 - Title: Create Module Assembly minigame UI component
 - Status: todo

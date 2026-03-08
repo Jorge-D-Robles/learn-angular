@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-059**: Create Module Assembly minigame engine (Assigned: claude, Status: in-progress)
 
 
 
