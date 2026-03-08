@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-286**: Add Playwright E2E job to GitHub Actions CI workflow (Assigned: claude, Status: in-progress)
 
 
 

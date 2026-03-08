@@ -4349,27 +4349,6 @@ Acceptance criteria:
 - [ ] REFRESHER_MIN_QUESTIONS enforced as minimum question count
 - [ ] Unit tests for mixed question selection
 
-### T-2026-286
-- Title: Add Playwright E2E job to GitHub Actions CI workflow
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: —
-- Blocked-by: —
-- Tags: ci, e2e, playwright, infrastructure
-- Refs: .github/workflows/ci.yml, playwright.config.ts
-
-The CI workflow has no E2E job. Playwright tests in e2e/ only run locally via `npm run e2e`. This ticket adds a Playwright E2E job to GitHub Actions with browser installation and caching.
-
-Acceptance criteria:
-- [ ] E2E job added to `.github/workflows/ci.yml`
-- [ ] Playwright browsers installed and cached
-- [ ] E2E tests run against production build
-- [ ] Job runs on push/PR (matching existing CI triggers)
-- Started: 2026-03-08
-
 ### T-2026-287
 - Title: Add MinigameShell HUD E2E tests for P2 minigame components
 - Status: todo
