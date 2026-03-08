@@ -28,26 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-361
-- Title: Fix minigame-play test failures caused by missing HTMLMediaElement.play() in jsdom
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P1
-- Depends: —
-- Blocked-by: —
-- Tags: bug, testing, minigame-play, audio
-- Refs: src/app/pages/minigame-play/minigame-play.spec.ts, src/testing/setup.ts
-
-2 tests in `minigame-play.spec.ts` fail because `AudioService.play()` calls `HTMLAudioElement.play()` which returns undefined in jsdom (should return a Promise). The global test setup file (`src/testing/setup.ts`) should be extended to polyfill `HTMLMediaElement.prototype.play` as a no-op returning `Promise.resolve()`.
-
-Acceptance criteria:
-- [ ] All minigame-play tests pass (0 failures)
-- [ ] HTMLMediaElement.play polyfill added to src/testing/setup.ts
-- [ ] No regressions in other test suites
-- Started: 2026-03-08
-
 ---
 
 ### T-2026-205

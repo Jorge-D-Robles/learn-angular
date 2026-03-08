@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-361**: Fix minigame-play test failures caused by missing HTMLMediaElement.play() in jsdom (Assigned: claude, Status: in-progress)
 
 
 
