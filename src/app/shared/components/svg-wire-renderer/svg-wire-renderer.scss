@@ -1,0 +1,37 @@
+:host {
+  display: block;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.svg-wire__path {
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.svg-wire__flow {
+  animation: wire-flow 1.5s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes wire-flow {
+  from {
+    stroke-dashoffset: 40;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svg-wire__flow {
+    animation: none;
+    opacity: 0.3;
+  }
+
+  .svg-wire__path {
+    transition: none;
+  }
+}

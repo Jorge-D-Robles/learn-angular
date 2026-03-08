@@ -13,5 +13,6 @@ export { PauseMenuComponent } from './pause-menu/pause-menu';
 export { StationCardComponent } from './station-card/station-card';
 export { TierBadgeComponent } from './tier-badge/tier-badge';
 export { SvgPortComponent } from './svg-port/svg-port';
+export { SvgWireRendererComponent, type WireDescriptor } from './svg-wire-renderer/svg-wire-renderer';
 export { XpNotificationComponent } from './xp-notification/xp-notification';
 export { XpProgressBarComponent } from './xp-progress-bar/xp-progress-bar';
