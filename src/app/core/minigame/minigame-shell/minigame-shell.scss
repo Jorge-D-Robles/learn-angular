@@ -116,9 +116,69 @@
   cursor: pointer;
 }
 
+.shell-hud__primary {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-4);
+}
+
 .shell-content {
   flex: 1;
   overflow: auto;
+}
+
+@media (max-width: 767px) {
+  .shell-hud {
+    flex-wrap: wrap;
+    gap: var(--nx-space-2);
+    padding: var(--nx-space-1) var(--nx-space-3);
+  }
+
+  .shell-hud__primary {
+    flex: 0 0 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--nx-space-1);
+  }
+
+  .shell-hud__score {
+    font-size: var(--nx-text-caption-size);
+  }
+
+  .shell-hud__timer {
+    font-size: var(--nx-text-caption-size);
+  }
+
+  // Mobile target: 16px (AC "20px icons" refers to the desktop baseline, not the mobile target)
+  .shell-hud__life {
+    width: 16px;
+    height: 16px;
+  }
+
+  .shell-hud__hint-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 0.625rem;
+  }
+
+  .shell-hud__hint {
+    font-size: var(--nx-text-caption-size);
+    padding: var(--nx-space-1);
+  }
+
+  .shell-hud__pause {
+    margin-left: auto;
+    padding: var(--nx-space-1);
+  }
+
+  .shell-hud__hint-popover {
+    white-space: normal;
+    max-width: 200px;
+  }
+
+  .shell-content {
+    min-height: 60vh;
+  }
 }
 
 @keyframes timer-pulse {

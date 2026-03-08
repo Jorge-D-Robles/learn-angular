@@ -11,14 +11,16 @@ import { MinigameStatus, PlayMode, type MinigameResult } from '../minigame.types
     <div class="minigame-shell">
       <!-- HUD Bar -->
       <div class="shell-hud">
-        <div class="shell-hud__score">{{ score() }}</div>
-        @if (showTimer()) {
-          <div class="shell-hud__timer"
-               [style.color]="timerColor()"
-               [class.shell-hud__timer--pulse]="timerPulse()">
-            {{ timeRemaining() }}s
-          </div>
-        }
+        <div class="shell-hud__primary">
+          <div class="shell-hud__score">{{ score() }}</div>
+          @if (showTimer()) {
+            <div class="shell-hud__timer"
+                 [style.color]="timerColor()"
+                 [class.shell-hud__timer--pulse]="timerPulse()">
+              {{ timeRemaining() }}s
+            </div>
+          }
+        </div>
         <div class="shell-hud__lives">
           @for (life of livesArray(); track $index) {
             <span class="shell-hud__life" [class.shell-hud__life--empty]="!life.filled">

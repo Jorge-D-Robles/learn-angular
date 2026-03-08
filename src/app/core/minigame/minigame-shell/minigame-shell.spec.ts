@@ -666,4 +666,32 @@ describe('MinigameShellComponent', () => {
     expect(shellComponent.timerColor()).toBe('var(--nx-color-sensor-green)');
     expect(shellComponent.timerPulse()).toBe(false);
   });
+
+  // --- 45. Primary group wraps score and timer ---
+  it('should wrap score and timer in shell-hud__primary group', async () => {
+    const { fixture, element } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS],
+      detectChanges: false,
+    });
+    fixture.componentInstance.timerDuration = 60;
+    fixture.componentInstance.timeRemaining = 30;
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const primary = element.querySelector('.shell-hud__primary');
+    expect(primary).toBeTruthy();
+    expect(primary?.querySelector('.shell-hud__score')).toBeTruthy();
+    expect(primary?.querySelector('.shell-hud__timer')).toBeTruthy();
+  });
+
+  // --- 46. Primary group contains score even when timer is hidden ---
+  it('should contain score in shell-hud__primary even without timer', async () => {
+    const { element } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS],
+    });
+    const primary = element.querySelector('.shell-hud__primary');
+    expect(primary).toBeTruthy();
+    expect(primary?.querySelector('.shell-hud__score')).toBeTruthy();
+    expect(primary?.querySelector('.shell-hud__timer')).toBeNull();
+  });
 });
