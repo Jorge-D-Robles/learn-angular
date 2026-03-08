@@ -69,6 +69,8 @@ export class DailyChallengeService {
     this.streakService.recordDailyPlay();
   }
 
+  // Uses toLocaleDateString('en-CA') intentionally. StreakService has its own
+  // _formatDate helper; if both need a shared formatter, extract to a utility.
   private _today(): string {
     return new Date().toLocaleDateString('en-CA');
   }

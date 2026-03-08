@@ -76,13 +76,21 @@ export class StreakService {
   }
 
   private _today(): string {
-    return new Date().toLocaleDateString('en-CA');
+    return this._formatDate(new Date());
   }
 
   private _isYesterday(dateStr: string): boolean {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    return dateStr === yesterday.toLocaleDateString('en-CA');
+    return dateStr === this._formatDate(yesterday);
+  }
+
+  /** Locale-independent YYYY-MM-DD formatter. Avoids toLocaleDateString('en-CA') dependency on ICU data. */
+  private _formatDate(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
 
   private _loadState(): void {

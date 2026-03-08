@@ -359,25 +359,27 @@ describe('DailyChallengeService', () => {
     });
 
     it('should extend streak when completing daily challenge on consecutive days', () => {
-      // Day 1: March 7
-      const service1 = createService();
-      vi.clearAllTimers();
-
-      service1.completeChallenge();
-      TestBed.flushEffects();
-      vi.advanceTimersByTime(500);
+      // Day 1: March 7 — seed localStorage directly with the expected Day 1
+      // streak state. We do NOT call completeChallenge() for Day 1 because its
+      // side effect (a debounced 500ms auto-save timer) would create an orphaned
+      // timer that could race with TestBed.resetTestingModule(). The manual seed
+      // ensures Day 2 StreakService._loadState() finds Day 1 data deterministically.
+      fakeStorage.setItem(
+        'nexus-station:streak',
+        JSON.stringify({
+          currentStreak: 1,
+          activeStreakDays: 1,
+          lastPlayDate: '2026-03-07',
+        }),
+      );
 
       // Day 2: March 8
       vi.setSystemTime(new Date('2026-03-08T12:00:00'));
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({});
       const service2 = createService();
-      vi.clearAllTimers();
-      vi.setSystemTime(new Date('2026-03-08T12:00:00'));
 
       service2.completeChallenge();
-      TestBed.flushEffects();
-      vi.advanceTimersByTime(500);
 
       const streakService = TestBed.inject(StreakService);
       expect(streakService.activeStreakDays()).toBe(2);

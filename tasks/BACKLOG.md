@@ -846,8 +846,8 @@ Acceptance criteria:
 
 ### T-2026-308
 - Title: Fix flaky DailyChallengeService streak extension test
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -862,6 +862,7 @@ Acceptance criteria:
 - [ ] Root cause identified (test timing issue, date boundary, or service logic bug)
 - [ ] Fix applied — test passes reliably
 - [ ] No other tests broken by the fix
+- Started: 2026-03-08
 
 ---
 

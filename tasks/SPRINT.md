@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-308**: Fix flaky DailyChallengeService streak extension test (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -18,7 +20,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-308**: Fix flaky DailyChallengeService streak extension test (Priority: medium, Size: S)
 - **T-2026-299**: Add error state rendering to MinigamePlayPage on level load failure (Priority: medium, Size: S)
 - **T-2026-300**: Integrate HintService penalty into LevelCompletionService score flow (Priority: medium, Size: S)
 - **T-2026-301**: Wire PlayMode context into MinigamePlayPage and replay mode pages (Priority: medium, Size: S)
