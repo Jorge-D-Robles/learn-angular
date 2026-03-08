@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-410**: Wire ConveyorBeltService into ModuleAssemblyEngine initialize and tick lifecycle (Assigned: claude, Status: in-progress)
 
 
 
