@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-224**: Create RankUpNotificationService to trigger rank-up overlay on rank change (Assigned: claude, Status: in-progress)
 
 
 
