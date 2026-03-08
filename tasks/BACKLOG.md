@@ -4512,25 +4512,6 @@ Acceptance criteria:
 - [ ] Verifies pause/resume interaction
 - [ ] Tests run via `npm run e2e`
 
-### T-2026-376
-- Title: Update architecture.md persistence table with LevelProgressionService key
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-375
-- Blocked-by: —
-- Tags: docs, architecture, persistence
-- Refs: docs/architecture.md, src/app/core/levels/level-progression.service.ts
-
-Architecture.md Section 6 "Progression Persistence" lists all services that persist to localStorage with their keys. After T-2026-375 adds persistence to LevelProgressionService, the documentation must be updated to include the new `level-progression` key in the persistence table.
-
-Acceptance criteria:
-- [ ] `level-progression` key added to the "Services That Persist" table in architecture.md
-- [ ] Entry includes: service name (LevelProgressionService), data description (per-level scores, stars, completion)
-- [ ] No other stale entries in the persistence table
-
 ### T-2026-377
 - Title: Add beforeunload handler to MinigamePlayPage for unsaved game warning
 - Status: todo

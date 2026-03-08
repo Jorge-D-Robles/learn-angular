@@ -15,11 +15,11 @@ Started: 2026-03-08
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-376**: Update architecture.md persistence table with LevelProgressionService key (Priority: low, Size: S, Depends: T-2026-375)
 
 ---
 
