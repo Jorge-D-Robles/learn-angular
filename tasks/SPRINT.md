@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-311**: Create integration test for MinigameEngine auto-pause on page visibility change (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -18,7 +20,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-311**: Create integration test for MinigameEngine auto-pause on page visibility change (Priority: medium, Size: S)
 - **T-2026-319**: Wire registry scoreConfig.maxScore into MinigamePlayPage buildMinigameResult (Priority: medium, Size: S)
 - **T-2026-318**: Create MinigamePlayPage retry flow integration test (Priority: medium, Size: S)
 - **T-2026-043**: Populate architecture.md with P1 technical decisions (Priority: low, Size: S)
