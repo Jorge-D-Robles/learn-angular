@@ -1,4 +1,5 @@
 import {
+  CircleCheck,
   House,
   Lock,
   Map,
@@ -31,11 +32,13 @@ export { LucideAngularModule } from 'lucide-angular';
  *   user     -> User         | settings -> Settings
  *   star     -> Star         | heart    -> Heart
  *   pause    -> Pause        | play     -> Play
+ *   check    -> CircleCheck
  *   chevron  -> ChevronRight/Down/Left/Up
  *   alert    -> CircleAlert   | refresh  -> RefreshCw
  *   x-close  -> X
  */
 export const APP_ICONS: LucideIcons = {
+  CircleCheck,
   House,
   Lock,
   Map,
