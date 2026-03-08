@@ -193,3 +193,4 @@
 [2026-03-08] T-2026-167: Add campaign route to app.routes.ts — campaign route with placeholder page and simplified side nav (claude)
 [2026-03-08] T-2026-061: Register Module Assembly in MinigameRegistry and wire routes — provideMinigame helper, engine injector wiring, Module Assembly registration (claude)
 [2026-03-08] T-2026-063: Create Wire Protocol minigame engine — Wire Protocol engine with verification-centric scoring and addScore base class method (claude)
+[2026-03-08] T-2026-067: Create Flow Commander minigame engine — Flow Commander engine with BFS simulation, gate routing, and condition evaluation (claude)
