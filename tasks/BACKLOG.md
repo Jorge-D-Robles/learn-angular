@@ -303,29 +303,6 @@ Acceptance criteria:
 - [ ] Theme persists across page reloads (already handled by SettingsService auto-save)
 - [ ] Unit tests for: body class updates when theme changes, correct class per theme value
 
-### T-2026-168
-- Title: Create MinigameInstructionsData for all P2 minigame tutorial content
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P2
-- Depends: T-2026-163, T-2026-058, T-2026-062, T-2026-066, T-2026-070
-- Blocked-by: —
-- Tags: content, tutorial, minigame, data
-- Refs: docs/minigames/01-module-assembly.md, docs/minigames/02-wire-protocol.md, docs/minigames/03-flow-commander.md, docs/minigames/04-signal-corps.md
-
-Each minigame spec includes a "Controls" section detailing the interaction model. This ticket creates the tutorial step data for the 4 P2 minigames (Module Assembly, Wire Protocol, Flow Commander, Signal Corps) so MinigameTutorialOverlayComponent can display first-time play instructions.
-
-Acceptance criteria:
-- [ ] Tutorial data file at `src/app/data/tutorials/minigame-tutorials.data.ts`
-- [ ] `MinigameTutorialData` interface: gameId, steps (title, description)
-- [ ] Module Assembly tutorial: 3-4 steps covering drag-from-belt, slot matching, decoy rejection, keyboard shortcuts
-- [ ] Wire Protocol tutorial: 3-4 steps covering source-target clicking, wire type selection, verification, wire removal
-- [ ] Flow Commander tutorial: 3-4 steps covering gate placement, condition configuration, run/reset, item routing
-- [ ] Signal Corps tutorial: 3-4 steps covering tower configuration, input/output declaration, parent wiring, deploy
-- [ ] Unit tests for: all 4 games have tutorial data, each has 3-4 steps, required fields populated
-
 ### T-2026-171
 - Title: Create accessibility audit ticket for WCAG 2.1 AA compliance
 - Status: todo
