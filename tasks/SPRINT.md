@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-056**: Create ComboTrackerService for combo multiplier mechanics (Assigned: claude, Status: in-progress)
 
 
 
