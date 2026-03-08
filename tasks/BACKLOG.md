@@ -264,27 +264,6 @@ Acceptance criteria:
 - [ ] "Back to Dashboard" navigation on completion
 - [ ] Unit tests for: content loading, challenge completion, mastery restoration display
 
-### T-2026-239
-- Title: Add engine.reset() method to MinigameEngine base class
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: —
-- Blocked-by: —
-- Tags: engine, api, minigame
-- Refs: src/app/core/minigame/minigame-engine.ts
-
-MinigameEngine has no `reset()` method. The current workaround for restarting a level is calling `engine.initialize(levelData)` + `engine.start()` separately (used by MinigamePlayPage.onRetry()). Add a convenience `reset()` method that encapsulates this pattern for a cleaner API.
-
-AC:
-- [ ] Add `reset()` method to MinigameEngine that calls `initialize(currentLevelData) + start()`
-- [ ] Engine stores reference to last-used level data for reset
-- [ ] Unit tests for reset behavior
-- [ ] Update MinigamePlayPage.onRetry() to use `engine.reset()` instead of manual initialize+start
-- Started: 2026-03-08
-
 ### T-2026-242
 - Title: Wire SettingsService animationSpeed to AnimationService duration multiplier
 - Status: todo

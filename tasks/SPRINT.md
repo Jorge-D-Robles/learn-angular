@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-239**: Add engine.reset() method to MinigameEngine base class (Assigned: claude, Status: in-progress)
 
 
 

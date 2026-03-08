@@ -138,3 +138,4 @@
 [2026-03-08] T-2026-210: Integrate PlayTimeService with MinigameEngine session tracking — PlayTimeTracker interface wired into engine lifecycle with pause-aware timing (claude)
 [2026-03-08] T-2026-286: Add Playwright E2E job to GitHub Actions CI workflow — Playwright E2E job with browser caching, system deps, and failure artifact upload (claude)
 [2026-03-08] T-2026-322: Wire AudioService into MinigameEngine lifecycle for game feedback sounds — SoundPlayer interface wired into engine lifecycle for correct/incorrect/complete/fail sounds (claude)
+[2026-03-08] T-2026-239: Add engine.reset() method to MinigameEngine base class — added reset() method and simplified MinigamePlayPage.onRetry() (claude)
