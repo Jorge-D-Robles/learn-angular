@@ -30,8 +30,8 @@ Acceptance criteria:
 
 ### T-2026-163
 - Title: Create MinigameTutorialOverlayComponent for first-time play instructions
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -52,6 +52,7 @@ Acceptance criteria:
 - [ ] Shown automatically on first play, accessible via pause menu "How to Play" on subsequent plays
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: step navigation, skip button, persistence of "don't show again" flag
+- Started: 2026-03-08
 
 ### T-2026-205
 - Title: Integrate MinigameTutorialOverlay with MinigameShell first-play detection

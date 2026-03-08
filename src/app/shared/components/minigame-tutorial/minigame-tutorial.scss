@@ -1,0 +1,129 @@
+.tutorial {
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card);
+  background: var(--nx-color-hull);
+  color: var(--nx-color-display);
+  padding: var(--nx-space-8);
+  max-width: 480px;
+  width: 90vw;
+  text-align: center;
+  animation: tutorialFadeIn var(--nx-duration-normal) var(--nx-ease-out);
+
+  &::backdrop {
+    background: rgba(10, 14, 26, 0.85);
+  }
+}
+
+.tutorial__content {
+  margin-bottom: var(--nx-space-4);
+}
+
+.tutorial__image {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: var(--nx-radius-button);
+  margin-bottom: var(--nx-space-4);
+  object-fit: contain;
+}
+
+.tutorial__title {
+  margin: 0 0 var(--nx-space-2);
+  font-size: var(--nx-text-section-heading-size);
+  font-weight: var(--nx-text-section-heading-weight);
+  color: var(--nx-color-beacon);
+}
+
+.tutorial__description {
+  margin: 0;
+  font-size: var(--nx-text-body-size);
+  color: var(--nx-color-corridor);
+  line-height: 1.5;
+}
+
+.tutorial__indicator {
+  margin: var(--nx-space-4) 0;
+  font-size: var(--nx-text-caption-size);
+  color: var(--nx-color-corridor);
+}
+
+.tutorial__checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nx-space-2);
+  margin-bottom: var(--nx-space-4);
+  font-size: var(--nx-text-caption-size);
+  color: var(--nx-color-corridor);
+
+  input[type='checkbox'] {
+    accent-color: var(--nx-color-reactor-blue);
+  }
+}
+
+.tutorial__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tutorial__nav {
+  display: flex;
+  gap: var(--nx-space-2);
+}
+
+.tutorial__btn {
+  padding: var(--nx-space-2) var(--nx-space-4);
+  border-radius: var(--nx-radius-button);
+  font-size: var(--nx-text-body-size);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity var(--nx-duration-fast) var(--nx-ease-out);
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.tutorial__btn--skip {
+  background: transparent;
+  border: 1px solid var(--nx-color-bulkhead);
+  color: var(--nx-color-corridor);
+}
+
+.tutorial__btn--prev {
+  background: transparent;
+  border: 1px solid var(--nx-color-bulkhead);
+  color: var(--nx-color-corridor);
+}
+
+.tutorial__btn--next {
+  background: var(--nx-color-reactor-blue);
+  color: white;
+}
+
+@keyframes tutorialFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tutorial {
+    animation: none;
+  }
+
+  .tutorial__btn {
+    transition: none;
+  }
+}
