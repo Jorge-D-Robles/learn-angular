@@ -30,8 +30,8 @@ Acceptance criteria:
 
 ### T-2026-130
 - Title: Create TooltipDirective for contextual help
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -53,6 +53,7 @@ Acceptance criteria:
 - [ ] Keyboard accessible: shows on focus, hides on blur
 - [ ] Exported from shared directives barrel
 - [ ] Unit tests for: show/hide on hover, position classes, keyboard accessibility
+- Started: 2026-03-08
 
 ### T-2026-132
 - Title: Style NotFoundPage with station theme

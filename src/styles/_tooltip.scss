@@ -1,0 +1,66 @@
+@use 'tokens' as t;
+
+.nx-tooltip {
+  position: fixed;
+  z-index: 10000;
+  max-width: 250px;
+  padding: t.$nx-space-2 t.$nx-space-3;
+  background-color: var(--nx-color-hull);
+  color: var(--nx-color-display);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: t.$nx-radius-button;
+  font-size: var(--nx-text-caption-size);
+  font-weight: var(--nx-text-caption-weight);
+  line-height: 1.4;
+  pointer-events: none;
+  white-space: normal;
+  word-wrap: break-word;
+  animation: nx-fade-in-kf t.$nx-duration-fast t.$nx-ease-out both;
+
+  // Arrow styles via pseudo-element (absolute relative to the fixed tooltip container)
+  &::after {
+    content: '';
+    position: absolute;
+    border: 5px solid transparent;
+  }
+
+  &--top {
+    transform: translateX(-50%) translateY(-100%);
+    &::after {
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-top-color: var(--nx-color-bulkhead);
+    }
+  }
+
+  &--bottom {
+    transform: translateX(-50%);
+    &::after {
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-bottom-color: var(--nx-color-bulkhead);
+    }
+  }
+
+  &--left {
+    transform: translateX(-100%) translateY(-50%);
+    &::after {
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      border-left-color: var(--nx-color-bulkhead);
+    }
+  }
+
+  &--right {
+    transform: translateY(-50%);
+    &::after {
+      right: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      border-right-color: var(--nx-color-bulkhead);
+    }
+  }
+}
