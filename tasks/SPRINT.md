@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-355**: Add ARIA landmark roles to app shell layout regions (Assigned: claude, Status: in-progress)
 
 
 ---

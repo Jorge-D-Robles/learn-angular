@@ -357,28 +357,6 @@ Acceptance criteria:
 - [ ] Uses real services (minimal mocking -- only HTMLAudioElement needs mocking)
 - [ ] Does not require DOM rendering (service-level integration only)
 
-### T-2026-355
-- Title: Add ARIA landmark roles to app shell layout regions
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-009
-- Blocked-by: —
-- Tags: accessibility, a11y, landmarks, app-shell
-- Refs: docs/ux/navigation.md, src/app/app.html
-
-WCAG 2.1 AA specifies ARIA landmark roles for page regions so screen readers can navigate by structure. The app shell has distinct regions (header/top bar, navigation, main content, footer) but no ticket ensures proper landmark roles are applied.
-
-Acceptance criteria:
-- [ ] Top bar has `role="banner"` or uses `<header>` element
-- [ ] Side nav and bottom nav have `role="navigation"` with `aria-label` distinguishing them (e.g., "Main navigation", "Mobile navigation")
-- [ ] Router-outlet container has `role="main"` or uses `<main>` element with `id="main-content"`
-- [ ] No duplicate landmark roles without distinguishing `aria-label`
-- [ ] Unit tests for: landmark role presence, aria-label values
-- Started: 2026-03-08
-
 ### T-2026-362
 - Title: Add route title metadata to all route definitions for a11y and browser tab
 - Status: todo
