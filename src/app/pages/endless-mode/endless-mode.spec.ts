@@ -2,6 +2,7 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
 import { createComponent } from '../../../testing/test-utils';
 import { EndlessModePage } from './endless-mode';
+import { PlayMode } from '../../core/minigame/minigame.types';
 
 function mockActivatedRoute(params: Record<string, string> = {}) {
   return {
@@ -40,5 +41,12 @@ describe('EndlessModePage', () => {
     });
     const p = element.querySelector('p');
     expect(p?.textContent).toContain('Game:');
+  });
+
+  it('should have playMode set to PlayMode.Endless', async () => {
+    const { component } = await createComponent(EndlessModePage, {
+      providers: [mockActivatedRoute({ gameId: 'wire-protocol' })],
+    });
+    expect(component.playMode).toBe(PlayMode.Endless);
   });
 });

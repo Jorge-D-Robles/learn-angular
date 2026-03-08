@@ -2,6 +2,7 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
 import { createComponent } from '../../../testing/test-utils';
 import { DailyChallengePage } from './daily-challenge';
+import { PlayMode } from '../../core/minigame/minigame.types';
 
 function mockActivatedRoute(params: Record<string, string> = {}) {
   return {
@@ -40,5 +41,12 @@ describe('DailyChallengePage', () => {
     });
     const p = element.querySelector('p');
     expect(p?.textContent).toContain('Game:');
+  });
+
+  it('should have playMode set to PlayMode.DailyChallenge', async () => {
+    const { component } = await createComponent(DailyChallengePage, {
+      providers: [mockActivatedRoute({ gameId: 'wire-protocol' })],
+    });
+    expect(component.playMode).toBe(PlayMode.DailyChallenge);
   });
 });

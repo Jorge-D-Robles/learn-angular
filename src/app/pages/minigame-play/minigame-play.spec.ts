@@ -19,7 +19,7 @@ import { LevelCompletionService, type LevelCompletionSummary } from '../../core/
 import { HintService, type HintResult } from '../../core/minigame/hint.service';
 import { MinigameEngine, type ActionResult, type MinigameEngineConfig } from '../../core/minigame/minigame-engine';
 import type { MinigameConfig } from '../../core/minigame/minigame.types';
-import { DifficultyTier, MinigameStatus } from '../../core/minigame/minigame.types';
+import { DifficultyTier, MinigameStatus, PlayMode } from '../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
 
 const ICON_PROVIDERS = [
@@ -1473,5 +1473,51 @@ describe('MinigamePlayPage', () => {
     expect(component.viewState()).toBe('ready');
     // Engine should be loaded successfully
     expect(component.engine()).not.toBeNull();
+  });
+
+  // --- PlayMode context ---
+  it('should set PlayMode.Story during engine initialization', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.engine()!.playMode()).toBe(PlayMode.Story);
+    testEngine.destroy();
+  });
+
+  it('should set PlayMode.Story on retry', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Fail the game so we can retry
+    testEngine.fail();
+    expect(testEngine.status()).toBe(MinigameStatus.Lost);
+
+    // Spy on setPlayMode BEFORE calling onRetry
+    const spy = vi.spyOn(component.engine()!, 'setPlayMode');
+
+    component.onRetry();
+    fixture.detectChanges();
+
+    expect(spy).toHaveBeenCalledWith(PlayMode.Story);
+    expect(component.engine()!.playMode()).toBe(PlayMode.Story);
+    testEngine.destroy();
   });
 });

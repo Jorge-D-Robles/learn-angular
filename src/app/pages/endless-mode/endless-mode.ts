@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
+import { PlayMode } from '../../core/minigame/minigame.types';
 
 @Component({
   selector: 'app-endless-mode',
@@ -12,6 +13,7 @@ import { map } from 'rxjs';
 })
 export class EndlessModePage {
   private readonly route = inject(ActivatedRoute);
+  readonly playMode = PlayMode.Endless;
 
   readonly gameId = toSignal(
     this.route.paramMap.pipe(map((params) => params.get('gameId') ?? '')),

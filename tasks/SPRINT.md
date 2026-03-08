@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-301**: Wire PlayMode context into MinigamePlayPage and replay mode pages (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -21,7 +23,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-301**: Wire PlayMode context into MinigamePlayPage and replay mode pages (Priority: medium, Size: S)
 - **T-2026-302**: Add MinigameScoreConfig to MinigameConfig for per-game scoring parameters (Priority: medium, Size: S)
 - **T-2026-306**: Create integration test for MinigamePlayPage completion-to-progression pipeline (Priority: medium, Size: S)
 

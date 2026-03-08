@@ -651,8 +651,8 @@ Acceptance criteria:
 
 ### T-2026-301
 - Title: Wire PlayMode context into MinigamePlayPage and replay mode pages
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -670,6 +670,7 @@ Acceptance criteria:
 - [ ] DailyChallengePage sets `PlayMode.DailyChallenge` when initializing its engine
 - [ ] PlayMode is available to downstream services (e.g., LevelCompletionService can check if replay mode to skip diminishing returns)
 - [ ] Unit tests for: play mode set on each page type
+- Started: 2026-03-08
 
 ### T-2026-302
 - Title: Add MinigameScoreConfig to MinigameConfig for per-game scoring parameters
@@ -798,6 +799,71 @@ Acceptance criteria:
 - [ ] Uses compact/small variant of StreakBadgeComponent
 - [ ] Responsive: hidden on mobile (bottom nav handles navigation; top bar is already tight)
 - [ ] Unit tests for: badge visibility with active streak, hidden with no streak
+
+### T-2026-310
+- Title: Remove stale completed tickets from BACKLOG.md
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P1
+- Depends: —
+- Blocked-by: —
+- Tags: infrastructure, backlog-hygiene, cleanup
+- Refs: tasks/BACKLOG.md, tasks/COMPLETED.md
+
+T-2026-201 (ComboTrackerService barrel), T-2026-230 (LifetimeStatsService barrel), and T-2026-231 (RankUpNotificationService barrel) are marked as completed in COMPLETED.md but their ticket entries still appear in BACKLOG.md. Per project conventions, completed tickets must be removed entirely from the backlog. Additionally, T-2026-180 has an ID collision: the completed ticket (scaffold features/minigames directory structure) shares its ID with an open ticket (add multiple-choice question support to RefresherChallengeService). The open ticket must be reassigned a new ID.
+
+Acceptance criteria:
+- [ ] T-2026-201, T-2026-230, T-2026-231 entries removed from BACKLOG.md (already in COMPLETED.md)
+- [ ] Open ticket "Add multiple-choice question support to RefresherChallengeService" (currently T-2026-180) reassigned to a new ticket ID to resolve the collision with the completed T-2026-180
+- [ ] No ticket IDs appear in both BACKLOG.md and COMPLETED.md after cleanup
+- [ ] Verification: `grep -oE 'T-2026-[0-9]+' tasks/BACKLOG.md | sort -u` has no overlap with `grep -oE 'T-2026-[0-9]+' tasks/COMPLETED.md | sort -u`
+
+### T-2026-311
+- Title: Create integration test for MinigameEngine auto-pause on page visibility change
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-288, T-2026-295
+- Blocked-by: —
+- Tags: testing, integration, minigame-framework, auto-pause, lifecycle
+- Refs: src/app/core/minigame/minigame-engine.ts, src/app/core/minigame/minigame-engine.spec.ts
+
+T-2026-288 added auto-pause on tab visibility change and T-2026-295 added onPause/onResume lifecycle hooks. These features have unit tests in isolation but no integration test verifies the full sequence: user switches tab -> engine auto-pauses -> onPause called -> user returns -> engine resumes -> onResume called -> timer resumes from correct position. This is a critical user-facing behavior that could regress if the visibility listener, pause state machine, or lifecycle hooks are modified independently.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/minigame/auto-pause.integration.spec.ts`
+- [ ] Test: engine in Playing state -> simulate visibilitychange to hidden -> verify status is Paused and _autoPaused flag set
+- [ ] Test: auto-paused engine -> simulate visibilitychange to visible -> verify status returns to Playing
+- [ ] Test: manually paused engine -> simulate visibility hidden + visible -> verify engine remains paused (manual pause takes precedence)
+- [ ] Test: verify onPause() called on auto-pause, onResume() called on auto-resume
+- [ ] Test: verify timer elapsed time excludes auto-paused duration
+- [ ] Uses real MinigameEngine subclass (not mocks) for true integration
+
+### T-2026-318
+- Title: Create MinigamePlayPage retry flow integration test
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-309, T-2026-184
+- Blocked-by: —
+- Tags: testing, integration, minigame-play, retry, hint, combo
+- Refs: src/app/pages/minigame-play/minigame-play.ts
+
+T-2026-309 fixes HintService reset on retry, and T-2026-184 integrates ComboTrackerService with MinigameEngine. The retry flow involves resetting multiple services (hints, combo, engine state, completion flag). No integration test verifies the full retry pipeline: player fails/completes -> clicks retry -> all services reset -> new attempt starts clean. A regression in any reset step would silently corrupt scoring or progression.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/pages/minigame-play/minigame-play-retry.integration.spec.ts`
+- [ ] Test: complete level with hints used -> retry -> verify hintService.hasUsedHints() is false
+- [ ] Test: complete level with combo active -> retry -> verify comboTracker is reset to 0
+- [ ] Test: complete level -> retry -> complete again -> verify LevelCompletionService called twice (not blocked by completionFired)
+- [ ] Test: fail level -> retry -> verify engine status returns to Playing
+- [ ] Uses TestBed with real services where possible
 
 ---
 
@@ -2113,6 +2179,149 @@ Acceptance criteria:
 - [ ] Smoke test at `e2e/a11y-smoke.spec.ts`: scan dashboard page for violations
 - [ ] Test integrated into CI (runs with existing Playwright job)
 - [ ] Documentation: how to run a11y tests locally
+
+### T-2026-312
+- Title: Wire LifetimeStatsService aggregate data into ProfilePage
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-212, T-2026-079
+- Blocked-by: —
+- Tags: integration, profile, stats, progression
+- Refs: docs/ux/navigation.md, src/app/core/progression/lifetime-stats.service.ts
+
+Navigation.md specifies the Profile page shows: "Rank and XP breakdown", "Play time stats", "Campaign progress: missions completed / total, percentage". LifetimeStatsService (T-2026-212) aggregates data from 6 services into a single ProfileStats computed signal. ProfilePage (T-2026-079) lists these as acceptance criteria but no ticket explicitly wires LifetimeStatsService into the page template. Without this integration, the profile page must inject 6+ services individually instead of using the facade.
+
+Acceptance criteria:
+- [ ] ProfilePage injects LifetimeStatsService
+- [ ] ProfileStats signal used for: total XP, current rank, missions completed, total missions, total play time, games played
+- [ ] Campaign progress section shows `completedMissions / totalMissions` with percentage bar
+- [ ] Play time stats section uses TimeFormatPipe for formatting durations
+- [ ] All stats update reactively when underlying service data changes
+- [ ] Unit tests for: stats rendering from LifetimeStatsService, reactive updates
+
+### T-2026-313
+- Title: Wire StatePersistenceService export/import into SettingsPage buttons
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-080, T-2026-024
+- Blocked-by: —
+- Tags: integration, settings, persistence, export-import
+- Refs: docs/ux/navigation.md, src/app/core/persistence/state-persistence.service.ts
+
+SettingsPage (T-2026-080) specifies "Export Progress" and "Import Progress" buttons, and StatePersistenceService (T-2026-024) provides `exportState()` (returns JSON string) and `importState(json)` (restores from JSON). No ticket wires these together. The export button should trigger a file download of the JSON, and the import button should open a file picker, read the JSON, and restore state with confirmation.
+
+Acceptance criteria:
+- [ ] "Export Progress" button calls StatePersistenceService.exportState() and triggers a browser file download (JSON file named `learn-angular-progress-YYYY-MM-DD.json`)
+- [ ] "Import Progress" button opens a file input, reads the selected JSON file
+- [ ] Import triggers ConfirmDialogComponent (warning variant): "This will replace all current progress. Continue?"
+- [ ] On confirm, calls StatePersistenceService.importState(json) and reloads app state
+- [ ] Error handling: shows error toast if imported file is invalid JSON or has wrong format
+- [ ] Unit tests for: export triggers download, import shows confirmation, import applies state, invalid file shows error
+
+### T-2026-314
+- Title: Update bottom nav "Mission" link to point to campaign route
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-167, T-2026-011
+- Blocked-by: —
+- Tags: navigation, bottom-nav, campaign, routing
+- Refs: docs/ux/navigation.md, src/app/app.html
+
+T-2026-167 creates the `/campaign` route and updates the side nav "Current Mission" link. T-2026-228 updated the bottom nav "Mission" link to use dynamic mission resolution via GameProgressionService. When the campaign page is built, the bottom nav "Mission" tab should navigate to `/campaign` rather than dynamically resolving to an individual mission chapter. This keeps mobile navigation consistent with desktop side nav behavior.
+
+Acceptance criteria:
+- [ ] Bottom nav "Mission" tab navigates to `/campaign` route
+- [ ] `routerLinkActive` highlights the tab when on `/campaign` or any `/mission/:chapterId` route
+- [ ] Label remains "Mission" for compact mobile display
+- [ ] Existing unit tests updated for new route target
+- [ ] No regression in desktop side nav behavior
+
+### T-2026-315
+- Title: Create MasteryTableComponent for sortable topic mastery display
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-034, T-2026-022, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, profile, mastery, shared
+- Refs: docs/ux/navigation.md, docs/progression.md
+
+Navigation.md specifies the Profile page shows "Mastery stars per topic (table view), sortable". ProfilePage (T-2026-079) lists "Mastery table: all Angular topics with mastery stars (MasteryStarsComponent), sortable" as an acceptance criterion. No reusable component encapsulates this table. A dedicated MasteryTableComponent prevents ProfilePage from becoming monolithic and allows reuse on the campaign page or dashboard.
+
+Acceptance criteria:
+- [ ] `MasteryTableComponent` at `src/app/shared/components/mastery-table/`
+- [ ] Selector: `nx-mastery-table`
+- [ ] Input: `masteryData` (array of {topicId, topicName, mastery: number (0-5), lastPracticed?: Date})
+- [ ] Columns: Topic Name, Mastery Stars (MasteryStarsComponent), Last Practiced (relative time), Status (active/degrading)
+- [ ] Sortable by: topic name (alpha), mastery level (numeric), last practiced (date)
+- [ ] Default sort: mastery ascending (lowest mastery first, nudging improvement)
+- [ ] Degrading topics highlighted with Alert Orange indicator
+- [ ] Responsive: collapses to card layout on mobile
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: row rendering, sort by each column, degrading indicator, responsive layout
+
+### T-2026-316
+- Title: Create DailyChallengeCardComponent for dashboard daily challenge widget
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-041, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, daily-challenge, dashboard, shared
+- Refs: docs/ux/navigation.md, docs/progression.md, docs/research/gamification-patterns.md
+
+T-2026-234 wires the daily challenge notification into DashboardPage but describes the widget inline in its acceptance criteria. Extracting this into a reusable DailyChallengeCardComponent keeps DashboardPage lean and allows reuse in other contexts (e.g., minigame hub sidebar). The component encapsulates the daily challenge display logic: today's game, XP bonus, completion state, and countdown to next challenge.
+
+Acceptance criteria:
+- [ ] `DailyChallengeCardComponent` at `src/app/shared/components/daily-challenge-card/`
+- [ ] Selector: `nx-daily-challenge-card`
+- [ ] Inputs: `challenge` (DailyChallenge), `isCompleted` (boolean), `streakDays` (number)
+- [ ] Not completed state: game name, topic, "+50 XP" badge, "Accept Challenge" button
+- [ ] Completed state: checkmark icon, score summary, countdown to next challenge (hours:minutes)
+- [ ] Streak indicator: flame icon with day count
+- [ ] Station-themed card styling: Hull background, Reactor Blue accent
+- [ ] Output: `acceptChallenge` event with gameId
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: not-completed rendering, completed rendering, countdown display, accept event
+
+### T-2026-317
+- Title: Create ActiveMissionCardComponent for dashboard mission prompt widget
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-216, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, story-missions, dashboard, shared
+- Refs: docs/ux/navigation.md, docs/curriculum.md
+
+T-2026-235 wires the active story mission prompt into DashboardPage but describes the widget inline. Extracting this into a reusable ActiveMissionCardComponent keeps DashboardPage lean and allows reuse on the campaign page. The component shows the next uncompleted mission with a "Continue" call-to-action.
+
+Acceptance criteria:
+- [ ] `ActiveMissionCardComponent` at `src/app/shared/components/active-mission-card/`
+- [ ] Selector: `nx-active-mission-card`
+- [ ] Inputs: `mission` (StoryMission | null), `isAllComplete` (boolean)
+- [ ] Active mission state: chapter number badge, title, Angular topic, "Continue" button
+- [ ] All-complete state: "Campaign Complete" message with station icon and total XP summary
+- [ ] No mission available state: "Begin your journey" message with "Start Mission 1" button
+- [ ] Station-themed styling: Hull background, Sensor Green accent for active, Solar Gold for complete
+- [ ] Output: `continueClicked` event with chapterId
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: active mission rendering, all-complete state, no-mission state, click event
 
 ---
 
@@ -4288,3 +4497,4 @@ Acceptance criteria:
 - [ ] `onRetry()` calls `hintService.reset()` before re-initializing the engine
 - [ ] Unit test: after retry, `hintService.hasUsedHints()` returns false
 - [ ] Unit test: after retry with hints used, completing level awards full XP (no carry-over penalty)
+

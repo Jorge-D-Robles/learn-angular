@@ -13,7 +13,7 @@ import { HintService } from '../../core/minigame/hint.service';
 import { KeyboardShortcutService } from '../../core/minigame/keyboard-shortcut.service';
 import { MinigameEngine } from '../../core/minigame/minigame-engine';
 import { ScoreCalculationService } from '../../core/minigame/score-calculation.service';
-import { MinigameStatus, type MinigameId, type MinigameLevel, type MinigameResult } from '../../core/minigame/minigame.types';
+import { MinigameStatus, PlayMode, type MinigameId, type MinigameLevel, type MinigameResult } from '../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 
@@ -237,6 +237,7 @@ export class MinigamePlayPage {
             const level = this.toMinigameLevel(def);
             this.currentLevelData = level;
             eng.initialize(level);
+            eng.setPlayMode(PlayMode.Story);
             eng.start();
             this.engine.set(eng);
 
@@ -332,6 +333,7 @@ export class MinigamePlayPage {
       this.completionFired = false;
       this.completionSummary.set(null);
       eng.initialize(this.currentLevelData);
+      eng.setPlayMode(PlayMode.Story);
       eng.start();
     }
   }
