@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-362**: Add route title metadata to all route definitions for a11y and browser tab (Assigned: claude, Status: in-progress)
 
 
 

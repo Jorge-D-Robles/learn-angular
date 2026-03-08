@@ -357,28 +357,6 @@ Acceptance criteria:
 - [ ] Uses real services (minimal mocking -- only HTMLAudioElement needs mocking)
 - [ ] Does not require DOM rendering (service-level integration only)
 
-### T-2026-362
-- Title: Add route title metadata to all route definitions for a11y and browser tab
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-012
-- Blocked-by: —
-- Tags: accessibility, a11y, routing, infrastructure
-- Refs: docs/ux/navigation.md, src/app/app.routes.ts
-
-WCAG 2.1 AA and good UX require meaningful page titles. Angular's router supports a `title` property on route definitions, which can drive both `document.title` updates and screen reader announcements (needed by T-2026-356). Currently no route in `app.routes.ts` has a `title` property. Without titles, the browser tab always shows the app name regardless of current page, and T-2026-356 has no title metadata to announce.
-
-Acceptance criteria:
-- [ ] All routes in `app.routes.ts` have a `title` property matching their purpose
-- [ ] Title values: "Dashboard" (home), "Mission :chapterId" (mission), "Minigames" (hub), "Level Select" (game levels), "Play" (gameplay), "Endless Mode", "Speed Run", "Daily Challenge", "Profile", "Settings", "Not Found"
-- [ ] Dynamic route titles use Angular's route `title` resolver or string template where needed
-- [ ] `document.title` updates automatically on navigation via Angular's built-in `TitleStrategy`
-- [ ] Unit tests for: title presence on each route, document.title update on navigation
-- Started: 2026-03-08
-
 ### T-2026-364
 - Title: Create integration test for combo tracking through full score and XP pipeline
 - Status: todo
