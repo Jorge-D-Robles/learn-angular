@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-245**: Wire ExpressionBuilderComponent into Flow Commander gate configuration (Assigned: claude, Status: in-progress)
 
 
 

@@ -538,29 +538,6 @@ Acceptance criteria:
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: locked/unlocked rendering, star display, best score, click event
 
-### T-2026-245
-- Title: Wire ExpressionBuilderComponent into Flow Commander gate configuration
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-160, T-2026-067
-- Blocked-by: —
-- Tags: integration, minigame, flow-commander, expression-builder
-- Refs: docs/minigames/03-flow-commander.md
-
-Flow Commander spec says "Condition editor -- simplified expression builder (not raw code at first)" for basic levels, graduating to "raw expression input at advanced levels." ExpressionBuilderComponent (T-2026-160, completed) provides guided/raw modes. But no ticket explicitly wires it into the Flow Commander gate configuration UI.
-
-Acceptance criteria:
-- [ ] FlowCommanderComponent uses ExpressionBuilderComponent for gate condition editing
-- [ ] Basic/Intermediate tiers: ExpressionBuilderComponent in guided mode
-- [ ] Advanced tier: ExpressionBuilderComponent in raw mode
-- [ ] Gate click opens condition panel with the expression builder
-- [ ] Configured expression stored in gate state for simulation
-- [ ] Unit tests for: expression builder rendering in gate config, mode switching by tier
-- Started: 2026-03-08
-
 ### T-2026-246
 - Title: Wire StationVisualizationComponent into DashboardPage
 - Status: todo

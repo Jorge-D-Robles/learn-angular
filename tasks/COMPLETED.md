@@ -212,3 +212,4 @@
 [2026-03-08] T-2026-410: Wire ConveyorBeltService into ModuleAssemblyEngine initialize and tick lifecycle — wire ConveyorBeltService into engine with tick delegation, exhaustion detection, and 10 integration tests (claude)
 [2026-03-08] T-2026-254: Register story mission content with StoryMissionContentService for P2 missions — register Phase 1 mission content with StoryMissionContentService via provideMissionContent() (claude)
 [2026-03-08] T-2026-259: Create story mission completion handler to award XP and trigger unlock — create StoryMissionCompletionService facade with XP, unlock, and mastery handling (claude)
+[2026-03-08] T-2026-245: Wire ExpressionBuilderComponent into Flow Commander gate configuration — wire ExpressionBuilderComponent with tier-based mode switching for gate configuration (claude)
