@@ -540,8 +540,8 @@ Acceptance criteria:
 
 ### T-2026-245
 - Title: Wire ExpressionBuilderComponent into Flow Commander gate configuration
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P2
@@ -559,6 +559,7 @@ Acceptance criteria:
 - [ ] Gate click opens condition panel with the expression builder
 - [ ] Configured expression stored in gate state for simulation
 - [ ] Unit tests for: expression builder rendering in gate config, mode switching by tier
+- Started: 2026-03-08
 
 ### T-2026-246
 - Title: Wire StationVisualizationComponent into DashboardPage

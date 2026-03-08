@@ -1,7 +1,7 @@
 import { signal, type Signal } from '@angular/core';
 import { MinigameEngine, type ActionResult } from '../../../core/minigame/minigame-engine';
 import type { MinigameEngineConfig } from '../../../core/minigame/minigame-engine';
-import { MinigameStatus } from '../../../core/minigame/minigame.types';
+import { MinigameStatus, type DifficultyTier, type MinigameLevel } from '../../../core/minigame/minigame.types';
 import type {
   FlowCommanderLevelData,
   PipelineGraph,
@@ -122,6 +122,7 @@ export class FlowCommanderEngine extends MinigameEngine<FlowCommanderLevelData> 
   private readonly _targetZones = signal<readonly TargetZone[]>([]);
   private readonly _availableGateTypes = signal<readonly GateType[]>([]);
   private readonly _simulationCount = signal(0);
+  private readonly _currentTier = signal<DifficultyTier | null>(null);
 
   // --- Private lookups ---
   private _nodeMap = new Map<string, PipelineNode>();
@@ -134,12 +135,18 @@ export class FlowCommanderEngine extends MinigameEngine<FlowCommanderLevelData> 
   readonly targetZones: Signal<readonly TargetZone[]> = this._targetZones.asReadonly();
   readonly availableGateTypes: Signal<readonly GateType[]> = this._availableGateTypes.asReadonly();
   readonly simulationCount: Signal<number> = this._simulationCount.asReadonly();
+  readonly currentTier: Signal<DifficultyTier | null> = this._currentTier.asReadonly();
 
   constructor(config?: Partial<MinigameEngineConfig>) {
     super(config);
   }
 
   // --- Lifecycle hooks ---
+
+  override initialize(level: MinigameLevel<FlowCommanderLevelData>): void {
+    this._currentTier.set(level.tier);
+    super.initialize(level);
+  }
 
   protected onLevelLoad(data: FlowCommanderLevelData): void {
     this._pipelineGraph.set(data.graph);

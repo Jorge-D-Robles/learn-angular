@@ -10,6 +10,7 @@ import {
 import { ExpressionBuilderComponent } from '../../../shared/components';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
+import { DifficultyTier } from '../../../core/minigame/minigame.types';
 import { GateType, GATE_TYPE_COLORS } from './pipeline.types';
 import { FlowCommanderEngine, type PlacedGate, type SimulationResult } from './flow-commander.engine';
 
@@ -134,13 +135,22 @@ export class FlowCommanderComponent implements OnDestroy {
     }).filter(t => t !== null);
   });
 
-  // Condition editor mode (based on gate type, not tier)
+  // Condition editor mode (based on tier + gate type)
   readonly conditionEditorMode = computed((): 'guided' | 'raw' => {
     const gateId = this.editingGateId();
     if (!gateId) return 'raw';
     const gate = this.placedGates().get(gateId);
     if (!gate) return 'raw';
-    return gate.gateType === GateType.if ? 'guided' : 'raw';
+
+    // @for and @switch always use raw mode (their conditions don't fit guided builder)
+    if (gate.gateType !== GateType.if) return 'raw';
+
+    // Advanced/Boss tiers use raw mode for all gates
+    const tier = this.engine?.currentTier();
+    if (tier === DifficultyTier.Advanced || tier === DifficultyTier.Boss) return 'raw';
+
+    // Basic/Intermediate @if gates use guided mode
+    return 'guided';
   });
 
   // Current condition value for the editing gate

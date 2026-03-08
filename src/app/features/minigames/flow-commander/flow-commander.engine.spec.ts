@@ -1244,4 +1244,41 @@ describe('FlowCommanderEngine', () => {
       expect(engine.placedGates().get('gate')!.condition).toBe('  ');
     });
   });
+
+  // --- 15. currentTier signal tests ---
+
+  describe('currentTier signal', () => {
+    it('should be null before initialization', () => {
+      const engine = createEngine();
+      expect(engine.currentTier()).toBeNull();
+    });
+
+    it('should reflect the initialized level tier', () => {
+      const engine = createEngine();
+      const level: MinigameLevel<FlowCommanderLevelData> = {
+        ...makeLevel(makeLevelData()),
+        tier: DifficultyTier.Advanced,
+      };
+      engine.initialize(level);
+      expect(engine.currentTier()).toBe(DifficultyTier.Advanced);
+    });
+
+    it('should update when re-initialized with a different tier', () => {
+      const engine = createEngine();
+
+      const basicLevel: MinigameLevel<FlowCommanderLevelData> = {
+        ...makeLevel(makeLevelData()),
+        tier: DifficultyTier.Basic,
+      };
+      engine.initialize(basicLevel);
+      expect(engine.currentTier()).toBe(DifficultyTier.Basic);
+
+      const advancedLevel: MinigameLevel<FlowCommanderLevelData> = {
+        ...makeLevel(makeLevelData()),
+        tier: DifficultyTier.Advanced,
+      };
+      engine.initialize(advancedLevel);
+      expect(engine.currentTier()).toBe(DifficultyTier.Advanced);
+    });
+  });
 });

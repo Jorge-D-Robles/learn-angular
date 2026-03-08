@@ -61,11 +61,11 @@ function createTestLevelData(overrides?: Partial<FlowCommanderLevelData>): FlowC
   };
 }
 
-function createLevel(data: FlowCommanderLevelData): MinigameLevel<FlowCommanderLevelData> {
+function createLevel(data: FlowCommanderLevelData, tier: DifficultyTier = DifficultyTier.Basic): MinigameLevel<FlowCommanderLevelData> {
   return {
     id: 'fc-test-01',
     gameId: 'flow-commander',
-    tier: DifficultyTier.Basic,
+    tier,
     conceptIntroduced: 'Test flow control',
     description: 'Test level',
     data,
@@ -82,9 +82,9 @@ describe('FlowCommanderComponent', () => {
   let component: FlowCommanderComponent;
   let shortcuts: KeyboardShortcutService;
 
-  function setup(levelData?: FlowCommanderLevelData) {
+  function setup(levelData?: FlowCommanderLevelData, tier?: DifficultyTier) {
     engine = new FlowCommanderEngine();
-    engine.initialize(createLevel(levelData ?? createTestLevelData()));
+    engine.initialize(createLevel(levelData ?? createTestLevelData(), tier));
     engine.start();
 
     TestBed.configureTestingModule({
@@ -317,6 +317,42 @@ describe('FlowCommanderComponent', () => {
       fixture.detectChanges();
 
       expect(component.editingGateId()).toBeNull();
+    });
+
+    it('should use guided mode for @if gates on Basic tier', () => {
+      setup(undefined, DifficultyTier.Basic);
+
+      engine.submitAction({ type: 'place-gate', nodeId: 'gate-1', gateType: GateType.if, condition: '' });
+      component.editingGateId.set('gate-1');
+
+      expect(component.conditionEditorMode()).toBe('guided');
+    });
+
+    it('should use raw mode for @if gates on Advanced tier', () => {
+      setup(undefined, DifficultyTier.Advanced);
+
+      engine.submitAction({ type: 'place-gate', nodeId: 'gate-1', gateType: GateType.if, condition: '' });
+      component.editingGateId.set('gate-1');
+
+      expect(component.conditionEditorMode()).toBe('raw');
+    });
+
+    it('should use raw mode for @for gates regardless of tier', () => {
+      setup(createTestLevelData({ availableGateTypes: [GateType.if, GateType.for] }), DifficultyTier.Basic);
+
+      engine.submitAction({ type: 'place-gate', nodeId: 'gate-1', gateType: GateType.for, condition: '' });
+      component.editingGateId.set('gate-1');
+
+      expect(component.conditionEditorMode()).toBe('raw');
+    });
+
+    it('should use raw mode for @switch gates regardless of tier', () => {
+      setup(undefined, DifficultyTier.Basic);
+
+      engine.submitAction({ type: 'place-gate', nodeId: 'gate-1', gateType: GateType.switch, condition: '' });
+      component.editingGateId.set('gate-1');
+
+      expect(component.conditionEditorMode()).toBe('raw');
     });
   });
 
