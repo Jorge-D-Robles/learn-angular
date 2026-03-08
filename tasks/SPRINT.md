@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-318**: Create MinigamePlayPage retry flow integration test (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -20,7 +22,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-318**: Create MinigamePlayPage retry flow integration test (Priority: medium, Size: S)
 - **T-2026-043**: Populate architecture.md with P1 technical decisions (Priority: low, Size: S)
 - **T-2026-051**: Create AudioService for sound effect management (Priority: low, Size: S)
 - **T-2026-052**: Create AnimationService for shared transition utilities (Priority: low, Size: S)

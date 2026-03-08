@@ -680,8 +680,8 @@ Acceptance criteria:
 
 ### T-2026-318
 - Title: Create MinigamePlayPage retry flow integration test
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -699,6 +699,7 @@ Acceptance criteria:
 - [ ] Test: complete level -> retry -> complete again -> verify LevelCompletionService called twice (not blocked by completionFired)
 - [ ] Test: fail level -> retry -> verify engine status returns to Playing
 - [ ] Uses TestBed with real services where possible
+- Started: 2026-03-08
 
 ---
 
