@@ -220,6 +220,13 @@ export abstract class MinigameEngine<TLevelData> {
     this._status.set(MinigameStatus.Lost);
   }
 
+  // --- Score mutation ---
+
+  /** Adds a delta to the current score. Clamps at 0 to prevent negative scores. */
+  protected addScore(delta: number): void {
+    this._score.update((s) => Math.max(0, s + delta));
+  }
+
   // --- Action method ---
 
   /** Submits an action for validation. Only valid from Playing status. */

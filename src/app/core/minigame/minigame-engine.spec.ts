@@ -58,6 +58,11 @@ class TestEngine extends MinigameEngine<{ difficulty: number }> {
     this.lastValidatedAction = action;
     return this.nextValidationResult;
   }
+
+  /** Expose addScore for testing. */
+  testAddScore(delta: number): void {
+    this.addScore(delta);
+  }
 }
 
 // --- Test helpers ---
@@ -1321,6 +1326,44 @@ describe('MinigameEngine', () => {
       audioEngine.submitAction('test');
       expect(mockSoundPlayer.play).not.toHaveBeenCalled();
       audioEngine.destroy();
+    });
+  });
+
+  // --- addScore ---
+
+  describe('addScore', () => {
+    it('should add a positive delta to the current score', () => {
+      const engine = new TestEngine();
+      engine.initialize(createTestLevel());
+      engine.start();
+
+      engine.testAddScore(50);
+
+      expect(engine.score()).toBe(50);
+      engine.destroy();
+    });
+
+    it('should clamp score to 0 when delta would make it negative', () => {
+      const engine = new TestEngine();
+      engine.initialize(createTestLevel());
+      engine.start();
+
+      engine.testAddScore(-999);
+
+      expect(engine.score()).toBe(0);
+      engine.destroy();
+    });
+
+    it('should accumulate score across multiple addScore calls', () => {
+      const engine = new TestEngine();
+      engine.initialize(createTestLevel());
+      engine.start();
+
+      engine.testAddScore(100);
+      engine.testAddScore(200);
+
+      expect(engine.score()).toBe(300);
+      engine.destroy();
     });
   });
 });
