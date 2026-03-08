@@ -122,32 +122,6 @@ Acceptance criteria:
 
 ## P2 -- Foundations Bundle
 
-### T-2026-063
-- Title: Create Wire Protocol minigame engine
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P2
-- Depends: T-2026-017, T-2026-062
-- Blocked-by: —
-- Tags: minigame, wire-protocol, engine
-- Refs: docs/minigames/02-wire-protocol.md
-
-Implement the Wire Protocol game engine. Handles wiring connections, wire type validation, pre-wired correction detection, and verification attempts (3 allowed).
-
-Acceptance criteria:
-- [ ] `WireProtocolEngine` at `src/app/features/minigames/wire-protocol/wire-protocol.engine.ts`
-- [ ] Extends `MinigameEngine<WireProtocolLevelData>`
-- [ ] Wire state: list of drawn wires with source, target, and type
-- [ ] Wire type enum: interpolation, property, event, twoWay
-- [ ] `validateAction(action)`: checks wire source-target compatibility AND correct wire type
-- [ ] Pre-wired connections loaded from level data (some correct, some intentionally wrong)
-- [ ] `verify()`: checks all connections, costs 1 of 3 attempts
-- [ ] Perfect score: all correct on first verification with no wrong wires
-- [ ] 3 failed verifications = level fails
-- [ ] Unit tests for: wire validation, type checking, pre-wired detection, verification logic
-
 ### T-2026-064
 - Title: Create Wire Protocol minigame UI component
 - Status: todo

@@ -192,3 +192,4 @@
 [2026-03-08] T-2026-189: Create MissionUnlockNotification for minigame unlock toast — signal-based unlock notification service with GameProgressionService integration (claude)
 [2026-03-08] T-2026-167: Add campaign route to app.routes.ts — campaign route with placeholder page and simplified side nav (claude)
 [2026-03-08] T-2026-061: Register Module Assembly in MinigameRegistry and wire routes — provideMinigame helper, engine injector wiring, Module Assembly registration (claude)
+[2026-03-08] T-2026-063: Create Wire Protocol minigame engine — Wire Protocol engine with verification-centric scoring and addScore base class method (claude)
