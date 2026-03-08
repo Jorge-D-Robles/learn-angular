@@ -337,8 +337,8 @@ Acceptance criteria:
 
 ### T-2026-307
 - Title: Add StreakBadgeComponent to top bar for at-a-glance streak visibility
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -356,6 +356,7 @@ Acceptance criteria:
 - [ ] Uses compact/small variant of StreakBadgeComponent
 - [ ] Responsive: hidden on mobile (bottom nav handles navigation; top bar is already tight)
 - [ ] Unit tests for: badge visibility with active streak, hidden with no streak
+- Started: 2026-03-08
 
 ### T-2026-330
 - Title: Update architecture.md to document AudioService and remove stale rankUp note

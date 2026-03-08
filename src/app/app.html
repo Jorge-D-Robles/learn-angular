@@ -4,6 +4,12 @@
   <a class="top-bar__logo" routerLink="/">Nexus Station</a>
 
   <div class="top-bar__status">
+    @if (activeStreakDays() > 0) {
+      <nx-streak-badge
+        class="top-bar__streak"
+        [currentStreak]="activeStreakDays()"
+        [multiplier]="streakMultiplier()" />
+    }
     <span class="top-bar__rank">{{ currentRank() }}</span>
     <nx-xp-progress-bar
       class="top-bar__xp"

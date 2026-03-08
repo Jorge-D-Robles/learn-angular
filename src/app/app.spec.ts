@@ -6,7 +6,7 @@ import {
   LucideIconProvider,
 } from 'lucide-angular';
 import { App } from './app';
-import { GameStateService, RankUpNotificationService, XpService } from './core';
+import { GameStateService, RankUpNotificationService, StreakService, XpService } from './core';
 import { APP_ICONS } from './shared';
 
 const ICON_PROVIDERS = [
@@ -335,5 +335,62 @@ describe('App', () => {
 
     const xpBar = fixture.nativeElement.querySelector('nx-xp-progress-bar');
     expect(xpBar.getAttribute('aria-valuenow')).toBe('100');
+  });
+
+  // ---------------------------------------------------------------------------
+  // Streak badge integration
+  // ---------------------------------------------------------------------------
+  describe('streak badge', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should NOT render streak badge when no streak is active', () => {
+      const fixture = TestBed.createComponent(App);
+      fixture.detectChanges();
+      const badge = fixture.nativeElement.querySelector('nx-streak-badge');
+      expect(badge).toBeFalsy();
+    });
+
+    it('should render streak badge when streak is active', () => {
+      const streakService = TestBed.inject(StreakService);
+      streakService.recordDailyPlay();
+      vi.advanceTimersByTime(500);
+
+      const fixture = TestBed.createComponent(App);
+      fixture.detectChanges();
+      const badge = fixture.nativeElement.querySelector('nx-streak-badge');
+      expect(badge).toBeTruthy();
+    });
+
+    it('should pass activeStreakDays to streak badge currentStreak input', async () => {
+      const streakService = TestBed.inject(StreakService);
+      streakService.recordDailyPlay();
+      vi.advanceTimersByTime(500);
+
+      const fixture = TestBed.createComponent(App);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const count = fixture.nativeElement.querySelector('.streak-badge__count');
+      expect(count.textContent.trim()).toBe('1');
+    });
+
+    it('should pass streakMultiplier to streak badge multiplier input', async () => {
+      const streakService = TestBed.inject(StreakService);
+      streakService.recordDailyPlay();
+      vi.advanceTimersByTime(500);
+
+      const fixture = TestBed.createComponent(App);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const multiplier = fixture.nativeElement.querySelector('.streak-badge__multiplier');
+      expect(multiplier.textContent.trim()).toBe('+10%');
+    });
   });
 });
