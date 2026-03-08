@@ -1476,6 +1476,80 @@ describe('MinigamePlayPage', () => {
     expect(component.engine()).not.toBeNull();
   });
 
+  // --- 50. Registry scoreConfig.maxScore overrides engine maxScore ---
+  it('should use registry scoreConfig.maxScore over engine maxScore', async () => {
+    const scoringEngine = new TestEngineForScoring({ maxScore: 1000 });
+    scoringEngine.setNextScoreChange(475); // 475/500 = 95% -> 3 stars; 475/1000 = 47.5% -> 1 star
+    const factory = vi.fn().mockReturnValue(scoringEngine);
+    const completeLevelSpy = vi.fn().mockReturnValue(TEST_COMPLETION_SUMMARY);
+    const config: MinigameConfig = {
+      id: 'module-assembly',
+      name: 'Module Assembly',
+      description: 'Conveyor belt drag-and-drop assembly',
+      angularTopic: 'Components',
+      totalLevels: 18,
+      difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+      scoreConfig: { timeWeight: 10, accuracyWeight: 100, comboWeight: 25, maxScore: 500 },
+    };
+    const { fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getConfig: vi.fn().mockReturnValue(config),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: completeLevelSpy },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    scoringEngine.submitAction('score');
+    scoringEngine.complete();
+    fixture.detectChanges();
+
+    expect(completeLevelSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ score: 475, starRating: 3 }),
+    );
+    scoringEngine.destroy();
+  });
+
+  // --- 51. Falls back to engine maxScore when scoreConfig is undefined ---
+  it('should fall back to engine maxScore when registry scoreConfig is undefined', async () => {
+    const scoringEngine = new TestEngineForScoring({ maxScore: 500 });
+    scoringEngine.setNextScoreChange(475); // 475/500 = 95% -> 3 stars
+    const factory = vi.fn().mockReturnValue(scoringEngine);
+    const completeLevelSpy = vi.fn().mockReturnValue(TEST_COMPLETION_SUMMARY);
+    const config: MinigameConfig = {
+      id: 'module-assembly',
+      name: 'Module Assembly',
+      description: 'Conveyor belt drag-and-drop assembly',
+      angularTopic: 'Components',
+      totalLevels: 18,
+      difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+      // scoreConfig intentionally omitted — tests fallback to engine maxScore
+    };
+    const { fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getConfig: vi.fn().mockReturnValue(config),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: completeLevelSpy },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    scoringEngine.submitAction('score');
+    scoringEngine.complete();
+    fixture.detectChanges();
+
+    expect(completeLevelSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ score: 475, starRating: 3 }),
+    );
+    scoringEngine.destroy();
+  });
+
   // --- PlayMode context ---
   it('should set PlayMode.Story during engine initialization', async () => {
     const testEngine = new TestEngine();

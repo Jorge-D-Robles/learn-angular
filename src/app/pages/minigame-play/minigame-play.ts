@@ -366,7 +366,7 @@ export class MinigamePlayPage {
   private buildMinigameResult(): MinigameResult {
     const eng = this.engine()!;
     const level = this.currentLevelData!;
-    const maxScore = eng.config.maxScore;
+    const maxScore = this.gameConfig()?.scoreConfig?.maxScore ?? eng.config.maxScore;
     return {
       gameId: level.gameId,
       levelId: level.id,

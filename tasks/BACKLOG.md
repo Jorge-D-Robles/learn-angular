@@ -4316,8 +4316,8 @@ Acceptance criteria:
 
 ### T-2026-319
 - Title: Wire registry scoreConfig.maxScore into MinigamePlayPage buildMinigameResult
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -4332,4 +4332,5 @@ Acceptance criteria:
 - [ ] `buildMinigameResult()` uses `registryConfig.scoreConfig?.maxScore` when available, falling back to `eng.config.maxScore`
 - [ ] Unit test: score and star rating use registry scoreConfig.maxScore when it differs from engine config
 - [ ] Unit test: falls back to engine config maxScore when scoreConfig is undefined
+- Started: 2026-03-08
 
