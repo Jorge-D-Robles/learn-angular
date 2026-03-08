@@ -123,6 +123,14 @@ export class HintService {
     return hints.filter((h) => !usedIds.has(h.id)).length;
   }
 
+  /**
+   * Returns the fraction of base XP that should be deducted as hint penalty.
+   * Clamped to [0, 1] to prevent negative XP.
+   */
+  getXpPenaltyFraction(): number {
+    return Math.min(1, this._usedHints().length * this._config.penaltyFraction);
+  }
+
   /** Clears used hints and config. Registered hint definitions are preserved. */
   reset(): void {
     this._usedHints.set([]);

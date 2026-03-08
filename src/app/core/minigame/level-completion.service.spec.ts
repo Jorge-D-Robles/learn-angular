@@ -11,6 +11,7 @@ import { MasteryService } from '../progression/mastery.service';
 import { LevelCompletionService } from './level-completion.service';
 import { XpNotificationService } from '../notifications';
 import { StreakService } from '../progression/streak.service';
+import { HintService, type HintDefinition } from './hint.service';
 
 // --- Test fixtures ---
 
@@ -101,6 +102,7 @@ function createFakeStorage(): Storage {
 describe('LevelCompletionService', () => {
   let service: LevelCompletionService;
   let levelProgression: LevelProgressionService;
+  let hintService: HintService;
   let fakeStorage: Storage;
   let originalLocalStorage: Storage;
 
@@ -119,6 +121,8 @@ describe('LevelCompletionService', () => {
 
     levelProgression = TestBed.inject(LevelProgressionService);
     levelProgression.registerLevels(testLevels);
+    hintService = TestBed.inject(HintService);
+    hintService.reset();
     service = TestBed.inject(LevelCompletionService);
   });
 
@@ -514,6 +518,105 @@ describe('LevelCompletionService', () => {
       const summary = service.completeLevel(makeResult({ perfect: false }));
       expect(summary.replayMultiplier).toBeDefined();
       expect(summary.replayMultiplier).toBe(1.0);
+    });
+  });
+
+  describe('hint penalty integration', () => {
+    const testHints: HintDefinition[] = [
+      { id: 'h1', text: 'Hint 1' },
+      { id: 'h2', text: 'Hint 2' },
+      { id: 'h3', text: 'Hint 3' },
+    ];
+
+    function setupHints(count: number, penaltyFraction = 0.25): void {
+      const hints = testHints.slice(0, Math.min(count, testHints.length));
+      if (count > testHints.length) {
+        for (let i = testHints.length; i < count; i++) {
+          hints.push({ id: `h${i + 1}`, text: `Hint ${i + 1}` });
+        }
+      }
+      hintService.registerHints('ma-basic-01', hints);
+      hintService.configure({ maxScore: 1000, penaltyFraction });
+    }
+
+    function useHints(count: number): void {
+      for (let i = 0; i < count; i++) {
+        hintService.requestHint('ma-basic-01');
+      }
+    }
+
+    // 6. XP with no hints
+    it('should award full XP with no hints used and hintPenalty = 0', () => {
+      const summary = service.completeLevel(makeResult({ perfect: false }));
+      expect(summary.xpEarned).toBe(15);
+      expect(summary.hintPenalty).toBe(0);
+    });
+
+    // 7. XP with 1 hint penalty (25% of base XP)
+    it('should deduct 25% hint penalty from base XP when 1 hint used', () => {
+      setupHints(3, 0.25);
+      useHints(1);
+      // Base XP = 15, penalty = Math.round(15 * 0.25) = 4, penalized = 11
+      const summary = service.completeLevel(makeResult({ perfect: false }));
+      expect(summary.hintPenalty).toBe(4);
+      expect(summary.xpEarned).toBe(11);
+    });
+
+    // 8. XP with 3 hints (75% penalty)
+    it('should deduct 75% hint penalty from base XP when 3 hints used', () => {
+      setupHints(3, 0.25);
+      useHints(3);
+      // Base XP = 15, penalty = Math.round(15 * 0.75) = 11, penalized = 4
+      const summary = service.completeLevel(makeResult({ perfect: false }));
+      expect(summary.hintPenalty).toBe(11);
+      expect(summary.xpEarned).toBe(4);
+    });
+
+    // 9. XP clamped to 0 (never negative)
+    it('should clamp hintPenalty so xpEarned never goes negative', () => {
+      setupHints(5, 0.25);
+      useHints(5); // 5 * 0.25 = 1.25, clamped to 1.0 = 100%
+      // Base XP = 15, penalty = Math.round(15 * 1.0) = 15, penalized = 0
+      const summary = service.completeLevel(makeResult({ perfect: false }));
+      expect(summary.hintPenalty).toBe(15);
+      expect(summary.xpEarned).toBe(0);
+    });
+
+    // 10. Perfect flag with hints used
+    it('should revoke perfect bonus when hints are used', () => {
+      setupHints(3, 0.25);
+      useHints(1);
+      // perfect: true but hints used -> effectivePerfect = false
+      // Base XP = 15 (not 30), penalty = Math.round(15 * 0.25) = 4
+      const summary = service.completeLevel(makeResult({ perfect: true }));
+      expect(summary.bonuses.perfect).toBe(false);
+      expect(summary.perfectBonus).toBe(0);
+    });
+
+    // 11. Perfect flag without hints
+    it('should grant perfect bonus when no hints used', () => {
+      const summary = service.completeLevel(makeResult({ perfect: true }));
+      expect(summary.bonuses.perfect).toBe(true);
+      expect(summary.perfectBonus).toBe(15); // 30 - 15 = 15
+    });
+
+    // 12. Hint penalty notification
+    it('should include hint penalty in notification bonuses', () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      setupHints(3, 0.25);
+      useHints(1);
+      service.completeLevel(makeResult({ perfect: false }));
+      const bonuses = spy.mock.calls[0][1] as readonly string[];
+      expect(bonuses).toContain('-4 Hint Penalty');
+    });
+
+    // 13. No hint penalty notification when no hints used
+    it('should not include hint penalty in notification when no hints used', () => {
+      const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeLevel(makeResult({ perfect: false }));
+      const bonuses = spy.mock.calls[0][1] as readonly string[];
+      const hasHintPenalty = bonuses.some((b) => b.includes('Hint Penalty'));
+      expect(hasHintPenalty).toBe(false);
     });
   });
 });

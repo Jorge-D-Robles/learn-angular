@@ -651,8 +651,8 @@ Acceptance criteria:
 
 ### T-2026-300
 - Title: Integrate HintService penalty into LevelCompletionService score flow
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -671,6 +671,7 @@ Acceptance criteria:
 - [ ] Perfect score detection accounts for hint usage (no hints + full lives = perfect)
 - [ ] XpNotification includes hint penalty info when hints were used
 - [ ] Unit tests for: XP with no hints, XP with 1 hint penalty, XP with max hints, perfect flag with hints
+- Started: 2026-03-08
 
 ### T-2026-301
 - Title: Wire PlayMode context into MinigamePlayPage and replay mode pages
@@ -4292,3 +4293,22 @@ Acceptance criteria:
 - [ ] Verifies MinigameShell HUD elements render (score, timer, hints, pause)
 - [ ] Verifies pause/resume interaction
 - [ ] Tests run via `npm run e2e`
+
+### T-2026-309
+- Title: Reset HintService on minigame retry to prevent penalty carry-over
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-300
+- Blocked-by: —
+- Tags: minigame-framework, hint-system, bug
+- Refs: src/app/pages/minigame-play/minigame-play.ts, src/app/core/minigame/hint.service.ts
+
+`MinigamePlayPage.onRetry()` does not call `hintService.reset()`. If a player retries a level, hints from the previous attempt persist, causing the hint penalty to carry over incorrectly.
+
+Acceptance criteria:
+- [ ] `onRetry()` calls `hintService.reset()` before re-initializing the engine
+- [ ] Unit test: after retry, `hintService.hasUsedHints()` returns false
+- [ ] Unit test: after retry with hints used, completing level awards full XP (no carry-over penalty)

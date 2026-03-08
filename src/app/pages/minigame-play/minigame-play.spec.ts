@@ -95,6 +95,7 @@ const TEST_COMPLETION_SUMMARY: LevelCompletionSummary = {
   isNewBestScore: true,
   rankUpOccurred: false,
   replayMultiplier: 1.0,
+  hintPenalty: 0,
 };
 
 // --- Mock factories ---
@@ -1122,6 +1123,33 @@ describe('MinigamePlayPage', () => {
 
     const bonuses = component.displayBonuses();
     expect(bonuses).toEqual([]);
+    testEngine.destroy();
+  });
+
+  // --- 37b. displayBonuses includes hint penalty when hintPenalty > 0 ---
+  it('should include hint penalty in displayBonuses when hintPenalty > 0', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const summaryWithHintPenalty: LevelCompletionSummary = {
+      ...TEST_COMPLETION_SUMMARY,
+      hintPenalty: 4,
+    };
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: vi.fn().mockReturnValue(summaryWithHintPenalty) },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    testEngine.complete();
+    fixture.detectChanges();
+
+    const bonuses = component.displayBonuses();
+    expect(bonuses).toEqual([{ label: 'Hint Penalty', amount: -4 }]);
     testEngine.destroy();
   });
 

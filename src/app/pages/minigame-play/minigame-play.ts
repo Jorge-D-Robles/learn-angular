@@ -189,6 +189,9 @@ export class MinigamePlayPage {
     if (summary.streakBonus > 0) {
       bonuses.push({ label: 'Streak Bonus', amount: summary.streakBonus });
     }
+    if (summary.hintPenalty > 0) {
+      bonuses.push({ label: 'Hint Penalty', amount: -summary.hintPenalty });
+    }
     return bonuses;
   });
 

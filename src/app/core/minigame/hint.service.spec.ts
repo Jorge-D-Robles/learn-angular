@@ -352,4 +352,71 @@ describe('HintService', () => {
       expect(service.getRemainingHints('level-1')).toBe(2);
     });
   });
+
+  // --- getXpPenaltyFraction ---
+
+  describe('getXpPenaltyFraction', () => {
+    it('should return 0 when no hints used', () => {
+      service.registerHints('level-1', [
+        { id: 'h1', text: 'Hint 1' },
+        { id: 'h2', text: 'Hint 2' },
+        { id: 'h3', text: 'Hint 3' },
+      ]);
+      service.configure({ maxScore: 1000, penaltyFraction: 0.25 });
+      expect(service.getXpPenaltyFraction()).toBe(0);
+    });
+
+    it('should return correct fraction after 1 hint', () => {
+      service.registerHints('level-1', [
+        { id: 'h1', text: 'Hint 1' },
+        { id: 'h2', text: 'Hint 2' },
+        { id: 'h3', text: 'Hint 3' },
+      ]);
+      service.configure({ maxScore: 1000, penaltyFraction: 0.25 });
+      service.requestHint('level-1');
+      expect(service.getXpPenaltyFraction()).toBe(0.25);
+    });
+
+    it('should return correct fraction after 2 hints', () => {
+      service.registerHints('level-1', [
+        { id: 'h1', text: 'Hint 1' },
+        { id: 'h2', text: 'Hint 2' },
+        { id: 'h3', text: 'Hint 3' },
+      ]);
+      service.configure({ maxScore: 1000, penaltyFraction: 0.25 });
+      service.requestHint('level-1');
+      service.requestHint('level-1');
+      expect(service.getXpPenaltyFraction()).toBe(0.5);
+    });
+
+    it('should clamp to 1.0 when penalty exceeds 100%', () => {
+      service.registerHints('level-1', [
+        { id: 'h1', text: 'Hint 1' },
+        { id: 'h2', text: 'Hint 2' },
+        { id: 'h3', text: 'Hint 3' },
+        { id: 'h4', text: 'Hint 4' },
+        { id: 'h5', text: 'Hint 5' },
+      ]);
+      service.configure({ maxScore: 1000, penaltyFraction: 0.25 });
+      service.requestHint('level-1');
+      service.requestHint('level-1');
+      service.requestHint('level-1');
+      service.requestHint('level-1');
+      service.requestHint('level-1'); // 5 * 0.25 = 1.25 -> clamped to 1.0
+      expect(service.getXpPenaltyFraction()).toBe(1.0);
+    });
+
+    it('should return 0 after reset', () => {
+      service.registerHints('level-1', [
+        { id: 'h1', text: 'Hint 1' },
+        { id: 'h2', text: 'Hint 2' },
+      ]);
+      service.configure({ maxScore: 1000, penaltyFraction: 0.25 });
+      service.requestHint('level-1');
+      service.requestHint('level-1');
+      expect(service.getXpPenaltyFraction()).toBe(0.5);
+      service.reset();
+      expect(service.getXpPenaltyFraction()).toBe(0);
+    });
+  });
 });

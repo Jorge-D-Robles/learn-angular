@@ -5,6 +5,7 @@ import { XpService } from '../progression/xp.service';
 import { MasteryService } from '../progression/mastery.service';
 import { XpNotificationService } from '../notifications';
 import { XpDiminishingReturnsService } from '../progression/xp-diminishing-returns.service';
+import { HintService } from './hint.service';
 
 /** Summary returned after completing a level. */
 export interface LevelCompletionSummary {
@@ -33,6 +34,8 @@ export interface LevelCompletionSummary {
   readonly rankUpOccurred: boolean;
   /** Diminishing returns multiplier applied (1.0 = first play, <1.0 = replay). */
   readonly replayMultiplier: number;
+  /** XP deducted as hint penalty (0 if no hints used). */
+  readonly hintPenalty: number;
 }
 
 /**
@@ -48,6 +51,7 @@ export class LevelCompletionService {
   private readonly masteryService = inject(MasteryService);
   private readonly xpNotification = inject(XpNotificationService);
   private readonly diminishingReturns = inject(XpDiminishingReturnsService);
+  private readonly hintService = inject(HintService);
 
   /**
    * Orchestrates the full completion pipeline for a finished level.
@@ -65,23 +69,32 @@ export class LevelCompletionService {
       );
     }
 
-    // 2. Calculate base XP
+    // 2. Determine effective perfect (hints revoke perfect status)
+    const effectivePerfect =
+      result.perfect === true && !this.hintService.hasUsedHints();
+
+    // 2b. Calculate base XP using effectivePerfect
     const baseXp = this.xpService.calculateLevelXp(
       levelDef.tier,
-      result.perfect,
+      effectivePerfect,
     );
 
-    // 2b. Record completion and get diminishing returns multiplier
+    // 2c. Apply hint penalty to base XP
+    const hintPenaltyFraction = this.hintService.getXpPenaltyFraction();
+    const hintPenalty = Math.round(baseXp * hintPenaltyFraction);
+    const hintPenalizedXp = baseXp - hintPenalty;
+
+    // 2d. Record completion and get diminishing returns multiplier
     const completionResult = this.diminishingReturns.recordCompletion(
       result.gameId,
       result.levelId,
       result.starRating,
     );
 
-    // 2c. Apply diminishing returns (bypass if star improvement)
+    // 2e. Apply diminishing returns (bypass if star improvement)
     const diminishedXp = completionResult.starImprovement
-      ? baseXp
-      : Math.round(baseXp * completionResult.replayMultiplier);
+      ? hintPenalizedXp
+      : Math.round(hintPenalizedXp * completionResult.replayMultiplier);
 
     // 3. Apply streak bonus on diminished XP
     const xpBreakdown = this.xpService.applyStreakBonus(diminishedXp);
@@ -110,8 +123,11 @@ export class LevelCompletionService {
 
     // 10. Trigger XP notification
     const bonuses: string[] = ['Level Complete'];
-    if (result.perfect === true) {
+    if (effectivePerfect) {
       bonuses.push('Perfect!');
+    }
+    if (hintPenalty > 0) {
+      bonuses.push(`-${hintPenalty} Hint Penalty`);
     }
     if (xpBreakdown.streakBonus > 0) {
       bonuses.push(`+${xpBreakdown.streakBonus} Streak Bonus`);
@@ -125,7 +141,7 @@ export class LevelCompletionService {
     this.xpNotification.show(xpEarned, bonuses);
 
     // perfectBonus = XP difference between perfect and non-perfect for this tier
-    const perfectBonus = result.perfect === true
+    const perfectBonus = effectivePerfect
       ? this.xpService.calculateLevelXp(levelDef.tier, true) -
         this.xpService.calculateLevelXp(levelDef.tier, false)
       : 0;
@@ -135,7 +151,7 @@ export class LevelCompletionService {
       starRating: result.starRating,
       xpEarned,
       bonuses: {
-        perfect: result.perfect === true,
+        perfect: effectivePerfect,
         streak: xpBreakdown.streakBonus > 0,
       },
       previousBestScore: priorBestScore,
@@ -144,6 +160,7 @@ export class LevelCompletionService {
       isNewBestScore,
       rankUpOccurred,
       replayMultiplier: completionResult.replayMultiplier,
+      hintPenalty,
     };
   }
 }
