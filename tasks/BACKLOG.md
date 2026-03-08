@@ -1342,8 +1342,8 @@ Acceptance criteria:
 
 ### T-2026-258
 - Title: Create WireProtocol port and wire data model
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P2
@@ -1363,6 +1363,7 @@ Acceptance criteria:
 - [ ] `VerificationResult`: correctWires[], incorrectWires[], missingWires[]
 - [ ] Exported from wire-protocol barrel
 - [ ] Unit tests for: wire type validation, source-target compatibility
+- Started: 2026-03-08
 
 ### T-2026-259
 - Title: Create story mission completion handler to award XP and trigger unlock

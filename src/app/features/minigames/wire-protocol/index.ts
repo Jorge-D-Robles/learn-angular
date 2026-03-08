@@ -1,1 +1,1 @@
-export {};
+export * from './wire-protocol.types';
