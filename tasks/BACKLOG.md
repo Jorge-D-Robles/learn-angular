@@ -122,32 +122,6 @@ Acceptance criteria:
 
 ## P2 -- Foundations Bundle
 
-### T-2026-064
-- Title: Create Wire Protocol minigame UI component
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P2
-- Depends: T-2026-063, T-2026-018, T-2026-158, T-2026-172
-- Blocked-by: —
-- Tags: minigame, wire-protocol, component, ui
-- Refs: docs/minigames/02-wire-protocol.md, docs/ux/visual-style.md
-
-Build the visual UI for Wire Protocol: split-screen component class (left) and template (right), color-coded connection ports, wire drawing with SVG bezier curves, and wire type selector.
-
-Acceptance criteria:
-- [ ] `WireProtocolComponent` at `src/app/features/minigames/wire-protocol/wire-protocol.component.ts`
-- [ ] Split-screen layout: component class panel (left) and template panel (right)
-- [ ] Source ports on properties/methods, destination ports on template binding targets
-- [ ] Click source port, then click target port to draw a wire
-- [ ] Wire type selector: toggle between binding types (keyboard: 1-4)
-- [ ] Wire colors: blue (interpolation), green (property), orange (event), purple (two-way)
-- [ ] SVG wire rendering with bezier curves and flowing particle animation
-- [ ] Right-click wire to remove it
-- [ ] Incorrect wires spark and fizzle on verification
-- [ ] Unit tests for: wire drawing, type selection, port interaction, removal
-
 ### T-2026-065
 - Title: Register Wire Protocol in MinigameRegistry and wire routes
 - Status: todo
