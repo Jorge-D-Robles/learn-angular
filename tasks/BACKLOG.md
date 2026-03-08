@@ -649,28 +649,6 @@ Acceptance criteria:
 - [ ] No runtime behavior change
 - [ ] Existing tests pass
 
-### T-2026-298
-- Title: Compute star rating via ScoreCalculationService in MinigamePlayPage
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P1
-- Depends: T-2026-223, T-2026-028
-- Blocked-by: —
-- Tags: bug, scoring, minigame-play, integration
-- Refs: src/app/pages/minigame-play/minigame-play.ts, src/app/core/minigame/score-calculation.service.ts
-
-MinigamePlayPage.buildMinigameResult() hardcodes `starRating: 0` instead of computing it from the actual score via ScoreCalculationService.getStarRating(). This means LevelCompletionService receives a 0-star result for every completed level, breaking star-based progression (mastery stars, level unlock logic, and LevelResultsComponent display).
-
-Acceptance criteria:
-- [ ] MinigamePlayPage injects ScoreCalculationService
-- [ ] `buildMinigameResult()` calls `ScoreCalculationService.getStarRating(score, maxScore)` to compute star rating
-- [ ] maxScore derived from game config or level definition (needs a source -- may require MinigameConfig to include a `defaultMaxScore` or level data to carry it)
-- [ ] Star rating correctly propagates to LevelResultsComponent display
-- [ ] Unit tests for: star rating computation with known score/maxScore, 1-star/2-star/3-star thresholds
-- Started: 2026-03-08
-
 ### T-2026-299
 - Title: Add error state rendering to MinigamePlayPage on level load failure
 - Status: todo

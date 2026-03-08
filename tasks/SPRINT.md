@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-298**: Compute star rating via ScoreCalculationService in MinigamePlayPage (Assigned: claude, Status: in-progress)
 
 
 
