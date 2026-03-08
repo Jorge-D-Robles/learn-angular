@@ -173,3 +173,4 @@
 [2026-03-08] T-2026-387: Add SpeedRunService and EndlessModeService barrel exports to minigame module — SpeedRunService and EndlessModeService already in barrel (unassigned)
 [2026-03-08] T-2026-383: Create integration test for persistence round-trip of LevelProgressionService — added integration test for LevelProgressionService persistence round-trip (claude)
 [2026-03-08] T-2026-376: Update architecture.md persistence table with LevelProgressionService key — added LevelProgressionService to architecture.md persistence table (claude)
+[2026-03-08] T-2026-257: Create ModuleAssembly part and blueprint data model — canonical domain model types, color constant, utility functions, 16 tests (claude)
