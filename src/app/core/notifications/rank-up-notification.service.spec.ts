@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { RankUpNotificationService } from './rank-up-notification.service';
 import { GameStateService } from '../state';
+import { AudioService, SoundEffect } from '../audio';
+import { SettingsService } from '../settings';
 
 function createFakeStorage(): Storage {
   const store = new Map<string, string>();
@@ -21,6 +23,7 @@ function createFakeStorage(): Storage {
 describe('RankUpNotificationService', () => {
   let service: RankUpNotificationService;
   let gameState: GameStateService;
+  let audioService: AudioService;
   let fakeStorage: Storage;
   let originalLocalStorage: Storage;
 
@@ -35,6 +38,8 @@ describe('RankUpNotificationService', () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({});
     gameState = TestBed.inject(GameStateService);
+    audioService = TestBed.inject(AudioService);
+    vi.spyOn(audioService, 'play');
     service = TestBed.inject(RankUpNotificationService);
     TestBed.flushEffects();
   });
@@ -134,5 +139,55 @@ describe('RankUpNotificationService', () => {
     TestBed.flushEffects();
 
     expect(service.showRankUp()).toBe(false);
+  });
+
+  it('should play rankUp sound when rank changes', () => {
+    gameState.addXp(500);
+    TestBed.flushEffects();
+
+    expect(audioService.play).toHaveBeenCalledWith(SoundEffect.rankUp);
+    expect(audioService.play).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not play sound when XP increases without rank change', () => {
+    gameState.addXp(100);
+    TestBed.flushEffects();
+
+    expect(audioService.play).not.toHaveBeenCalled();
+  });
+
+  it('should play sound only once per rank-up (no double-play)', () => {
+    gameState.addXp(500);
+    TestBed.flushEffects();
+
+    expect(audioService.play).toHaveBeenCalledTimes(1);
+
+    TestBed.flushEffects();
+
+    expect(audioService.play).toHaveBeenCalledTimes(1);
+  });
+
+  it('should play sound on consecutive rank-ups after dismiss', () => {
+    gameState.addXp(500);
+    TestBed.flushEffects();
+    service.dismiss();
+
+    gameState.addXp(1000);
+    TestBed.flushEffects();
+
+    expect(audioService.play).toHaveBeenCalledTimes(2);
+    expect(audioService.play).toHaveBeenCalledWith(SoundEffect.rankUp);
+  });
+
+  it('should call audioService.play even when sound is disabled', () => {
+    // RankUpNotificationService always delegates to AudioService.play();
+    // the soundEnabled guard lives in AudioService (tested in audio.service.spec.ts).
+    const settingsService = TestBed.inject(SettingsService);
+    settingsService.updateSetting('soundEnabled', false);
+
+    gameState.addXp(500);
+    TestBed.flushEffects();
+
+    expect(audioService.play).toHaveBeenCalledWith(SoundEffect.rankUp);
   });
 });
