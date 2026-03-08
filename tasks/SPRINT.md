@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-407**: Create CurriculumService for chapter-to-minigame mapping lookups (Assigned: claude, Status: in-progress)
 
 
 

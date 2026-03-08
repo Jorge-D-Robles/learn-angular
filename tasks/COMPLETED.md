@@ -177,3 +177,5 @@
 [2026-03-08] T-2026-258: Create WireProtocol port and wire data model — domain model types, WireType enum, color constant, 3 utility functions, 22 tests (claude)
 [2026-03-08] T-2026-255: Create FlowCommander pipeline graph data model — pipeline graph types, GateType enum, CargoPriority union, BFS connectivity helper, 22 tests (claude)
 [2026-03-08] T-2026-256: Create SignalCorps tower configuration data model — tower config types, ParentBinding, GridSize, PORT_TYPE_COLORS, 3 utility functions, 27 tests (claude)
+[2026-03-08] T-2026-407: Create CurriculumService for chapter-to-minigame mapping lookups — stateless CurriculumService with 5 lookup methods, pre-computed Maps, 26 tests (claude)
+[2026-03-08] T-2026-408: Add CurriculumService to curriculum barrel export — subsumed by T-2026-407 which added the barrel export (unassigned)
