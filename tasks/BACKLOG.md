@@ -191,28 +191,6 @@ Acceptance criteria:
 - [ ] `src/app/core/progression/index.ts` updated to export `StreakRewardService`
 - [ ] Build passes with updated barrel
 
-### T-2026-291
-- Title: Create DailyChallenge-to-StreakReward integration test
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-206, T-2026-251
-- Blocked-by: —
-- Tags: testing, integration, daily-challenge, streak, rewards
-- Refs: docs/progression.md, docs/research/gamification-patterns.md
-
-The full daily challenge pipeline spans 3 services: DailyChallengeService.completeChallenge() -> StreakService.recordDailyPlay() (via T-2026-206) -> StreakRewardService.checkMilestoneReward() (via T-2026-251). No integration test verifies this end-to-end flow. A regression in any link could silently break the streak reward system that progression.md specifies as "7-day streak rewards."
-
-Acceptance criteria:
-- [ ] Integration test file at `src/app/core/integration/daily-streak-reward.integration.spec.ts`
-- [ ] Test: complete daily challenge -> verify streak increments
-- [ ] Test: complete 7 consecutive daily challenges -> verify 100 XP streak reward awarded
-- [ ] Test: verify XpNotificationService receives streak milestone notification
-- [ ] Test: verify reward is not re-awarded on 8th day (idempotent milestone tracking)
-- [ ] All services use real implementations (not mocks) for true integration testing
-
 ### T-2026-294
 - Title: Add DailyChallengeService barrel export to progression module
 - Status: todo
