@@ -11,13 +11,13 @@ Started: 2026-03-08
 
 ## Active
 
-*(none — pick from Queue)*
+- **T-2026-360**: Fix minigame-play test failures caused by missing window.matchMedia mock (Assigned: claude, Status: in-progress)
+
 
 ---
 
 ## Queue
 
-- **T-2026-360**: Fix minigame-play test failures caused by missing window.matchMedia mock (Priority: high, Size: S)
 - **T-2026-205**: Integrate MinigameTutorialOverlay with MinigameShell first-play detection (Priority: medium, Size: S)
 - **T-2026-354**: Add skip-to-content link for keyboard accessibility (Priority: medium, Size: S)
 - **T-2026-327**: Wire AudioService to RankUpNotificationService for rank-up sound (Priority: low, Size: S)

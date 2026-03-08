@@ -30,8 +30,8 @@ Acceptance criteria:
 
 ### T-2026-360
 - Title: Fix minigame-play test failures caused by missing window.matchMedia mock
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P1
@@ -46,6 +46,7 @@ Acceptance criteria:
 - [ ] All minigame-play test files pass without errors
 - [ ] `window.matchMedia` is properly mocked/polyfilled in test setup
 - [ ] No regressions in other test suites
+- Started: 2026-03-08
 
 ---
 
