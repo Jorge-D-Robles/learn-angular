@@ -489,24 +489,6 @@ Acceptance criteria:
 - [ ] Engine is paused while tutorial overlay is active
 - [ ] Unit tests for: first-play detection, tutorial display, dismiss-and-start, pause menu "How to Play"
 
-### T-2026-207
-- Title: Add LevelNavigationService to levels barrel export
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-182
-- Blocked-by: —
-- Tags: infrastructure, barrel-export, conventions
-- Refs: src/app/core/levels/index.ts
-
-LevelNavigationService (T-2026-182) will create `level-navigation.service.ts` in the levels directory but no ticket adds it to the levels barrel export. Per project conventions, all services in a directory should be exported from the directory barrel.
-
-Acceptance criteria:
-- [ ] `src/app/core/levels/index.ts` updated to export `LevelNavigationService`
-- [ ] Build passes with updated barrel
-
 ### T-2026-208
 - Title: Add XpDiminishingReturnsService to progression barrel export
 - Status: todo

@@ -85,3 +85,4 @@
 [2026-03-07] T-2026-226: Integrate SvgWireRendererComponent with WireDrawService state — integrated SvgWireRenderer and SvgPort with WireDrawService via optional DI, with preview wire support and 12 new tests (claude)
 [2026-03-07] T-2026-227: Update side nav "Current Mission" link to use dynamic mission resolution — replaced hardcoded mission link with dynamic resolution via GameProgressionService computed signals (claude)
 [2026-03-07] T-2026-228: Update bottom nav "Mission" link to use dynamic mission resolution — replaced hardcoded mission link with dynamic resolution via GameProgressionService, compact mobile labels (claude)
+[2026-03-07] T-2026-207: Add LevelNavigationService to levels barrel export — added LevelNavigationService to levels barrel export (claude)
