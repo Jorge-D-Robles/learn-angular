@@ -1,0 +1,123 @@
+:host {
+  display: block;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+h1 {
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+}
+
+.dashboard__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard__rank {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dashboard__rank-label {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.dashboard__section-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+}
+
+.dashboard__mission,
+.dashboard__challenge,
+.dashboard__shortcuts,
+.dashboard__alerts,
+.dashboard__modules {
+  margin-bottom: 1.5rem;
+}
+
+.dashboard__mission-complete {
+  margin: 0;
+  font-weight: 600;
+}
+
+.dashboard__challenge-bonus {
+  margin: 0 0 0.5rem;
+}
+
+.dashboard__challenge-play {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  background: var(--nx-color-reactor-blue, #3b82f6);
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.dashboard__challenge-done {
+  margin: 0;
+  font-weight: 600;
+  color: var(--nx-color-success, #22c55e);
+}
+
+.dashboard__shortcut-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dashboard__shortcut-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--nx-color-border, #334155);
+  border-radius: 0.25rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-weight: 500;
+
+  &:hover {
+    background: var(--nx-color-surface-hover, #1e293b);
+  }
+}
+
+.dashboard__empty-shortcuts {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.dashboard__module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.dashboard__module-card {
+  cursor: pointer;
+  text-align: center;
+
+  &--locked {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard__module-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+  }
+}

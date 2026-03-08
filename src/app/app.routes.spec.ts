@@ -1,8 +1,22 @@
-import { provideRouter } from '@angular/router';
+import { signal } from '@angular/core';
+import { provideRouter, Router } from '@angular/router';
+import {
+  LucideIconConfig,
+  LucideIconProvider,
+  LUCIDE_ICONS,
+} from 'lucide-angular';
 import { routes } from './app.routes';
 import { DashboardPage } from './pages/dashboard/dashboard';
 import { NotFoundPage } from './pages/not-found/not-found';
-import { createComponent } from '../testing/test-utils';
+import { createComponent, getMockProvider } from '../testing/test-utils';
+import { XpService } from './core/progression/xp.service';
+import { GameProgressionService } from './core/progression/game-progression.service';
+import { DailyChallengeService } from './core/progression/daily-challenge.service';
+import { SpacedRepetitionService } from './core/progression/spaced-repetition.service';
+import { MasteryService } from './core/progression/mastery.service';
+import { StreakService } from './core/progression/streak.service';
+import { MinigameRegistryService } from './core/minigame/minigame-registry.service';
+import { APP_ICONS } from './shared/icons';
 
 describe('routes', () => {
   const expectedPaths = [
@@ -185,7 +199,49 @@ describe('routes', () => {
 
   describe('eager component rendering', () => {
     it('should render DashboardPage with an h1', async () => {
-      const { element } = await createComponent(DashboardPage);
+      const { element } = await createComponent(DashboardPage, {
+        providers: [
+          {
+            provide: LUCIDE_ICONS,
+            multi: true,
+            useValue: new LucideIconProvider(APP_ICONS),
+          },
+          {
+            provide: LucideIconConfig,
+            useValue: Object.assign(new LucideIconConfig(), { size: 24, color: 'currentColor' }),
+          },
+          getMockProvider(XpService, {
+            totalXp: signal(0),
+            currentRank: signal('Cadet'),
+          }),
+          getMockProvider(GameProgressionService, {
+            currentMission: signal(null),
+            completedMissions: signal(new Set()),
+            getUnlockedMinigames: () => [],
+          }),
+          getMockProvider(DailyChallengeService, {
+            todaysChallenge: signal({ date: '2026-01-01', gameId: 'module-assembly', levelId: 'x', bonusXp: 50, completed: false }),
+          }),
+          getMockProvider(SpacedRepetitionService, {
+            getDegradingTopics: () => [],
+          }),
+          getMockProvider(MasteryService, {
+            mastery: signal(new Map()),
+            getMastery: () => 0,
+          }),
+          getMockProvider(MinigameRegistryService, {
+            getAllGames: () => [],
+            getConfig: () => undefined,
+          }),
+          getMockProvider(StreakService, {
+            activeStreakDays: signal(0),
+            streakMultiplier: signal(1),
+          }),
+          getMockProvider(Router, {
+            navigate: () => Promise.resolve(true),
+          }),
+        ],
+      });
       expect(element.querySelector('h1')).toBeTruthy();
     });
 

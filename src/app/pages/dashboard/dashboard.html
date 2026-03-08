@@ -1,0 +1,81 @@
+<h1>Station Dashboard</h1>
+
+<section class="dashboard__header">
+  <div class="dashboard__rank">
+    <span class="dashboard__rank-label">{{ currentRank() }}</span>
+    <nx-streak-badge
+      [currentStreak]="activeStreakDays()"
+      [multiplier]="streakMultiplier()" />
+  </div>
+  <nx-xp-progress-bar
+    [currentXp]="rankXpProgress()"
+    [nextRankXp]="rankXpRange()"
+    [currentRank]="currentRank()"
+    [nextRank]="nextRankName()"
+    variant="full" />
+</section>
+
+<section class="dashboard__mission">
+  @if (currentMission(); as mission) {
+    <nx-mission-card
+      [mission]="mission"
+      [isCurrent]="true"
+      (missionClicked)="navigateToMission()" />
+  } @else {
+    <nx-station-card cardTitle="Mission Status">
+      <p class="dashboard__mission-complete">All Missions Complete</p>
+    </nx-station-card>
+  }
+</section>
+
+<section class="dashboard__challenge">
+  <h2 class="dashboard__section-title">Daily Challenge</h2>
+  @if (!todaysChallenge().completed) {
+    <nx-station-card [cardTitle]="challengeGameName()">
+      <p class="dashboard__challenge-bonus">+{{ todaysChallenge().bonusXp }} XP bonus</p>
+      <button type="button" class="dashboard__challenge-play" (click)="navigateToChallenge()">
+        Play
+      </button>
+    </nx-station-card>
+  } @else {
+    <nx-station-card cardTitle="Daily Challenge">
+      <p class="dashboard__challenge-done">Completed</p>
+    </nx-station-card>
+  }
+</section>
+
+<section class="dashboard__shortcuts">
+  <h2 class="dashboard__section-title">Quick Play</h2>
+  @if (quickPlayGames().length > 0) {
+    <div class="dashboard__shortcut-list">
+      @for (game of quickPlayGames(); track game.id) {
+        <button type="button" class="dashboard__shortcut-btn" (click)="navigateToMinigame(game.id)">
+          {{ game.name }}
+        </button>
+      }
+    </div>
+  } @else {
+    <p class="dashboard__empty-shortcuts">Start your first mission to unlock minigames.</p>
+  }
+</section>
+
+<section class="dashboard__alerts">
+  <nx-degradation-alert
+    [degradingTopics]="degradingTopicItems()"
+    (practiceRequested)="navigateToMinigame($event)" />
+</section>
+
+<section class="dashboard__modules">
+  <h2 class="dashboard__section-title">Station Modules</h2>
+  <div class="dashboard__module-grid">
+    @for (mod of moduleGrid(); track mod.id) {
+      <nx-station-card
+        [cardTitle]="mod.name"
+        class="dashboard__module-card"
+        [class.dashboard__module-card--locked]="!mod.unlocked"
+        (click)="mod.unlocked ? navigateToMinigame(mod.id) : null">
+        <nx-mastery-stars [stars]="mod.mastery" size="sm" />
+      </nx-station-card>
+    }
+  </div>
+</section>
