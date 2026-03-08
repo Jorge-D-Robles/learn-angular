@@ -5,7 +5,7 @@ import { ALL_STORY_MISSIONS } from '../curriculum/curriculum.data';
 import type { MinigameId } from '../minigame/minigame.types';
 import { StreakService } from './streak.service';
 import { StreakRewardService } from './streak-reward.service';
-import { XpNotificationService } from '../notifications';
+import { MissionUnlockNotificationService, XpNotificationService } from '../notifications';
 
 // --- Test helpers ---
 
@@ -400,6 +400,44 @@ describe('GameProgressionService', () => {
 
     it('should not trigger notification for idempotent re-completion', () => {
       const spy = vi.spyOn(TestBed.inject(XpNotificationService), 'show');
+      service.completeMission(1);
+      service.completeMission(1);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // --- 11. Minigame unlock notifications ---
+
+  describe('minigame unlock notifications', () => {
+    it('should trigger unlock notification when completing a mission that unlocks a new minigame', () => {
+      const spy = vi.spyOn(TestBed.inject(MissionUnlockNotificationService), 'showUnlock');
+      service.completeMission(1);
+      expect(spy).toHaveBeenCalledWith('Module Assembly', 'module-assembly');
+    });
+
+    it('should not trigger unlock notification when mission has no minigame', () => {
+      const spy = vi.spyOn(TestBed.inject(MissionUnlockNotificationService), 'showUnlock');
+      // Complete chapters 1-8 to satisfy deps for Ch 9
+      completeMissionsUpTo(service, 8);
+      spy.mockClear();
+      // Ch 9 has unlocksMinigame: null
+      service.completeMission(9);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should not trigger unlock notification for already-unlocked minigame', () => {
+      const spy = vi.spyOn(TestBed.inject(MissionUnlockNotificationService), 'showUnlock');
+      // Ch 1 unlocks module-assembly
+      service.completeMission(1);
+      expect(spy).toHaveBeenCalledTimes(1);
+      spy.mockClear();
+      // Ch 2 also unlocks module-assembly, but it's already unlocked
+      service.completeMission(2);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should not trigger unlock notification for idempotent re-completion', () => {
+      const spy = vi.spyOn(TestBed.inject(MissionUnlockNotificationService), 'showUnlock');
       service.completeMission(1);
       service.completeMission(1);
       expect(spy).toHaveBeenCalledTimes(1);

@@ -9,10 +9,11 @@ import {
 } from '@angular/core';
 import { StatePersistenceService } from '../persistence/state-persistence.service';
 import { XpService } from './xp.service';
-import { XpNotificationService } from '../notifications';
+import { MissionUnlockNotificationService, XpNotificationService } from '../notifications';
 import { ALL_STORY_MISSIONS } from '../curriculum/curriculum.data';
 import type { ChapterId, PhaseNumber, StoryMission } from '../curriculum/curriculum.types';
 import type { MinigameId } from '../minigame/minigame.types';
+import { DEFAULT_MINIGAME_CONFIGS } from '../minigame/minigame-registry.service';
 
 const PERSISTENCE_KEY = 'game-progression';
 
@@ -34,6 +35,7 @@ export class GameProgressionService {
   private readonly persistence = inject(StatePersistenceService);
   private readonly xpService = inject(XpService);
   private readonly xpNotification = inject(XpNotificationService);
+  private readonly unlockNotification = inject(MissionUnlockNotificationService);
   private readonly destroyRef = inject(DestroyRef);
   private _saveTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -112,6 +114,12 @@ export class GameProgressionService {
       throw new Error(
         `Prerequisites not met for chapter ${chapterId}`,
       );
+    }
+
+    // Check for first minigame unlock BEFORE updating completed set
+    if (mission.unlocksMinigame !== null && !this.isMinigameUnlocked(mission.unlocksMinigame)) {
+      const gameName = DEFAULT_MINIGAME_CONFIGS.find(c => c.id === mission.unlocksMinigame)?.name ?? mission.unlocksMinigame;
+      this.unlockNotification.showUnlock(gameName, mission.unlocksMinigame);
     }
 
     this._completedMissions.update((set) => {
