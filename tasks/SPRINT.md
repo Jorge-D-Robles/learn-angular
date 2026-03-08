@@ -82,11 +82,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-053**: Add replay mode routes for endless, speed run, and daily challenge (Priority: medium, Size: S)
 - **T-2026-240**: Add MinigameShell timer color transitions for time pressure feedback (Priority: medium, Size: S)
 - **T-2026-248**: Create P1 MinigameShell + engine lifecycle E2E smoke test (Priority: medium, Size: S)
 - **T-2026-241**: Create P1 core services integration test (Priority: medium, Size: M)

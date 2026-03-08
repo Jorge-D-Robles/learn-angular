@@ -149,28 +149,6 @@ Acceptance criteria:
 - [ ] All animation triggers use 0ms duration when reduced motion is active
 - [ ] Unit tests for: reduced motion detection, animation trigger definitions
 
-### T-2026-053
-- Title: Add replay mode routes for endless, speed run, and daily challenge
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-012, T-2026-048, T-2026-049, T-2026-041
-- Blocked-by: —
-- Tags: routing, replay-modes, navigation
-- Refs: docs/ux/navigation.md
-
-Navigation.md defines three replay mode routes that are not yet in the routing configuration: `/minigames/:gameId/endless`, `/minigames/:gameId/speedrun`, `/minigames/:gameId/daily`. These need placeholder page components and route entries.
-
-Acceptance criteria:
-- [ ] Route `/minigames/:gameId/endless` added to app.routes.ts with lazy-loaded EndlessModePage
-- [ ] Route `/minigames/:gameId/speedrun` added to app.routes.ts with lazy-loaded SpeedRunPage
-- [ ] Route `/minigames/:gameId/daily` added to app.routes.ts with lazy-loaded DailyChallengePage
-- [ ] Each page component reads `:gameId` from route params and displays placeholder content
-- [ ] Pages created at `src/app/pages/endless-mode/`, `src/app/pages/speed-run/`, `src/app/pages/daily-challenge/`
-- [ ] Unit tests for: route resolution, gameId param reading
-
 ### T-2026-056
 - Title: Create ComboTrackerService for combo multiplier mechanics
 - Status: todo
