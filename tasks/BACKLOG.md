@@ -217,29 +217,6 @@ Acceptance criteria:
 - [ ] MinigameShell integration works (score, timer, lives)
 - [ ] E2e smoke test: navigate to level 1, verify game renders
 
-### T-2026-066
-- Title: Define Flow Commander level data for 18 levels
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P2
-- Depends: T-2026-019, T-2026-038
-- Blocked-by: —
-- Tags: minigame, flow-commander, level-data, content
-- Refs: docs/minigames/03-flow-commander.md, docs/curriculum.md
-
-Define the static level data for all 18 Flow Commander levels. Each level specifies pipeline topology, cargo items with properties, gate slots, target zones, and valid solutions.
-
-Acceptance criteria:
-- [ ] Level data file at `src/app/data/levels/flow-commander.data.ts`
-- [ ] `FlowCommanderLevelData` interface: items[], pipelineTopology, gateSlots[], targetZones[], validSolutions[]
-- [ ] 6 Basic levels (@if simple through @empty)
-- [ ] 6 Intermediate levels (@switch through mixed challenge)
-- [ ] 5 Advanced levels (dynamic data through full pipeline)
-- [ ] 1 Boss level ("Emergency Cargo Sort" with 50+ items, 8 types)
-- [ ] Unit tests verify: 18 total levels, all levels have valid pipeline definitions
-
 ### T-2026-067
 - Title: Create Flow Commander minigame engine
 - Status: todo
