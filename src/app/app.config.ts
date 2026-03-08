@@ -3,7 +3,7 @@ import {
   ErrorHandler,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, TitleStrategy } from '@angular/router';
 import {
   LucideIconConfig,
   LucideIconProvider,
@@ -12,6 +12,7 @@ import {
 
 import { routes } from './app.routes';
 import { GlobalErrorHandler } from './core/error';
+import { NexusTitleStrategy } from './core';
 import { APP_ICONS } from './shared/icons';
 
 export const appConfig: ApplicationConfig = {
@@ -19,6 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     provideRouter(routes),
+    { provide: TitleStrategy, useClass: NexusTitleStrategy },
     {
       provide: LUCIDE_ICONS,
       multi: true,

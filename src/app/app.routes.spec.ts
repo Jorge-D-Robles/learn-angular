@@ -119,6 +119,70 @@ describe('routes', () => {
     });
   });
 
+  describe('route titles', () => {
+    it('should have a title on the root route', () => {
+      const route = routes.find((r) => r.path === '');
+      expect(route?.title).toBe('Dashboard');
+    });
+
+    it('should have a title on the mission route', () => {
+      const route = routes.find((r) => r.path === 'mission/:chapterId');
+      expect(route?.title).toBe('Mission');
+    });
+
+    it('should have a title on the minigames route', () => {
+      const route = routes.find((r) => r.path === 'minigames');
+      expect(route?.title).toBe('Minigames');
+    });
+
+    it('should have a title on the level select route', () => {
+      const route = routes.find((r) => r.path === 'minigames/:gameId');
+      expect(route?.title).toBe('Level Select');
+    });
+
+    it('should have a title on the gameplay route', () => {
+      const route = routes.find((r) => r.path === 'minigames/:gameId/level/:levelId');
+      expect(route?.title).toBe('Play');
+    });
+
+    it('should have a title on the endless mode route', () => {
+      const route = routes.find((r) => r.path === 'minigames/:gameId/endless');
+      expect(route?.title).toBe('Endless Mode');
+    });
+
+    it('should have a title on the speed run route', () => {
+      const route = routes.find((r) => r.path === 'minigames/:gameId/speedrun');
+      expect(route?.title).toBe('Speed Run');
+    });
+
+    it('should have a title on the daily challenge route', () => {
+      const route = routes.find((r) => r.path === 'minigames/:gameId/daily');
+      expect(route?.title).toBe('Daily Challenge');
+    });
+
+    it('should have a title on the profile route', () => {
+      const route = routes.find((r) => r.path === 'profile');
+      expect(route?.title).toBe('Profile');
+    });
+
+    it('should have a title on the settings route', () => {
+      const route = routes.find((r) => r.path === 'settings');
+      expect(route?.title).toBe('Settings');
+    });
+
+    it('should have a title on the wildcard route', () => {
+      const route = routes.find((r) => r.path === '**');
+      expect(route?.title).toBe('Not Found');
+    });
+
+    it('every route should have a title defined', () => {
+      const allHaveTitles = routes.every(
+        (r) => typeof r.title === 'string' && (r.title as string).length > 0,
+      );
+      expect(allHaveTitles).toBe(true);
+    });
+  });
+
   describe('eager component rendering', () => {
     it('should render DashboardPage with an h1', async () => {
       const { element } = await createComponent(DashboardPage);

@@ -6,5 +6,6 @@ export * from './minigame';
 export * from './notifications';
 export * from './persistence';
 export * from './progression';
+export * from './routing';
 export * from './settings';
 export * from './state';
