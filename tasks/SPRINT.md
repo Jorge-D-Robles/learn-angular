@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-306**: Create integration test for MinigamePlayPage completion-to-progression pipeline (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -23,7 +25,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-306**: Create integration test for MinigamePlayPage completion-to-progression pipeline (Priority: medium, Size: S)
 
 ---
 

@@ -713,8 +713,8 @@ Acceptance criteria:
 
 ### T-2026-306
 - Title: Create integration test for MinigamePlayPage completion-to-progression pipeline
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -732,6 +732,7 @@ Acceptance criteria:
 - [ ] Test: completion only fires once per level (completionFired guard works)
 - [ ] Test: retry resets completionFired flag and allows re-completion
 - [ ] Uses TestBed with real LevelCompletionService (or spy to verify call)
+- Started: 2026-03-08
 
 ### T-2026-307
 - Title: Add StreakBadgeComponent to top bar for at-a-glance streak visibility
