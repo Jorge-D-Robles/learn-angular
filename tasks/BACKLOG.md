@@ -122,6 +122,27 @@ Acceptance criteria:
 
 ## P2 -- Foundations Bundle
 
+### T-2026-468
+- Title: Redesign multi-blueprint Module Assembly levels to support plural blueprint display
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-467
+- Blocked-by: —
+- Tags: module-assembly, level-data, game-design
+- Refs: src/app/data/levels/module-assembly.data.ts, src/app/features/minigames/module-assembly/module-assembly.engine.ts
+
+T-2026-467 merged multi-blueprint levels (6, 9, 12, 16, 18) into single blueprints as a workaround for the engine's singular `blueprint` field. This destroys the pedagogical intent of those levels (teaching multi-component assembly). This ticket should either:
+1. Extend the engine to support `blueprints` (plural) with a sequential assembly flow, OR
+2. Redesign those levels to work well with a single merged blueprint
+
+Acceptance criteria:
+- [ ] Multi-blueprint levels clearly teach their intended concept (e.g., Level 6 "Multiple Components")
+- [ ] Engine and/or data model supports the pedagogical distinction
+- [ ] All tests pass
+
 ### T-2026-069
 - Title: Register Flow Commander in MinigameRegistry and wire routes
 - Status: todo
