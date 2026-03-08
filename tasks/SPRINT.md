@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-288**: Add Page Visibility auto-pause to MinigameEngine (Assigned: claude, Status: in-progress)
 
 
 

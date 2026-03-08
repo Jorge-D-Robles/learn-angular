@@ -106,3 +106,4 @@
 [2026-03-07] T-2026-174: Create TimeFormatPipe for play time display — created TimeFormatPipe with long/short/timer formats and 26 unit tests (claude)
 [2026-03-07] T-2026-225: Wire RankUpOverlayComponent into app shell root — wired RankUpOverlayComponent into app shell with signal-based visibility and dismiss (claude)
 [2026-03-07] T-2026-231: Add RankUpNotificationService to notifications barrel export — barrel export already added in T-2026-225 (unassigned)
+[2026-03-07] T-2026-288: Add Page Visibility auto-pause to MinigameEngine — added auto-pause on tab visibility change with _autoPaused flag, 7 new tests (claude)
