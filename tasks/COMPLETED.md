@@ -99,3 +99,4 @@
 [2026-03-07] T-2026-050: Create PlayTimeService for tracking session and total play time — created PlayTimeService with session tracking, per-game time, beforeunload persistence (claude)
 [2026-03-07] T-2026-056: Create ComboTrackerService for combo multiplier mechanics — created ComboTrackerService with combo signals, multiplier thresholds, and 30 unit tests (claude)
 [2026-03-07] T-2026-201: Add ComboTrackerService to minigame barrel export — barrel export already added in T-2026-056 (unassigned)
+[2026-03-07] T-2026-164: Create XpDiminishingReturnsService for replay XP scaling — created XpDiminishingReturnsService with diminishing multipliers, star improvement detection, and persistence (claude)

@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-164**: Create XpDiminishingReturnsService for replay XP scaling (Assigned: claude, Status: in-progress)
 
 
 
