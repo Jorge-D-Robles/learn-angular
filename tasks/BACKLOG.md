@@ -149,23 +149,22 @@ Acceptance criteria:
 - [ ] Unit tests for: step navigation, skip button, persistence of "don't show again" flag
 
 ### T-2026-165
-- Title: Create barrel exports for audio and animation core modules
+- Title: Create barrel export for animation core module
 - Status: todo
 - Assigned: unassigned
 - Priority: low
 - Size: S
 - Milestone: P1
-- Depends: T-2026-051, T-2026-052
+- Depends: T-2026-052
 - Blocked-by: —
 - Tags: infrastructure, barrel-export, conventions
-- Refs: src/app/core/audio/, src/app/core/animation/
+- Refs: src/app/core/animation/
 
-AudioService (T-2026-051) and AnimationService (T-2026-052) will create files in `src/app/core/audio/` and `src/app/core/animation/` but neither ticket creates barrel exports. Per project conventions, each core subdirectory needs an `index.ts` barrel. These barrels should be created after the services are implemented and included in the root core barrel (T-2026-126).
+Audio barrel export was completed in T-2026-321. This ticket now only covers the animation module barrel.
 
 Acceptance criteria:
-- [ ] `src/app/core/audio/index.ts` exports AudioService and SoundEffect enum
-- [ ] `src/app/core/animation/index.ts` exports AnimationService, animation triggers, ANIMATION_DURATIONS
-- [ ] Both barrels included in `src/app/core/index.ts` re-exports (depends on T-2026-126)
+- [ ] `src/app/core/animation/index.ts` exports AnimationService, ANIMATION_DURATIONS, ANIMATION_CLASSES
+- [ ] Animation barrel included in `src/app/core/index.ts` re-exports
 - [ ] Build passes with no circular dependencies
 
 ### T-2026-205
@@ -650,8 +649,8 @@ Acceptance criteria:
 
 ### T-2026-324
 - Title: Create placeholder audio asset files for all SoundEffect types
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -668,6 +667,7 @@ Acceptance criteria:
 - [ ] Files are small (<50KB each) to keep the bundle lean
 - [ ] AudioService.preload() successfully loads all files without console errors
 - [ ] Manual verification: calling AudioService.play(SoundEffect.click) produces audible output
+- Started: 2026-03-08
 
 ### T-2026-327
 - Title: Wire AudioService to RankUpNotificationService for rank-up sound
