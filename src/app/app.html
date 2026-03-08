@@ -5,8 +5,8 @@
     <span class="top-bar__rank">{{ currentRank() }}</span>
     <nx-xp-progress-bar
       class="top-bar__xp"
-      [currentXp]="rankProgress()"
-      [nextRankXp]="100"
+      [currentXp]="rankXpProgress()"
+      [nextRankXp]="rankXpRange()"
       [currentRank]="currentRank()" />
   </div>
 

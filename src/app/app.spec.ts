@@ -255,4 +255,49 @@ describe('App', () => {
     const overlay = fixture.nativeElement.querySelector('nx-rank-up-overlay');
     expect(overlay).toBeFalsy();
   });
+
+  it('should show correct XP progress percentage mid-rank', () => {
+    const gameState = TestBed.inject(GameStateService);
+    gameState.resetState();
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    const xpService = TestBed.inject(XpService);
+    xpService.addXp(250);
+    fixture.detectChanges();
+
+    const xpBar = fixture.nativeElement.querySelector('nx-xp-progress-bar');
+    expect(xpBar.getAttribute('aria-valuenow')).toBe('50');
+  });
+
+  it('should update XP progress bar dynamically on rank change', () => {
+    const gameState = TestBed.inject(GameStateService);
+    gameState.resetState();
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    const xpService = TestBed.inject(XpService);
+    xpService.addXp(600);
+    fixture.detectChanges();
+
+    const xpBar = fixture.nativeElement.querySelector('nx-xp-progress-bar');
+    expect(xpBar.getAttribute('aria-valuenow')).toBe('10');
+  });
+
+  it('should show 100% progress at max rank', () => {
+    const gameState = TestBed.inject(GameStateService);
+    gameState.resetState();
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    const xpService = TestBed.inject(XpService);
+    xpService.addXp(30000);
+    fixture.detectChanges();
+
+    const xpBar = fixture.nativeElement.querySelector('nx-xp-progress-bar');
+    expect(xpBar.getAttribute('aria-valuenow')).toBe('100');
+  });
 });

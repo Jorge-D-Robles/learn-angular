@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { BottomNavComponent } from './bottom-nav/bottom-nav';
-import { XpService, RankUpNotificationService } from './core';
+import { XpService, RankUpNotificationService, getCurrentRankThreshold, getNextRankThreshold } from './core';
 import { SideNavComponent } from './side-nav/side-nav';
 import { RankUpOverlayComponent, XpNotificationComponent, XpProgressBarComponent } from './shared';
 
@@ -16,5 +16,16 @@ export class App {
   protected readonly rankUpService = inject(RankUpNotificationService);
 
   readonly currentRank = this.xpService.currentRank;
-  readonly rankProgress = this.xpService.rankProgress;
+
+  readonly rankXpProgress = computed(() => {
+    const totalXp = this.xpService.totalXp();
+    return totalXp - getCurrentRankThreshold(totalXp).xpRequired;
+  });
+
+  readonly rankXpRange = computed(() => {
+    const totalXp = this.xpService.totalXp();
+    const next = getNextRankThreshold(totalXp);
+    if (!next) return 0;
+    return next.xpRequired - getCurrentRankThreshold(totalXp).xpRequired;
+  });
 }
