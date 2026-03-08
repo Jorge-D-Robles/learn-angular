@@ -367,7 +367,7 @@ Central localStorage abstraction. Defined in `src/app/core/persistence/state-per
 
 Three distinct approaches are used across the codebase:
 
-1. **Manual debounced-effect pattern** (most common): Services implement their own persistence via `effect()` -> `untracked()` -> `_debouncedSave()` -> `setTimeout(500ms)` -> `DestroyRef.onDestroy()` clears pending timeout. Used by: GameStateService, SettingsService, MasteryService, SpacedRepetitionService, GameProgressionService, StreakService, PlayTimeService, XpDiminishingReturnsService.
+1. **Manual debounced-effect pattern** (most common): Services implement their own persistence via `effect()` -> `untracked()` -> `_debouncedSave()` -> `setTimeout(500ms)` -> `DestroyRef.onDestroy()` clears pending timeout. Used by: GameStateService, SettingsService, MasteryService, SpacedRepetitionService, GameProgressionService, StreakService, PlayTimeService, XpDiminishingReturnsService, LevelProgressionService.
 
 2. **Synchronous saves**: Some services call `persistence.save()` directly without debounce. Used by: StreakRewardService, DailyChallengeService, EndlessModeService, SpeedRunService.
 
@@ -402,6 +402,7 @@ Each service uses its own localStorage key under the `nexus-station:` namespace:
 | `settings` | SettingsService | UserSettings (sound, animation, theme, reducedMotion) |
 | `streak` | StreakService | Streak snapshot (days, lastActivity) |
 | `streak-rewards` | StreakRewardService | Claimed reward milestones |
+| `level-progression` | LevelProgressionService | Map\<levelId, LevelProgress\> (scores, stars, completion, attempts) |
 | `diminishing-returns` | XpDiminishingReturnsService | Completion counts per level |
 | `play-time` | PlayTimeService | Total play time in seconds |
 | `daily-challenge` | DailyChallengeService | Last completed date |
