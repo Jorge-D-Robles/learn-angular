@@ -647,28 +647,6 @@ Acceptance criteria:
 - [ ] `tick` sound plays during timer countdown (last 5 seconds only, to avoid annoyance)
 - [ ] Unit tests for: click on pause, hint sound, tick during countdown
 
-### T-2026-324
-- Title: Create placeholder audio asset files for all SoundEffect types
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-051
-- Blocked-by: —
-- Tags: audio, assets, placeholder
-- Refs: src/app/core/audio/audio.service.ts
-
-AudioService references 9 audio files (correct.mp3, incorrect.mp3, complete.mp3, fail.mp3, levelUp.mp3, rankUp.mp3, hint.mp3, click.mp3, tick.mp3) at `audio/` path but no actual audio files exist in the project. Without these files, all play() calls silently fail. Create minimal placeholder audio files so the audio pipeline works end-to-end.
-
-Acceptance criteria:
-- [ ] `public/audio/` directory exists with all 9 .mp3 files listed in SOUND_PATHS
-- [ ] Each file is a valid, short (~100-300ms) audio file (can be generated programmatically or sourced from CC0 libraries)
-- [ ] Files are small (<50KB each) to keep the bundle lean
-- [ ] AudioService.preload() successfully loads all files without console errors
-- [ ] Manual verification: calling AudioService.play(SoundEffect.click) produces audible output
-- Started: 2026-03-08
-
 ### T-2026-327
 - Title: Wire AudioService to RankUpNotificationService for rank-up sound
 - Status: todo

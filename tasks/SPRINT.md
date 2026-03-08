@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-324**: Create placeholder audio asset files for all SoundEffect types (Assigned: claude, Status: in-progress)
 
 
 
