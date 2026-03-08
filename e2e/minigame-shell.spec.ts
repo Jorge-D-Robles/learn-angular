@@ -37,4 +37,11 @@ test.describe('MinigamePlayPage', () => {
     await expect(page.locator('app-minigame-shell')).toBeVisible();
     await expect(page.locator('app-module-assembly')).toBeVisible();
   });
+
+  test('should render Wire Protocol game for a valid level', async ({ page }) => {
+    await page.goto('/minigames/wire-protocol/level/wp-basic-01');
+
+    await expect(page.locator('app-minigame-shell')).toBeVisible();
+    await expect(page.locator('app-wire-protocol')).toBeVisible();
+  });
 });
