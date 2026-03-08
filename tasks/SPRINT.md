@@ -11,7 +11,6 @@ Started: 2026-03-07
 
 ## Active
 
-- **T-2026-050**: Create PlayTimeService for tracking session and total play time (Assigned: claude, Status: in-progress)
 
 
 
