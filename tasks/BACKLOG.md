@@ -104,8 +104,8 @@ Acceptance criteria:
 
 ### T-2026-056
 - Title: Create ComboTrackerService for combo multiplier mechanics
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -125,6 +125,7 @@ Acceptance criteria:
 - [ ] `reset()`: resets combo state for new level
 - [ ] `maxCombo` signal: highest combo achieved in current session
 - [ ] Unit tests for: increment, reset on incorrect, multiplier thresholds, max tracking
+- Started: 2026-03-07
 
 ### T-2026-129
 - Title: Create EmptyStateComponent for no-content pages

@@ -9,4 +9,5 @@ export * from './keyboard-shortcut.service';
 export * from './endless-mode.service';
 export * from './speed-run.service';
 export * from './wire-draw.service';
+export * from './combo-tracker.service';
 export { MinigameShellComponent } from './minigame-shell/minigame-shell';
