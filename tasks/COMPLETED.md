@@ -200,3 +200,4 @@
 [2026-03-08] T-2026-139: Register Flow Commander level data with LevelLoaderService — registered Flow Commander level pack with LevelLoaderService, 6 tests for tier distributions (claude)
 [2026-03-08] T-2026-140: Register Signal Corps level data with LevelLoaderService — registered Signal Corps level pack with LevelLoaderService, 6 tests for tier distributions (claude)
 [2026-03-08] T-2026-166: Create StoryMissionContentService for loading and parsing mission content — created StoryMissionContentService with content registry, step tracking, and GameProgressionService integration (claude)
+[2026-03-08] T-2026-237: Create MinigamePlayPage level data loading and engine initialization — added loading spinner state, baseViewState pattern, and registered P2 engine factories via provideMinigameEngine (claude)

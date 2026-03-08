@@ -657,29 +657,6 @@ Acceptance criteria:
 - [ ] Hidden when no minigames are unlocked yet (first-time user)
 - [ ] Unit tests for: card rendering, game selection logic, navigation, empty state
 
-### T-2026-237
-- Title: Create MinigamePlayPage level data loading and engine initialization
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P2
-- Depends: T-2026-223, T-2026-137, T-2026-138, T-2026-139, T-2026-140
-- Blocked-by: —
-- Tags: integration, minigame-play, level-loading, critical-path
-- Refs: docs/ux/navigation.md, src/app/pages/minigame-play/minigame-play.ts
-
-T-2026-223 wires the engine lifecycle to the shell, but the level data loading pipeline is not complete for P2 minigames. This ticket ensures that when a player navigates to `/minigames/:gameId/level/:levelId`, the correct level data is loaded from the registered level pack, passed to the engine, and the engine is started. This is the final integration step that makes P2 minigames playable end-to-end.
-
-Acceptance criteria:
-- [ ] MinigamePlayPage loads level data from LevelLoaderService.loadLevel(gameId, levelId)
-- [ ] Level data passed to engine.loadLevel() on initialization
-- [ ] Loading state shown (LoadingSpinnerComponent) while level data loads
-- [ ] Error state shown (ErrorStateComponent) if level data fails to load or is not found
-- [ ] Engine auto-starts after level data is loaded
-- [ ] Works for all 4 P2 minigames: Module Assembly, Wire Protocol, Flow Commander, Signal Corps
-- [ ] Unit tests for: level loading flow, loading state, error state, engine start
-
 ### T-2026-238
 - Title: Create LevelCardComponent for level select page level list
 - Status: todo
@@ -2428,6 +2405,34 @@ Acceptance criteria:
 - [ ] Test: wildcard route catches all unmatched paths
 - [ ] Uses real CorridorRunnerSimulationService with level 1 data
 
+### T-2026-460
+- Title: Create CorridorRunnerMapComponent for top-down station map navigation visualization
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P3
+- Depends: T-2026-266, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, corridor-runner, map
+- Refs: docs/minigames/05-corridor-runner.md, docs/ux/visual-style.md
+
+Corridor Runner spec describes a "top-down station map with corridors and modules" where "corridors light up as routes are configured" and "crew member sprite with walking animation along routes." The UI component (T-2026-083) is L-size. Extracting the map visualization follows the P2 sub-component pattern (graph canvas, pipeline viz, etc.). The map is the core visual element of the Run phase.
+
+Acceptance criteria:
+- [ ] `CorridorRunnerMapComponent` at `src/app/features/minigames/corridor-runner/map/map.ts`
+- [ ] Renders top-down station layout from MapNode[] and MapEdge[] data
+- [ ] Module nodes rendered at (x, y) positions with labels
+- [ ] Corridor edges rendered as connecting paths between modules
+- [ ] Corridors light up (glow) when their corresponding route is configured
+- [ ] Crew member sprite rendered at current position with walking animation along corridors
+- [ ] Input: `stationMap` (StationMap), `configuredRoutes` (RouteEntry[]), `crewPosition` (MapNode | null), `crewPath` (MapNode[])
+- [ ] Output: `moduleClicked` event with moduleId
+- [ ] Hull breach animation: decompression visual at dead-end modules (per spec)
+- [ ] Successful arrival: door open animation at destination module
+- [ ] Exported from corridor-runner barrel
+- [ ] Unit tests for: node rendering, corridor glow on route config, crew movement along path, hull breach animation state
+
 ### T-2026-428
 - Title: Create CorridorRunnerRouteEditorComponent for config phase route editing
 - Status: todo
@@ -3244,6 +3249,62 @@ Acceptance criteria:
 - [ ] Exported from data-relay barrel
 - [ ] Unit tests for: each built-in pipe application, pipe chaining, output comparison, stream evaluation, custom pipe handling
 
+### T-2026-461
+- Title: Create PowerGridBoardComponent for circuit board grid with service-component nodes and power lines
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P5
+- Depends: T-2026-270, T-2026-172, T-2026-054, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, power-grid, board
+- Refs: docs/minigames/07-power-grid.md, docs/ux/visual-style.md
+
+Power Grid spec describes a "Grid board with services (left) and components (right)" with "Power line drawing between services and components" and "Color-coded connections (blue=root, green=component, orange=factory)." The UI component (T-2026-093) is L-size. Extracting the circuit board canvas follows the established sub-component pattern. The board handles spatial layout, power line drawing between nodes, and scope-based color coding.
+
+Acceptance criteria:
+- [ ] `PowerGridBoardComponent` at `src/app/features/minigames/power-grid/board/board.ts`
+- [ ] Renders grid layout with ServiceNode entries on the left and ComponentNode entries on the right
+- [ ] Service nodes display: name, type, current scope indicator
+- [ ] Component nodes display: name, required injection slots
+- [ ] Power line drawing between service and component using SvgWireRendererComponent
+- [ ] Line colors: blue (root scope), green (component scope), orange (factory), purple (hierarchical)
+- [ ] Short circuit detection: incorrect connections spark with Emergency Red feedback
+- [ ] Input: `services` (ServiceNode[]), `components` (ComponentNode[]), `connections` (PowerConnection[])
+- [ ] Output: `connectionDrawn` event with {serviceId, componentId}
+- [ ] Output: `connectionRemoved` event with {serviceId, componentId}
+- [ ] Output: `serviceClicked` event with serviceId (for scope config panel)
+- [ ] Exported from power-grid barrel
+- [ ] Unit tests for: node layout, connection drawing, color by scope, short circuit visual, click events
+
+### T-2026-462
+- Title: Create DataRelayStreamVisualizerComponent for left-to-right data stream and pipe slot rendering
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P5
+- Depends: T-2026-271, T-2026-054, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, data-relay, stream-visualizer
+- Refs: docs/minigames/08-data-relay.md, docs/ux/visual-style.md
+
+Data Relay spec describes a "Left-to-right data stream visualization" with "Data particles showing visual transformation through pipes" and a "pipe toolbox organized by category." The UI component (T-2026-096) is L-size. Extracting the stream visualizer follows the established sub-component pattern. The visualizer renders data flowing through placed pipe slots with live transformation previews.
+
+Acceptance criteria:
+- [ ] `DataRelayStreamVisualizerComponent` at `src/app/features/minigames/data-relay/stream-visualizer/stream-visualizer.ts`
+- [ ] Renders left-to-right flow for each DataStream with raw input on the left and target output on the right
+- [ ] Pipe slots rendered as drop zones along the stream where pipes can be placed
+- [ ] Placed pipes show pipe name and current params
+- [ ] Data particles animate through the stream, visually changing as they pass through each pipe
+- [ ] Output comparison: actual vs expected output displayed on the right side with green (match) or red (mismatch)
+- [ ] Input: `streams` (DataStream[]), `placedPipes` (Map<streamId, PipeBlock[]>)
+- [ ] Output: `pipeSlotClicked` event with {streamId, slotIndex} for pipe config panel
+- [ ] Output: `pipeDragTarget` event for pipe placement from toolbox
+- [ ] Exported from data-relay barrel
+- [ ] Unit tests for: stream rendering, pipe slot drop zones, data particle animation, output comparison display
+
 ### T-2026-436
 - Title: Create integration test for PowerGridInjectionService DI scope validation
 - Status: todo
@@ -3582,6 +3643,38 @@ Acceptance criteria:
 - [ ] Output: `cancelled` event
 - [ ] Exported from reactor-core barrel
 - [ ] Unit tests for: signal node value editing, computed node expression editing, effect node action editing, type-specific rendering, config apply event
+
+### T-2026-455
+- Title: Create ReactorCoreGraphCanvasComponent for node drag-and-drop and wire drawing
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P6
+- Depends: T-2026-273, T-2026-054, T-2026-172, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, reactor-core, graph-canvas
+- Refs: docs/minigames/09-reactor-core.md, docs/ux/visual-style.md
+
+Reactor Core spec describes a graph editor where players "drag nodes, draw dependency wires" on a canvas. The main UI component (T-2026-100) is L-size. ReactorCoreNodeConfigComponent (T-2026-439) handles individual node configuration, but no ticket extracts the graph canvas itself -- the spatial area where nodes are positioned and dependency wires are drawn between them. This is the most complex sub-component of the Reactor Core UI and follows the established P2 sub-component pattern (FlowCommanderGateConfig, SignalCorpsTowerConfig, etc.).
+
+Acceptance criteria:
+- [ ] `ReactorCoreGraphCanvasComponent` at `src/app/features/minigames/reactor-core/graph-canvas/graph-canvas.ts`
+- [ ] Renders a zoomable/pannable canvas area for node placement
+- [ ] Nodes rendered at their (x, y) positions with type-specific colors: signal (Reactor Blue), computed (Sensor Green), effect (Alert Orange)
+- [ ] Drag-and-drop node placement from toolbox using DraggableDirective (T-2026-054)
+- [ ] Wire drawing between node ports using SvgWireRendererComponent (T-2026-172)
+- [ ] Dependency wires show directional flow (source -> target) with arrow indicators
+- [ ] Click node to select it and emit `nodeSelected` event for config panel
+- [ ] Input: `nodes` (Map of nodes), `edges` (GraphEdge[]), `toolboxItems` (NodeType[])
+- [ ] Output: `nodeAdded` event with {type, position}
+- [ ] Output: `nodeMoved` event with {nodeId, newPosition}
+- [ ] Output: `edgeAdded` event with {sourceId, targetId}
+- [ ] Output: `edgeRemoved` event with {sourceId, targetId}
+- [ ] Output: `nodeSelected` event with nodeId
+- [ ] Energy flow animation along wires during simulation (per spec "energy flowing along wires")
+- [ ] Exported from reactor-core barrel
+- [ ] Unit tests for: node rendering, drag placement, wire drawing, selection, energy animation states
 
 ### T-2026-440
 - Title: Create integration test for ReactorCoreGraphService change propagation and scenario execution
@@ -4275,6 +4368,60 @@ Acceptance criteria:
 - [ ] Exported from blast-doors barrel
 - [ ] Unit tests for: slot rendering, drag-drop placement, correct/incorrect visual states, keyboard navigation, event emissions
 
+### T-2026-463
+- Title: Create DeepSpaceRadioInterceptorPipelineComponent for visual interceptor chain display
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-275, T-2026-054, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, deep-space-radio, interceptor-pipeline
+- Refs: docs/minigames/10-deep-space-radio.md, docs/ux/visual-style.md
+
+Deep Space Radio spec describes an "Interceptor pipeline visualization: ordered chain of processing blocks" where players drag interceptor blocks into position and see radio wave animations through the chain. The UI component (T-2026-118) is L-size. Extracting the pipeline visualization follows the established sub-component pattern.
+
+Acceptance criteria:
+- [ ] `InterceptorPipelineComponent` at `src/app/features/minigames/deep-space-radio/interceptor-pipeline/interceptor-pipeline.ts`
+- [ ] Renders horizontal pipeline with ordered interceptor slot positions
+- [ ] Interceptor blocks draggable from toolbox into pipeline slots
+- [ ] Each block displays: interceptor type icon, name, configuration preview
+- [ ] Radio wave animation flows through the chain on "Transmit" (request phase left-to-right, response phase right-to-left)
+- [ ] Interceptor modification indicators: key icon (auth), scroll (logging), loop arrow (retry), shield (error), cache (caching)
+- [ ] Input: `chain` (InterceptorBlock[]), `isTransmitting` (boolean), `toolboxItems` (InterceptorBlock[])
+- [ ] Output: `interceptorPlaced` event with {interceptor, position}
+- [ ] Output: `interceptorRemoved` event with {position}
+- [ ] Output: `interceptorClicked` event with InterceptorBlock (for config)
+- [ ] Reorder support: drag interceptors within the pipeline to change order
+- [ ] Exported from deep-space-radio barrel
+- [ ] Unit tests for: slot rendering, drag placement, reorder, wave animation states, interceptor type icons
+
+### T-2026-464
+- Title: Create SystemCertificationCoverageOverlayComponent for source code coverage visualization
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-276, T-2026-031, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, system-certification, coverage
+- Refs: docs/minigames/11-system-certification.md, docs/ux/visual-style.md
+
+System Certification spec describes a "Coverage overlay mode: toggle to see covered (green), uncovered (red), partial (yellow) lines on source." The UI component (T-2026-120) is L-size. Extracting the coverage overlay follows the established sub-component pattern. The overlay renders on top of the CodeEditorComponent source code viewer.
+
+Acceptance criteria:
+- [ ] `CoverageOverlayComponent` at `src/app/features/minigames/system-certification/coverage-overlay/coverage-overlay.ts`
+- [ ] Input: `sourceLines` (string[]), `coverageResult` (CoverageResult), `isVisible` (boolean)
+- [ ] Renders colored line gutters: Sensor Green (covered), Emergency Red (uncovered), Solar Gold (partial)
+- [ ] Coverage percentage gauge rendered prominently (per spec: "Coverage meter gauge, prominent, visual")
+- [ ] Toggle button switches between source-only view and coverage overlay view
+- [ ] Hint integration: uncovered lines pulse when hint is active (per spec: "Hint button that highlights uncovered code path")
+- [ ] Output: `lineClicked` event with lineNumber for focusing on uncovered code
+- [ ] Exported from system-certification barrel
+- [ ] Unit tests for: line color by coverage state, coverage percentage display, toggle visibility, hint pulse on uncovered lines
+
 ### T-2026-446
 - Title: Create integration test for DeepSpaceRadioInterceptorService transmission simulation
 - Status: todo
@@ -4797,6 +4944,50 @@ Acceptance criteria:
 - [ ] Par times match each minigame spec (e.g., Module Assembly: 3 min, Wire Protocol: 4 min, etc.)
 - [ ] Unit tests for: config loading per game, par time values match specs
 
+### T-2026-465
+- Title: Wire LeaderboardComponent into SpeedRunPage for post-run leaderboard display
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P8
+- Depends: T-2026-219, T-2026-156
+- Blocked-by: —
+- Tags: integration, leaderboard, speed-run, replay-modes
+- Refs: docs/progression.md, docs/research/gamification-patterns.md
+
+Progression.md specifies "Speed run leaderboards are competitive." Gamification research says "Speed run leaderboards are competitive; mastery is personal." T-2026-253 wires LeaderboardComponent into LevelSelectPage replay tabs, but the SpeedRunPage (T-2026-156) itself should show the leaderboard post-run so the player sees their rank immediately after completing a speed run. Without this, the player must navigate back to level select to see their ranking.
+
+Acceptance criteria:
+- [ ] SpeedRunPage renders LeaderboardComponent in the post-run results section
+- [ ] Leaderboard shows speed run mode entries for the current minigame
+- [ ] Player's new entry highlighted if they just set a record
+- [ ] Leaderboard positioned below the time splits breakdown
+- [ ] Unit tests for: leaderboard rendering in post-run state, player entry highlight
+
+### T-2026-466
+- Title: Create integration test for replay mode configuration loading per minigame
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P8
+- Depends: T-2026-284
+- Blocked-by: —
+- Tags: testing, integration, replay-modes, configuration
+- Refs: docs/progression.md, docs/minigames/TEMPLATE.md
+
+T-2026-284 creates replay mode configs (EndlessModeConfig, SpeedRunConfig) for all 12 minigames with game-specific parameters from each minigame spec (spawn intervals, par times). No integration test verifies that: all 12 minigames have both endless and speed run configs, par times match spec values, and the config loading pipeline works when EndlessModePage/SpeedRunPage reads config by route param gameId.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/replay-mode-configs.integration.spec.ts`
+- [ ] Test: all 12 minigame IDs have EndlessModeConfig entries
+- [ ] Test: all 12 minigame IDs have SpeedRunConfig entries
+- [ ] Test: Module Assembly par time matches spec (verify against minigame doc)
+- [ ] Test: replay mode page reads correct config when gameId route param is 'module-assembly'
+- [ ] Test: unknown gameId returns default/fallback config
+- [ ] Uses real config data and route param resolution
+
 ### T-2026-285
 - Title: Create P8 end-to-end smoke test for replay modes
 - Status: todo
@@ -5070,6 +5261,95 @@ Acceptance criteria:
 - [ ] Test: best time persists across service restarts (localStorage round-trip)
 - [ ] Test: first-ever run always sets best time
 - [ ] Uses real SpeedRunService with fake localStorage
+
+### T-2026-456
+- Title: Wire CosmeticService unlock evaluation to rank-up and mastery milestone events
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P8
+- Depends: T-2026-111, T-2026-021, T-2026-022
+- Blocked-by: —
+- Tags: integration, cosmetics, gamification, progression, unlock
+- Refs: docs/progression.md
+
+Progression.md specifies cosmetic unlocks are "Unlocked at rank milestones and mastery milestones." CosmeticService (T-2026-111) stores cosmetic items with unlock conditions but no ticket triggers the evaluation. T-2026-279 wires AchievementService checks to progression events, but CosmeticService needs the same treatment. Without this, cosmetics are never unlocked during gameplay.
+
+Acceptance criteria:
+- [ ] XpService rank change triggers CosmeticService.evaluateUnlocks()
+- [ ] MasteryService mastery change triggers CosmeticService.evaluateUnlocks()
+- [ ] AchievementService new achievement triggers CosmeticService.evaluateUnlocks() (for achievement-tied badges)
+- [ ] Newly unlocked cosmetics shown via notification (toast or dedicated cosmetic unlock notification)
+- [ ] Multiple unlocks at once (e.g., rank up unlocks 2 cosmetics) each get notified
+- [ ] Unit tests for: unlock triggered on rank up, unlock triggered on mastery milestone, unlock triggered on achievement earn
+
+### T-2026-457
+- Title: Wire unlocked cosmetic themes into SettingsPage theme selector
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P8
+- Depends: T-2026-111, T-2026-143, T-2026-325
+- Blocked-by: —
+- Tags: integration, cosmetics, settings, themes
+- Refs: docs/progression.md, docs/ux/navigation.md
+
+Progression.md lists "UI themes" as cosmetic unlocks. SettingsPage (T-2026-080) has a theme selector with dark/station/light options. CosmeticService (T-2026-111) tracks unlocked cosmetics including themes. T-2026-325 creates theme CSS variants. But no ticket connects CosmeticService unlocked themes to the theme selector dropdown. Without this, the theme selector only shows the 3 default themes even if the player has unlocked additional variants.
+
+Acceptance criteria:
+- [ ] SettingsPage theme selector queries CosmeticService for unlocked theme cosmetics
+- [ ] Default themes (dark, station, light) always available
+- [ ] Unlocked cosmetic themes added to the dropdown (e.g., "Reactor Blue", "Solar Gold")
+- [ ] Locked themes shown as dimmed with unlock requirement tooltip
+- [ ] Selecting an unlocked cosmetic theme applies it via SettingsService and CosmeticService.equipCosmetic()
+- [ ] Unit tests for: default themes always present, unlocked themes added, locked themes dimmed, equip on select
+
+### T-2026-458
+- Title: Create P8 E2E smoke test for profile page achievements, cosmetics, and leaderboard sections
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P8
+- Depends: T-2026-252, T-2026-280, T-2026-253
+- Blocked-by: —
+- Tags: testing, e2e, profile, achievements, cosmetics, leaderboard
+- Refs: docs/ux/navigation.md, playwright.config.ts
+
+P8 adds achievements (T-2026-252), cosmetics (T-2026-280), and leaderboard (T-2026-253) sections to the profile and level select pages. T-2026-285 has E2E tests for replay modes but none for the achievement/cosmetic/leaderboard UI sections. No E2E test validates these P8 additions render correctly.
+
+Acceptance criteria:
+- [ ] Playwright test at `e2e/p8-profile.spec.ts`
+- [ ] Test: `/profile` renders "Achievements" section with achievement grid
+- [ ] Test: achievement badges display with earned/unearned states
+- [ ] Test: `/profile` renders "Cosmetics" section with cosmetic gallery
+- [ ] Test: cosmetic gallery shows filter tabs (Skin, Theme, Badge)
+- [ ] Test: `/minigames/module-assembly` renders leaderboard tab in replay mode section
+- [ ] Tests run in CI (GitHub Actions)
+
+### T-2026-459
+- Title: Create integration test for CosmeticService unlock evaluation on rank milestone
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P8
+- Depends: T-2026-456
+- Blocked-by: —
+- Tags: testing, integration, cosmetics, rank, progression
+- Refs: docs/progression.md, src/app/core/progression/cosmetic.service.ts
+
+T-2026-456 wires CosmeticService unlock evaluation to rank-up events. No integration test verifies the chain: earn enough XP -> rank up -> CosmeticService evaluates -> rank-milestone cosmetic unlocked -> notification shown.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/cosmetic-rank-unlock.integration.spec.ts`
+- [ ] Test: reaching Ensign rank unlocks the Ensign-tier cosmetic
+- [ ] Test: reaching Commander rank unlocks the Commander-tier cosmetic
+- [ ] Test: rank below threshold does not unlock cosmetic
+- [ ] Test: already-unlocked cosmetic is not re-notified on subsequent rank evaluations
+- [ ] Uses real CosmeticService, XpService, and cosmetic data
 
 ### T-2026-386
 - Title: Add AudioService sound effect for achievement earned event
@@ -5538,4 +5818,115 @@ Acceptance criteria:
 - [ ] "Reset All Progress" button full width on mobile with adequate touch target (44px minimum)
 - [ ] Export/Import buttons side by side on desktop, stacked on mobile
 - [ ] Unit tests validate no layout overflow at 375px viewport
+
+### T-2026-450
+- Title: Wire AudioService to story mission completion handler for mission complete sound
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-259, T-2026-406
+- Blocked-by: —
+- Tags: audio, integration, story-missions, completion
+- Refs: docs/overview.md, docs/research/gamification-patterns.md, src/app/core/audio/audio.service.ts
+
+Gamification research emphasizes "Immediate feedback" and "All minigames provide instant visual/audio feedback." Story mission completion is a significant progression event (50 XP, minigame unlock). AudioService plays sounds for rank-up (T-2026-327), XP (T-2026-328), and minigame actions (T-2026-322/323), but no ticket wires a sound to story mission completion. T-2026-406 adds the SoundEffect.missionComplete enum value. This ticket wires the sound into the completion handler.
+
+Acceptance criteria:
+- [ ] Story mission completion handler (T-2026-259) calls AudioService.play(SoundEffect.missionComplete) on mission complete
+- [ ] Sound plays before XP notification toast (audio reinforces the moment)
+- [ ] Sound respects SettingsService.soundEnabled toggle
+- [ ] Sound does not play if mission was already completed (idempotent completion)
+- [ ] Unit tests for: sound played on first completion, sound skipped on repeat, sound skipped when disabled
+
+### T-2026-451
+- Title: Create integration test for CurriculumService chapter-to-minigame mapping against curriculum.md
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-407, T-2026-038
+- Blocked-by: —
+- Tags: testing, integration, curriculum, data-integrity
+- Refs: docs/curriculum.md, src/app/core/curriculum/curriculum.service.ts, src/app/data/missions/
+
+CurriculumService (T-2026-407) provides getMinigameForChapter() and other lookup methods. The CURRICULUM constant (T-2026-038) defines all 34 chapters. No integration test verifies that the CurriculumService mappings match curriculum.md: that each chapter's minigame unlock is correct, that prerequisite chains are consistent, and that chapters 9, 10, 27, 33, 34 correctly have no minigame unlocks.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/curriculum-mapping.integration.spec.ts`
+- [ ] Test: chapters 1-3 unlock Module Assembly (or new levels), per curriculum.md
+- [ ] Test: chapters 4 unlocks Flow Commander, 5-6 unlock Wire Protocol, 7-8 unlock Signal Corps
+- [ ] Test: chapters 9, 10 do NOT unlock any minigame (deferrable views, image optimization)
+- [ ] Test: chapters 11-13 unlock Corridor Runner
+- [ ] Test: chapters 27, 33, 34 do NOT unlock any minigame (content projection, animations, performance)
+- [ ] Test: all 12 minigame IDs appear in the curriculum mapping at least once
+- [ ] Uses real CurriculumService and CURRICULUM constant
+
+### T-2026-452
+- Title: Create integration test for MissionUnlockNotificationService lifecycle in app shell
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-338, T-2026-259
+- Blocked-by: —
+- Tags: testing, integration, notifications, minigame-unlock, app-shell
+- Refs: docs/overview.md, src/app/app.html
+
+T-2026-338 wires MissionUnlockNotificationService into the app shell root and T-2026-259 creates the story mission completion handler that triggers unlocks. No integration test verifies the full chain: complete mission -> unlock notification service triggers -> notification component renders in app shell -> auto-dismiss or click navigates to minigame.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/mission-unlock-notification.integration.spec.ts`
+- [ ] Test: completing a mission that unlocks a minigame shows the unlock notification
+- [ ] Test: completing a mission that does NOT unlock a minigame does not show notification
+- [ ] Test: notification displays the correct minigame name
+- [ ] Test: notification auto-dismisses after configured timeout
+- [ ] Uses real MissionUnlockNotificationService and GameProgressionService
+
+### T-2026-453
+- Title: Create LevelSelectPage replay mode tab content for Endless, Speed Run, and Daily modes
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-077, T-2026-053
+- Blocked-by: —
+- Tags: ui, level-select, replay-modes, tabs
+- Refs: docs/ux/navigation.md, docs/progression.md
+
+Navigation.md specifies the Level Select page includes "Replay mode tabs (Story, Endless, Speed Run, Daily)." LevelSelectPage (T-2026-077) was built with the acceptance criterion for replay mode tabs, but no ticket creates the tab content that navigates to the replay mode routes (/minigames/:gameId/endless, /speedrun, /daily). Without tab content, the tabs are empty or non-functional.
+
+Acceptance criteria:
+- [ ] LevelSelectPage has 4 tabs: Story (default), Endless, Speed Run, Daily
+- [ ] Story tab shows the level list grouped by tier (existing functionality)
+- [ ] Endless tab shows: high score, "Start Endless" button linking to `/minigames/:gameId/endless`
+- [ ] Speed Run tab shows: par time, best time, "Start Run" button linking to `/minigames/:gameId/speedrun`
+- [ ] Daily tab shows: today's challenge info (if this game), "Accept" button linking to `/minigames/:gameId/daily`
+- [ ] Tabs use routerLink for navigation to replay mode routes
+- [ ] Unit tests for: tab rendering, button navigation links per mode
+
+### T-2026-454
+- Title: Wire StreakRewardService milestone notifications into app shell for visual reward feedback
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-249, T-2026-009
+- Blocked-by: —
+- Tags: integration, notifications, streaks, app-shell
+- Refs: docs/progression.md, docs/research/gamification-patterns.md
+
+StreakRewardService (T-2026-249) awards XP at 7/14/30-day milestones and is wired to StreakService (T-2026-251). However, when a streak milestone is reached, no visual notification is shown to the player. XpNotificationService shows XP toasts, but streak milestones deserve a distinct visual (e.g., "7-Day Streak! +100 XP"). Without this, players may not notice they hit a milestone.
+
+Acceptance criteria:
+- [ ] StreakRewardService milestone detection triggers a notification via XpNotificationService or a dedicated streak toast
+- [ ] Notification shows: milestone name (e.g., "7-Day Streak"), bonus XP amount, flame icon
+- [ ] Notification renders in the app shell notification stack (alongside XP toasts, rank-up overlay)
+- [ ] Does not duplicate the XP notification (either combine them or sequence them with a delay)
+- [ ] Unit tests for: milestone notification shown on 7-day, 14-day, 30-day milestones
 
