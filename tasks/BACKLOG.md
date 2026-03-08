@@ -28,32 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-163
-- Title: Create MinigameTutorialOverlayComponent for first-time play instructions
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-018, T-2026-007
-- Blocked-by: —
-- Tags: ui, component, minigame-framework, tutorial, onboarding
-- Refs: docs/research/gamification-patterns.md, docs/ux/visual-style.md
-
-Gamification research specifies "progressive disclosure -- don't show everything at once." Each minigame has unique controls and mechanics. When a player launches a minigame for the first time, a tutorial overlay should explain the controls and objective. Subsequent plays skip it (or offer a "How to Play" button in the pause menu).
-
-Acceptance criteria:
-- [ ] `MinigameTutorialOverlayComponent` at `src/app/shared/components/minigame-tutorial/`
-- [ ] Selector: `nx-minigame-tutorial`
-- [ ] Input: `gameId` (MinigameId), `steps` (array of {title, description, image?})
-- [ ] Multi-step tutorial with next/previous/skip navigation
-- [ ] Step indicator (dots or numbers showing current step)
-- [ ] "Don't show again" checkbox that persists per-game via StatePersistenceService
-- [ ] Shown automatically on first play, accessible via pause menu "How to Play" on subsequent plays
-- [ ] Exported from shared components barrel
-- [ ] Unit tests for: step navigation, skip button, persistence of "don't show again" flag
-- Started: 2026-03-08
-
 ### T-2026-205
 - Title: Integrate MinigameTutorialOverlay with MinigameShell first-play detection
 - Status: todo

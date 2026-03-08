@@ -141,3 +141,4 @@
 [2026-03-08] T-2026-239: Add engine.reset() method to MinigameEngine base class — added reset() method and simplified MinigamePlayPage.onRetry() (claude)
 [2026-03-08] T-2026-132: Style NotFoundPage with station theme — Hull Breach themed 404 page with CSS art, warning stripes, breach animation, design tokens (claude)
 [2026-03-08] T-2026-133: Create StreakBadgeComponent for streak display — streak badge with flame icon, three visual states, glow effects, and accessibility (claude)
+[2026-03-08] T-2026-163: Create MinigameTutorialOverlayComponent for first-time play instructions — created MinigameTutorialOverlayComponent with multi-step navigation, persistence, and dialog accessibility (claude)

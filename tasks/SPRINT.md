@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-163**: Create MinigameTutorialOverlayComponent for first-time play instructions (Assigned: claude, Status: in-progress)
 
 
 
