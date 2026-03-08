@@ -30,8 +30,8 @@ Acceptance criteria:
 
 ### T-2026-361
 - Title: Fix minigame-play test failures caused by missing HTMLMediaElement.play() in jsdom
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P1
@@ -46,6 +46,7 @@ Acceptance criteria:
 - [ ] All minigame-play tests pass (0 failures)
 - [ ] HTMLMediaElement.play polyfill added to src/testing/setup.ts
 - [ ] No regressions in other test suites
+- Started: 2026-03-08
 
 ---
 

@@ -27,3 +27,20 @@ if (typeof window.matchMedia !== 'function') {
     },
   });
 }
+
+// jsdom does not implement HTMLMediaElement.play() or pause().
+// AudioService calls clone.play().catch(...), which throws when play()
+// returns undefined instead of a Promise.
+Object.defineProperty(HTMLMediaElement.prototype, 'play', {
+  writable: true,
+  configurable: true,
+  value: () => Promise.resolve(),
+});
+
+Object.defineProperty(HTMLMediaElement.prototype, 'pause', {
+  writable: true,
+  configurable: true,
+  value: () => {
+    /* intentional no-op stub */
+  },
+});
