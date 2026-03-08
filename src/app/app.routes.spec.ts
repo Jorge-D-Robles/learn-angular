@@ -1,3 +1,4 @@
+import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { DashboardPage } from './pages/dashboard/dashboard';
 import { NotFoundPage } from './pages/not-found/not-found';
@@ -125,7 +126,9 @@ describe('routes', () => {
     });
 
     it('should render NotFoundPage with Hull Breach text', async () => {
-      const { element } = await createComponent(NotFoundPage);
+      const { element } = await createComponent(NotFoundPage, {
+        providers: [provideRouter([])],
+      });
       expect(element.textContent).toContain('Hull Breach');
     });
   });

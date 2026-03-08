@@ -12,5 +12,6 @@ test.describe('App', () => {
     await page.goto('/this-route-does-not-exist');
 
     await expect(page.getByRole('heading', { name: 'Hull Breach' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Return to Dashboard' })).toBeVisible();
   });
 });
