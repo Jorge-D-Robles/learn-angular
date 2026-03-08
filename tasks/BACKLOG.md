@@ -838,26 +838,6 @@ Acceptance criteria:
 - [ ] "Back to Dashboard" navigation on completion
 - [ ] Unit tests for: content loading, challenge completion, mastery restoration display
 
-### T-2026-218
-- Title: Create DailyChallengeCompletionHandler to award bonus XP
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P2
-- Depends: T-2026-041, T-2026-021, T-2026-032
-- Blocked-by: —
-- Tags: integration, daily-challenge, xp, notifications
-- Refs: docs/progression.md, docs/overview.md
-
-Progression.md specifies "Daily challenge completion: 50 bonus XP." DailyChallengeService (T-2026-041) tracks completion and XpService (T-2026-021) manages XP, but no ticket connects daily challenge completion to the 50 XP bonus award and notification. Without this integration, daily challenges are tracked but don't award their bonus XP.
-
-Acceptance criteria:
-- [ ] DailyChallengeService completion flow awards 50 bonus XP via XpService.addXp()
-- [ ] XpNotificationService shows "+50 Daily Challenge" notification on completion
-- [ ] Bonus XP only awarded once per day (completing same challenge again does not re-award)
-- [ ] Unit tests for: bonus XP award, notification display, no double-award
-
 ### T-2026-239
 - Title: Add engine.reset() method to MinigameEngine base class
 - Status: todo
