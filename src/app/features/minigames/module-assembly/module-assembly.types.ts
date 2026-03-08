@@ -47,6 +47,7 @@ export interface ModuleAssemblyLevelData {
   readonly blueprint: ComponentBlueprint;
   readonly parts: readonly ComponentPart[];
   readonly decoys: readonly DecoyInfo[];
+  readonly beltSpeed: number;
 }
 
 // ---------------------------------------------------------------------------

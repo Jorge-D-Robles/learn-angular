@@ -68,6 +68,7 @@ const _validLevelData: ModuleAssemblyLevelData = {
   blueprint: _validBlueprint,
   parts: [_validPart, _decoyPart],
   decoys: [_validDecoyInfo],
+  beltSpeed: 100,
 };
 
 // Suppress unused variable warnings for compile-time checks
@@ -279,6 +280,7 @@ describe('ModuleAssemblyLevelData', () => {
         { id: 'p1', type: 'classBody', content: 'export class TestComponent {}', isDecoy: false, correctSlotId: 's1' },
       ],
       decoys: [],
+      beltSpeed: 100,
     };
 
     expect(levelData.blueprint.name).toBe('TestComponent');

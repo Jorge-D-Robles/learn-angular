@@ -124,8 +124,8 @@ Acceptance criteria:
 
 ### T-2026-059
 - Title: Create Module Assembly minigame engine
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: L
 - Milestone: P2
@@ -148,6 +148,7 @@ Acceptance criteria:
 - [ ] Belt exhaustion: if belt empties with unfilled required slots, level fails
 - [ ] 3 strikes (wrong placements) = level fails
 - [ ] Unit tests for: part validation, slot matching, decoy handling, win/lose conditions, scoring
+- Started: 2026-03-08
 
 ### T-2026-060
 - Title: Create Module Assembly minigame UI component
