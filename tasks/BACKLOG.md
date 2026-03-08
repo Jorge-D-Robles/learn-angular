@@ -232,28 +232,6 @@ Acceptance criteria:
 - [ ] All public types from DailyChallengeService are importable via barrel path
 - [ ] Build passes with no missing exports
 
-### T-2026-296
-- Title: Migrate ReplayMode type to use PlayMode enum
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-289
-- Blocked-by: —
-- Tags: refactor, minigame-framework, types
-- Refs: src/app/pages/level-select/level-select.ts, src/app/core/minigame/minigame.types.ts
-
-The `ReplayMode` type alias in `level-select.ts` uses a string union `'story' | 'endless' | 'speedrun' | 'daily'` that diverges from the canonical `PlayMode` enum (e.g., `'speedrun'` vs `PlayMode.SpeedRun = 'speedRun'`). Replace `ReplayMode` with `PlayMode` to unify the mode representation across the codebase.
-
-Acceptance criteria:
-- [ ] `ReplayMode` type alias removed from `level-select.ts`
-- [ ] All usages replaced with `PlayMode` enum from `src/app/core/minigame/minigame.types.ts`
-- [ ] String values updated to match enum values (`'speedrun'` → `PlayMode.SpeedRun`, `'daily'` → `PlayMode.DailyChallenge`)
-- [ ] No runtime behavior change
-- [ ] Existing tests pass
-- Started: 2026-03-08
-
 ### T-2026-303
 - Title: Add shared components barrel exports for SvgPort and SvgWireRenderer
 - Status: todo
