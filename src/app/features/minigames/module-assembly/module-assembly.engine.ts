@@ -1,4 +1,4 @@
-import { signal, computed, type Signal } from '@angular/core';
+import { signal, computed, type Signal, type WritableSignal } from '@angular/core';
 import { MinigameEngine, type ActionResult } from '../../../core/minigame/minigame-engine';
 import type { MinigameEngineConfig } from '../../../core/minigame/minigame-engine';
 import { MinigameStatus } from '../../../core/minigame/minigame.types';
@@ -62,12 +62,13 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
   private readonly _beltParts = signal<readonly ComponentPart[]>([]);
   private readonly _beltSpeed = signal(0);
   private readonly _filledSlots = signal<ReadonlyMap<string, ComponentPart>>(new Map());
-  private _blueprint: ComponentBlueprint = { name: '', slots: [], expectedParts: [] };
+  private readonly _blueprint: WritableSignal<ComponentBlueprint> = signal<ComponentBlueprint>({ name: '', slots: [], expectedParts: [] });
 
   // --- Public read-only signals ---
   readonly beltParts: Signal<readonly ComponentPart[]> = this._beltParts.asReadonly();
   readonly beltSpeed: Signal<number> = this._beltSpeed.asReadonly();
   readonly filledSlots: Signal<ReadonlyMap<string, ComponentPart>> = this._filledSlots.asReadonly();
+  readonly blueprint: Signal<ComponentBlueprint> = this._blueprint.asReadonly();
 
   readonly strikes = computed(() => this.config.initialLives - this.lives());
   readonly maxStrikes = computed(() => this.config.initialLives);
@@ -79,7 +80,7 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
   // --- Lifecycle hooks ---
 
   protected onLevelLoad(data: ModuleAssemblyLevelData): void {
-    this._blueprint = data.blueprint;
+    this._blueprint.set(data.blueprint);
     this._beltParts.set([...data.parts]);
     this._beltSpeed.set(data.beltSpeed);
     this._filledSlots.set(new Map());
@@ -108,7 +109,7 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
   private handlePlacePart(action: PlacePartAction): ActionResult {
     const parts = this._beltParts();
     const part = parts.find((p) => p.id === action.partId);
-    const slot = this._blueprint.slots.find((s) => s.id === action.targetSlotId);
+    const slot = this._blueprint().slots.find((s) => s.id === action.targetSlotId);
 
     if (!part || !slot) {
       return INVALID_NO_CHANGE;
@@ -162,7 +163,7 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
   // --- Private condition checks ---
 
   private checkWinCondition(): void {
-    const requiredSlots = this._blueprint.slots.filter((s) => s.isRequired);
+    const requiredSlots = this._blueprint().slots.filter((s) => s.isRequired);
     const filled = this._filledSlots();
     if (requiredSlots.every((s) => filled.has(s.id))) {
       this.complete();
@@ -174,7 +175,7 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
       return;
     }
     if (this._beltParts().length === 0) {
-      const requiredSlots = this._blueprint.slots.filter((s) => s.isRequired);
+      const requiredSlots = this._blueprint().slots.filter((s) => s.isRequired);
       const filled = this._filledSlots();
       if (requiredSlots.some((s) => !filled.has(s.id))) {
         this.fail();

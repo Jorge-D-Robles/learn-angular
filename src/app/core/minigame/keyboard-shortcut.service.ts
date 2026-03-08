@@ -29,6 +29,11 @@ export class KeyboardShortcutService {
     });
   }
 
+  /** Remove a single shortcut by key. No-op if the key is not registered. */
+  unregister(key: string): void {
+    this._shortcuts.delete(key.toLowerCase());
+  }
+
   /** Clear all shortcuts and reset isEnabled to true. */
   unregisterAll(): void {
     this._shortcuts.clear();

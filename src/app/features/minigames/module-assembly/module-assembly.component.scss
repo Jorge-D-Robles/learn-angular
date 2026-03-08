@@ -1,0 +1,207 @@
+// Module Assembly — Conveyor belt + Blueprint layout
+// Space-station "Nexus" aesthetic
+
+.module-assembly {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+}
+
+// --- Belt ---
+
+.belt {
+  position: relative;
+  height: 100px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--color-surface, #1a1a2e);
+  border: 1px solid var(--color-border, #2a2a4e);
+}
+
+.belt__part {
+  position: absolute;
+  top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 4px solid;
+  border-radius: 6px;
+  background: var(--color-card, #16213e);
+  cursor: grab;
+  user-select: none;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+  }
+
+  &--correct {
+    animation: snap-in 0.2s ease-out;
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.6);
+  }
+
+  &--incorrect {
+    animation: shake 0.3s ease;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+  }
+}
+
+.belt__part-label {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary, #8b92a8);
+}
+
+.belt__part-content {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--color-text-primary, #e2e8f0);
+  white-space: nowrap;
+}
+
+// --- Blueprint ---
+
+.blueprint {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border-radius: 8px;
+  background: var(--color-surface, #1a1a2e);
+  border: 1px solid var(--color-border, #2a2a4e);
+  transition: box-shadow 0.3s ease;
+
+  &--complete {
+    animation: glow-pulse 1.5s ease-in-out infinite;
+  }
+}
+
+.blueprint__name {
+  width: 100%;
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #e2e8f0);
+}
+
+.blueprint__slot {
+  position: relative;
+  min-width: 140px;
+  min-height: 64px;
+  padding: 0.5rem 0.75rem;
+  border: 2px dashed;
+  border-radius: 6px;
+  background: var(--color-card, #16213e);
+  transition: border-style 0.2s, box-shadow 0.2s;
+
+  &--filled {
+    border-style: solid;
+  }
+
+  &--required::after {
+    content: '*';
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    color: var(--color-accent, #f97316);
+    font-weight: bold;
+  }
+}
+
+:host ::ng-deep .nx-drop-zone--hover {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.blueprint__slot-label {
+  display: block;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary, #8b92a8);
+  margin-bottom: 0.25rem;
+}
+
+.blueprint__slot-number {
+  position: absolute;
+  bottom: 4px;
+  right: 8px;
+  font-size: 0.625rem;
+  color: var(--color-text-secondary, #8b92a8);
+  opacity: 0.6;
+}
+
+.blueprint__slot-content {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--color-text-primary, #e2e8f0);
+}
+
+// --- Animations ---
+
+@keyframes snap-in {
+  from {
+    transform: scale(1.15);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(234, 179, 8, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.6);
+  }
+}
+
+// --- Reduced motion ---
+
+@media (prefers-reduced-motion: reduce) {
+  .belt__part--correct,
+  .belt__part--incorrect {
+    animation: none;
+  }
+
+  .blueprint--complete {
+    animation: none;
+    box-shadow: 0 0 12px rgba(234, 179, 8, 0.4);
+  }
+}
+
+// --- Responsive ---
+
+@media (max-width: 767px) {
+  .module-assembly {
+    flex-direction: column;
+  }
+
+  .belt {
+    height: 80px;
+  }
+
+  .blueprint {
+    flex-direction: column;
+  }
+
+  .blueprint__slot {
+    min-width: unset;
+    width: 100%;
+  }
+}

@@ -10,4 +10,5 @@ export * from './endless-mode.service';
 export * from './speed-run.service';
 export * from './wire-draw.service';
 export * from './combo-tracker.service';
+export * from './minigame-engine.tokens';
 export { MinigameShellComponent } from './minigame-shell/minigame-shell';

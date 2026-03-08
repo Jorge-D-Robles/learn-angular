@@ -117,4 +117,37 @@ describe('KeyboardShortcutService', () => {
 
     expect(callback).toHaveBeenCalledOnce();
   });
+
+  describe('unregister(key)', () => {
+    it('should remove a single shortcut by key', () => {
+      const callbackA = vi.fn();
+      const callbackB = vi.fn();
+      service.register('a', 'Action A', callbackA);
+      service.register('b', 'Action B', callbackB);
+
+      service.unregister('a');
+
+      dispatchKey('a');
+      dispatchKey('b');
+      expect(callbackA).not.toHaveBeenCalled();
+      expect(callbackB).toHaveBeenCalledOnce();
+    });
+
+    it('should be a no-op if the key is not registered', () => {
+      service.register('a', 'Action A', vi.fn());
+
+      expect(() => service.unregister('z')).not.toThrow();
+      expect(service.getRegistered()).toHaveLength(1);
+    });
+
+    it('should normalize key to lowercase', () => {
+      const callback = vi.fn();
+      service.register('a', 'Action A', callback);
+
+      service.unregister('A');
+
+      dispatchKey('a');
+      expect(callback).not.toHaveBeenCalled();
+    });
+  });
 });
