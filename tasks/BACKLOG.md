@@ -242,29 +242,6 @@ Acceptance criteria:
 - [ ] Both barrels included in `src/app/core/index.ts` re-exports (depends on T-2026-126)
 - [ ] Build passes with no circular dependencies
 
-### T-2026-185
-- Title: Integrate XpDiminishingReturnsService with LevelCompletionService
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-164, T-2026-113
-- Blocked-by: —
-- Tags: integration, progression, xp, diminishing-returns
-- Refs: docs/research/gamification-patterns.md, src/app/core/minigame/level-completion.service.ts
-
-XpDiminishingReturnsService (T-2026-164) tracks replay counts and calculates diminished XP multipliers, but no ticket wires it into the LevelCompletionService facade. Without this integration, replaying easy levels always awards full XP.
-
-Acceptance criteria:
-- [ ] LevelCompletionService injects XpDiminishingReturnsService
-- [ ] `completeLevel()` applies the diminishing returns multiplier to the base XP before awarding
-- [ ] First completion of any level always gets full XP (multiplier = 1.0)
-- [ ] Improvement completions (higher star rating) get full XP for the delta
-- [ ] LevelCompletionSummary includes `replayMultiplier` field
-- [ ] Unit tests for: first play full XP, diminished replay XP, improvement exception
-- Started: 2026-03-08
-
 ### T-2026-201
 - Title: Add ComboTrackerService to minigame barrel export
 - Status: todo
