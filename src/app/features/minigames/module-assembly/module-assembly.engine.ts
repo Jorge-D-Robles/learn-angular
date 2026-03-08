@@ -3,6 +3,7 @@ import { MinigameEngine, type ActionResult } from '../../../core/minigame/miniga
 import type { MinigameEngineConfig } from '../../../core/minigame/minigame-engine';
 import { MinigameStatus } from '../../../core/minigame/minigame.types';
 import { isDecoyPart, type ComponentPart, type ComponentBlueprint, type ModuleAssemblyLevelData } from './module-assembly.types';
+import type { ConveyorBeltService } from './conveyor-belt.service';
 
 // ---------------------------------------------------------------------------
 // Action types
@@ -73,8 +74,11 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
   readonly strikes = computed(() => this.config.initialLives - this.lives());
   readonly maxStrikes = computed(() => this.config.initialLives);
 
-  constructor(config?: Partial<MinigameEngineConfig>) {
+  private readonly _conveyorBelt: ConveyorBeltService | undefined;
+
+  constructor(config?: Partial<MinigameEngineConfig>, conveyorBelt?: ConveyorBeltService) {
     super(config);
+    this._conveyorBelt = conveyorBelt;
   }
 
   // --- Lifecycle hooks ---
@@ -84,6 +88,7 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
     this._beltParts.set([...data.parts]);
     this._beltSpeed.set(data.beltSpeed);
     this._filledSlots.set(new Map());
+    this._conveyorBelt?.reset(data.parts, data.beltSpeed);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -122,6 +127,7 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
     if (part.correctSlotId === slot.id) {
       // Correct placement
       this._beltParts.set(parts.filter((p) => p.id !== action.partId));
+      this._conveyorBelt?.removePart(action.partId);
       const newMap = new Map(this._filledSlots());
       newMap.set(slot.id, part);
       this._filledSlots.set(newMap);
@@ -151,6 +157,7 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
     if (isDecoyPart(part)) {
       // Correct rejection
       this._beltParts.set(parts.filter((p) => p.id !== action.partId));
+      this._conveyorBelt?.removePart(action.partId);
       this.checkBeltExhaustion();
       return { valid: true, scoreChange: DECOY_BONUS_SCORE, livesChange: 0 };
     }
@@ -158,6 +165,22 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
     // Wrong rejection (rejected a valid part)
     this.recordIncorrectAction();
     return { valid: false, scoreChange: 0, livesChange: -1 };
+  }
+
+  // --- Tick ---
+
+  /**
+   * Advances the conveyor belt by `dt` seconds and checks for exhaustion.
+   * No-op if no ConveyorBeltService was provided.
+   *
+   * NOTE: Until the component cleanup ticket lands, the component still calls
+   * beltService.tick(dt) directly. Do NOT call engine.tick() from the component
+   * animation loop until the redundant beltService.tick() call is removed, or
+   * parts will advance at 2x speed.
+   */
+  tick(dt: number): void {
+    this._conveyorBelt?.tick(dt);
+    this.checkBeltExhaustion();
   }
 
   // --- Private condition checks ---
@@ -174,7 +197,12 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
     if (this.status() !== MinigameStatus.Playing) {
       return;
     }
-    if (this._beltParts().length === 0) {
+
+    const exhausted = this._conveyorBelt
+      ? this._conveyorBelt.isExhausted()
+      : this._beltParts().length === 0;
+
+    if (exhausted) {
       const requiredSlots = this._blueprint().slots.filter((s) => s.isRequired);
       const filled = this._filledSlots();
       if (requiredSlots.some((s) => !filled.has(s.id))) {

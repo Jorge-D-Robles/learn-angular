@@ -1570,8 +1570,8 @@ Acceptance criteria:
 
 ### T-2026-410
 - Title: Wire ConveyorBeltService into ModuleAssemblyEngine initialize and tick lifecycle
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P2
@@ -1591,6 +1591,7 @@ Acceptance criteria:
 - [ ] ConveyorBeltService.isExhausted signal drives engine win/lose evaluation
 - [ ] Existing engine unit tests updated; 6+ new integration tests for service delegation
 - [ ] Barrel export unchanged (service already exported)
+- Started: 2026-03-08
 
 ### T-2026-411
 - Title: Create FlowCommanderSimulationService for pipeline cargo routing

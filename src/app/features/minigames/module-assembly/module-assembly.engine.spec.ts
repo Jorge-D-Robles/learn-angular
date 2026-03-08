@@ -17,6 +17,7 @@ import {
   type MinigameLevel,
 } from '../../../core/minigame/minigame.types';
 import { ComboTrackerService } from '../../../core/minigame/combo-tracker.service';
+import { ConveyorBeltService } from './conveyor-belt.service';
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -851,6 +852,234 @@ describe('ModuleAssemblyEngine', () => {
       expect(result.valid).toBe(false);
       expect(result.scoreChange).toBe(0);
       expect(result.livesChange).toBe(0);
+    });
+  });
+
+  // --- 11. ConveyorBeltService integration ---
+
+  describe('ConveyorBeltService integration', () => {
+    function createEngineWithBelt(
+      comboTracker?: ComboTrackerService,
+    ): { engine: ModuleAssemblyEngine; beltService: ConveyorBeltService } {
+      const beltService = new ConveyorBeltService();
+      const engine = new ModuleAssemblyEngine({ comboTracker }, beltService);
+      return { engine, beltService };
+    }
+
+    it('should call conveyorBelt.reset() with level parts and speed on initialize', () => {
+      const { engine, beltService } = createEngineWithBelt();
+      const parts = [
+        createTestPart({ id: 'p1' }),
+        createTestPart({ id: 'p2' }),
+        createTestPart({ id: 'p3' }),
+      ];
+      const data = createTestLevelData({ parts, beltSpeed: 150 });
+
+      engine.initialize(createLevel(data));
+
+      expect(beltService.parts()).toHaveLength(3);
+      expect(beltService.beltSpeed()).toBe(150);
+    });
+
+    it('should call conveyorBelt.removePart() on correct place-part action', () => {
+      const { engine, beltService } = createEngineWithBelt();
+      const data = createTestLevelData();
+      initAndStart(engine, data);
+
+      engine.submitAction({
+        type: 'place-part',
+        partId: 'part-1',
+        targetSlotId: 'slot-1',
+      } as PlacePartAction);
+
+      expect(beltService.parts().find(bp => bp.part.id === 'part-1')).toBeUndefined();
+    });
+
+    it('should call conveyorBelt.removePart() on correct reject-decoy action', () => {
+      const { engine, beltService } = createEngineWithBelt();
+      const decoy = createDecoyPart({ id: 'decoy-1' });
+      const data = createTestLevelData({
+        parts: [createTestPart(), decoy],
+      });
+      initAndStart(engine, data);
+
+      engine.submitAction({
+        type: 'reject-decoy',
+        partId: 'decoy-1',
+      } as RejectDecoyAction);
+
+      expect(beltService.parts().find(bp => bp.part.id === 'decoy-1')).toBeUndefined();
+    });
+
+    it('should NOT call conveyorBelt.removePart() on wrong placement', () => {
+      const { engine, beltService } = createEngineWithBelt();
+      const slot1 = createTestSlot({ id: 'slot-1' });
+      const slot2 = createTestSlot({ id: 'slot-2' });
+      const part1 = createTestPart({ id: 'p1', correctSlotId: 'slot-1' });
+      const part2 = createTestPart({ id: 'p2', correctSlotId: 'slot-2' });
+
+      const data = createTestLevelData({
+        blueprint: createTestBlueprint({
+          slots: [slot1, slot2],
+          expectedParts: ['p1', 'p2'],
+        }),
+        parts: [part1, part2],
+      });
+      initAndStart(engine, data);
+
+      engine.submitAction({
+        type: 'place-part',
+        partId: 'p1',
+        targetSlotId: 'slot-2', // wrong slot
+      } as PlacePartAction);
+
+      expect(beltService.parts().find(bp => bp.part.id === 'p1')).toBeDefined();
+    });
+
+    it('should NOT call conveyorBelt.removePart() on wrong rejection', () => {
+      const { engine, beltService } = createEngineWithBelt();
+      const part1 = createTestPart({ id: 'p1', correctSlotId: 'slot-1' });
+      const part2 = createTestPart({ id: 'p2', correctSlotId: 'slot-1' });
+
+      const data = createTestLevelData({
+        parts: [part1, part2],
+      });
+      initAndStart(engine, data);
+
+      engine.submitAction({
+        type: 'reject-decoy',
+        partId: 'p1', // valid part, not a decoy
+      } as RejectDecoyAction);
+
+      expect(beltService.parts().find(bp => bp.part.id === 'p1')).toBeDefined();
+    });
+
+    it('should delegate tick to conveyorBelt.tick() and advance belt positions', () => {
+      const { engine, beltService } = createEngineWithBelt();
+      const parts = [
+        createTestPart({ id: 'p1', correctSlotId: 'slot-1' }),
+        createTestPart({ id: 'p2', correctSlotId: 'slot-2' }),
+      ];
+      const slot1 = createTestSlot({ id: 'slot-1' });
+      const slot2 = createTestSlot({ id: 'slot-2' });
+      const data = createTestLevelData({
+        blueprint: createTestBlueprint({
+          slots: [slot1, slot2],
+          expectedParts: ['p1', 'p2'],
+        }),
+        parts,
+        beltSpeed: 100,
+      });
+      initAndStart(engine, data);
+
+      const initialPositions = beltService.parts().map(bp => bp.x);
+      engine.tick(1.0); // 1 second at 100 px/s = 100 px displacement
+
+      beltService.parts().forEach((bp, i) => {
+        expect(bp.x).toBe(initialPositions[i] - 100);
+      });
+    });
+
+    it('should detect exhaustion after tick scrolls all parts off-screen', () => {
+      const { engine, beltService } = createEngineWithBelt();
+      const slot1 = createTestSlot({ id: 'slot-1' });
+      const part1 = createTestPart({ id: 'p1', correctSlotId: 'slot-1' });
+
+      const data = createTestLevelData({
+        blueprint: createTestBlueprint({
+          slots: [slot1],
+          expectedParts: ['p1'],
+        }),
+        parts: [part1],
+        beltSpeed: 1000,
+      });
+      initAndStart(engine, data);
+
+      // Tick enough to scroll all parts off-screen (x < 0)
+      engine.tick(10);
+
+      expect(beltService.isExhausted()).toBe(true);
+      expect(engine.status()).toBe(MinigameStatus.Lost);
+    });
+
+    it('should NOT fail via exhaustion when service parts are removed by player (not exhausted)', () => {
+      const { engine, beltService } = createEngineWithBelt();
+      const slot1 = createTestSlot({ id: 'slot-1' });
+      const part1 = createTestPart({ id: 'p1', correctSlotId: 'slot-1' });
+      const decoy = createDecoyPart({ id: 'decoy-1' });
+
+      const data = createTestLevelData({
+        blueprint: createTestBlueprint({
+          slots: [slot1],
+          expectedParts: ['p1'],
+        }),
+        parts: [part1, decoy],
+      });
+      initAndStart(engine, data);
+
+      // Place part correctly (fills required slot -> wins)
+      engine.submitAction({
+        type: 'place-part',
+        partId: 'p1',
+        targetSlotId: 'slot-1',
+      } as PlacePartAction);
+
+      expect(engine.status()).toBe(MinigameStatus.Won);
+      // Service should not report exhaustion (part was removed by player, not scrolled off)
+      expect(beltService.isExhausted()).toBe(false);
+    });
+
+    it('should reset conveyorBelt on engine.reset() (retry)', () => {
+      const { engine, beltService } = createEngineWithBelt();
+      const slot1 = createTestSlot({ id: 'slot-1' });
+      const slot2 = createTestSlot({ id: 'slot-2' });
+      const part1 = createTestPart({ id: 'p1', correctSlotId: 'slot-1' });
+      const part2 = createTestPart({ id: 'p2', correctSlotId: 'slot-2' });
+
+      const data = createTestLevelData({
+        blueprint: createTestBlueprint({
+          slots: [slot1, slot2],
+          expectedParts: ['p1', 'p2'],
+        }),
+        parts: [part1, part2],
+      });
+      initAndStart(engine, data);
+
+      // Submit a wrong action to change state
+      engine.submitAction({
+        type: 'place-part',
+        partId: 'p1',
+        targetSlotId: 'slot-2', // wrong
+      } as PlacePartAction);
+
+      // Reset the engine (retry)
+      engine.reset();
+
+      // Belt service should be re-populated with original level parts
+      expect(beltService.parts()).toHaveLength(2);
+      expect(beltService.parts().map(bp => bp.part.id)).toEqual(['p1', 'p2']);
+    });
+
+    it('should handle double removePart call safely (idempotent)', () => {
+      const { engine, beltService } = createEngineWithBelt();
+      const data = createTestLevelData();
+      initAndStart(engine, data);
+
+      const partsBefore = beltService.parts().length;
+
+      // Engine calls removePart internally on correct placement
+      engine.submitAction({
+        type: 'place-part',
+        partId: 'part-1',
+        targetSlotId: 'slot-1',
+      } as PlacePartAction);
+
+      const partsAfterFirst = beltService.parts().length;
+      expect(partsAfterFirst).toBe(partsBefore - 1);
+
+      // Manually call removePart again (simulating component double-call)
+      expect(() => beltService.removePart('part-1')).not.toThrow();
+      expect(beltService.parts().length).toBe(partsAfterFirst);
     });
   });
 });
