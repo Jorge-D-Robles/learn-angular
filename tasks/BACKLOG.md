@@ -602,27 +602,6 @@ Acceptance criteria:
 - [ ] Badge updates reactively when streak changes
 - [ ] Unit tests for: badge rendering with streak data, reactive updates
 
-### T-2026-254
-- Title: Register story mission content with StoryMissionContentService for P2 missions
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-074, T-2026-166
-- Blocked-by: —
-- Tags: integration, story-missions, content-loading, phase-1
-- Refs: docs/curriculum.md
-
-T-2026-074 creates the mission content data and T-2026-166 creates StoryMissionContentService. No ticket registers the Phase 1 mission content with the service so StoryMissionPage can load it by chapterId.
-
-Acceptance criteria:
-- [ ] Phase 1 mission content (Ch 1-10) registered with StoryMissionContentService
-- [ ] `getMissionContent(1)` through `getMissionContent(10)` return valid content
-- [ ] Registration happens at app initialization or on first access
-- [ ] Unit tests for: content loading for each chapter, invalid chapterId handling
-- Started: 2026-03-08
-
 ### T-2026-259
 - Title: Create story mission completion handler to award XP and trigger unlock
 - Status: todo

@@ -210,3 +210,4 @@
 [2026-03-08] T-2026-069: Register Flow Commander in MinigameRegistry and wire routes — register Flow Commander with provideMinigame, add unit tests and E2E smoke test (claude)
 [2026-03-08] T-2026-073: Register Signal Corps in MinigameRegistry and wire routes — register Signal Corps with provideMinigame, remove provideMinigameEngine, add E2E smoke test (claude)
 [2026-03-08] T-2026-410: Wire ConveyorBeltService into ModuleAssemblyEngine initialize and tick lifecycle — wire ConveyorBeltService into engine with tick delegation, exhaustion detection, and 10 integration tests (claude)
+[2026-03-08] T-2026-254: Register story mission content with StoryMissionContentService for P2 missions — register Phase 1 mission content with StoryMissionContentService via provideMissionContent() (claude)

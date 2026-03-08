@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-254**: Register story mission content with StoryMissionContentService for P2 missions (Assigned: claude, Status: in-progress)
 
 
 
