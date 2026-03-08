@@ -357,26 +357,6 @@ Acceptance criteria:
 - [ ] Responsive: hidden on mobile (bottom nav handles navigation; top bar is already tight)
 - [ ] Unit tests for: badge visibility with active streak, hidden with no streak
 
-### T-2026-328
-- Title: Wire AudioService to XpNotificationService for XP award sound
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-051, T-2026-321
-- Blocked-by: —
-- Tags: audio, integration, notifications, xp
-- Refs: docs/progression.md, src/app/core/notifications/xp-notification.service.ts
-
-XpNotificationService displays XP award notifications but does not play the `levelUp` sound for significant XP gains. Progression.md specifies XP awards as core feedback. A subtle sound on XP notification reinforces the reward loop.
-
-Acceptance criteria:
-- [ ] XpNotificationService injects AudioService
-- [ ] `levelUp` sound plays when an XP notification is emitted (on level-up events only, not every XP tick)
-- [ ] Unit tests for: sound plays on level-up XP notification, no sound on regular XP award
-- Started: 2026-03-08
-
 ### T-2026-330
 - Title: Update architecture.md to document AudioService and remove stale rankUp note
 - Status: todo
