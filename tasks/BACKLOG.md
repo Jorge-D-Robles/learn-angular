@@ -314,26 +314,6 @@ Acceptance criteria:
 - [ ] Respects `prefers-reduced-motion` (disable pulse animations)
 - [ ] Unit tests for: glow state per mastery level, module click emission, dark state for 0 mastery
 
-### T-2026-139
-- Title: Register Flow Commander level data with LevelLoaderService
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-066, T-2026-030
-- Blocked-by: —
-- Tags: minigame, flow-commander, level-data, integration
-- Refs: docs/minigames/03-flow-commander.md, src/app/core/levels/level-loader.service.ts
-
-Register Flow Commander level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
-
-Acceptance criteria:
-- [ ] Flow Commander level pack registered with LevelLoaderService
-- [ ] `LevelLoaderService.loadLevel('flow-commander', levelId)` returns correct level data
-- [ ] `LevelLoaderService.getLevelPack('flow-commander')` returns all 18 levels grouped by tier
-- [ ] Unit tests for: level loading by ID, level pack retrieval
-
 ### T-2026-140
 - Title: Register Signal Corps level data with LevelLoaderService
 - Status: todo
