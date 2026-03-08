@@ -564,27 +564,6 @@ Acceptance criteria:
 - [ ] Paused time excluded: engine.pause() stops the timer, engine.resume() resumes it
 - [ ] Unit tests for: time recording on completion, pause exclusion, per-game accumulation
 
-### T-2026-211
-- Title: Integrate RefresherChallengeService practice with SpacedRepetitionService mastery restoration
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-047, T-2026-023
-- Blocked-by: —
-- Tags: integration, progression, spaced-repetition, refresher
-- Refs: docs/progression.md, src/app/core/progression/refresher-challenge.service.ts, src/app/core/progression/spaced-repetition.service.ts
-
-Progression.md says "Quick refreshers: 3-5 questions, restore 1 star of lost mastery." RefresherChallengeService (T-2026-047) has a recordPractice() method and SpacedRepetitionService (T-2026-023) tracks degradation. But no ticket explicitly verifies that RefresherChallengeService.recordPractice() calls SpacedRepetitionService to reset the degradation timer and restore effective mastery. This integration ticket ensures the two services work together correctly.
-
-Acceptance criteria:
-- [ ] RefresherChallengeService.recordPractice(topicId) calls SpacedRepetitionService.recordPractice(topicId)
-- [ ] After practice, SpacedRepetitionService resets the degradation timer for the topic
-- [ ] Effective mastery returns to stored mastery level after practice
-- [ ] Integration test: degrade a topic, practice it, verify mastery is restored
-- [ ] Unit tests for: practice delegation, degradation timer reset
-
 ### T-2026-212
 - Title: Create LifetimeStatsService for aggregate player statistics
 - Status: todo
