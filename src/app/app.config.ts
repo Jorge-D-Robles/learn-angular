@@ -15,6 +15,7 @@ import { GlobalErrorHandler } from './core/error';
 import { NexusTitleStrategy } from './core';
 import { APP_ICONS } from './shared/icons';
 import { MODULE_ASSEMBLY_LEVEL_PACK } from './data/levels/module-assembly.data';
+import { WIRE_PROTOCOL_LEVEL_PACK } from './data/levels/wire-protocol.data';
 import { provideLevelData } from './data/levels/provide-level-data';
 import { provideMinigame } from './data/minigame-registration';
 import { ModuleAssemblyComponent, ModuleAssemblyEngine } from './features/minigames/module-assembly';
@@ -38,6 +39,7 @@ export const appConfig: ApplicationConfig = {
       }),
     },
     provideLevelData(MODULE_ASSEMBLY_LEVEL_PACK),
+    provideLevelData(WIRE_PROTOCOL_LEVEL_PACK),
     provideMinigame('module-assembly', ModuleAssemblyComponent, () => new ModuleAssemblyEngine()),
   ],
 };
