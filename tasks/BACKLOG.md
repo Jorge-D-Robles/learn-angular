@@ -508,29 +508,6 @@ Acceptance criteria:
 - [ ] `src/app/core/minigame/index.ts` updated to export `WireDrawService`
 - [ ] Build passes with updated barrel
 
-### T-2026-204
-- Title: Integrate HintService hint button with MinigameShell HUD
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-044, T-2026-018
-- Blocked-by: —
-- Tags: integration, minigame-framework, hints, ui
-- Refs: docs/minigames/TEMPLATE.md, docs/research/gamification-patterns.md, src/app/core/minigame/hint.service.ts
-
-HintService (T-2026-044) provides hint registration, dispensing, and penalty calculation. MinigameShell (T-2026-018) has a HUD with score, timer, and lives, but no hint button. The gamification research states "Hints available but cost points (self-regulating difficulty)." Multiple minigame specs reference a hint system (Terminal Hack: "Hint button -- reveals one element (costs points)"). This ticket wires a hint button into the shell HUD that shows available hint count, dispenses hints on click, and displays the hint content.
-
-Acceptance criteria:
-- [ ] MinigameShell HUD includes a "Hint" button with remaining hint count badge
-- [ ] Hint button calls HintService.dispenseHint() and displays the returned hint text in a tooltip/popover
-- [ ] Hint button is disabled when no hints remain (HintService.remainingHints() === 0)
-- [ ] Hint button shows point cost before dispensing (e.g., "Use Hint (-50 pts)")
-- [ ] Hint button hidden when engine has no hints registered (some minigames may not use hints)
-- [ ] Keyboard shortcut: 'H' key triggers hint (registered via KeyboardShortcutService)
-- [ ] Unit tests for: hint button visibility, dispense interaction, disabled state, keyboard shortcut
-
 ### T-2026-205
 - Title: Integrate MinigameTutorialOverlay with MinigameShell first-play detection
 - Status: todo

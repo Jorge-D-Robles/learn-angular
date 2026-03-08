@@ -75,3 +75,4 @@
 [2026-03-07] T-2026-182: Create LevelNavigationService for next/previous level resolution — created LevelNavigationService with getNextLevel, getPreviousLevel, isNextLevelUnlocked (claude)
 [2026-03-07] T-2026-186: Integrate LevelFailedComponent with MinigameShell failure overlay — replaced shell failure overlay with LevelFailedComponent, added hint integration and failure reason derivation (claude)
 [2026-03-07] T-2026-172: Create SvgWireRendererComponent for SVG bezier curve wire rendering — created SvgWireRendererComponent with bezier curves, color coding, flow animation, and prefers-reduced-motion support (claude)
+[2026-03-07] T-2026-204: Integrate HintService hint button with MinigameShell HUD — added hint button to shell HUD with count badge, penalty preview, popover, keyboard shortcut, and getNextHintPenalty API (claude)
