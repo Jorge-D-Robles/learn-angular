@@ -606,8 +606,8 @@ Acceptance criteria:
 
 ### T-2026-321
 - Title: Create AudioService barrel export and add to core re-export
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -623,6 +623,7 @@ Acceptance criteria:
 - [ ] `src/app/core/index.ts` includes `export * from './audio'`
 - [ ] Existing imports of AudioService elsewhere continue to work
 - [ ] Build passes with no errors
+- Started: 2026-03-08
 
 ### T-2026-322
 - Title: Wire AudioService into MinigameEngine lifecycle for game feedback sounds

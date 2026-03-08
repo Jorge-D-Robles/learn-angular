@@ -11,13 +11,13 @@ Started: 2026-03-08
 
 ## Active
 
-*(none — pick from Queue)*
+- **T-2026-321**: Create AudioService barrel export and add to core re-export (Assigned: claude, Status: in-progress)
+
 
 ---
 
 ## Queue
 
-- **T-2026-321**: Create AudioService barrel export and add to core re-export (Priority: medium, Size: S)
 - **T-2026-324**: Create placeholder audio asset files for all SoundEffect types (Priority: medium, Size: S)
 - **T-2026-329**: Create integration test for AudioService with SettingsService sound toggle (Priority: medium, Size: S)
 - **T-2026-165**: Create barrel exports for audio and animation core modules (Priority: low, Size: S)
