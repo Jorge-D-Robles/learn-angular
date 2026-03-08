@@ -2249,6 +2249,142 @@ Acceptance criteria:
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: active mission rendering, all-complete state, no-mission state, click event
 
+### T-2026-325
+- Title: Create theme CSS custom property variants for dark/station/light themes
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-143
+- Blocked-by: —
+- Tags: ui, themes, css, visual-style
+- Refs: docs/ux/visual-style.md, src/styles.css
+
+T-2026-143 wires SettingsPage theme preference to a body class (`theme-dark`, `theme-station`, `theme-light`), but no CSS actually defines what those themes look like. Visual-style.md specifies the "Nexus Station" palette (Hull Dark, Plasma Blue, Sensor Green, Solar Gold, etc.) as the default, but doesn't define light/alternate variants. Without theme CSS, the body class change has no visual effect.
+
+Acceptance criteria:
+- [ ] `src/styles/themes/` directory with `_dark.css`, `_station.css`, `_light.css`
+- [ ] Each theme file sets CSS custom properties: `--color-bg-primary`, `--color-bg-secondary`, `--color-text-primary`, `--color-text-secondary`, `--color-accent`, `--color-accent-secondary`, `--color-success`, `--color-error`
+- [ ] Station theme uses visual-style.md palette (Hull Dark backgrounds, Plasma Blue accent, Sensor Green success)
+- [ ] Dark theme: deeper blacks, higher contrast, same accent colors
+- [ ] Light theme: white backgrounds, dark text, adapted accent colors for accessibility
+- [ ] `styles.css` imports all theme files and applies them via `.theme-dark`, `.theme-station`, `.theme-light` body class selectors
+- [ ] All existing components that use hardcoded colors are updated to use CSS custom properties
+- [ ] Contrast ratios meet WCAG AA (4.5:1 for text)
+
+### T-2026-332
+- Title: Create P2 cross-cutting integration test for story mission to minigame unlock flow
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-059, T-2026-088
+- Blocked-by: —
+- Tags: test, integration, story, minigame, unlock
+- Refs: docs/overview.md, docs/curriculum.md
+
+Overview.md defines the core game loop: "Complete Story Mission -> Unlock Minigame -> Master Minigame -> Earn XP -> Level Up." No integration test verifies this cross-cutting flow. After P2 delivers the first minigame engines and story missions, this test ensures the full unlock pipeline works.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/integration/story-to-minigame.integration.spec.ts`
+- [ ] Test: completing story mission 1 unlocks Module Assembly minigame
+- [ ] Test: completing story mission unlocks the correct minigame per curriculum mapping
+- [ ] Test: locked minigame cannot be played before its prerequisite story mission
+- [ ] Test: XP is awarded for both story mission completion and minigame completion
+- [ ] Uses real CurriculumService, ProgressionService, and level data
+
+### T-2026-333
+- Title: Create integration test for SpacedRepetition degradation-to-dashboard-alert flow
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-042, T-2026-074
+- Blocked-by: —
+- Tags: test, integration, spaced-repetition, dashboard
+- Refs: docs/progression.md, src/app/core/progression/spaced-repetition.service.ts
+
+Progression.md specifies a spaced repetition system: 7-day grace period, 14-day degradation to max 2 stars lost. SpacedRepetitionService (T-2026-042) tracks decay and DashboardPage (T-2026-074) should show "needs review" alerts. No test verifies the service-to-dashboard integration.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/integration/spaced-repetition-alert.integration.spec.ts`
+- [ ] Test: topic with no practice for >7 days triggers "needs review" in SpacedRepetitionService
+- [ ] Test: dashboard page receives and displays decayed topics from the service
+- [ ] Test: practicing a decayed topic resets its decay timer
+- [ ] Uses real SpacedRepetitionService with mocked date provider
+
+### T-2026-334
+- Title: Wire MinigamePlayPage to show loading spinner during engine factory creation
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-017, T-2026-076
+- Blocked-by: —
+- Tags: ui, loading, minigame, ux
+- Refs: docs/ux/navigation.md, src/app/pages/minigame-play/
+
+MinigamePlayPage (T-2026-076) loads a minigame engine dynamically via the factory registry. The engine creation is async (lazy-loaded modules), but no loading state is shown while the engine initializes. Users see a blank page or flash of empty content during load.
+
+Acceptance criteria:
+- [ ] MinigamePlayPage shows a loading spinner while the engine factory is being resolved
+- [ ] Loading state uses the shared LoadingSpinnerComponent (or creates one if none exists)
+- [ ] Error state shown if engine factory fails to load (with "Retry" and "Back" buttons)
+- [ ] Once engine is ready, spinner is replaced with MinigameShell + game component
+- [ ] Unit tests for: loading state shown, error state shown, transition to game state
+
+### T-2026-335
+- Title: Create ConfirmDialogService for programmatic dialog invocation
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-007
+- Blocked-by: —
+- Tags: service, ui, dialog, shared
+- Refs: docs/ux/navigation.md
+
+Multiple features need confirmation dialogs (quit minigame mid-game, reset progress, delete save data). Navigation.md specifies a "Quit?" confirmation when leaving a minigame. No shared dialog service exists for programmatic invocation. Angular CDK Dialog or a lightweight custom solution.
+
+Acceptance criteria:
+- [ ] `ConfirmDialogService` at `src/app/shared/services/confirm-dialog.service.ts`
+- [ ] `confirm(options: ConfirmDialogOptions): Observable<boolean>` method
+- [ ] Options: `title`, `message`, `confirmText` (default "Confirm"), `cancelText` (default "Cancel"), `variant` ('danger' | 'warning' | 'info')
+- [ ] Dialog renders as a modal overlay with backdrop
+- [ ] Accessible: focus trap, Escape to dismiss, aria-labelledby
+- [ ] Station-themed styling matching visual-style.md
+- [ ] Exported from shared services barrel
+- [ ] Unit tests for: dialog opens, confirm returns true, cancel returns false, escape dismisses
+
+### T-2026-336
+- Title: Create ProgressBarComponent for generic progress display
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-007
+- Blocked-by: —
+- Tags: ui, component, shared, progress
+- Refs: docs/ux/visual-style.md, docs/progression.md
+
+Multiple pages need progress bars: XP to next level, mastery progress, story completion percentage, level progress within a minigame. No shared ProgressBarComponent exists. Progression.md shows XP bars and mastery stars as percentages.
+
+Acceptance criteria:
+- [ ] `ProgressBarComponent` at `src/app/shared/components/progress-bar/`
+- [ ] Selector: `nx-progress-bar`
+- [ ] Inputs: `value` (0-100), `max` (default 100), `label` (optional), `variant` ('default' | 'xp' | 'mastery' | 'timer'), `showPercentage` (boolean)
+- [ ] Animated fill using CSS transitions (respects prefers-reduced-motion)
+- [ ] Variant colors: default (Plasma Blue), xp (Solar Gold), mastery (Sensor Green), timer (Alert Red when low)
+- [ ] Accessible: role="progressbar", aria-valuenow, aria-valuemin, aria-valuemax, aria-label
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: value rendering, variant styling, percentage display, accessibility attributes
+
 ---
 
 ## P3 -- Navigation Bundle
