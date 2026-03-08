@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { GameProgressionService } from '../progression/game-progression.service';
 import { MasteryService } from '../progression/mastery.service';
 import { XpService } from '../progression/xp.service';
-import { ALL_STORY_MISSIONS } from './curriculum.data';
+import { CurriculumService } from './curriculum.service';
 import type { ChapterId } from './curriculum.types';
 import type { MinigameId } from '../minigame/minigame.types';
 
@@ -30,6 +30,7 @@ export class StoryMissionCompletionService {
   private readonly gameProgression = inject(GameProgressionService);
   private readonly masteryService = inject(MasteryService);
   private readonly xpService = inject(XpService);
+  private readonly curriculum = inject(CurriculumService);
 
   /**
    * Completes a story mission: awards XP, updates campaign state,
@@ -43,10 +44,9 @@ export class StoryMissionCompletionService {
   completeMission(chapterId: ChapterId): MissionCompletionSummary {
     // Idempotency check: if already completed, return early
     if (this.gameProgression.isMissionCompleted(chapterId)) {
-      const mission = ALL_STORY_MISSIONS.find((m) => m.chapterId === chapterId);
       return {
         xpAwarded: 0,
-        unlockedMinigame: mission?.unlocksMinigame ?? null,
+        unlockedMinigame: this.curriculum.getMinigameForChapter(chapterId),
         masteryAwarded: false,
         alreadyCompleted: true,
       };
@@ -63,8 +63,7 @@ export class StoryMissionCompletionService {
     const xpAwarded = xpAfter - xpBefore;
 
     // Look up the mission to determine minigame unlock
-    const mission = ALL_STORY_MISSIONS.find((m) => m.chapterId === chapterId);
-    const unlockedMinigame = mission?.unlocksMinigame ?? null;
+    const unlockedMinigame = this.curriculum.getMinigameForChapter(chapterId);
 
     // Apply mastery floor if this mission unlocks a minigame
     let masteryAwarded = false;

@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { StoryMissionCompletionService } from './story-mission-completion.service';
+import { CurriculumService } from './curriculum.service';
 import { MasteryService } from '../progression/mastery.service';
 import { XpService } from '../progression/xp.service';
 import type { ChapterId } from './curriculum.types';
@@ -140,5 +141,37 @@ describe('StoryMissionCompletionService', () => {
 
   it('should throw for unmet prerequisites', () => {
     expect(() => service.completeMission(2 as ChapterId)).toThrow();
+  });
+
+  // --- Test 9: "New levels" chapter returns correct minigameId and masteryAwarded ---
+
+  it('should return correct minigameId and masteryAwarded for "new levels" chapter', () => {
+    // Ch 1 is prerequisite for Ch 2; both unlock 'module-assembly'
+    service.completeMission(1 as ChapterId);
+
+    const summary = service.completeMission(2 as ChapterId);
+    expect(summary.unlockedMinigame).toBe('module-assembly');
+    expect(summary.masteryAwarded).toBe(true);
+  });
+
+  // --- Test 10: Another non-unlocking chapter returns null ---
+
+  it('should return null unlockedMinigame for non-unlocking chapter 10', () => {
+    completeMissionsUpTo(service, 9);
+
+    const summary = service.completeMission(10 as ChapterId);
+    expect(summary.unlockedMinigame).toBeNull();
+    expect(summary.masteryAwarded).toBe(false);
+  });
+
+  // --- Test 11: CurriculumService is used for unlock resolution ---
+
+  it('should use CurriculumService.getMinigameForChapter for unlock resolution', () => {
+    const curriculum = TestBed.inject(CurriculumService);
+    const spy = vi.spyOn(curriculum, 'getMinigameForChapter');
+
+    service.completeMission(1 as ChapterId);
+
+    expect(spy).toHaveBeenCalledWith(1);
   });
 });

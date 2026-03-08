@@ -1632,8 +1632,8 @@ Acceptance criteria:
 
 ### T-2026-417
 - Title: Add CurriculumService dependency to story mission completion handler
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P2
@@ -1650,6 +1650,7 @@ Acceptance criteria:
 - [ ] Chapters that don't unlock a minigame (Ch 9, 10, 27, 33, 34 per curriculum.md) skip the unlock step
 - [ ] Chapters that unlock "new levels" for an existing minigame (Ch 2, 3, 6, 8, etc.) are handled appropriately
 - [ ] Unit tests for: unlock called with correct minigameId, no unlock for non-unlocking chapters, "new levels" chapters handled
+- Started: 2026-03-08
 
 ### T-2026-418
 - Title: Create FlowCommanderGateConfigComponent for gate condition editing panel
