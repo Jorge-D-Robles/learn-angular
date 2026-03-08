@@ -87,3 +87,4 @@
 [2026-03-07] T-2026-228: Update bottom nav "Mission" link to use dynamic mission resolution — replaced hardcoded mission link with dynamic resolution via GameProgressionService, compact mobile labels (claude)
 [2026-03-07] T-2026-207: Add LevelNavigationService to levels barrel export — added LevelNavigationService to levels barrel export (claude)
 [2026-03-07] T-2026-053: Add replay mode routes for endless, speed run, and daily challenge — added 3 replay mode routes with lazy-loaded placeholder pages and 12 unit tests (claude)
+[2026-03-07] T-2026-240: Add MinigameShell timer color transitions for time pressure feedback — added configurable timer color transitions (green/orange/red) and pulse animation with reduced-motion support (claude)

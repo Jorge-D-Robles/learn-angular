@@ -754,27 +754,6 @@ AC:
 - [ ] Unit tests for reset behavior
 - [ ] Update MinigamePlayPage.onRetry() to use `engine.reset()` instead of manual initialize+start
 
-### T-2026-240
-- Title: Add MinigameShell timer color transitions for time pressure feedback
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-018, T-2026-007
-- Blocked-by: —
-- Tags: ui, minigame-framework, timer, visual-feedback
-- Refs: docs/ux/visual-style.md, src/app/core/minigame/minigame-shell/minigame-shell.ts
-
-Visual style guide specifies timer displays should transition: "Sensor Green (safe) -> Alert Orange (warning) -> Emergency Red (critical)." MinigameShell has a timer display but currently uses a single color. This ticket adds dynamic color transitions based on remaining time percentage.
-
-Acceptance criteria:
-- [ ] Timer text color changes based on remaining time: >50% = Sensor Green, 25-50% = Alert Orange, <25% = Emergency Red
-- [ ] Transition thresholds configurable via inputs (with sensible defaults)
-- [ ] Timer pulses/flashes when in critical range (<10%)
-- [ ] Respects `prefers-reduced-motion` (disable pulse, keep color change)
-- [ ] Unit tests for: color at each threshold, pulse activation, reduced motion behavior
-
 ### T-2026-241
 - Title: Create P1 core services integration test
 - Status: todo
