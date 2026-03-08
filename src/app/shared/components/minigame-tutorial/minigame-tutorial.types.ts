@@ -7,3 +7,8 @@ export interface TutorialStep {
   /** Optional illustration URL displayed above the step text. */
   readonly image?: string;
 }
+
+/** Returns the persistence key used to store whether a tutorial has been seen. */
+export function tutorialSeenKey(gameId: string): string {
+  return `tutorial-seen:${gameId}`;
+}

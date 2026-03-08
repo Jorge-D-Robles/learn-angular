@@ -2,12 +2,14 @@ import { Component, computed, effect, inject, input, output } from '@angular/cor
 import { AudioService, SoundEffect } from '../../audio';
 import { LevelFailedComponent } from '../../../shared/components/level-failed/level-failed';
 import { LevelResultsComponent } from '../../../shared/components/level-results/level-results';
+import { MinigameTutorialOverlayComponent } from '../../../shared/components/minigame-tutorial/minigame-tutorial';
+import type { TutorialStep } from '../../../shared/components/minigame-tutorial/minigame-tutorial.types';
 import { PauseMenuComponent } from '../../../shared/components/pause-menu/pause-menu';
-import { MinigameStatus, PlayMode, type MinigameResult } from '../minigame.types';
+import { MinigameStatus, PlayMode, type MinigameId, type MinigameResult } from '../minigame.types';
 
 @Component({
   selector: 'app-minigame-shell',
-  imports: [LevelFailedComponent, LevelResultsComponent, PauseMenuComponent],
+  imports: [LevelFailedComponent, LevelResultsComponent, MinigameTutorialOverlayComponent, PauseMenuComponent],
   template: `
     <div class="minigame-shell">
       <!-- HUD Bar -->
@@ -58,11 +60,20 @@ import { MinigameStatus, PlayMode, type MinigameResult } from '../minigame.types
         <ng-content />
       </div>
 
+      <!-- Tutorial Overlay -->
+      @if (showTutorial() && gameId() && tutorialSteps().length > 0) {
+        <nx-minigame-tutorial
+          [gameId]="gameId()!"
+          [steps]="tutorialSteps()"
+          (dismissed)="tutorialDismissed.emit()" />
+      }
+
       <!-- Pause Overlay -->
       @if (status() === paused) {
         <nx-pause-menu
           (resume)="onResumeClick()"
           (restart)="restartGame.emit()"
+          (howToPlay)="howToPlay.emit()"
           (quit)="quit.emit()" />
       }
 
@@ -116,6 +127,9 @@ export class MinigameShellComponent {
   readonly warningThreshold = input(0.5);
   readonly criticalThreshold = input(0.25);
   readonly pulseThreshold = input(0.1);
+  readonly showTutorial = input(false);
+  readonly gameId = input<MinigameId | null>(null);
+  readonly tutorialSteps = input<readonly TutorialStep[]>([]);
 
   // --- Signal outputs ---
   readonly pauseGame = output();
@@ -127,6 +141,8 @@ export class MinigameShellComponent {
   readonly nextLevel = output();
   readonly replay = output();
   readonly requestHint = output();
+  readonly tutorialDismissed = output();
+  readonly howToPlay = output();
 
   // --- Template enum references ---
   readonly paused = MinigameStatus.Paused;

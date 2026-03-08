@@ -13,7 +13,10 @@ import { HintService } from '../../core/minigame/hint.service';
 import { KeyboardShortcutService } from '../../core/minigame/keyboard-shortcut.service';
 import { MinigameEngine } from '../../core/minigame/minigame-engine';
 import { ScoreCalculationService } from '../../core/minigame/score-calculation.service';
+import { StatePersistenceService } from '../../core/persistence/state-persistence.service';
 import { MinigameStatus, PlayMode, type MinigameId, type MinigameLevel, type MinigameResult } from '../../core/minigame/minigame.types';
+import type { TutorialStep } from '../../shared/components/minigame-tutorial/minigame-tutorial.types';
+import { tutorialSeenKey } from '../../shared/components/minigame-tutorial/minigame-tutorial.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 
@@ -68,6 +71,9 @@ import { ErrorStateComponent } from '../../shared/components/error-state/error-s
           [hintCount]="hintCount()"
           [hintPenalty]="hintPenalty()"
           [activeHintText]="activeHintText()"
+          [showTutorial]="showTutorial()"
+          [gameId]="$any(gameId())"
+          [tutorialSteps]="tutorialSteps()"
           (pauseGame)="onPause()"
           (resumeGame)="onResume()"
           (quit)="onQuit()"
@@ -77,6 +83,8 @@ import { ErrorStateComponent } from '../../shared/components/error-state/error-s
           (replay)="onReplay()"
           (nextLevel)="onNextLevel()"
           (requestHint)="onRequestHint()"
+          (tutorialDismissed)="onTutorialDismissed()"
+          (howToPlay)="onHowToPlay()"
         >
           <ng-container *ngComponentOutlet="resolvedComponent()!" />
         </app-minigame-shell>
@@ -95,11 +103,14 @@ export class MinigamePlayPage {
   private readonly hintService = inject(HintService);
   private readonly keyboardShortcuts = inject(KeyboardShortcutService);
   private readonly scoreCalculation = inject(ScoreCalculationService);
+  private readonly persistence = inject(StatePersistenceService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly loadError = signal<string | null>(null);
   readonly engine = signal<MinigameEngine<unknown> | null>(null);
   readonly completionSummary = signal<LevelCompletionSummary | null>(null);
+  readonly showTutorial = signal(false);
+  private _tutorialIsFirstPlay = false;
   private currentLevelData: MinigameLevel<unknown> | null = null;
   private completionFired = false;
   private loadSub: Subscription | null = null;
@@ -201,6 +212,12 @@ export class MinigamePlayPage {
     return summary.previousBestScore;
   });
 
+  readonly tutorialSteps = computed<readonly TutorialStep[]>(() => {
+    const id = this.gameId();
+    if (!id) return [];
+    return this.registry.getConfig(id as MinigameId)?.tutorialSteps ?? [];
+  });
+
   readonly nextLevelLocked = computed(() => {
     const gid = this.gameId();
     const lid = this.levelId();
@@ -238,7 +255,18 @@ export class MinigamePlayPage {
             this.currentLevelData = level;
             eng.initialize(level);
             eng.setPlayMode(PlayMode.Story);
-            eng.start();
+
+            // Check tutorial-seen flag before starting
+            const steps = this.registry.getConfig(gid as MinigameId)?.tutorialSteps ?? [];
+            const seen = this.persistence.load<boolean>(tutorialSeenKey(gid));
+            if (!seen && steps.length > 0) {
+              this.showTutorial.set(true);
+              this._tutorialIsFirstPlay = true;
+              // Do NOT call eng.start() — tutorial will trigger it on dismiss
+            } else {
+              eng.start();
+            }
+
             this.engine.set(eng);
 
             // Register hint keyboard shortcut
@@ -284,6 +312,19 @@ export class MinigamePlayPage {
       // WARNING: unregisterAll() clears ALL shortcuts. If other pages register shortcuts, switch to per-key unregister.
       this.keyboardShortcuts.unregisterAll();
     });
+  }
+
+  onTutorialDismissed(): void {
+    this.showTutorial.set(false);
+    if (this._tutorialIsFirstPlay) {
+      this.engine()?.start();
+      this._tutorialIsFirstPlay = false;
+    }
+  }
+
+  onHowToPlay(): void {
+    this.showTutorial.set(true);
+    this._tutorialIsFirstPlay = false;
   }
 
   onPause(): void {
@@ -334,6 +375,7 @@ export class MinigamePlayPage {
     if (eng && this.currentLevelData) {
       this.completionFired = false;
       this.completionSummary.set(null);
+      this.showTutorial.set(false);
       if (resetHints) {
         this.hintService.reset();
         this.activeHintText.set('');

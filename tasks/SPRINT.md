@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-205**: Integrate MinigameTutorialOverlay with MinigameShell first-play detection (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -18,7 +20,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-205**: Integrate MinigameTutorialOverlay with MinigameShell first-play detection (Priority: medium, Size: S)
 - **T-2026-354**: Add skip-to-content link for keyboard accessibility (Priority: medium, Size: S)
 - **T-2026-327**: Wire AudioService to RankUpNotificationService for rank-up sound (Priority: low, Size: S)
 - **T-2026-328**: Wire AudioService to XpNotificationService for XP award sound (Priority: low, Size: S)

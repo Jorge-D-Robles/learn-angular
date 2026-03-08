@@ -12,7 +12,9 @@ import { LevelFailedComponent } from '../../../shared/components/level-failed/le
 import { LevelResultsComponent } from '../../../shared/components/level-results/level-results';
 import { MinigameShellComponent } from './minigame-shell';
 import { PauseMenuComponent } from '../../../shared/components/pause-menu/pause-menu';
-import { MinigameStatus, type MinigameResult } from '../minigame.types';
+import { MinigameStatus, type MinigameId, type MinigameResult } from '../minigame.types';
+import type { TutorialStep } from '../../../shared/components/minigame-tutorial/minigame-tutorial.types';
+import { MinigameTutorialOverlayComponent } from '../../../shared/components/minigame-tutorial/minigame-tutorial';
 
 const ICON_PROVIDERS = [
   {
@@ -54,10 +56,15 @@ const TEST_RESULT: MinigameResult = {
     [warningThreshold]="warningThreshold"
     [criticalThreshold]="criticalThreshold"
     [pulseThreshold]="pulseThreshold"
+    [showTutorial]="showTutorial"
+    [gameId]="gameId"
+    [tutorialSteps]="tutorialSteps"
     (pauseGame)="onPause()" (resumeGame)="onResume()" (restartGame)="onRestart()"
     (quit)="onQuit()" (retry)="onRetry()" (useHint)="onUseHint()"
     (nextLevel)="onNextLevel()" (replay)="onReplay()"
     (requestHint)="onRequestHint()"
+    (tutorialDismissed)="onTutorialDismissed()"
+    (howToPlay)="onHowToPlay()"
   ><p class="game-content">Game here</p></app-minigame-shell>`,
   imports: [MinigameShellComponent],
 })
@@ -81,6 +88,10 @@ class TestHost {
   criticalThreshold = 0.25;
   pulseThreshold = 0.1;
 
+  showTutorial = false;
+  gameId: MinigameId | null = null;
+  tutorialSteps: TutorialStep[] = [];
+
   pauseCalled = false;
   resumeCalled = false;
   restartCalled = false;
@@ -90,6 +101,8 @@ class TestHost {
   nextLevelCalled = false;
   replayCalled = false;
   requestHintCalled = false;
+  tutorialDismissedCalled = false;
+  howToPlayCalled = false;
 
   onPause(): void { this.pauseCalled = true; }
   onResume(): void { this.resumeCalled = true; }
@@ -100,6 +113,8 @@ class TestHost {
   onNextLevel(): void { this.nextLevelCalled = true; }
   onReplay(): void { this.replayCalled = true; }
   onRequestHint(): void { this.requestHintCalled = true; }
+  onTutorialDismissed(): void { this.tutorialDismissedCalled = true; }
+  onHowToPlay(): void { this.howToPlayCalled = true; }
 }
 
 describe('MinigameShellComponent', () => {
@@ -824,5 +839,66 @@ describe('MinigameShellComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     expect(mockAudio.play).not.toHaveBeenCalledWith(SoundEffect.tick);
+  });
+
+  // --- Tutorial integration tests ---
+
+  // --- 55. Tutorial overlay shown when showTutorial is true with valid gameId and steps ---
+  it('should render tutorial overlay when showTutorial is true with valid gameId and steps', async () => {
+    const { fixture, element } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
+      detectChanges: false,
+    });
+    fixture.componentInstance.showTutorial = true;
+    fixture.componentInstance.gameId = 'module-assembly';
+    fixture.componentInstance.tutorialSteps = [{ title: 'Test', description: 'Test desc' }];
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(element.querySelector('nx-minigame-tutorial')).toBeTruthy();
+  });
+
+  // --- 56. Tutorial overlay hidden when showTutorial is false ---
+  it('should not render tutorial overlay when showTutorial is false', async () => {
+    const { fixture, element } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
+      detectChanges: false,
+    });
+    fixture.componentInstance.showTutorial = false;
+    fixture.componentInstance.gameId = 'module-assembly';
+    fixture.componentInstance.tutorialSteps = [{ title: 'Test', description: 'Test desc' }];
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(element.querySelector('nx-minigame-tutorial')).toBeNull();
+  });
+
+  // --- 57. Tutorial dismissal emits tutorialDismissed ---
+  it('should emit tutorialDismissed when tutorial overlay emits dismissed', async () => {
+    const { fixture } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
+      detectChanges: false,
+    });
+    fixture.componentInstance.showTutorial = true;
+    fixture.componentInstance.gameId = 'module-assembly';
+    fixture.componentInstance.tutorialSteps = [{ title: 'Test', description: 'Test desc' }];
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const tutorialDebug = fixture.debugElement.query(By.directive(MinigameTutorialOverlayComponent));
+    tutorialDebug.triggerEventHandler('dismissed');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.tutorialDismissedCalled).toBe(true);
+  });
+
+  // --- 58. howToPlay event forwarded from pause menu ---
+  it('should emit howToPlay when howToPlay event fires from pause menu', async () => {
+    const { fixture } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER],
+      detectChanges: false,
+    });
+    fixture.componentInstance.status = MinigameStatus.Paused;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.debugElement.query(By.directive(PauseMenuComponent)).triggerEventHandler('howToPlay');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.howToPlayCalled).toBe(true);
   });
 });

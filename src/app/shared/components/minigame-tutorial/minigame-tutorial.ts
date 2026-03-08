@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import type { MinigameId } from '../../../core/minigame/minigame.types';
 import { StatePersistenceService } from '../../../core/persistence/state-persistence.service';
-import type { TutorialStep } from './minigame-tutorial.types';
+import { tutorialSeenKey, type TutorialStep } from './minigame-tutorial.types';
 
 @Component({
   selector: 'nx-minigame-tutorial',
@@ -77,7 +77,7 @@ import type { TutorialStep } from './minigame-tutorial.types';
 })
 export class MinigameTutorialOverlayComponent implements OnInit {
   readonly gameId = input.required<MinigameId>();
-  readonly steps = input.required<TutorialStep[]>();
+  readonly steps = input.required<readonly TutorialStep[]>();
   readonly dismissed = output();
 
   readonly currentStep = signal(0);
@@ -138,7 +138,7 @@ export class MinigameTutorialOverlayComponent implements OnInit {
 
   private dismiss(): void {
     if (this.dontShowAgain()) {
-      this.persistence.save(`tutorial-seen:${this.gameId()}`, true);
+      this.persistence.save(tutorialSeenKey(this.gameId()), true);
     }
     this.dismissed.emit();
     this.dialogEl().nativeElement.close();

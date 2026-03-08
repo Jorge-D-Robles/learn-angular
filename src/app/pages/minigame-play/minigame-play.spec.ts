@@ -21,6 +21,8 @@ import { MinigameEngine, type ActionResult, type MinigameEngineConfig } from '..
 import type { MinigameConfig } from '../../core/minigame/minigame.types';
 import { DifficultyTier, MinigameStatus, PlayMode } from '../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
+import { StatePersistenceService } from '../../core/persistence/state-persistence.service';
+import type { TutorialStep } from '../../shared/components/minigame-tutorial/minigame-tutorial.types';
 
 const ICON_PROVIDERS = [
   {
@@ -82,6 +84,21 @@ const TEST_LEVEL_DEF: LevelDefinition<unknown> = {
   conceptIntroduced: 'Test concept',
   description: 'A test level',
   data: { difficulty: 1 },
+};
+
+const TEST_TUTORIAL_STEPS: TutorialStep[] = [
+  { title: 'Step 1', description: 'First step' },
+  { title: 'Step 2', description: 'Second step' },
+];
+
+const TEST_CONFIG_WITH_TUTORIAL: MinigameConfig = {
+  id: 'module-assembly',
+  name: 'Module Assembly',
+  description: 'Conveyor belt drag-and-drop assembly',
+  angularTopic: 'Components',
+  totalLevels: 18,
+  difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+  tutorialSteps: TEST_TUTORIAL_STEPS,
 };
 
 const TEST_COMPLETION_SUMMARY: LevelCompletionSummary = {
@@ -168,6 +185,18 @@ function mockLevelNavigationService(overrides: Partial<LevelNavigationService> =
   };
 }
 
+function mockPersistence(overrides: Partial<StatePersistenceService> = {}) {
+  return {
+    provide: StatePersistenceService,
+    useValue: {
+      load: vi.fn().mockReturnValue(null),
+      save: vi.fn().mockReturnValue(true),
+      clear: vi.fn(),
+      ...overrides,
+    },
+  };
+}
+
 // --- Setup helper ---
 
 async function setup(options: {
@@ -178,6 +207,7 @@ async function setup(options: {
   levelCompletion?: Partial<LevelCompletionService>;
   hintService?: Partial<HintService>;
   levelNavigation?: Partial<LevelNavigationService>;
+  persistence?: Partial<StatePersistenceService>;
 } = {}) {
   const {
     params = { gameId: 'module-assembly', levelId: 'ma-basic-01' },
@@ -187,6 +217,7 @@ async function setup(options: {
     levelCompletion = {},
     hintService = {},
     levelNavigation = {},
+    persistence = {},
   } = options;
 
   await TestBed.configureTestingModule({
@@ -200,6 +231,7 @@ async function setup(options: {
       mockLevelCompletion(levelCompletion),
       mockHintService(hintService),
       mockLevelNavigationService(levelNavigation),
+      mockPersistence(persistence),
     ],
   }).compileComponents();
 
@@ -1690,6 +1722,158 @@ describe('MinigamePlayPage', () => {
 
     expect(retrySpy).toHaveBeenCalledWith(false);
     expect(resetSpy).not.toHaveBeenCalled();
+    testEngine.destroy();
+  });
+
+  // --- Tutorial integration tests ---
+
+  // --- T1. First play: showTutorial is true when tutorial-seen flag is absent ---
+  it('should set showTutorial to true on first play when tutorial-seen flag is absent', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+        getConfig: vi.fn().mockReturnValue(TEST_CONFIG_WITH_TUTORIAL),
+      },
+      persistence: {
+        load: vi.fn().mockReturnValue(null),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.showTutorial()).toBe(true);
+    testEngine.destroy();
+  });
+
+  // --- T2. First play: engine.start() NOT called before tutorial dismissed ---
+  it('should not call engine.start() before tutorial is dismissed on first play', async () => {
+    const testEngine = new TestEngine();
+    const startSpy = vi.spyOn(testEngine, 'start');
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+        getConfig: vi.fn().mockReturnValue(TEST_CONFIG_WITH_TUTORIAL),
+      },
+      persistence: {
+        load: vi.fn().mockReturnValue(null),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(startSpy).not.toHaveBeenCalled();
+    testEngine.destroy();
+  });
+
+  // --- T3. Tutorial dismissed on first play: engine.start() called ---
+  it('should call engine.start() when tutorial is dismissed on first play', async () => {
+    const testEngine = new TestEngine();
+    const startSpy = vi.spyOn(testEngine, 'start');
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+        getConfig: vi.fn().mockReturnValue(TEST_CONFIG_WITH_TUTORIAL),
+      },
+      persistence: {
+        load: vi.fn().mockReturnValue(null),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Dismiss the tutorial
+    component.onTutorialDismissed();
+
+    expect(startSpy).toHaveBeenCalled();
+    expect(component.showTutorial()).toBe(false);
+    testEngine.destroy();
+  });
+
+  // --- T4. Returning player: engine starts immediately ---
+  it('should start engine immediately when tutorial-seen flag is set', async () => {
+    const testEngine = new TestEngine();
+    const startSpy = vi.spyOn(testEngine, 'start');
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+        getConfig: vi.fn().mockReturnValue(TEST_CONFIG_WITH_TUTORIAL),
+      },
+      persistence: {
+        load: vi.fn().mockReturnValue(true),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(startSpy).toHaveBeenCalled();
+    expect(component.showTutorial()).toBe(false);
+    testEngine.destroy();
+  });
+
+  // --- T5. How to Play from pause: showTutorial set to true ---
+  it('should set showTutorial to true when howToPlay is triggered', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+        getConfig: vi.fn().mockReturnValue(TEST_CONFIG_WITH_TUTORIAL),
+      },
+      persistence: {
+        load: vi.fn().mockReturnValue(true),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    component.onHowToPlay();
+
+    expect(component.showTutorial()).toBe(true);
+    testEngine.destroy();
+  });
+
+  // --- T6. Tutorial dismissed from pause: engine NOT auto-resumed ---
+  it('should not call engine.start() when tutorial dismissed from pause context', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { component, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+        getConfig: vi.fn().mockReturnValue(TEST_CONFIG_WITH_TUTORIAL),
+      },
+      persistence: {
+        load: vi.fn().mockReturnValue(true),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Simulate "How to Play" from pause
+    component.onHowToPlay();
+    const startSpy = vi.spyOn(testEngine, 'start');
+
+    // Dismiss tutorial
+    component.onTutorialDismissed();
+
+    expect(startSpy).not.toHaveBeenCalled();
+    expect(component.showTutorial()).toBe(false);
     testEngine.destroy();
   });
 });

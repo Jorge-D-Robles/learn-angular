@@ -1,5 +1,6 @@
 // No circular dep: score-calculation.service.ts does not import from this file
 import type { ScoreConfig } from './score-calculation.service';
+import type { TutorialStep } from '../../shared/components/minigame-tutorial/minigame-tutorial.types';
 
 /**
  * Union of all 12 minigame identifiers.
@@ -68,6 +69,8 @@ export interface MinigameConfig {
   readonly difficultyTiers: readonly DifficultyTier[];
   /** Per-game scoring weights and ceiling. Optional for backward compatibility. */
   readonly scoreConfig?: ScoreConfig;
+  /** Tutorial steps shown on first play. Optional — no steps means no tutorial. */
+  readonly tutorialSteps?: readonly TutorialStep[];
 }
 
 /**

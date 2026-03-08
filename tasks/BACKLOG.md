@@ -32,8 +32,8 @@ Acceptance criteria:
 
 ### T-2026-205
 - Title: Integrate MinigameTutorialOverlay with MinigameShell first-play detection
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -51,6 +51,7 @@ Acceptance criteria:
 - [ ] PauseMenuComponent includes "How to Play" button that opens the tutorial overlay
 - [ ] Engine is paused while tutorial overlay is active
 - [ ] Unit tests for: first-play detection, tutorial display, dismiss-and-start, pause menu "How to Play"
+- Started: 2026-03-08
 
 ### T-2026-208
 - Title: Add XpDiminishingReturnsService to progression barrel export

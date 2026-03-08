@@ -88,6 +88,7 @@ export class PauseMenuComponent {
   // eslint-disable-next-line @angular-eslint/no-output-native -- 'resume' is not used as a native media event here
   readonly resume = output();
   readonly restart = output();
+  readonly howToPlay = output();
   readonly quit = output();
 
   readonly focusedIndex = signal(0);
@@ -98,6 +99,7 @@ export class PauseMenuComponent {
   readonly menuItems: readonly MenuItem[] = [
     { label: 'Resume', action: () => this.resume.emit() },
     { label: 'Restart Level', action: () => this.restart.emit() },
+    { label: 'How to Play', action: () => this.howToPlay.emit() },
     { label: 'View Shortcuts', action: () => this.showShortcuts.update(v => !v) },
     { label: 'Quit to Level Select', action: () => this.showQuitConfirm.set(true) },
   ];

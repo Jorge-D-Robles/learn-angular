@@ -11,6 +11,7 @@ import { KeyboardShortcutService } from '../../../core/minigame';
       <nx-pause-menu
         (resume)="onResume()"
         (restart)="onRestart()"
+        (howToPlay)="onHowToPlay()"
         (quit)="onQuit()" />
     }
   `,
@@ -20,6 +21,7 @@ class TestHost {
   showPause = true;
   onResume = vi.fn();
   onRestart = vi.fn();
+  onHowToPlay = vi.fn();
   onQuit = vi.fn();
 }
 
@@ -55,14 +57,15 @@ describe('PauseMenuComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render 4 menu items', async () => {
+  it('should render 5 menu items', async () => {
     const { element } = await setup();
     const items = element.querySelectorAll('.pause-menu__item');
-    expect(items.length).toBe(4);
+    expect(items.length).toBe(5);
     expect(items[0].textContent?.trim()).toBe('Resume');
     expect(items[1].textContent?.trim()).toBe('Restart Level');
-    expect(items[2].textContent?.trim()).toBe('View Shortcuts');
-    expect(items[3].textContent?.trim()).toBe('Quit to Level Select');
+    expect(items[2].textContent?.trim()).toBe('How to Play');
+    expect(items[3].textContent?.trim()).toBe('View Shortcuts');
+    expect(items[4].textContent?.trim()).toBe('Quit to Level Select');
   });
 
   it('should emit resume when Resume is clicked', async () => {
@@ -79,10 +82,17 @@ describe('PauseMenuComponent', () => {
     expect((component as TestHost).onRestart).toHaveBeenCalled();
   });
 
+  it('should emit howToPlay when How to Play is clicked', async () => {
+    const { element, component } = await setup();
+    const items = element.querySelectorAll('.pause-menu__item');
+    (items[2] as HTMLElement).click();
+    expect((component as TestHost).onHowToPlay).toHaveBeenCalled();
+  });
+
   it('should show confirm dialog when Quit is clicked', async () => {
     const { element, fixture } = await setup();
     const items = element.querySelectorAll('.pause-menu__item');
-    (items[3] as HTMLElement).click();
+    (items[4] as HTMLElement).click();
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -93,7 +103,7 @@ describe('PauseMenuComponent', () => {
   it('should emit quit when quit is confirmed', async () => {
     const { element, fixture, component } = await setup();
     const items = element.querySelectorAll('.pause-menu__item');
-    (items[3] as HTMLElement).click();
+    (items[4] as HTMLElement).click();
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -105,7 +115,7 @@ describe('PauseMenuComponent', () => {
   it('should NOT emit quit when quit is cancelled and hide dialog', async () => {
     const { element, fixture, component } = await setup();
     const items = element.querySelectorAll('.pause-menu__item');
-    (items[3] as HTMLElement).click();
+    (items[4] as HTMLElement).click();
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -127,7 +137,7 @@ describe('PauseMenuComponent', () => {
   it('should ignore Escape when quit confirm dialog is open', async () => {
     const { element, fixture, overlayEl, component } = await setup();
     const items = element.querySelectorAll('.pause-menu__item');
-    (items[3] as HTMLElement).click();
+    (items[4] as HTMLElement).click();
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -137,7 +147,8 @@ describe('PauseMenuComponent', () => {
 
   it('should wrap ArrowDown from last item to first', async () => {
     const { overlayEl, element, fixture } = await setup();
-    // Press ArrowDown 4 times (0->1->2->3->0)
+    // Press ArrowDown 5 times (0->1->2->3->4->0)
+    dispatchKey(overlayEl, 'ArrowDown');
     dispatchKey(overlayEl, 'ArrowDown');
     dispatchKey(overlayEl, 'ArrowDown');
     dispatchKey(overlayEl, 'ArrowDown');
@@ -150,12 +161,12 @@ describe('PauseMenuComponent', () => {
 
   it('should wrap ArrowUp from first item to last', async () => {
     const { overlayEl, element, fixture } = await setup();
-    // focusedIndex starts at 0, ArrowUp wraps to 3
+    // focusedIndex starts at 0, ArrowUp wraps to 4
     dispatchKey(overlayEl, 'ArrowUp');
     fixture.detectChanges();
 
     const items = element.querySelectorAll('.pause-menu__item');
-    expect(items[3].classList.contains('pause-menu__item--focused')).toBe(true);
+    expect(items[4].classList.contains('pause-menu__item--focused')).toBe(true);
   });
 
   it('should activate focused item with Enter', async () => {
@@ -171,12 +182,12 @@ describe('PauseMenuComponent', () => {
     const items = element.querySelectorAll('.pause-menu__item');
 
     // Click View Shortcuts to show
-    (items[2] as HTMLElement).click();
+    (items[3] as HTMLElement).click();
     fixture.detectChanges();
     expect(element.querySelector('.pause-overlay__shortcuts')).toBeTruthy();
 
     // Click again to hide
-    (items[2] as HTMLElement).click();
+    (items[3] as HTMLElement).click();
     fixture.detectChanges();
     expect(element.querySelector('.pause-overlay__shortcuts')).toBeFalsy();
   });
@@ -188,7 +199,7 @@ describe('PauseMenuComponent', () => {
     shortcutService.register('r', 'Reset Board', vi.fn());
 
     const items = element.querySelectorAll('.pause-menu__item');
-    (items[2] as HTMLElement).click();
+    (items[3] as HTMLElement).click();
     fixture.detectChanges();
 
     const keys = element.querySelectorAll('.pause-overlay__shortcut-key');

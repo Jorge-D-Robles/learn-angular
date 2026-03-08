@@ -12,6 +12,7 @@ export { LockedContentComponent } from './locked-content/locked-content';
 export { MasteryStarsComponent } from './mastery-stars/mastery-stars';
 export { MinigameTutorialOverlayComponent } from './minigame-tutorial/minigame-tutorial';
 export type { TutorialStep } from './minigame-tutorial/minigame-tutorial.types';
+export { tutorialSeenKey } from './minigame-tutorial/minigame-tutorial.types';
 export { MissionCardComponent } from './mission-card/mission-card';
 export { PauseMenuComponent } from './pause-menu/pause-menu';
 export { RankUpOverlayComponent } from './rank-up-overlay/rank-up-overlay';
