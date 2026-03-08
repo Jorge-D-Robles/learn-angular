@@ -14,6 +14,7 @@ export { MissionCardComponent } from './mission-card/mission-card';
 export { PauseMenuComponent } from './pause-menu/pause-menu';
 export { RankUpOverlayComponent } from './rank-up-overlay/rank-up-overlay';
 export { StationCardComponent } from './station-card/station-card';
+export { StreakBadgeComponent } from './streak-badge/streak-badge';
 export { TierBadgeComponent } from './tier-badge/tier-badge';
 export { SvgPortComponent } from './svg-port/svg-port';
 export { SvgWireRendererComponent, type WireDescriptor } from './svg-wire-renderer/svg-wire-renderer';

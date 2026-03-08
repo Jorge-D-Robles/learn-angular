@@ -1,5 +1,6 @@
 import {
   CircleCheck,
+  Flame,
   House,
   Lock,
   Map,
@@ -28,7 +29,8 @@ export { LucideAngularModule } from 'lucide-angular';
  * Add new icons here when needed — they will be tree-shaken if unused.
  *
  * Icon name mapping (ticket name -> Lucide name):
- *   home     -> House        | lock     -> Lock
+ *   flame    -> Flame        | home     -> House
+ *   lock     -> Lock
  *   map      -> Map          | gamepad  -> Gamepad2
  *   user     -> User         | settings -> Settings
  *   star     -> Star         | heart    -> Heart
@@ -40,6 +42,7 @@ export { LucideAngularModule } from 'lucide-angular';
  */
 export const APP_ICONS: LucideIcons = {
   CircleCheck,
+  Flame,
   House,
   Lock,
   Map,

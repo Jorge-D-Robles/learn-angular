@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-133**: Create StreakBadgeComponent for streak display (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -19,7 +21,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-133**: Create StreakBadgeComponent for streak display (Priority: low, Size: S)
 - **T-2026-163**: Create MinigameTutorialOverlayComponent for first-time play instructions (Priority: low, Size: S)
 - **T-2026-242**: Wire SettingsService animationSpeed to AnimationService duration multiplier (Priority: low, Size: S)
 - **T-2026-293**: Create ScoreBreakdownComponent for level completion detail (Priority: low, Size: S)
