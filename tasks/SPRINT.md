@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-133**: Create StreakBadgeComponent for streak display (Assigned: claude, Status: in-progress)
 
 
 

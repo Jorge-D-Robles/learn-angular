@@ -28,31 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-133
-- Title: Create StreakBadgeComponent for streak display
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-027, T-2026-007
-- Blocked-by: —
-- Tags: ui, component, streak, gamification
-- Refs: docs/progression.md, docs/research/gamification-patterns.md, docs/ux/navigation.md
-
-The profile page needs a streak counter display (navigation.md: "Streak counter"), and the dashboard could show it too. StreakService (T-2026-027) provides the data but there is no visual component for displaying streak information.
-
-Acceptance criteria:
-- [ ] `StreakBadgeComponent` at `src/app/shared/components/streak-badge/`
-- [ ] Selector: `nx-streak-badge`
-- [ ] Inputs: `currentStreak` (number), `multiplier` (number)
-- [ ] Displays: flame/streak icon, current streak day count, multiplier percentage (e.g., "+30%")
-- [ ] Visual states: no streak (dim), active streak (glowing), max streak 5+ days (Solar Gold glow)
-- [ ] Accessible: aria-label describes streak status
-- [ ] Exported from shared components barrel
-- [ ] Unit tests for: rendering at each state, multiplier display, aria-label
-- Started: 2026-03-08
-
 ### T-2026-163
 - Title: Create MinigameTutorialOverlayComponent for first-time play instructions
 - Status: todo
