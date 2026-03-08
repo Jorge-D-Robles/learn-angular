@@ -224,8 +224,8 @@ Acceptance criteria:
 
 ### T-2026-164
 - Title: Create XpDiminishingReturnsService for replay XP scaling
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -244,6 +244,7 @@ Acceptance criteria:
 - [ ] Improving star rating (e.g., 2->3 stars) awards full XP for the improvement delta, not diminished
 - [ ] Persisted via StatePersistenceService
 - [ ] Unit tests for: first play full XP, diminishing scale, improvement exception, persistence
+- Started: 2026-03-07
 
 ### T-2026-165
 - Title: Create barrel exports for audio and animation core modules
