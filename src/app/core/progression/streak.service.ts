@@ -4,10 +4,12 @@ import {
   effect,
   inject,
   Injectable,
+  Injector,
   signal,
   untracked,
 } from '@angular/core';
 import { StatePersistenceService } from '../persistence/state-persistence.service';
+import { StreakRewardService } from './streak-reward.service';
 
 const STREAK_KEY = 'streak';
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
@@ -26,6 +28,16 @@ export class StreakService {
   private readonly persistence = inject(StatePersistenceService);
   private readonly destroyRef = inject(DestroyRef);
   private _saveTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  private readonly injector = inject(Injector);
+  private _streakRewardService: StreakRewardService | null = null;
+
+  private get streakRewardService(): StreakRewardService {
+    if (this._streakRewardService === null) {
+      this._streakRewardService = this.injector.get(StreakRewardService);
+    }
+    return this._streakRewardService;
+  }
 
   private readonly _currentStreak = signal(0);
   private readonly _activeStreakDays = signal(0);
@@ -73,6 +85,7 @@ export class StreakService {
     }
 
     this._lastPlayDate.set(today);
+    this.streakRewardService.checkMilestoneReward(this._activeStreakDays());
   }
 
   private _today(): string {

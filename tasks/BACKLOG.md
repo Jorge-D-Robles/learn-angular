@@ -193,8 +193,8 @@ Acceptance criteria:
 
 ### T-2026-251
 - Title: Wire StreakRewardService milestone check to StreakService daily play recording
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -210,6 +210,7 @@ Acceptance criteria:
 - [ ] If a milestone is reached, bonus XP is awarded and notification shown
 - [ ] Integration test: record 7 consecutive days, verify 100 XP bonus awarded
 - [ ] Unit tests for: milestone trigger on streak update, no trigger when below milestone
+- Started: 2026-03-08
 
 ### T-2026-291
 - Title: Create DailyChallenge-to-StreakReward integration test

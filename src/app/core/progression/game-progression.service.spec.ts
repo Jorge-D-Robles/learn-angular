@@ -4,6 +4,7 @@ import { XpService } from './xp.service';
 import { ALL_STORY_MISSIONS } from '../curriculum/curriculum.data';
 import type { MinigameId } from '../minigame/minigame.types';
 import { StreakService } from './streak.service';
+import { StreakRewardService } from './streak-reward.service';
 import { XpNotificationService } from '../notifications';
 
 // --- Test helpers ---
@@ -307,8 +308,18 @@ describe('GameProgressionService', () => {
   // --- 9. Streak bonus on story mission XP ---
 
   describe('streak bonus on story mission XP', () => {
+    let localService: GameProgressionService;
+    let localXpService: XpService;
+
     beforeEach(() => {
       vi.useFakeTimers();
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      TestBed.overrideProvider(StreakRewardService, {
+        useValue: { checkMilestoneReward: vi.fn().mockReturnValue(null) },
+      });
+      localXpService = TestBed.inject(XpService);
+      localService = TestBed.inject(GameProgressionService);
     });
 
     afterEach(() => {
@@ -327,21 +338,21 @@ describe('GameProgressionService', () => {
 
     it('should apply streak bonus to story mission XP (3-day streak)', () => {
       buildStreak(3); // 1.3x
-      service.completeMission(1);
+      localService.completeMission(1);
       // Base story XP = 50. With 1.3x: Math.round(50 * 1.3) = 65
-      expect(xpService.totalXp()).toBe(65);
+      expect(localXpService.totalXp()).toBe(65);
     });
 
     it('should award base XP when no streak active', () => {
-      service.completeMission(1);
-      expect(xpService.totalXp()).toBe(50);
+      localService.completeMission(1);
+      expect(localXpService.totalXp()).toBe(50);
     });
 
     it('should cap streak bonus at 5-day max (1.5x)', () => {
       buildStreak(7); // capped at 1.5x
-      service.completeMission(1);
+      localService.completeMission(1);
       // Base story XP = 50. With 1.5x: Math.round(50 * 1.5) = 75
-      expect(xpService.totalXp()).toBe(75);
+      expect(localXpService.totalXp()).toBe(75);
     });
   });
 

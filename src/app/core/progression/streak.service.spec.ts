@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { StreakService } from './streak.service';
+import { StreakRewardService } from './streak-reward.service';
 
 // --- Test helpers ---
 
@@ -374,5 +375,51 @@ describe('StreakService', () => {
 
     expect(service.activeStreakDays()).toBe(2);
     expect(service.currentStreak()).toBe(2);
+  });
+
+  // --- Milestone reward wiring tests ---
+
+  describe('milestone reward wiring', () => {
+    let checkMilestoneSpy: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      checkMilestoneSpy = vi.fn().mockReturnValue(null);
+      TestBed.overrideProvider(StreakRewardService, {
+        useValue: { checkMilestoneReward: checkMilestoneSpy },
+      });
+    });
+
+    it('should call checkMilestoneReward after recordDailyPlay', () => {
+      vi.setSystemTime(new Date('2026-03-07T12:00:00'));
+      const service = TestBed.inject(StreakService);
+
+      service.recordDailyPlay();
+
+      expect(checkMilestoneSpy).toHaveBeenCalledWith(1);
+    });
+
+    it('should call checkMilestoneReward with correct count after consecutive days', () => {
+      vi.setSystemTime(new Date('2026-03-07T12:00:00'));
+      const service = TestBed.inject(StreakService);
+
+      service.recordDailyPlay();
+      vi.setSystemTime(new Date('2026-03-08T12:00:00'));
+      service.recordDailyPlay();
+      vi.setSystemTime(new Date('2026-03-09T12:00:00'));
+      service.recordDailyPlay();
+
+      expect(checkMilestoneSpy).toHaveBeenLastCalledWith(3);
+    });
+
+    it('should not call checkMilestoneReward on same-day duplicate', () => {
+      vi.setSystemTime(new Date('2026-03-07T12:00:00'));
+      const service = TestBed.inject(StreakService);
+
+      service.recordDailyPlay();
+      checkMilestoneSpy.mockClear();
+      service.recordDailyPlay(); // same day — early return
+
+      expect(checkMilestoneSpy).not.toHaveBeenCalled();
+    });
   });
 });

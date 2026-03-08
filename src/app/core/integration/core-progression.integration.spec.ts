@@ -14,6 +14,7 @@ import {
   SpacedRepetitionService,
   RefresherChallengeService,
 } from '../progression';
+import { StreakRewardService } from '../progression/streak-reward.service';
 import { GameStateService } from '../state';
 import { XpNotificationService } from '../notifications';
 import { StatePersistenceService } from '../persistence';
@@ -68,6 +69,7 @@ describe('Core progression integration', () => {
   let spacedRepetition: SpacedRepetitionService;
   let refresherService: RefresherChallengeService;
   let notificationService: XpNotificationService;
+  let streakRewardService: StreakRewardService;
   let fakeStorage: Storage;
   let originalLocalStorage: Storage;
 
@@ -93,6 +95,7 @@ describe('Core progression integration', () => {
         XpNotificationService,
         StatePersistenceService,
         LevelLoaderService,
+        StreakRewardService,
       ],
     });
 
@@ -105,6 +108,7 @@ describe('Core progression integration', () => {
     spacedRepetition = TestBed.inject(SpacedRepetitionService);
     refresherService = TestBed.inject(RefresherChallengeService);
     notificationService = TestBed.inject(XpNotificationService);
+    streakRewardService = TestBed.inject(StreakRewardService);
 
     levelProgression.registerLevels(testLevels);
   });
@@ -216,6 +220,37 @@ describe('Core progression integration', () => {
       // Start at 0 XP, complete a Basic non-perfect level (15 XP) -> still Cadet
       const summary = levelCompletion.completeLevel(makeResult({ perfect: false }));
       expect(summary.rankUpOccurred).toBe(false);
+    });
+  });
+
+  describe('streak reward milestone integration', () => {
+    it('awards 100 XP bonus when 7-day streak milestone is reached', () => {
+      const showSpy = vi.spyOn(notificationService, 'show');
+
+      for (let day = 0; day < 7; day++) {
+        vi.setSystemTime(new Date(`2026-03-${String(day + 1).padStart(2, '0')}T12:00:00`));
+        streakService.recordDailyPlay();
+      }
+      TestBed.flushEffects();
+
+      expect(xpService.totalXp()).toBe(100);
+      expect(streakRewardService.isAwarded(7)).toBe(true);
+      expect(showSpy).toHaveBeenCalledWith(100, expect.arrayContaining(['Weekly Warrior']));
+    });
+
+    it('does not re-award milestone on 8th consecutive day', () => {
+      for (let day = 0; day < 7; day++) {
+        vi.setSystemTime(new Date(`2026-03-${String(day + 1).padStart(2, '0')}T12:00:00`));
+        streakService.recordDailyPlay();
+      }
+      TestBed.flushEffects();
+      const xpAfter7 = xpService.totalXp();
+
+      vi.setSystemTime(new Date('2026-03-08T12:00:00'));
+      streakService.recordDailyPlay();
+      TestBed.flushEffects();
+
+      expect(xpService.totalXp()).toBe(xpAfter7);
     });
   });
 });
