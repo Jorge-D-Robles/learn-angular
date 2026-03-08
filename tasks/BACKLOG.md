@@ -5018,8 +5018,8 @@ Acceptance criteria:
 
 ### T-2026-407
 - Title: Create CurriculumService for chapter-to-minigame mapping lookups
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P2
@@ -5040,6 +5040,7 @@ Acceptance criteria:
 - [ ] All methods are pure lookups against the CURRICULUM constant (no state)
 - [ ] Exported from curriculum barrel
 - [ ] Unit tests for: chapter-minigame mapping, phase lookup, prerequisite resolution, edge cases (invalid chapter, chapters without minigames)
+- Started: 2026-03-08
 
 ### T-2026-408
 - Title: Add CurriculumService to curriculum barrel export
