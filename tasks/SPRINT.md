@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-322**: Wire AudioService into MinigameEngine lifecycle for game feedback sounds (Assigned: claude, Status: in-progress)
 
 
 ---
