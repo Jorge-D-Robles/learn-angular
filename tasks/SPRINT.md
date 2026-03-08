@@ -85,11 +85,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-241**: Create P1 core services integration test (Priority: medium, Size: M)
 - **T-2026-058**: Define Module Assembly level data for 18 levels (Priority: high, Size: M)
 - **T-2026-076**: Create MinigameHubPage component for minigame browsing (Priority: high, Size: M)
 - **T-2026-077**: Create LevelSelectPage component for level browsing (Priority: high, Size: M)

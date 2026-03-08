@@ -754,29 +754,6 @@ AC:
 - [ ] Unit tests for reset behavior
 - [ ] Update MinigamePlayPage.onRetry() to use `engine.reset()` instead of manual initialize+start
 
-### T-2026-241
-- Title: Create P1 core services integration test
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: M
-- Milestone: P1
-- Depends: T-2026-113, T-2026-020, T-2026-021, T-2026-022, T-2026-023, T-2026-027
-- Blocked-by: —
-- Tags: testing, integration, core-engine, progression
-- Refs: docs/progression.md, docs/overview.md
-
-No integration test validates that the core progression services work together end-to-end: completing a level via LevelCompletionService should update LevelProgressionService scores, award XP via XpService, update mastery via MasteryService, refresh SpacedRepetitionService timers, and apply streak multiplier via StreakService. Each service has unit tests, but the orchestration has no integration coverage.
-
-Acceptance criteria:
-- [ ] Integration test file at `src/app/core/integration/core-progression.integration.spec.ts`
-- [ ] Test: complete a level -> LevelProgressionService records score -> XpService adds XP -> MasteryService updates mastery
-- [ ] Test: streak active -> XP calculation includes streak multiplier
-- [ ] Test: topic degraded -> complete refresher -> SpacedRepetitionService resets degradation timer
-- [ ] Test: level completion triggers XP notification
-- [ ] Test: rank up detected when XP crosses threshold
-- [ ] All tests use real service instances (not mocks) to verify integration
-
 ### T-2026-242
 - Title: Wire SettingsService animationSpeed to AnimationService duration multiplier
 - Status: todo
