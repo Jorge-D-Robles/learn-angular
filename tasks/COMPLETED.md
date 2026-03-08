@@ -144,3 +144,4 @@
 [2026-03-08] T-2026-163: Create MinigameTutorialOverlayComponent for first-time play instructions — created MinigameTutorialOverlayComponent with multi-step navigation, persistence, and dialog accessibility (claude)
 [2026-03-08] T-2026-242: Wire SettingsService animationSpeed to AnimationService duration multiplier — wired animationSpeed setting to scale animation durations via SPEED_MULTIPLIERS (claude)
 [2026-03-08] T-2026-293: Create ScoreBreakdownComponent for level completion detail — created ScoreBreakdownComponent with itemized scoring, bonus/penalty styling, total row, and new best indicator (claude)
+[2026-03-08] T-2026-323: Wire AudioService into MinigameShell for UI interaction sounds — wired AudioService for click/hint/tick sounds with effect-based reactive detection (claude)

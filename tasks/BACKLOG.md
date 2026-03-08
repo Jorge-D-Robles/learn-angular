@@ -377,28 +377,6 @@ Acceptance criteria:
 - [ ] Responsive: hidden on mobile (bottom nav handles navigation; top bar is already tight)
 - [ ] Unit tests for: badge visibility with active streak, hidden with no streak
 
-### T-2026-323
-- Title: Wire AudioService into MinigameShell for UI interaction sounds
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-051, T-2026-321
-- Blocked-by: —
-- Tags: audio, integration, minigame-shell, ui
-- Refs: docs/research/gamification-patterns.md, src/app/shared/components/minigame-shell/
-
-MinigameShell handles UI chrome around minigames (pause, hint, timer). It should play `click` on button interactions and `hint` when a hint is revealed, providing the "immediate audio feedback" specified in gamification research.
-
-Acceptance criteria:
-- [ ] MinigameShell injects AudioService
-- [ ] `click` sound plays on pause/resume button press
-- [ ] `hint` sound plays when hint is revealed
-- [ ] `tick` sound plays during timer countdown (last 5 seconds only, to avoid annoyance)
-- [ ] Unit tests for: click on pause, hint sound, tick during countdown
-- Started: 2026-03-08
-
 ### T-2026-327
 - Title: Wire AudioService to RankUpNotificationService for rank-up sound
 - Status: todo

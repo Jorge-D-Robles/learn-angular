@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-323**: Wire AudioService into MinigameShell for UI interaction sounds (Assigned: claude, Status: in-progress)
 
 
 
