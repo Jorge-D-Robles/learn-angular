@@ -13,6 +13,7 @@ export interface ActionResult {
 export interface MinigameEngineConfig {
   readonly initialLives: number;
   readonly timerDuration: number | null;
+  readonly maxScore: number;
   readonly document?: Document;
   readonly comboTracker?: ComboTrackerService;
 }
@@ -21,6 +22,7 @@ export interface MinigameEngineConfig {
 export const DEFAULT_ENGINE_CONFIG: MinigameEngineConfig = {
   initialLives: 3,
   timerDuration: null,
+  maxScore: 1000,
 };
 
 /**

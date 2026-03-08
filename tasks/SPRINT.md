@@ -11,13 +11,14 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-298**: Compute star rating via ScoreCalculationService in MinigamePlayPage (Assigned: claude, Status: in-progress)
+
 
 
 ---
 
 ## Queue
 
-- **T-2026-298**: Compute star rating via ScoreCalculationService in MinigamePlayPage (Priority: high, Size: S)
 - **T-2026-308**: Fix flaky DailyChallengeService streak extension test (Priority: medium, Size: S)
 - **T-2026-299**: Add error state rendering to MinigamePlayPage on level load failure (Priority: medium, Size: S)
 - **T-2026-300**: Integrate HintService penalty into LevelCompletionService score flow (Priority: medium, Size: S)

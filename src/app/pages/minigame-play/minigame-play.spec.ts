@@ -17,7 +17,7 @@ import { LevelLoaderService } from '../../core/levels/level-loader.service';
 import { LevelNavigationService } from '../../core/levels/level-navigation.service';
 import { LevelCompletionService, type LevelCompletionSummary } from '../../core/minigame/level-completion.service';
 import { HintService, type HintResult } from '../../core/minigame/hint.service';
-import { MinigameEngine, type ActionResult } from '../../core/minigame/minigame-engine';
+import { MinigameEngine, type ActionResult, type MinigameEngineConfig } from '../../core/minigame/minigame-engine';
 import type { MinigameConfig } from '../../core/minigame/minigame.types';
 import { DifficultyTier, MinigameStatus } from '../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
@@ -46,6 +46,20 @@ class TestEngine extends MinigameEngine<unknown> {
   protected onComplete(): void { /* stub */ }
   protected validateAction(): ActionResult {
     return { valid: true, scoreChange: 10, livesChange: 0 };
+  }
+}
+
+class TestEngineForScoring extends MinigameEngine<unknown> {
+  private nextScoreChange = 0;
+  constructor(config: Partial<MinigameEngineConfig> = {}) {
+    super({ initialLives: 3, timerDuration: null, ...config });
+  }
+  setNextScoreChange(n: number) { this.nextScoreChange = n; }
+  protected onLevelLoad(): void { /* stub */ }
+  protected onStart(): void { /* stub */ }
+  protected onComplete(): void { /* stub */ }
+  protected validateAction(): ActionResult {
+    return { valid: true, scoreChange: this.nextScoreChange, livesChange: 0 };
   }
 }
 
@@ -621,7 +635,7 @@ describe('MinigamePlayPage', () => {
         score: 0,
         perfect: true,
         xpEarned: 0,
-        starRating: 0,
+        starRating: 1,
       }),
     );
     testEngine.destroy();
@@ -1206,5 +1220,139 @@ describe('MinigamePlayPage', () => {
     expect(result!.gameId).toBe('module-assembly');
     expect(result!.levelId).toBe('ma-basic-01');
     testEngine.destroy();
+  });
+
+  // --- 42. Star rating = 1 for score below 60% of maxScore ---
+  it('should compute 1-star rating for score below 60% of maxScore', async () => {
+    const scoringEngine = new TestEngineForScoring();
+    scoringEngine.setNextScoreChange(500); // 500/1000 = 50%
+    const factory = vi.fn().mockReturnValue(scoringEngine);
+    const completeLevelSpy = vi.fn().mockReturnValue(TEST_COMPLETION_SUMMARY);
+    const { fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: completeLevelSpy },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    scoringEngine.submitAction('score');
+    scoringEngine.complete();
+    fixture.detectChanges();
+
+    expect(completeLevelSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ score: 500, starRating: 1 }),
+    );
+    scoringEngine.destroy();
+  });
+
+  // --- 43. Star rating = 2 for score at 80% of maxScore ---
+  it('should compute 2-star rating for score at 80% of maxScore', async () => {
+    const scoringEngine = new TestEngineForScoring();
+    scoringEngine.setNextScoreChange(800); // 800/1000 = 80%
+    const factory = vi.fn().mockReturnValue(scoringEngine);
+    const completeLevelSpy = vi.fn().mockReturnValue(TEST_COMPLETION_SUMMARY);
+    const { fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: completeLevelSpy },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    scoringEngine.submitAction('score');
+    scoringEngine.complete();
+    fixture.detectChanges();
+
+    expect(completeLevelSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ score: 800, starRating: 2 }),
+    );
+    scoringEngine.destroy();
+  });
+
+  // --- 44. Star rating = 3 for score at 95% of maxScore ---
+  it('should compute 3-star rating for score at 95% of maxScore', async () => {
+    const scoringEngine = new TestEngineForScoring();
+    scoringEngine.setNextScoreChange(950); // 950/1000 = 95%
+    const factory = vi.fn().mockReturnValue(scoringEngine);
+    const completeLevelSpy = vi.fn().mockReturnValue(TEST_COMPLETION_SUMMARY);
+    const { fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: completeLevelSpy },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    scoringEngine.submitAction('score');
+    scoringEngine.complete();
+    fixture.detectChanges();
+
+    expect(completeLevelSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ score: 950, starRating: 3 }),
+    );
+    scoringEngine.destroy();
+  });
+
+  // --- 45. Star rating = 1 for score of 0 ---
+  it('should compute 1-star rating for score of 0', async () => {
+    const scoringEngine = new TestEngineForScoring();
+    const factory = vi.fn().mockReturnValue(scoringEngine);
+    const completeLevelSpy = vi.fn().mockReturnValue(TEST_COMPLETION_SUMMARY);
+    const { fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: completeLevelSpy },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Complete immediately without scoring
+    scoringEngine.complete();
+    fixture.detectChanges();
+
+    expect(completeLevelSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ score: 0, starRating: 1 }),
+    );
+    scoringEngine.destroy();
+  });
+
+  // --- 46. Star rating uses engine maxScore config ---
+  it('should use engine maxScore config for star rating computation', async () => {
+    const scoringEngine = new TestEngineForScoring({ maxScore: 500 });
+    scoringEngine.setNextScoreChange(475); // 475/500 = 95%
+    const factory = vi.fn().mockReturnValue(scoringEngine);
+    const completeLevelSpy = vi.fn().mockReturnValue(TEST_COMPLETION_SUMMARY);
+    const { fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: completeLevelSpy },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    scoringEngine.submitAction('score');
+    scoringEngine.complete();
+    fixture.detectChanges();
+
+    expect(completeLevelSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ score: 475, starRating: 3 }),
+    );
+    scoringEngine.destroy();
   });
 });

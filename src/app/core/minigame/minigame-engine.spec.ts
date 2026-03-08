@@ -585,6 +585,7 @@ describe('MinigameEngine', () => {
       expect(engine.config).toEqual({
         initialLives: 3,
         timerDuration: null,
+        maxScore: 1000,
       });
     });
 
@@ -593,6 +594,12 @@ describe('MinigameEngine', () => {
       expect(customEngine.config.initialLives).toBe(5);
       expect(customEngine.config.timerDuration).toBe(60);
       customEngine.destroy();
+    });
+
+    it('should default maxScore to 1000', () => {
+      const engine = new TestEngine();
+      expect(engine.config.maxScore).toBe(1000);
+      engine.destroy();
     });
   });
 

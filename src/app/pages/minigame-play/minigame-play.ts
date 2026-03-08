@@ -12,6 +12,7 @@ import { LevelCompletionService, type LevelCompletionSummary } from '../../core/
 import { HintService } from '../../core/minigame/hint.service';
 import { KeyboardShortcutService } from '../../core/minigame/keyboard-shortcut.service';
 import { MinigameEngine } from '../../core/minigame/minigame-engine';
+import { ScoreCalculationService } from '../../core/minigame/score-calculation.service';
 import { MinigameStatus, type MinigameId, type MinigameLevel, type MinigameResult } from '../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
 
@@ -83,6 +84,7 @@ export class MinigamePlayPage {
   private readonly levelNav = inject(LevelNavigationService);
   private readonly hintService = inject(HintService);
   private readonly keyboardShortcuts = inject(KeyboardShortcutService);
+  private readonly scoreCalculation = inject(ScoreCalculationService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly engine = signal<MinigameEngine<unknown> | null>(null);
@@ -328,6 +330,7 @@ export class MinigamePlayPage {
   private buildMinigameResult(): MinigameResult {
     const eng = this.engine()!;
     const level = this.currentLevelData!;
+    const maxScore = eng.config.maxScore;
     return {
       gameId: level.gameId,
       levelId: level.id,
@@ -337,7 +340,7 @@ export class MinigamePlayPage {
         ? eng.config.timerDuration! - eng.timeRemaining()
         : 0,
       xpEarned: 0,
-      starRating: 0,
+      starRating: this.scoreCalculation.getStarRating(eng.score(), maxScore),
     };
   }
 
