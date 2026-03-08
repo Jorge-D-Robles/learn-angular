@@ -22,6 +22,7 @@ See `overview.md` for project vision and `curriculum.md` for content scope.
 ```
 src/app/
   core/                  -- Singleton services, state, engine framework
+    audio/               -- AudioService, SoundEffect enum, SOUND_PATHS constant
     curriculum/          -- CurriculumPhase/StoryMission types and CURRICULUM constant
     error/               -- GlobalErrorHandler
     integration/         -- Cross-service integration specs
@@ -518,8 +519,14 @@ XpNotificationService.show() --> toast notification
   |
   v
 LevelCompletionSummary (returned)
-  includes: rankUpOccurred flag (computed in summary;
-            not yet wired to RankUpNotificationService)
+  includes: rankUpOccurred flag (computed by comparing
+            rank before/after XP addition; available in
+            the summary but not consumed by the notification
+            service)
+
+Note: RankUpNotificationService detects rank-ups independently
+via an effect() watching xpService.currentRank(), not through
+LevelCompletionSummary. See Section 9 for AudioService details.
 ```
 
 ### Known Issue
@@ -529,3 +536,35 @@ Angular 21 Vite dev server routing bug -- routes are not populated correctly in 
 ### Package Manager
 
 npm with corepack for consistent Node/npm versions across environments.
+
+---
+
+## 9. Audio
+
+### AudioService
+
+Singleton service for playing sound effects. Defined in `src/app/core/audio/audio.service.ts`.
+
+**Purpose**: Provides a `play(soundId)` method that plays short audio clips for game events (correct/incorrect answers, level completion, rank-ups, etc.). Respects the user's sound preference from `SettingsService`.
+
+**SoundEffect enum** (9 values):
+
+| Value | File | Usage |
+|-------|------|-------|
+| `correct` | `audio/correct.mp3` | Player submits a correct action |
+| `incorrect` | `audio/incorrect.mp3` | Player submits an incorrect action |
+| `complete` | `audio/complete.mp3` | Level completed successfully |
+| `fail` | `audio/fail.mp3` | Level failed (lives depleted or timer expired) |
+| `levelUp` | `audio/levelUp.mp3` | New level unlocked |
+| `rankUp` | `audio/rankUp.mp3` | Player reaches a new rank |
+| `hint` | `audio/hint.mp3` | Hint requested |
+| `click` | `audio/click.mp3` | UI button interaction |
+| `tick` | `audio/tick.mp3` | Timer tick (countdown warning) |
+
+**Caching strategy**: Bulk preload on first use. On first `play()` call (or explicit `preload()` call), creates `HTMLAudioElement` instances for all 9 sounds at once and stores them in a `Map<SoundEffect, HTMLAudioElement>` cache. A `_preloaded` boolean flag prevents redundant preloading. Subsequent plays clone the cached element via `cloneNode(true)` to allow overlapping playback. SSR-safe: the preload guard exits early if `typeof window === 'undefined'`, leaving the cache empty on SSR even though `_preloaded` is set to `true`. File paths are defined in the exported `SOUND_PATHS` constant (`Record<SoundEffect, string>`).
+
+**SettingsService integration**: `play()` checks `SettingsService.settings().soundEnabled` before playing. If sound is disabled, `play()` is a no-op.
+
+**Volume control**: Private `_volume` signal (default 0.5), exposed as read-only. `setVolume(v)` clamps to [0, 1]. Each cloned audio element's `volume` is set to the current signal value.
+
+**Consumers**: `RankUpNotificationService` injects `AudioService` to play `SoundEffect.rankUp` when a rank change is detected via its `effect()`.
