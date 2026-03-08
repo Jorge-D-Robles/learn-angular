@@ -28,28 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-033
-- Title: Create rank-up celebration overlay component
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-021, T-2026-007
-- Blocked-by: —
-- Tags: ui, celebration, rank, component
-- Refs: docs/progression.md, docs/ux/visual-style.md
-
-A full-screen overlay that appears when the player reaches a new rank. Displays the new rank name, badge, and a congratulatory message.
-
-Acceptance criteria:
-- [ ] `RankUpOverlayComponent` at `src/app/shared/components/rank-up-overlay/`
-- [ ] Displays: new rank name, rank badge/icon, "Promoted to {Rank}!" message
-- [ ] Full-screen overlay with semi-transparent backdrop
-- [ ] Dismiss button or auto-dismiss after 5 seconds
-- [ ] Respects `prefers-reduced-motion`
-- [ ] Unit tests for: rendering rank info, dismiss behavior
-
 ### T-2026-043
 - Title: Populate architecture.md with P1 technical decisions
 - Status: todo
