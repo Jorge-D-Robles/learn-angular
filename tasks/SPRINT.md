@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-256**: Create SignalCorps tower configuration data model (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -19,7 +21,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-256**: Create SignalCorps tower configuration data model (Priority: high, Size: S)
 - **T-2026-407**: Create CurriculumService for chapter-to-minigame mapping lookups (Priority: high, Size: S)
 - **T-2026-137**: Register Module Assembly level data with LevelLoaderService (Priority: high, Size: S)
 - **T-2026-059**: Create Module Assembly minigame engine (Priority: high, Size: L)

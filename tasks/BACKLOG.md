@@ -1292,8 +1292,8 @@ Acceptance criteria:
 
 ### T-2026-256
 - Title: Create SignalCorps tower configuration data model
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P2
@@ -1314,6 +1314,7 @@ Acceptance criteria:
 - [ ] `ParentBinding`: parentProperty/handler -> tower input/output name
 - [ ] Exported from signal-corps barrel
 - [ ] Unit tests for: type validation, config completeness checking
+- Started: 2026-03-08
 
 ### T-2026-259
 - Title: Create story mission completion handler to award XP and trigger unlock
