@@ -234,8 +234,8 @@ Acceptance criteria:
 
 ### T-2026-296
 - Title: Migrate ReplayMode type to use PlayMode enum
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -252,6 +252,7 @@ Acceptance criteria:
 - [ ] String values updated to match enum values (`'speedrun'` → `PlayMode.SpeedRun`, `'daily'` → `PlayMode.DailyChallenge`)
 - [ ] No runtime behavior change
 - [ ] Existing tests pass
+- Started: 2026-03-08
 
 ### T-2026-303
 - Title: Add shared components barrel exports for SvgPort and SvgWireRenderer

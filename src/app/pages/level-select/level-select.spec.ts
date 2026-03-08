@@ -320,4 +320,42 @@ describe('LevelSelectPage', () => {
     expect(empty).toBeTruthy();
     expect(empty!.textContent).toContain('No levels available');
   });
+
+  // 18. Navigate to speedrun route on Speed Run mode launch
+  it('should navigate to speedrun route on Speed Run mode launch', async () => {
+    const { element, fixture } = await setup();
+    const tabs = element.querySelectorAll('[role="tab"]');
+    (tabs[2] as HTMLButtonElement).click(); // Speed Run tab (index 2)
+    fixture.detectChanges();
+
+    const launchBtn = element.querySelector('.level-select__launch-btn') as HTMLButtonElement;
+    launchBtn.click();
+    fixture.detectChanges();
+
+    const router = fixture.debugElement.injector.get(Router);
+    expect(router.navigate).toHaveBeenCalledWith([
+      '/minigames',
+      'module-assembly',
+      'speedrun',
+    ]);
+  });
+
+  // 19. Navigate to daily route on Daily mode launch
+  it('should navigate to daily route on Daily mode launch', async () => {
+    const { element, fixture } = await setup();
+    const tabs = element.querySelectorAll('[role="tab"]');
+    (tabs[3] as HTMLButtonElement).click(); // Daily tab (index 3)
+    fixture.detectChanges();
+
+    const launchBtn = element.querySelector('.level-select__launch-btn') as HTMLButtonElement;
+    launchBtn.click();
+    fixture.detectChanges();
+
+    const router = fixture.debugElement.injector.get(Router);
+    expect(router.navigate).toHaveBeenCalledWith([
+      '/minigames',
+      'module-assembly',
+      'daily',
+    ]);
+  });
 });

@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-296**: Migrate ReplayMode type to use PlayMode enum (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -18,7 +20,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-296**: Migrate ReplayMode type to use PlayMode enum (Priority: low, Size: S)
 - **T-2026-304**: Create MinigameEngine onLevelComplete hook for subclass cleanup (Priority: low, Size: S)
 - **T-2026-331**: Create P1 completion integration test for full level completion pipeline with audio (Priority: low, Size: M)
 - **T-2026-291**: Create DailyChallenge-to-StreakReward integration test (Priority: low, Size: S)

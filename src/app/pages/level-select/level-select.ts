@@ -8,9 +8,7 @@ import { LockedContentComponent } from '../../shared/components/locked-content/l
 import { LevelLoaderService } from '../../core/levels/level-loader.service';
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
 import { LEVEL_TIER_CONFIGS } from '../../core/levels/level.types';
-import type { DifficultyTier, MinigameId } from '../../core/minigame/minigame.types';
-
-type ReplayMode = 'story' | 'endless' | 'speedrun' | 'daily';
+import { PlayMode, type DifficultyTier, type MinigameId } from '../../core/minigame/minigame.types';
 
 interface LevelViewModel {
   readonly levelId: string;
@@ -27,21 +25,22 @@ interface TierGroup {
 }
 
 interface TabConfig {
-  readonly mode: ReplayMode;
+  readonly mode: PlayMode;
   readonly label: string;
+  readonly routeSlug: string;
 }
 
 const TABS: readonly TabConfig[] = [
-  { mode: 'story', label: 'Story' },
-  { mode: 'endless', label: 'Endless' },
-  { mode: 'speedrun', label: 'Speed Run' },
-  { mode: 'daily', label: 'Daily' },
+  { mode: PlayMode.Story, label: 'Story', routeSlug: 'story' },
+  { mode: PlayMode.Endless, label: 'Endless', routeSlug: 'endless' },
+  { mode: PlayMode.SpeedRun, label: 'Speed Run', routeSlug: 'speedrun' },
+  { mode: PlayMode.DailyChallenge, label: 'Daily', routeSlug: 'daily' },
 ];
 
-const MODE_DESCRIPTIONS: Record<Exclude<ReplayMode, 'story'>, string> = {
-  endless: 'Play infinitely with increasing difficulty. No level limit \u2014 how far can you go?',
-  speedrun: 'Race through a fixed set of levels. Beat the par time for bonus XP.',
-  daily: 'A unique challenge every day. Complete it for bonus rewards.',
+const MODE_DESCRIPTIONS: Record<Exclude<PlayMode, PlayMode.Story>, string> = {
+  [PlayMode.Endless]: 'Play infinitely with increasing difficulty. No level limit \u2014 how far can you go?',
+  [PlayMode.SpeedRun]: 'Race through a fixed set of levels. Beat the par time for bonus XP.',
+  [PlayMode.DailyChallenge]: 'A unique challenge every day. Complete it for bonus rewards.',
 };
 
 @Component({
@@ -64,7 +63,7 @@ const MODE_DESCRIPTIONS: Record<Exclude<ReplayMode, 'story'>, string> = {
       }
     </div>
 
-    @if (activeTab() === 'story') {
+    @if (activeTab() === PlayMode.Story) {
       @for (group of tierGroups(); track group.tier) {
         <section class="level-select__tier-group">
           <h2 class="level-select__tier-heading">
@@ -93,7 +92,7 @@ const MODE_DESCRIPTIONS: Record<Exclude<ReplayMode, 'story'>, string> = {
       }
     }
 
-    @if (activeTab() !== 'story') {
+    @if (activeTab() !== PlayMode.Story) {
       <div class="level-select__mode-launcher">
         <p class="level-select__mode-description">{{ modeDescription() }}</p>
         <button class="level-select__launch-btn" (click)="launchMode()">
@@ -110,8 +109,9 @@ export class LevelSelectPage {
   private readonly levelLoader = inject(LevelLoaderService);
   private readonly levelProgression = inject(LevelProgressionService);
 
+  readonly PlayMode = PlayMode;
   readonly tabs = TABS;
-  readonly activeTab = signal<ReplayMode>('story');
+  readonly activeTab = signal<PlayMode>(PlayMode.Story);
 
   readonly gameId = toSignal(
     this.route.paramMap.pipe(map((params) => params.get('gameId') ?? '')),
@@ -153,7 +153,7 @@ export class LevelSelectPage {
 
   readonly modeDescription = computed(() => {
     const tab = this.activeTab();
-    if (tab === 'story') return '';
+    if (tab === PlayMode.Story) return '';
     return MODE_DESCRIPTIONS[tab];
   });
 
@@ -161,7 +161,7 @@ export class LevelSelectPage {
     return TABS.find((t) => t.mode === this.activeTab())?.label ?? '';
   });
 
-  setTab(mode: ReplayMode): void {
+  setTab(mode: PlayMode): void {
     this.activeTab.set(mode);
   }
 
@@ -172,7 +172,11 @@ export class LevelSelectPage {
   }
 
   launchMode(): void {
-    this.router.navigate(['/minigames', this.gameId(), this.activeTab()]);
+    const tab = TABS.find((t) => t.mode === this.activeTab());
+    // tab is always found because activeTab is constrained to PlayMode values in TABS
+    if (tab) {
+      this.router.navigate(['/minigames', this.gameId(), tab.routeSlug]);
+    }
   }
 
   unlockMessage(tier: DifficultyTier): string {
