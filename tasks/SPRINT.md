@@ -76,11 +76,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-216**: Create MissionCardComponent for campaign page mission list (Priority: medium, Size: S)
 - **T-2026-218**: Create DailyChallengeCompletionHandler to award bonus XP (Priority: medium, Size: S)
 - **T-2026-226**: Integrate SvgWireRendererComponent with WireDrawService state (Priority: medium, Size: S)
 - **T-2026-227**: Update side nav "Current Mission" link to use dynamic mission resolution (Priority: medium, Size: S)

@@ -80,3 +80,4 @@
 [2026-03-07] T-2026-202: Add WireDrawService to minigame barrel export — added WireDrawService export to minigame barrel (claude)
 [2026-03-07] T-2026-175: Integrate LevelResultsComponent with MinigameShell completion flow — wired LevelResultsComponent into MinigameShell completion flow with real next-level navigation (claude)
 [2026-03-07] T-2026-211: Integrate RefresherChallengeService practice with SpacedRepetitionService mastery restoration — added 6 integration tests verifying RefresherChallengeService + SpacedRepetitionService degradation-reset-restoration flow (claude)
+[2026-03-07] T-2026-216: Create MissionCardComponent for campaign page mission list — created MissionCardComponent with chapter badge, status indicators, and 15 unit tests (claude)
