@@ -244,8 +244,8 @@ Acceptance criteria:
 
 ### T-2026-174
 - Title: Create TimeFormatPipe for play time display
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -267,6 +267,7 @@ Acceptance criteria:
 - [ ] Handles 0 seconds as "0s" / "0:00" / "00:00.0"
 - [ ] Exported from shared pipes barrel
 - [ ] Unit tests for: all three formats, edge cases (0, sub-minute, multi-hour)
+- Started: 2026-03-07
 
 ### T-2026-184
 - Title: Integrate ComboTrackerService with MinigameEngine base class

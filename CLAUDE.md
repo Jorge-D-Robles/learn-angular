@@ -46,7 +46,7 @@ tasks/              # Task management (sprint-based ticket system)
 ## Conventions
 
 - **Selector prefixes:** App-level components use the `app-` prefix (e.g., `app-root`). Shared library components in `src/app/shared/` use the `nx-` prefix (e.g., `nx-station-card`). Both prefixes are configured in `eslint.config.js`.
-- **File naming:** Component files use `component-name.ts` (not `component-name.component.ts`), matching Angular 2025 conventions. Same for specs: `component-name.spec.ts`.
+- **File naming:** Component files use `component-name.ts` (not `component-name.component.ts`), matching Angular 2025 conventions. Same for specs: `component-name.spec.ts`. Pipes use `pipe-name.pipe.ts` and directives use `directive-name.directive.ts` to distinguish them from components.
 - **Barrel exports:** Each subdirectory under `src/app/shared/` has an `index.ts` barrel. The root `src/app/shared/index.ts` re-exports all subdirectories. Empty barrels use `export {};` to remain valid TypeScript modules.
 - **Testing coverage thresholds:** CI enforces minimum coverage via `ng test -c coverage`. Thresholds (configured in `angular.json` under `test.options.coverageThresholds`): statements 80%, branches 75%, functions 80%, lines 80%. Run locally with `npx ng test -c coverage --watch=false`. The build fails if any threshold is not met.
 

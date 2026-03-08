@@ -1,2 +1,1 @@
-// Pipes barrel -- exports added as pipes are created
-export {};
+export { TimeFormatPipe, type TimeFormatStyle } from './time-format.pipe';
