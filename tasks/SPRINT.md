@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-051**: Create AudioService for sound effect management (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -22,7 +24,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-051**: Create AudioService for sound effect management (Priority: low, Size: S)
 - **T-2026-052**: Create AnimationService for shared transition utilities (Priority: low, Size: S)
 
 ---

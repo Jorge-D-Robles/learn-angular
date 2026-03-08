@@ -30,8 +30,8 @@ Acceptance criteria:
 
 ### T-2026-051
 - Title: Create AudioService for sound effect management
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -51,6 +51,7 @@ Acceptance criteria:
 - [ ] Volume control (0-1 range)
 - [ ] Does not block UI thread (uses Web Audio API or HTMLAudioElement)
 - [ ] Unit tests for: play when enabled, no-op when disabled, volume control
+- Started: 2026-03-08
 
 ### T-2026-052
 - Title: Create AnimationService for shared transition utilities
