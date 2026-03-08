@@ -54,8 +54,8 @@ Acceptance criteria:
 
 ### T-2026-050
 - Title: Create PlayTimeService for tracking session and total play time
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -76,6 +76,7 @@ Acceptance criteria:
 - [ ] Auto-saves play time data via StatePersistenceService
 - [ ] Handles page close/refresh gracefully (save on beforeunload)
 - [ ] Unit tests for: session tracking, total accumulation, per-game tracking
+- Started: 2026-03-07
 
 ### T-2026-051
 - Title: Create AudioService for sound effect management
