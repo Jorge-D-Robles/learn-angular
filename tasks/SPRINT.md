@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-319**: Wire registry scoreConfig.maxScore into MinigamePlayPage buildMinigameResult (Assigned: claude, Status: in-progress)
 
 
 
