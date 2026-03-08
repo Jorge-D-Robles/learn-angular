@@ -19,6 +19,8 @@ class TestEngine extends MinigameEngine<{ difficulty: number }> {
   onLevelLoadCalled = false;
   onStartCalled = false;
   onCompleteCalled = false;
+  onPauseCalled = false;
+  onResumeCalled = false;
   lastValidatedAction: unknown = null;
   nextValidationResult: ActionResult = {
     valid: true,
@@ -38,6 +40,12 @@ class TestEngine extends MinigameEngine<{ difficulty: number }> {
   }
   protected onComplete(): void {
     this.onCompleteCalled = true;
+  }
+  protected override onPause(): void {
+    this.onPauseCalled = true;
+  }
+  protected override onResume(): void {
+    this.onResumeCalled = true;
   }
   protected validateAction(action: unknown): ActionResult {
     this.lastValidatedAction = action;
@@ -235,6 +243,34 @@ describe('MinigameEngine', () => {
       // Status is Playing, not Paused
       engine.resume();
       expect(engine.status()).toBe(MinigameStatus.Playing);
+    });
+
+    it('should call onPause when pausing', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      engine.pause();
+      expect(engine.onPauseCalled).toBe(true);
+    });
+
+    it('should call onResume when resuming', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      engine.pause();
+      engine.resume();
+      expect(engine.onResumeCalled).toBe(true);
+    });
+
+    it('should not call onPause when pause is a no-op (not Playing)', () => {
+      engine.initialize(createTestLevel());
+      engine.pause(); // status is Loading, should be no-op
+      expect(engine.onPauseCalled).toBe(false);
+    });
+
+    it('should not call onResume when resume is a no-op (not Paused)', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      engine.resume(); // status is Playing, should be no-op
+      expect(engine.onResumeCalled).toBe(false);
     });
   });
 
@@ -760,6 +796,22 @@ describe('MinigameEngine', () => {
       mockDoc.hidden = true;
       mockDoc.dispatchVisibilityChange();
       expect(visEngine.status()).toBe(MinigameStatus.Paused);
+      visEngine.destroy();
+    });
+
+    it('should call onPause and onResume during auto-pause/resume', () => {
+      const mockDoc = createMockDocument();
+      const visEngine = new TestEngine({ document: mockDoc as unknown as Document });
+      visEngine.initialize(createTestLevel());
+      visEngine.start();
+
+      mockDoc.hidden = true;
+      mockDoc.dispatchVisibilityChange();
+      expect(visEngine.onPauseCalled).toBe(true);
+
+      mockDoc.hidden = false;
+      mockDoc.dispatchVisibilityChange();
+      expect(visEngine.onResumeCalled).toBe(true);
       visEngine.destroy();
     });
 

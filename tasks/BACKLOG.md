@@ -630,8 +630,8 @@ Acceptance criteria:
 
 ### T-2026-295
 - Title: Create MinigameEngine onPause and onResume lifecycle hooks
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -649,6 +649,7 @@ Acceptance criteria:
 - [ ] `resume()` calls `onResume()` after setting status to Playing
 - [ ] Existing tests still pass (empty default implementations are backward compatible)
 - [ ] Unit tests for: onPause called on pause, onResume called on resume
+- Started: 2026-03-08
 
 ### T-2026-296
 - Title: Migrate ReplayMode type to use PlayMode enum

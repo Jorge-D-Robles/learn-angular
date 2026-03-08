@@ -122,6 +122,7 @@ export abstract class MinigameEngine<TLevelData> {
     }
     this._status.set(MinigameStatus.Paused);
     this._clearTimer();
+    this.onPause();
   }
 
   /** Resumes the game. Only valid from Paused status. */
@@ -134,6 +135,7 @@ export abstract class MinigameEngine<TLevelData> {
     if (this._config.timerDuration !== null) {
       this._startTimer();
     }
+    this.onResume();
   }
 
   /** Completes the game (win). Only valid from Playing status. */
@@ -251,4 +253,12 @@ export abstract class MinigameEngine<TLevelData> {
   protected abstract onStart(): void;
   protected abstract onComplete(): void;
   protected abstract validateAction(action: unknown): ActionResult;
+
+  /** Called after the engine is paused. Override to freeze game-specific state. */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  protected onPause(): void {}
+
+  /** Called after the engine is resumed. Override to restore game-specific state. */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  protected onResume(): void {}
 }
