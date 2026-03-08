@@ -338,6 +338,40 @@ describe('App', () => {
   });
 
   // ---------------------------------------------------------------------------
+  // ARIA landmark roles
+  // ---------------------------------------------------------------------------
+  describe('ARIA landmark roles', () => {
+    it('should have aria-label on the banner landmark', () => {
+      const fixture = TestBed.createComponent(App);
+      fixture.detectChanges();
+      const header = fixture.nativeElement.querySelector('header');
+      expect(header.getAttribute('aria-label')).toBe('Site header');
+    });
+
+    it('should have a navigation landmark with aria-label Main navigation', () => {
+      const fixture = TestBed.createComponent(App);
+      fixture.detectChanges();
+      const nav = fixture.nativeElement.querySelector('nav[aria-label="Main navigation"]');
+      expect(nav).toBeTruthy();
+    });
+
+    it('should have a navigation landmark with aria-label Mobile navigation', () => {
+      const fixture = TestBed.createComponent(App);
+      fixture.detectChanges();
+      const nav = fixture.nativeElement.querySelector('nav[aria-label="Mobile navigation"]');
+      expect(nav).toBeTruthy();
+    });
+
+    it('should not have duplicate navigation landmark labels', () => {
+      const fixture = TestBed.createComponent(App);
+      fixture.detectChanges();
+      const navs = fixture.nativeElement.querySelectorAll('nav');
+      const labels = Array.from<Element>(navs).map(nav => nav.getAttribute('aria-label'));
+      expect(new Set(labels).size).toBe(labels.length);
+    });
+  });
+
+  // ---------------------------------------------------------------------------
   // Streak badge integration
   // ---------------------------------------------------------------------------
   describe('streak badge', () => {

@@ -359,8 +359,8 @@ Acceptance criteria:
 
 ### T-2026-355
 - Title: Add ARIA landmark roles to app shell layout regions
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -377,6 +377,7 @@ Acceptance criteria:
 - [ ] Router-outlet container has `role="main"` or uses `<main>` element with `id="main-content"`
 - [ ] No duplicate landmark roles without distinguishing `aria-label`
 - [ ] Unit tests for: landmark role presence, aria-label values
+- Started: 2026-03-08
 
 ### T-2026-362
 - Title: Add route title metadata to all route definitions for a11y and browser tab
@@ -4815,4 +4816,326 @@ Acceptance criteria:
 - [ ] Verifies pause/resume interaction
 - [ ] Tests run via `npm run e2e`
 
+### T-2026-375
+- Title: Add persistence to LevelProgressionService for level progress data
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P1
+- Depends: T-2026-020, T-2026-024
+- Blocked-by: —
+- Tags: persistence, levels, progression, critical-path
+- Refs: docs/architecture.md, src/app/core/levels/level-progression.service.ts, src/app/core/persistence/state-persistence.service.ts
+
+LevelProgressionService tracks per-level scores, star ratings, completion status, and attempts -- but does NOT persist this data to localStorage. When the app reloads, all level progress is lost. Every other stateful service (GameStateService, MasteryService, StreakService, etc.) persists via StatePersistenceService with the debounced-effect pattern. LevelProgressionService must do the same.
+
+Without this, the entire game loop breaks on page reload: players lose all level stars, best scores, and tier unlock progress. This is a critical P1 gap that must be resolved before P2 game content is playable.
+
+Acceptance criteria:
+- [ ] LevelProgressionService injects StatePersistenceService
+- [ ] Level progress Map saved to localStorage under `nexus-station:level-progression` key
+- [ ] Uses the debounced-effect persistence pattern (effect -> untracked -> setTimeout 500ms)
+- [ ] On service initialization, loads persisted progress from localStorage
+- [ ] Validates loaded data shape before applying (silently discard corrupted entries)
+- [ ] `DestroyRef.onDestroy()` clears pending save timeout
+- [ ] Persisted data includes: levelId, completed, bestScore, starRating, perfect, attempts
+- [ ] Level registration (`registerLevels()`) does not overwrite persisted progress
+- [ ] Unit tests for: save on progress change, load on init, corrupted data handling, no overwrite on re-registration
+
+### T-2026-376
+- Title: Update architecture.md persistence table with LevelProgressionService key
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-375
+- Blocked-by: —
+- Tags: docs, architecture, persistence
+- Refs: docs/architecture.md, src/app/core/levels/level-progression.service.ts
+
+Architecture.md Section 6 "Progression Persistence" lists all services that persist to localStorage with their keys. After T-2026-375 adds persistence to LevelProgressionService, the documentation must be updated to include the new `level-progression` key in the persistence table.
+
+Acceptance criteria:
+- [ ] `level-progression` key added to the "Services That Persist" table in architecture.md
+- [ ] Entry includes: service name (LevelProgressionService), data description (per-level scores, stars, completion)
+- [ ] No other stale entries in the persistence table
+
+### T-2026-377
+- Title: Add beforeunload handler to MinigamePlayPage for unsaved game warning
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-223
+- Blocked-by: —
+- Tags: ux, minigame, browser, data-loss-prevention
+- Refs: docs/ux/navigation.md, src/app/pages/minigame-play/minigame-play.ts
+
+MinigamePlayPage allows users to close the browser tab during an active game without any warning. The `canDeactivate` guard (T-2026-363) handles in-app navigation but does not cover browser close, tab close, or page refresh. The `beforeunload` event is the only way to warn users in these scenarios.
+
+Acceptance criteria:
+- [ ] MinigamePlayPage registers a `beforeunload` event handler when engine status is Playing or Paused
+- [ ] Handler sets `event.returnValue` to trigger the browser's native "Leave site?" dialog
+- [ ] Handler is removed when engine status is Won, Lost, or Loading (no false warnings)
+- [ ] Handler is removed on component destroy via `DestroyRef`
+- [ ] Unit tests for: handler registered on Playing, handler removed on Won/Lost, handler removed on destroy
+
+### T-2026-378
+- Title: Wire LeaderboardService entry recording into LevelCompletionService
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P8
+- Depends: T-2026-110, T-2026-113
+- Blocked-by: —
+- Tags: integration, leaderboard, progression, completion
+- Refs: docs/research/gamification-patterns.md, docs/progression.md
+
+LeaderboardService (T-2026-110) defines `addEntry(gameId, entry)` for recording per-minigame scores, but no ticket triggers this call. When a level is completed via LevelCompletionService, the result should be recorded in the leaderboard. Without this integration, the leaderboard is never populated during gameplay.
+
+Acceptance criteria:
+- [ ] LevelCompletionService.completeLevel() calls LeaderboardService.addEntry() with the game result
+- [ ] Entry includes: score, time (from engine timer), date, mode (from engine playMode)
+- [ ] Entry only added for modes that have leaderboards (story, endless, speedrun -- not daily)
+- [ ] Leaderboard entry uses the player name from GameStateService
+- [ ] Unit tests for: entry added on level complete, correct mode mapping, daily mode excluded
+
+### T-2026-379
+- Title: Create AchievementNotificationComponent for earned achievement toasts
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P8
+- Depends: T-2026-109, T-2026-032
+- Blocked-by: —
+- Tags: ui, component, achievements, notifications, gamification
+- Refs: docs/research/gamification-patterns.md, docs/ux/visual-style.md
+
+AchievementService (T-2026-109) specifies "Achievement notification on earn (integrates with toast system)" but no ticket creates the visual notification component. When an achievement is earned, a toast should appear with the badge icon, title, and type (Discovery/Mastery/Commitment). This is distinct from XP notifications -- achievements deserve their own visual treatment.
+
+Acceptance criteria:
+- [ ] `AchievementNotificationComponent` at `src/app/shared/components/achievement-notification/`
+- [ ] Selector: `nx-achievement-notification`
+- [ ] Displays: badge icon, achievement title, type label (Discovery/Mastery/Commitment)
+- [ ] Type-specific accent colors: Discovery (Reactor Blue), Mastery (Solar Gold), Commitment (Sensor Green)
+- [ ] Slide-in animation from top-right, auto-dismiss after 4 seconds
+- [ ] Respects `prefers-reduced-motion`
+- [ ] Stacks with existing notifications (does not overlap XP toasts)
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: notification rendering, type-specific colors, auto-dismiss, reduced motion
+
+### T-2026-380
+- Title: Wire AchievementNotificationComponent into app shell root for global display
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P8
+- Depends: T-2026-379, T-2026-009
+- Blocked-by: —
+- Tags: integration, notifications, app-shell, achievements
+- Refs: docs/research/gamification-patterns.md, src/app/app.html
+
+XpNotificationComponent and RankUpOverlayComponent are wired into the app shell root (T-2026-125, T-2026-225). AchievementNotificationComponent (T-2026-379) needs the same treatment. Without this, achievement toasts have no DOM host and never render.
+
+Acceptance criteria:
+- [ ] App component imports AchievementNotificationComponent
+- [ ] App shell template includes the achievement notification container
+- [ ] Notifications display globally when AchievementService.checkAchievements() finds a new earn
+- [ ] Does not overlap with XP notifications or rank-up overlay (z-index ordering)
+- [ ] Unit tests for: notification visibility on achievement earn
+
+### T-2026-381
+- Title: Create integration test for tutorial-to-first-play flow in MinigamePlayPage
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-205, T-2026-168
+- Blocked-by: —
+- Tags: testing, integration, tutorial, minigame, first-play
+- Refs: docs/minigames/TEMPLATE.md, src/app/pages/minigame-play/minigame-play.ts
+
+T-2026-205 integrated MinigameTutorialOverlay with first-play detection and T-2026-168 creates tutorial data for P2 minigames. No integration test verifies the full first-play flow: tutorial-seen flag absent -> tutorial overlay shown -> engine NOT started -> dismiss tutorial -> engine starts -> tutorial-seen flag persisted -> subsequent play skips tutorial.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/pages/minigame-play/tutorial-first-play.integration.spec.ts`
+- [ ] Test: first play with no tutorial-seen flag -> tutorial overlay visible, engine not started
+- [ ] Test: dismiss tutorial -> engine starts, tutorial-seen flag persisted to localStorage
+- [ ] Test: subsequent play with tutorial-seen flag -> tutorial not shown, engine starts immediately
+- [ ] Test: "How to Play" from pause menu shows tutorial without blocking engine restart
+- [ ] Uses real StatePersistenceService with fake localStorage
+
+### T-2026-382
+- Title: Wire tutorial step data from MinigameInstructionsData into MinigameRegistryService configs
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-168, T-2026-029
+- Blocked-by: —
+- Tags: integration, tutorial, minigame-registry, content
+- Refs: docs/minigames/01-module-assembly.md, src/app/core/minigame/minigame-registry.service.ts, src/app/data/tutorials/minigame-tutorials.data.ts
+
+T-2026-168 creates `MinigameInstructionsData` for all P2 minigames and `MinigameConfig` has an optional `tutorialSteps` field. But no ticket populates each game's config with its tutorial steps. Currently `DEFAULT_MINIGAME_CONFIGS` registers all 12 games without `tutorialSteps`, so the tutorial overlay has no content to display. This ticket wires the tutorial data into the registry so first-play tutorials actually show content.
+
+Acceptance criteria:
+- [ ] Each P2 minigame's `MinigameConfig` includes `tutorialSteps` from the tutorial data file
+- [ ] Tutorial steps populated during `MinigameRegistryService.register()` for Module Assembly, Wire Protocol, Flow Commander, Signal Corps
+- [ ] `MinigamePlayPage.tutorialSteps()` returns non-empty array for registered P2 games
+- [ ] Unit tests for: registry config includes tutorial steps for each P2 game, steps match tutorial data
+
+### T-2026-383
+- Title: Create integration test for persistence round-trip of LevelProgressionService
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-375
+- Blocked-by: —
+- Tags: testing, integration, persistence, levels, progression
+- Refs: docs/architecture.md, src/app/core/levels/level-progression.service.ts
+
+T-2026-375 adds persistence to LevelProgressionService. A dedicated integration test should verify the full round-trip: register levels -> complete levels with scores -> destroy service -> recreate service -> verify progress is restored from localStorage exactly as saved.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/level-progression-persistence.integration.spec.ts`
+- [ ] Test: register levels, complete 3 levels with different scores/stars -> verify persisted to localStorage
+- [ ] Test: recreate LevelProgressionService -> verify all 3 level progress entries restored
+- [ ] Test: restored progress includes correct bestScore, starRating, completed flag, attempts count
+- [ ] Test: registering the same levels again does not overwrite restored progress
+- [ ] Test: corrupted localStorage data is silently discarded, service initializes with empty progress
+- [ ] Uses real StatePersistenceService with fake localStorage
+
+### T-2026-384
+- Title: Create integration test for EndlessModeService high score update on session end
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P8
+- Depends: T-2026-048, T-2026-155
+- Blocked-by: —
+- Tags: testing, integration, endless-mode, high-score
+- Refs: docs/progression.md, src/app/core/minigame/endless-mode.service.ts
+
+EndlessModeService (T-2026-048) tracks high scores per game and EndlessModePage (T-2026-155) manages sessions. No integration test verifies the flow: start session -> play rounds -> session ends -> high score updated if new record -> high score persisted. The page must call `endSession()` which returns whether a new high score was achieved.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/endless-high-score.integration.spec.ts`
+- [ ] Test: complete endless session with score higher than existing high score -> high score updated
+- [ ] Test: complete endless session with score lower than existing high score -> high score unchanged
+- [ ] Test: high score persists across service restarts (localStorage round-trip)
+- [ ] Test: first-ever session always sets high score
+- [ ] Uses real EndlessModeService with fake localStorage
+
+### T-2026-385
+- Title: Create integration test for SpeedRunService best time update on run completion
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P8
+- Depends: T-2026-049, T-2026-156
+- Blocked-by: —
+- Tags: testing, integration, speed-run, best-time
+- Refs: docs/progression.md, src/app/core/minigame/speed-run.service.ts
+
+SpeedRunService (T-2026-049) tracks best times per game. No integration test verifies the flow: start run -> complete levels -> record time -> best time updated if faster -> best time persisted.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/speedrun-best-time.integration.spec.ts`
+- [ ] Test: complete speed run faster than existing best time -> best time updated
+- [ ] Test: complete speed run slower than existing best time -> best time unchanged
+- [ ] Test: best time persists across service restarts (localStorage round-trip)
+- [ ] Test: first-ever run always sets best time
+- [ ] Uses real SpeedRunService with fake localStorage
+
+### T-2026-386
+- Title: Add AudioService sound effect for achievement earned event
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P8
+- Depends: T-2026-109, T-2026-051
+- Blocked-by: —
+- Tags: audio, achievements, integration
+- Refs: docs/research/gamification-patterns.md, src/app/core/audio/audio.service.ts
+
+AudioService plays sounds for rank-up (T-2026-327), XP notifications (T-2026-328), and minigame actions (T-2026-322/T-2026-323). Achievements are a significant reward event per gamification research ("Achievement badges - types: Discovery, mastery, commitment") but have no associated sound. A distinct achievement sound reinforces the reward.
+
+Acceptance criteria:
+- [ ] `SoundEffect` enum extended with `achievement` value
+- [ ] Placeholder audio file created at `assets/audio/achievement.mp3`
+- [ ] AchievementService calls `AudioService.play(SoundEffect.achievement)` when a new achievement is earned
+- [ ] Sound respects SettingsService.soundEnabled toggle
+- [ ] Unit tests for: sound played on achievement earn, sound skipped when sound disabled
+
+### T-2026-387
+- Title: Add SpeedRunService and EndlessModeService barrel exports to minigame module
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-048, T-2026-049
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/minigame/index.ts
+
+SpeedRunService (T-2026-049) and EndlessModeService (T-2026-048) are in the minigame directory. Per the architecture.md listing, they should be exported from the minigame barrel. Verify and ensure both services are exported.
+
+Acceptance criteria:
+- [ ] `src/app/core/minigame/index.ts` exports `SpeedRunService` and `EndlessModeService`
+- [ ] All public types from both services importable via barrel path
+- [ ] Build passes with no missing exports
+
+### T-2026-388
+- Title: Create canDeactivate guard for StoryMissionPage during active mission step
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-075, T-2026-057
+- Blocked-by: —
+- Tags: routing, guard, story-missions, ux, navigation
+- Refs: docs/ux/navigation.md, src/app/pages/mission/
+
+T-2026-363 creates a `canDeactivate` guard for MinigamePlayPage but no equivalent exists for StoryMissionPage. When a player is partway through a multi-step story mission and navigates away (via nav link, back button, or URL change), progress through the current mission steps could be lost. A guard should confirm before allowing departure.
+
+Acceptance criteria:
+- [ ] `StoryMissionGuard` functional `canDeactivate` guard at `src/app/core/guards/story-mission.guard.ts`
+- [ ] Guard checks if the player is partway through a multi-step mission (current step > 0 and < total steps)
+- [ ] If mid-mission: shows ConfirmDialogComponent with "Leave this mission? Your step progress will be lost."
+- [ ] If at start (step 0) or completed: allows navigation without prompt
+- [ ] Guard registered on the `/mission/:chapterId` route in `app.routes.ts`
+- [ ] Unit tests for: guard allows at step 0, guard prompts mid-mission, guard allows after completion
+
+### T-2026-389
+- Title: Add StoryMissionGuard to guards barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-388, T-2026-347
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/guards/index.ts
+
+T-2026-388 creates StoryMissionGuard and T-2026-347 creates the guards barrel. This ticket ensures StoryMissionGuard is included in the barrel alongside MissionGuard, MinigameLevelGuard, and MinigamePlayGuard.
+
+Acceptance criteria:
+- [ ] `src/app/core/guards/index.ts` updated to export `StoryMissionGuard`
+- [ ] Build passes with updated barrel
 

@@ -1,8 +1,8 @@
 # Current Sprint
 
-Sprint: S07-p1-finish
+Sprint: S08-p1-core
 Milestone: P1
-Goal: Finish remaining P1 tickets and fix test infrastructure
+Goal: Complete remaining P1 core engine tickets
 Started: 2026-03-08
 
 <!-- Velocity: (recorded at sprint close) -->
@@ -11,20 +11,20 @@ Started: 2026-03-08
 
 ## Active
 
-
-
-
-
-
-
-
-
+- **T-2026-355**: Add ARIA landmark roles to app shell layout regions (Assigned: claude, Status: in-progress)
 
 
 ---
 
 ## Queue
 
+- **T-2026-362**: Add route title metadata to all route definitions for a11y and browser tab (Priority: medium, Size: S)
+- **T-2026-296**: Migrate ReplayMode type to use PlayMode enum (Priority: low, Size: S)
+- **T-2026-304**: Create MinigameEngine onLevelComplete hook for subclass cleanup (Priority: low, Size: S)
+- **T-2026-331**: Create P1 completion integration test for full level completion pipeline with audio (Priority: low, Size: M)
+- **T-2026-291**: Create DailyChallenge-to-StreakReward integration test (Priority: low, Size: S)
+- **T-2026-364**: Create integration test for combo tracking through full score and XP pipeline (Priority: low, Size: S)
+- **T-2026-330**: Update architecture.md to document AudioService and remove stale rankUp note (Priority: low, Size: S)
 
 ---
 
