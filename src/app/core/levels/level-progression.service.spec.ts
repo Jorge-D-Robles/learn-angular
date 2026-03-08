@@ -7,6 +7,7 @@ import {
 import { GameStateService } from '../state';
 import type { LevelDefinition } from './level.types';
 import { LevelProgressionService } from './level-progression.service';
+import type { LevelProgress } from './level-progression.service';
 
 // --- Test fixtures ---
 
@@ -78,17 +79,53 @@ function makeResult(overrides: Partial<MinigameResult> = {}): MinigameResult {
   };
 }
 
+function createFakeStorage(): Storage {
+  const store = new Map<string, string>();
+  return {
+    getItem: (key: string) => store.get(key) ?? null,
+    setItem: (key: string, value: string) => store.set(key, value),
+    removeItem: (key: string) => {
+      store.delete(key);
+    },
+    clear: () => store.clear(),
+    key: (i: number) => [...store.keys()][i] ?? null,
+    get length() {
+      return store.size;
+    },
+  } as Storage;
+}
+
 describe('LevelProgressionService', () => {
   let service: LevelProgressionService;
   let addXpSpy: ReturnType<typeof vi.fn>;
+  let fakeStorage: Storage;
+  let originalLocalStorage: Storage;
 
   beforeEach(() => {
+    fakeStorage = createFakeStorage();
+    originalLocalStorage = window.localStorage;
+
+    Object.defineProperty(window, 'localStorage', {
+      value: fakeStorage,
+      writable: true,
+      configurable: true,
+    });
+
+    TestBed.resetTestingModule();
     TestBed.configureTestingModule({});
 
     const gameState = TestBed.inject(GameStateService);
     addXpSpy = vi.spyOn(gameState, 'addXp');
 
     service = TestBed.inject(LevelProgressionService);
+  });
+
+  afterEach(() => {
+    Object.defineProperty(window, 'localStorage', {
+      value: originalLocalStorage,
+      writable: true,
+      configurable: true,
+    });
   });
 
   // --- Initialization ---
@@ -353,6 +390,202 @@ describe('LevelProgressionService', () => {
 
       service.resetProgress();
       expect(service.progress().size).toBe(0);
+    });
+  });
+
+  // --- Persistence ---
+
+  describe('persistence', () => {
+    const STORAGE_KEY = 'nexus-station:level-progression';
+
+    function seedProgress(data: Record<string, unknown>): void {
+      fakeStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function validEntry(overrides: Partial<LevelProgress> = {}): LevelProgress {
+      return {
+        levelId: 'ma-basic-01',
+        completed: true,
+        bestScore: 200,
+        starRating: 3,
+        perfect: false,
+        attempts: 5,
+        ...overrides,
+      };
+    }
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should load saved progress from localStorage on init', () => {
+      const entry = validEntry();
+      seedProgress({ 'ma-basic-01': entry });
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const svc = TestBed.inject(LevelProgressionService);
+
+      const loaded = svc.getLevel('ma-basic-01');
+      expect(loaded).not.toBeNull();
+      expect(loaded!.levelId).toBe('ma-basic-01');
+      expect(loaded!.completed).toBe(true);
+      expect(loaded!.bestScore).toBe(200);
+      expect(loaded!.starRating).toBe(3);
+      expect(loaded!.perfect).toBe(false);
+      expect(loaded!.attempts).toBe(5);
+    });
+
+    it('should auto-save progress after debounce', () => {
+      vi.useFakeTimers();
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+
+      const svc = TestBed.inject(LevelProgressionService);
+      vi.clearAllTimers();
+
+      svc.registerLevels(testLevels);
+      svc.completeLevel(makeResult({ levelId: 'ma-basic-01', score: 150, xpEarned: 10 }));
+      TestBed.flushEffects();
+
+      // Before debounce -- not saved yet
+      const before = fakeStorage.getItem(STORAGE_KEY);
+      expect(before).toBeNull();
+
+      vi.advanceTimersByTime(500);
+
+      const after = fakeStorage.getItem(STORAGE_KEY);
+      expect(after).not.toBeNull();
+      const parsed = JSON.parse(after!);
+      expect(parsed['ma-basic-01']).toBeDefined();
+      expect(parsed['ma-basic-01'].bestScore).toBe(150);
+      expect(parsed['ma-basic-01'].completed).toBe(true);
+    });
+
+    it('should debounce rapid changes into a single save', () => {
+      vi.useFakeTimers();
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+
+      const svc = TestBed.inject(LevelProgressionService);
+      vi.clearAllTimers();
+
+      svc.registerLevels(testLevels);
+      svc.completeLevel(makeResult({ levelId: 'ma-basic-01', score: 100, xpEarned: 10 }));
+      TestBed.flushEffects();
+      svc.completeLevel(makeResult({ levelId: 'ma-basic-02', score: 200, xpEarned: 10 }));
+      TestBed.flushEffects();
+      svc.completeLevel(makeResult({ levelId: 'ma-inter-01', score: 300, xpEarned: 10 }));
+      TestBed.flushEffects();
+
+      vi.advanceTimersByTime(500);
+
+      const stored = fakeStorage.getItem(STORAGE_KEY);
+      expect(stored).not.toBeNull();
+      const parsed = JSON.parse(stored!);
+      expect(Object.keys(parsed).length).toBe(3);
+      expect(parsed['ma-basic-01']).toBeDefined();
+      expect(parsed['ma-basic-02']).toBeDefined();
+      expect(parsed['ma-inter-01']).toBeDefined();
+    });
+
+    it('should handle corrupted JSON data gracefully', () => {
+      fakeStorage.setItem(STORAGE_KEY, '{invalid json');
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const svc = TestBed.inject(LevelProgressionService);
+
+      expect(svc.progress().size).toBe(0);
+      warnSpy.mockRestore();
+    });
+
+    it('should handle wrong shape (not an object) gracefully', () => {
+      fakeStorage.setItem(STORAGE_KEY, '42');
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const svc = TestBed.inject(LevelProgressionService);
+
+      expect(svc.progress().size).toBe(0);
+    });
+
+    it('should discard entries with invalid field types', () => {
+      seedProgress({
+        'bad-score': {
+          levelId: 'bad-score',
+          completed: true,
+          bestScore: 'not-a-number',
+          starRating: 2,
+          perfect: false,
+          attempts: 1,
+        },
+        'bad-completed': {
+          levelId: 'bad-completed',
+          completed: 42,
+          bestScore: 100,
+          starRating: 2,
+          perfect: false,
+          attempts: 1,
+        },
+        'missing-levelId': {
+          completed: true,
+          bestScore: 100,
+          starRating: 2,
+          perfect: false,
+          attempts: 1,
+        },
+        'valid-entry': validEntry({ levelId: 'valid-entry' }),
+      });
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const svc = TestBed.inject(LevelProgressionService);
+
+      expect(svc.progress().size).toBe(1);
+      expect(svc.getLevel('valid-entry')).not.toBeNull();
+      expect(svc.getLevel('bad-score')).toBeNull();
+      expect(svc.getLevel('bad-completed')).toBeNull();
+      expect(svc.getLevel('missing-levelId')).toBeNull();
+    });
+
+    it('should not overwrite persisted progress when registerLevels is called', () => {
+      seedProgress({
+        'ma-basic-01': validEntry({
+          levelId: 'ma-basic-01',
+          completed: true,
+          bestScore: 200,
+        }),
+      });
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const svc = TestBed.inject(LevelProgressionService);
+
+      svc.registerLevels(testLevels);
+
+      const progress = svc.getLevel('ma-basic-01');
+      expect(progress).not.toBeNull();
+      expect(progress!.completed).toBe(true);
+      expect(progress!.bestScore).toBe(200);
+    });
+
+    it('should clear persistence on resetProgress', () => {
+      seedProgress({
+        'ma-basic-01': validEntry(),
+      });
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const svc = TestBed.inject(LevelProgressionService);
+
+      expect(svc.progress().size).toBe(1);
+
+      svc.resetProgress();
+
+      expect(svc.progress().size).toBe(0);
+      expect(fakeStorage.getItem(STORAGE_KEY)).toBeNull();
     });
   });
 });

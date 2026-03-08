@@ -1,4 +1,11 @@
-import { inject, Injectable, signal } from '@angular/core';
+import {
+  DestroyRef,
+  effect,
+  inject,
+  Injectable,
+  signal,
+  untracked,
+} from '@angular/core';
 import {
   DifficultyTier,
   type MinigameId,
@@ -6,6 +13,12 @@ import {
 } from '../minigame/minigame.types';
 import { LEVEL_TIER_CONFIGS, type LevelDefinition } from './level.types';
 import { GameStateService } from '../state';
+import { StatePersistenceService } from '../persistence/state-persistence.service';
+
+const LEVEL_PROGRESSION_KEY = 'level-progression';
+
+/** Serializable form of the progress map. */
+type LevelProgressionSnapshot = Record<string, LevelProgress>;
 
 /** Per-level progress tracking data. */
 export interface LevelProgress {
@@ -30,7 +43,12 @@ const DEFAULT_LEVEL_PROGRESS: Omit<LevelProgress, 'levelId'> = {
 
 @Injectable({ providedIn: 'root' })
 export class LevelProgressionService {
+  static readonly SAVE_DEBOUNCE_MS = 500;
+
   private readonly gameState = inject(GameStateService);
+  private readonly persistence = inject(StatePersistenceService);
+  private readonly destroyRef = inject(DestroyRef);
+  private _saveTimeout: ReturnType<typeof setTimeout> | null = null;
 
   // Private mutable state
   private readonly _progress = signal<ReadonlyMap<string, LevelProgress>>(
@@ -40,6 +58,16 @@ export class LevelProgressionService {
 
   // Public read-only signal
   readonly progress = this._progress.asReadonly();
+
+  constructor() {
+    this._loadState();
+    this._setupAutoSave();
+    this.destroyRef.onDestroy(() => {
+      if (this._saveTimeout !== null) {
+        clearTimeout(this._saveTimeout);
+      }
+    });
+  }
 
   /**
    * Registers level definitions. Deduplicates by levelId —
@@ -158,5 +186,53 @@ export class LevelProgressionService {
   /** Resets all progress to empty. */
   resetProgress(): void {
     this._progress.set(new Map());
+    this.persistence.clear(LEVEL_PROGRESSION_KEY);
+  }
+
+  private _loadState(): void {
+    const saved =
+      this.persistence.load<LevelProgressionSnapshot>(LEVEL_PROGRESSION_KEY);
+    if (saved !== null && typeof saved === 'object' && !Array.isArray(saved)) {
+      const validated = new Map<string, LevelProgress>();
+      for (const [key, value] of Object.entries(saved)) {
+        if (
+          value !== null &&
+          typeof value === 'object' &&
+          !Array.isArray(value) &&
+          typeof (value as LevelProgress).levelId === 'string' &&
+          (value as LevelProgress).levelId === key &&
+          typeof (value as LevelProgress).completed === 'boolean' &&
+          typeof (value as LevelProgress).bestScore === 'number' &&
+          (value as LevelProgress).bestScore >= 0 &&
+          typeof (value as LevelProgress).starRating === 'number' &&
+          (value as LevelProgress).starRating >= 0 &&
+          (value as LevelProgress).starRating <= 5 &&
+          typeof (value as LevelProgress).perfect === 'boolean' &&
+          typeof (value as LevelProgress).attempts === 'number' &&
+          (value as LevelProgress).attempts >= 0
+        ) {
+          validated.set(key, value as LevelProgress);
+        }
+      }
+      this._progress.set(validated);
+    }
+  }
+
+  private _setupAutoSave(): void {
+    effect(() => {
+      const snapshot = this._progress();
+      untracked(() => this._debouncedSave(snapshot));
+    });
+  }
+
+  private _debouncedSave(snapshot: ReadonlyMap<string, LevelProgress>): void {
+    if (this._saveTimeout !== null) {
+      clearTimeout(this._saveTimeout);
+    }
+    this._saveTimeout = setTimeout(() => {
+      const plain: LevelProgressionSnapshot = Object.fromEntries(snapshot);
+      this.persistence.save(LEVEL_PROGRESSION_KEY, plain);
+      this._saveTimeout = null;
+    }, LevelProgressionService.SAVE_DEBOUNCE_MS);
   }
 }
