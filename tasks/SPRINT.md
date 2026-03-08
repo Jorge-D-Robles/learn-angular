@@ -25,11 +25,11 @@ Started: 2026-03-08
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-074**: Create story mission content for Chapters 1-10 (Priority: high, Size: L)
 - **T-2026-078**: Create DashboardPage component with station overview (Priority: medium, Size: M)
 - **T-2026-189**: Create MissionUnlockNotification for minigame unlock toast (Priority: medium, Size: S)
 - **T-2026-167**: Add campaign route to app.routes.ts (Priority: medium, Size: S)
