@@ -711,29 +711,6 @@ Acceptance criteria:
 - [ ] Build passes with no circular dependencies
 - [ ] ExpressionValidator importable via `'./shared'` barrel path
 
-### T-2026-306
-- Title: Create integration test for MinigamePlayPage completion-to-progression pipeline
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-223, T-2026-113
-- Blocked-by: —
-- Tags: testing, integration, minigame-play, progression
-- Refs: src/app/pages/minigame-play/minigame-play.ts, src/app/core/minigame/level-completion.service.ts
-
-MinigamePlayPage has a completion detection effect that watches for engine status `Won` and calls `LevelCompletionService.completeLevel()`. This critical integration point is not covered by integration tests. T-2026-241 tests the core services pipeline but not the page-level wiring. A regression in the completion effect, the MinigameResult construction, or the effect timing would silently break the entire progression system.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/pages/minigame-play/minigame-play.integration.spec.ts`
-- [ ] Test: engine transitions to Won -> LevelCompletionService.completeLevel() called with correct MinigameResult
-- [ ] Test: completionSummary signal is set after completion
-- [ ] Test: completion only fires once per level (completionFired guard works)
-- [ ] Test: retry resets completionFired flag and allows re-completion
-- [ ] Uses TestBed with real LevelCompletionService (or spy to verify call)
-- Started: 2026-03-08
-
 ### T-2026-307
 - Title: Add StreakBadgeComponent to top bar for at-a-glance streak visibility
 - Status: todo
