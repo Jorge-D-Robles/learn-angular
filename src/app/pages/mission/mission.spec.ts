@@ -11,6 +11,7 @@ import { createComponent, getMockProvider } from '../../../testing/test-utils';
 import { MissionPage } from './mission';
 import { GameProgressionService } from '../../core/progression/game-progression.service';
 import { CurriculumService } from '../../core/curriculum/curriculum.service';
+import { StoryMissionCompletionService } from '../../core/curriculum/story-mission-completion.service';
 import type { ChapterId, StoryMission } from '../../core/curriculum/curriculum.types';
 import { CHAPTER_01_CONTENT } from '../../data/missions/phase-1';
 import { APP_ICONS } from '../../shared/icons';
@@ -90,6 +91,8 @@ async function setup(options: SetupOptions = {}) {
         isMissionAvailable: () => isAvailable,
         isMissionCompleted: () => isCompleted,
         completedMissions: completedMissionsSignal,
+      }),
+      getMockProvider(StoryMissionCompletionService, {
         completeMission: completeMissionFn,
       }),
       getMockProvider(CurriculumService, {
@@ -287,7 +290,7 @@ describe('MissionPage', () => {
 
   // === Completion state (5 tests) ===
 
-  it('should call GameProgressionService.completeMission on Complete button click', async () => {
+  it('should call StoryMissionCompletionService.completeMission on Complete button click', async () => {
     const completeMissionFn = vi.fn();
     const { element, fixture, component } = await setup({ completeMissionFn });
     // Navigate to last step

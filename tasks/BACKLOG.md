@@ -604,8 +604,8 @@ Acceptance criteria:
 
 ### T-2026-259
 - Title: Create story mission completion handler to award XP and trigger unlock
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P2
@@ -623,6 +623,7 @@ Acceptance criteria:
 - [ ] If mission unlocks a minigame, MissionUnlockNotificationService.showUnlock() triggered
 - [ ] MasteryService updated: topic gets 1 star (story mission completion = 1 star per progression.md)
 - [ ] Unit tests for: XP award, unlock notification, mastery update, campaign progress
+- Started: 2026-03-08
 
 ### T-2026-260
 - Title: Create accessibility test infrastructure with axe-core

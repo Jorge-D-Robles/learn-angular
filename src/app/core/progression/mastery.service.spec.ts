@@ -366,4 +366,54 @@ describe('MasteryService', () => {
   it('should return 0 for unknown topicId', () => {
     expect(service.getMastery('blast-doors')).toBe(0);
   });
+
+  // --- ensureMinimumMastery ---
+
+  describe('ensureMinimumMastery', () => {
+    it('should set mastery to minStars when current is 0', () => {
+      expect(service.getMastery('wire-protocol')).toBe(0);
+      service.ensureMinimumMastery('wire-protocol', 1);
+      expect(service.getMastery('wire-protocol')).toBe(1);
+    });
+
+    it('should be a no-op when current mastery >= minStars', () => {
+      // Set mastery to 3 via level completions
+      levelService.completeLevel(makeResult({ levelId: 'ma-basic-01' }));
+      levelService.completeLevel(makeResult({ levelId: 'ma-basic-02' }));
+      levelService.completeLevel(makeResult({ levelId: 'ma-inter-01' }));
+      levelService.completeLevel(makeResult({ levelId: 'ma-adv-01' }));
+      service.updateMastery(TEST_GAME_ID);
+      expect(service.getMastery(TEST_GAME_ID)).toBe(3);
+
+      service.ensureMinimumMastery(TEST_GAME_ID, 1);
+      expect(service.getMastery(TEST_GAME_ID)).toBe(3);
+    });
+
+    it('should set mastery to minStars when current is lower', () => {
+      expect(service.getMastery('signal-corps')).toBe(0);
+      service.ensureMinimumMastery('signal-corps', 2);
+      expect(service.getMastery('signal-corps')).toBe(2);
+    });
+
+    it('should persist the change via auto-save', () => {
+      vi.useFakeTimers();
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const svc = TestBed.inject(MasteryService);
+      vi.clearAllTimers();
+
+      svc.ensureMinimumMastery('wire-protocol', 1);
+      TestBed.flushEffects();
+
+      vi.advanceTimersByTime(500);
+
+      const saved = fakeStorage.getItem('nexus-station:mastery');
+      expect(saved).not.toBeNull();
+      const parsed = JSON.parse(saved!);
+      expect(parsed['wire-protocol']).toBe(1);
+
+      vi.useRealTimers();
+    });
+  });
 });

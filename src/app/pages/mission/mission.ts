@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { GameProgressionService } from '../../core/progression/game-progression.service';
 import { CurriculumService } from '../../core/curriculum/curriculum.service';
+import { StoryMissionCompletionService } from '../../core/curriculum/story-mission-completion.service';
 import type { ChapterId } from '../../core/curriculum/curriculum.types';
 import type { CodeExampleStep, ConceptStep } from '../../core/curriculum/story-mission-content.types';
 import { PHASE_1_MISSIONS } from '../../data/missions/phase-1';
@@ -20,6 +21,7 @@ export class MissionPage {
   private readonly router = inject(Router);
   private readonly gameProgression = inject(GameProgressionService);
   private readonly curriculum = inject(CurriculumService);
+  private readonly missionCompletion = inject(StoryMissionCompletionService);
 
   readonly chapterId = toSignal(
     this.route.paramMap.pipe(map((p) => p.get('chapterId') ?? '')),
@@ -109,7 +111,7 @@ export class MissionPage {
 
   completeMission(): void {
     try {
-      this.gameProgression.completeMission(this.chapterIdNum() as ChapterId);
+      this.missionCompletion.completeMission(this.chapterIdNum() as ChapterId);
       this.missionCompleted.set(true);
     } catch (e) {
       this.errorMessage.set(e instanceof Error ? e.message : 'Failed to complete mission');

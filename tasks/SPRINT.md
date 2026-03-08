@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-259**: Create story mission completion handler to award XP and trigger unlock (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -21,7 +23,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-259**: Create story mission completion handler to award XP and trigger unlock (Priority: high, Size: S)
 - **T-2026-382**: Wire tutorial step data into MinigameRegistryService configs (Priority: medium, Size: S)
 - **T-2026-245**: Wire ExpressionBuilderComponent into Flow Commander gate configuration (Priority: high, Size: S)
 

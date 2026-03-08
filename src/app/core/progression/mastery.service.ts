@@ -75,6 +75,23 @@ export class MasteryService {
     });
   }
 
+  /**
+   * Sets mastery to at least `minStars` if the current value is lower.
+   * Used for story-mission-based star awards (star 1 = mission completed).
+   * No-op if the current mastery is already >= minStars.
+   */
+  ensureMinimumMastery(topicId: MinigameId, minStars: number): void {
+    const current = this._mastery().get(topicId) ?? 0;
+    if (current >= minStars) {
+      return;
+    }
+    this._mastery.update((map) => {
+      const next = new Map(map);
+      next.set(topicId, minStars);
+      return next;
+    });
+  }
+
   /** Returns the mastery map (sparse -- only entries for updated topics). */
   getAllMastery(): ReadonlyMap<MinigameId, number> {
     return this._mastery();
