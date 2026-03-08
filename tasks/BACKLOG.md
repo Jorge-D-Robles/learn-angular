@@ -639,8 +639,8 @@ Acceptance criteria:
 
 ### T-2026-249
 - Title: Create StreakRewardService for 7-day streak milestones
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -661,6 +661,7 @@ Acceptance criteria:
 - [ ] Shows notification via XpNotificationService
 - [ ] Rewards only awarded once per milestone (persisted via StatePersistenceService)
 - [ ] Unit tests for: milestone detection, bonus XP award, no re-award, notification
+- Started: 2026-03-07
 
 ### T-2026-250
 - Title: Add StreakRewardService to progression barrel export
