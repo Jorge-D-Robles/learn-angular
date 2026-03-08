@@ -4,6 +4,7 @@ import { SpacedRepetitionService } from './spaced-repetition.service';
 import { GameProgressionService } from './game-progression.service';
 import { XpService } from './xp.service';
 import { XpNotificationService } from '../notifications/xp-notification.service';
+import { StreakService } from './streak.service';
 import type { MinigameId } from '../minigame/minigame.types';
 
 // --- Test helpers ---
@@ -331,5 +332,55 @@ describe('DailyChallengeService', () => {
 
     const service = TestBed.inject(DailyChallengeService);
     expect(service.todaysChallenge().gameId).toBe('module-assembly');
+  });
+
+  // --- Streak integration (3 tests) ---
+
+  describe('Streak integration', () => {
+    it('should call StreakService.recordDailyPlay() on completion', () => {
+      const service = createService();
+      const streakService = TestBed.inject(StreakService);
+      const spy = vi.spyOn(streakService, 'recordDailyPlay');
+
+      service.completeChallenge();
+
+      expect(spy).toHaveBeenCalledOnce();
+    });
+
+    it('should not call StreakService.recordDailyPlay() when challenge is already completed', () => {
+      const service = createService();
+      const streakService = TestBed.inject(StreakService);
+      const spy = vi.spyOn(streakService, 'recordDailyPlay');
+
+      service.completeChallenge();
+      service.completeChallenge();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should extend streak when completing daily challenge on consecutive days', () => {
+      // Day 1: March 7
+      const service1 = createService();
+      vi.clearAllTimers();
+
+      service1.completeChallenge();
+      TestBed.flushEffects();
+      vi.advanceTimersByTime(500);
+
+      // Day 2: March 8
+      vi.setSystemTime(new Date('2026-03-08T12:00:00'));
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const service2 = createService();
+      vi.clearAllTimers();
+      vi.setSystemTime(new Date('2026-03-08T12:00:00'));
+
+      service2.completeChallenge();
+      TestBed.flushEffects();
+      vi.advanceTimersByTime(500);
+
+      const streakService = TestBed.inject(StreakService);
+      expect(streakService.activeStreakDays()).toBe(2);
+    });
   });
 });

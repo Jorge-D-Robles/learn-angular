@@ -4,6 +4,7 @@ import { SpacedRepetitionService } from './spaced-repetition.service';
 import { GameProgressionService } from './game-progression.service';
 import { XpService } from './xp.service';
 import { XpNotificationService } from '../notifications/xp-notification.service';
+import { StreakService } from './streak.service';
 import type { MinigameId } from '../minigame/minigame.types';
 
 export interface DailyChallenge {
@@ -35,6 +36,7 @@ export class DailyChallengeService {
   private readonly gameProgression = inject(GameProgressionService);
   private readonly xpService = inject(XpService);
   private readonly xpNotification = inject(XpNotificationService);
+  private readonly streakService = inject(StreakService);
   private readonly persistence = inject(StatePersistenceService);
 
   private readonly _completedDate = signal<string | null>(null);
@@ -64,6 +66,7 @@ export class DailyChallengeService {
     this.xpService.addXp(DAILY_CHALLENGE_BONUS_XP);
     this.xpNotification.show(DAILY_CHALLENGE_BONUS_XP, ['Daily Challenge']);
     this._saveState();
+    this.streakService.recordDailyPlay();
   }
 
   private _today(): string {
