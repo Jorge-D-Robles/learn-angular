@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-052**: Create AnimationService for shared transition utilities (Assigned: claude, Status: in-progress)
 
 
 

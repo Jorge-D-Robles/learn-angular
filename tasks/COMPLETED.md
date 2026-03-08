@@ -128,3 +128,4 @@
 [2026-03-08] T-2026-318: Create MinigamePlayPage retry flow integration test — create MinigamePlayPage retry flow integration test (claude)
 [2026-03-08] T-2026-043: Populate architecture.md with P1 technical decisions — populate architecture.md with P1 technical decisions (claude)
 [2026-03-08] T-2026-051: Create AudioService for sound effect management — create AudioService for sound effect management (claude)
+[2026-03-08] T-2026-052: Create AnimationService for shared transition utilities — create AnimationService for shared transition utilities (claude)

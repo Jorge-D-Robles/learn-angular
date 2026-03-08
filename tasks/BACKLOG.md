@@ -28,33 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-052
-- Title: Create AnimationService for shared transition utilities
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-039, T-2026-007
-- Blocked-by: —
-- Tags: animation, service, ui
-- Refs: docs/ux/visual-style.md
-
-Visual style guide specifies animation principles: 150-250ms for UI transitions, 300-500ms for game feedback, ease-out for entrances, ease-in for exits, and respect for prefers-reduced-motion. This service provides reusable animation utilities and Angular animation triggers that all components can use.
-
-Acceptance criteria:
-- [ ] `AnimationService` at `src/app/core/animation/animation.service.ts`
-- [ ] `isReducedMotion` signal: reads from SettingsService and/or prefers-reduced-motion media query
-- [ ] `ANIMATION_DURATIONS` constants: uiTransition (200ms), gameFeedback (400ms), overlay (300ms)
-- [ ] Reusable Angular animation triggers at `src/app/core/animation/animations.ts`:
-  - `fadeIn` / `fadeOut` (150ms ease-out / ease-in)
-  - `slideInRight` / `slideOutRight` (250ms ease-out)
-  - `scaleIn` (200ms ease-out, for overlays)
-  - `pulse` (400ms, for game feedback)
-- [ ] All animation triggers use 0ms duration when reduced motion is active
-- [ ] Unit tests for: reduced motion detection, animation trigger definitions
-- Started: 2026-03-08
-
 ### T-2026-129
 - Title: Create EmptyStateComponent for no-content pages
 - Status: todo
