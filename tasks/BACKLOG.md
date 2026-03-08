@@ -28,31 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-051
-- Title: Create AudioService for sound effect management
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-039
-- Blocked-by: —
-- Tags: audio, service, ui
-- Refs: docs/ux/visual-style.md, docs/minigames/01-module-assembly.md, docs/minigames/04-signal-corps.md
-
-Multiple minigame specs reference sound effects and audio feedback (correct/incorrect sounds, completion jingles). The SettingsService already tracks soundEnabled preference. This service provides a centralized API for playing sound effects that respects the sound setting.
-
-Acceptance criteria:
-- [ ] `AudioService` at `src/app/core/audio/audio.service.ts`
-- [ ] `play(soundId)`: plays a named sound effect if sound is enabled
-- [ ] `SoundEffect` enum: correct, incorrect, complete, fail, levelUp, rankUp, hint, click, tick
-- [ ] Respects `SettingsService.settings().soundEnabled` — no-op when disabled
-- [ ] Preloads sound files on initialization (lazy: only when first needed)
-- [ ] Volume control (0-1 range)
-- [ ] Does not block UI thread (uses Web Audio API or HTMLAudioElement)
-- [ ] Unit tests for: play when enabled, no-op when disabled, volume control
-- Started: 2026-03-08
-
 ### T-2026-052
 - Title: Create AnimationService for shared transition utilities
 - Status: todo

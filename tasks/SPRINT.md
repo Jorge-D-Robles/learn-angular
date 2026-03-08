@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-051**: Create AudioService for sound effect management (Assigned: claude, Status: in-progress)
 
 
 
