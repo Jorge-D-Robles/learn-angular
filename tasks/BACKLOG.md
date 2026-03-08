@@ -412,8 +412,8 @@ Acceptance criteria:
 
 ### T-2026-212
 - Title: Create LifetimeStatsService for aggregate player statistics
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -431,6 +431,7 @@ Acceptance criteria:
 - [ ] Computed signals for reactive UI binding
 - [ ] Exported from progression barrel
 - [ ] Unit tests for: stats aggregation, reactive updates when underlying services change
+- Started: 2026-03-07
 
 ### T-2026-225
 - Title: Wire RankUpOverlayComponent into app shell root
