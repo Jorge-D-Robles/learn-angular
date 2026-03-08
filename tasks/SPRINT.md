@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-205**: Integrate MinigameTutorialOverlay with MinigameShell first-play detection (Assigned: claude, Status: in-progress)
 
 
 

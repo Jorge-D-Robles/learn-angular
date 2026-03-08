@@ -30,29 +30,6 @@ Acceptance criteria:
 
 ---
 
-### T-2026-205
-- Title: Integrate MinigameTutorialOverlay with MinigameShell first-play detection
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-163, T-2026-018, T-2026-024
-- Blocked-by: —
-- Tags: integration, minigame-framework, tutorial, onboarding
-- Refs: docs/research/gamification-patterns.md, docs/ux/visual-style.md
-
-MinigameTutorialOverlayComponent (T-2026-163) provides step-through tutorial UI and MinigameShell (T-2026-018) manages the minigame lifecycle, but no ticket connects them. The tutorial should show automatically when a player launches a minigame for the first time, blocking engine start until dismissed. The "don't show again" flag is persisted. PauseMenuComponent (T-2026-135) should include a "How to Play" option that reopens the tutorial.
-
-Acceptance criteria:
-- [ ] MinigameShell checks StatePersistenceService for tutorial-seen flag on engine ready
-- [ ] If tutorial not seen, renders MinigameTutorialOverlayComponent before starting engine
-- [ ] Tutorial dismissal sets the flag and starts the engine
-- [ ] PauseMenuComponent includes "How to Play" button that opens the tutorial overlay
-- [ ] Engine is paused while tutorial overlay is active
-- [ ] Unit tests for: first-play detection, tutorial display, dismiss-and-start, pause menu "How to Play"
-- Started: 2026-03-08
-
 ### T-2026-208
 - Title: Add XpDiminishingReturnsService to progression barrel export
 - Status: todo
