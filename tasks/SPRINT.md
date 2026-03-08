@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-300**: Integrate HintService penalty into LevelCompletionService score flow (Assigned: claude, Status: in-progress)
 
 
 
