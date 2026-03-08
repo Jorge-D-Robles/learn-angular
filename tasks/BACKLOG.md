@@ -244,8 +244,8 @@ Acceptance criteria:
 
 ### T-2026-185
 - Title: Integrate XpDiminishingReturnsService with LevelCompletionService
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -263,6 +263,7 @@ Acceptance criteria:
 - [ ] Improvement completions (higher star rating) get full XP for the delta
 - [ ] LevelCompletionSummary includes `replayMultiplier` field
 - [ ] Unit tests for: first play full XP, diminished replay XP, improvement exception
+- Started: 2026-03-08
 
 ### T-2026-201
 - Title: Add ComboTrackerService to minigame barrel export

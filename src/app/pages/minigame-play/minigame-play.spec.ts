@@ -80,6 +80,7 @@ const TEST_COMPLETION_SUMMARY: LevelCompletionSummary = {
   streakBonus: 0,
   isNewBestScore: true,
   rankUpOccurred: false,
+  replayMultiplier: 1.0,
 };
 
 // --- Mock factories ---

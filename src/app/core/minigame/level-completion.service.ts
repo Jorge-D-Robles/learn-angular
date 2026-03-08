@@ -4,6 +4,7 @@ import { LevelProgressionService } from '../levels/level-progression.service';
 import { XpService } from '../progression/xp.service';
 import { MasteryService } from '../progression/mastery.service';
 import { XpNotificationService } from '../notifications';
+import { XpDiminishingReturnsService } from '../progression/xp-diminishing-returns.service';
 
 /** Summary returned after completing a level. */
 export interface LevelCompletionSummary {
@@ -30,6 +31,8 @@ export interface LevelCompletionSummary {
   readonly isNewBestScore: boolean;
   /** Whether the player's rank changed as a result of this completion. */
   readonly rankUpOccurred: boolean;
+  /** Diminishing returns multiplier applied (1.0 = first play, <1.0 = replay). */
+  readonly replayMultiplier: number;
 }
 
 /**
@@ -44,6 +47,7 @@ export class LevelCompletionService {
   private readonly xpService = inject(XpService);
   private readonly masteryService = inject(MasteryService);
   private readonly xpNotification = inject(XpNotificationService);
+  private readonly diminishingReturns = inject(XpDiminishingReturnsService);
 
   /**
    * Orchestrates the full completion pipeline for a finished level.
@@ -61,42 +65,59 @@ export class LevelCompletionService {
       );
     }
 
-    // 2. Calculate XP with streak bonus
+    // 2. Calculate base XP
     const baseXp = this.xpService.calculateLevelXp(
       levelDef.tier,
       result.perfect,
     );
-    const xpBreakdown = this.xpService.applyStreakBonus(baseXp);
+
+    // 2b. Record completion and get diminishing returns multiplier
+    const completionResult = this.diminishingReturns.recordCompletion(
+      result.gameId,
+      result.levelId,
+      result.starRating,
+    );
+
+    // 2c. Apply diminishing returns (bypass if star improvement)
+    const diminishedXp = completionResult.starImprovement
+      ? baseXp
+      : Math.round(baseXp * completionResult.replayMultiplier);
+
+    // 3. Apply streak bonus on diminished XP
+    const xpBreakdown = this.xpService.applyStreakBonus(diminishedXp);
     const xpEarned = xpBreakdown.totalXp;
 
-    // 3. Capture rank BEFORE state mutation
+    // 4. Capture rank BEFORE state mutation
     const rankBefore = this.xpService.currentRank();
 
-    // 4. Capture prior best score BEFORE state mutation
+    // 5. Capture prior best score BEFORE state mutation
     const priorBestScore =
       this.levelProgression.getLevel(result.levelId)?.bestScore ?? 0;
 
-    // 5. Build enriched result and record completion (single XP path)
+    // 6. Build enriched result and record completion (single XP path)
     const enrichedResult: MinigameResult = { ...result, xpEarned };
     this.levelProgression.completeLevel(enrichedResult);
 
-    // 6. Update mastery
+    // 7. Update mastery
     this.masteryService.updateMastery(result.gameId);
 
-    // 7. Detect rank-up
+    // 8. Detect rank-up
     const rankAfter = this.xpService.currentRank();
     const rankUpOccurred = rankBefore !== rankAfter;
 
-    // 8. Determine if new best score
+    // 9. Determine if new best score
     const isNewBestScore = result.score > priorBestScore;
 
-    // 9. Trigger XP notification
+    // 10. Trigger XP notification
     const bonuses: string[] = ['Level Complete'];
     if (result.perfect === true) {
       bonuses.push('Perfect!');
     }
     if (xpBreakdown.streakBonus > 0) {
       bonuses.push(`+${xpBreakdown.streakBonus} Streak Bonus`);
+    }
+    if (completionResult.replayMultiplier < 1.0 && !completionResult.starImprovement) {
+      bonuses.push(`Replay: ${Math.round(completionResult.replayMultiplier * 100)}% XP`);
     }
     if (rankUpOccurred) {
       bonuses.push(`Rank Up: ${rankAfter}`);
@@ -122,6 +143,7 @@ export class LevelCompletionService {
       streakBonus: xpBreakdown.streakBonus,
       isNewBestScore,
       rankUpOccurred,
+      replayMultiplier: completionResult.replayMultiplier,
     };
   }
 }
