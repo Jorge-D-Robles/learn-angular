@@ -4,7 +4,9 @@ import {
   type ActionResult,
   type MinigameEngineConfig,
   type PlayTimeTracker,
+  type SoundPlayer,
 } from './minigame-engine';
+import { SoundEffect } from '../audio';
 import {
   MinigameStatus,
   PlayMode,
@@ -1071,6 +1073,97 @@ describe('MinigameEngine', () => {
       trackedEngine.complete();
       expect(mockTracker.recordMinigameTime).not.toHaveBeenCalled();
       trackedEngine.destroy();
+    });
+  });
+
+  // --- 17. Audio feedback ---
+
+  describe('Audio feedback', () => {
+    let mockSoundPlayer: SoundPlayer;
+
+    beforeEach(() => {
+      mockSoundPlayer = { play: vi.fn() };
+    });
+
+    it('should play correct sound on valid action', () => {
+      const audioEngine = new TestEngine({ soundPlayer: mockSoundPlayer });
+      audioEngine.initialize(createTestLevel());
+      audioEngine.start();
+      audioEngine.nextValidationResult = { valid: true, scoreChange: 10, livesChange: 0 };
+      audioEngine.submitAction('test');
+      expect(mockSoundPlayer.play).toHaveBeenCalledWith(SoundEffect.correct);
+      audioEngine.destroy();
+    });
+
+    it('should play incorrect sound on invalid action', () => {
+      const audioEngine = new TestEngine({ soundPlayer: mockSoundPlayer });
+      audioEngine.initialize(createTestLevel());
+      audioEngine.start();
+      audioEngine.nextValidationResult = { valid: false, scoreChange: 0, livesChange: -1 };
+      audioEngine.submitAction('test');
+      expect(mockSoundPlayer.play).toHaveBeenCalledWith(SoundEffect.incorrect);
+      audioEngine.destroy();
+    });
+
+    it('should play complete sound on level completion', () => {
+      const audioEngine = new TestEngine({ soundPlayer: mockSoundPlayer });
+      audioEngine.initialize(createTestLevel());
+      audioEngine.start();
+      audioEngine.complete();
+      expect(mockSoundPlayer.play).toHaveBeenCalledWith(SoundEffect.complete);
+      audioEngine.destroy();
+    });
+
+    it('should play fail sound on level failure', () => {
+      const audioEngine = new TestEngine({ soundPlayer: mockSoundPlayer });
+      audioEngine.initialize(createTestLevel());
+      audioEngine.start();
+      audioEngine.fail();
+      expect(mockSoundPlayer.play).toHaveBeenCalledWith(SoundEffect.fail);
+      audioEngine.destroy();
+    });
+
+    it('should play fail sound on auto-fail from lives reaching 0', () => {
+      const audioEngine = new TestEngine({ soundPlayer: mockSoundPlayer });
+      audioEngine.initialize(createTestLevel());
+      audioEngine.start();
+      audioEngine.nextValidationResult = { valid: true, scoreChange: 0, livesChange: -3 };
+      audioEngine.submitAction('test');
+      expect(mockSoundPlayer.play).toHaveBeenCalledWith(SoundEffect.fail);
+      audioEngine.destroy();
+    });
+
+    it('should play both incorrect and fail sounds when invalid action causes auto-fail', () => {
+      const audioEngine = new TestEngine({ soundPlayer: mockSoundPlayer });
+      audioEngine.initialize(createTestLevel());
+      audioEngine.start();
+      audioEngine.nextValidationResult = { valid: false, scoreChange: 0, livesChange: -3 };
+      audioEngine.submitAction('test');
+      expect(mockSoundPlayer.play).toHaveBeenCalledTimes(2);
+      expect(mockSoundPlayer.play).toHaveBeenNthCalledWith(1, SoundEffect.incorrect);
+      expect(mockSoundPlayer.play).toHaveBeenNthCalledWith(2, SoundEffect.fail);
+      audioEngine.destroy();
+    });
+
+    it('should not play sounds when no soundPlayer configured', () => {
+      const noSoundEngine = new TestEngine();
+      noSoundEngine.initialize(createTestLevel());
+      noSoundEngine.start();
+      expect(() => {
+        noSoundEngine.submitAction('test');
+        noSoundEngine.complete();
+      }).not.toThrow();
+      noSoundEngine.destroy();
+    });
+
+    it('should not play sounds when submitAction is called in non-Playing status', () => {
+      const audioEngine = new TestEngine({ soundPlayer: mockSoundPlayer });
+      audioEngine.initialize(createTestLevel());
+      audioEngine.start();
+      audioEngine.pause();
+      audioEngine.submitAction('test');
+      expect(mockSoundPlayer.play).not.toHaveBeenCalled();
+      audioEngine.destroy();
     });
   });
 });

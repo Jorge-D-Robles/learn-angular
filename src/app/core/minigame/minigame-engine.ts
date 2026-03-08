@@ -1,6 +1,7 @@
 import { signal, computed, type Signal } from '@angular/core';
 import { MinigameStatus, PlayMode, type MinigameLevel, type MinigameState, type MinigameId } from './minigame.types';
 import type { ComboTrackerService } from './combo-tracker.service';
+import { SoundEffect } from '../audio';
 
 /** Result returned by a minigame action validation. */
 export interface ActionResult {
@@ -14,6 +15,11 @@ export interface PlayTimeTracker {
   recordMinigameTime(gameId: MinigameId, durationSeconds: number): void;
 }
 
+/** Interface for playing sound effects. Implemented by AudioService. */
+export interface SoundPlayer {
+  play(soundId: SoundEffect): void;
+}
+
 /** Configuration for a MinigameEngine instance. */
 export interface MinigameEngineConfig {
   readonly initialLives: number;
@@ -22,6 +28,7 @@ export interface MinigameEngineConfig {
   readonly document?: Document;
   readonly comboTracker?: ComboTrackerService;
   readonly playTimeTracker?: PlayTimeTracker;
+  readonly soundPlayer?: SoundPlayer;
 }
 
 /** Default engine configuration values. */
@@ -65,9 +72,10 @@ export abstract class MinigameEngine<TLevelData> {
   }));
 
   // --- Private fields ---
-  private readonly _config: Omit<MinigameEngineConfig, 'document' | 'comboTracker' | 'playTimeTracker'>;
+  private readonly _config: Omit<MinigameEngineConfig, 'document' | 'comboTracker' | 'playTimeTracker' | 'soundPlayer'>;
   private readonly _comboTracker: ComboTrackerService | undefined;
   private readonly _playTimeTracker: PlayTimeTracker | undefined;
+  private readonly _soundPlayer: SoundPlayer | undefined;
   private _timerId: ReturnType<typeof setInterval> | null = null;
   private _autoPaused = false;
   private readonly _boundVisibilityHandler: (() => void) | null;
@@ -77,15 +85,16 @@ export abstract class MinigameEngine<TLevelData> {
   private _gameIdForPlayTime: MinigameId | null = null;
 
   /** Public read-only accessor for the engine configuration. */
-  get config(): Omit<MinigameEngineConfig, 'document' | 'comboTracker' | 'playTimeTracker'> {
+  get config(): Omit<MinigameEngineConfig, 'document' | 'comboTracker' | 'playTimeTracker' | 'soundPlayer'> {
     return this._config;
   }
 
   protected constructor(config: Partial<MinigameEngineConfig> = {}) {
-    const { document: configDoc, comboTracker, playTimeTracker, ...restConfig } = { ...DEFAULT_ENGINE_CONFIG, ...config };
+    const { document: configDoc, comboTracker, playTimeTracker, soundPlayer, ...restConfig } = { ...DEFAULT_ENGINE_CONFIG, ...config };
     this._config = restConfig;
     this._comboTracker = comboTracker;
     this._playTimeTracker = playTimeTracker;
+    this._soundPlayer = soundPlayer;
     this._doc = configDoc ?? (typeof document !== 'undefined' ? document : undefined);
     this._boundVisibilityHandler = this._doc ? this._onVisibilityChange.bind(this) : null;
   }
@@ -167,6 +176,7 @@ export abstract class MinigameEngine<TLevelData> {
     }
     this._clearTimer();
     this._status.set(MinigameStatus.Won);
+    this._soundPlayer?.play(SoundEffect.complete);
     this._finalizePlayTime();
     this.onComplete();
   }
@@ -178,6 +188,7 @@ export abstract class MinigameEngine<TLevelData> {
     }
     this._clearTimer();
     this._status.set(MinigameStatus.Lost);
+    this._soundPlayer?.play(SoundEffect.fail);
     this._finalizePlayTime();
   }
 
@@ -206,6 +217,7 @@ export abstract class MinigameEngine<TLevelData> {
     const result = this.validateAction(action);
     this._score.update((current) => Math.max(0, current + result.scoreChange));
     this._lives.update((current) => current + result.livesChange);
+    this._soundPlayer?.play(result.valid ? SoundEffect.correct : SoundEffect.incorrect);
     if (this._lives() <= 0) {
       this.fail();
     }

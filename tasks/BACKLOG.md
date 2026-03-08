@@ -516,8 +516,8 @@ Acceptance criteria:
 
 ### T-2026-322
 - Title: Wire AudioService into MinigameEngine lifecycle for game feedback sounds
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -536,6 +536,7 @@ Acceptance criteria:
 - [ ] `fail` sound plays when level failure is triggered
 - [ ] Sounds respect SettingsService.soundEnabled (already handled by AudioService.play)
 - [ ] Unit tests for: sound played on correct, incorrect, complete, fail; sound not played when disabled
+- Started: 2026-03-08
 
 ### T-2026-323
 - Title: Wire AudioService into MinigameShell for UI interaction sounds
