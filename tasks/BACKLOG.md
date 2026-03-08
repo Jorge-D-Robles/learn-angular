@@ -242,29 +242,6 @@ Acceptance criteria:
 - [ ] Both barrels included in `src/app/core/index.ts` re-exports (depends on T-2026-126)
 - [ ] Build passes with no circular dependencies
 
-### T-2026-184
-- Title: Integrate ComboTrackerService with MinigameEngine base class
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-056, T-2026-017
-- Blocked-by: —
-- Tags: integration, minigame-framework, combo, scoring
-- Refs: docs/minigames/01-module-assembly.md, docs/minigames/02-wire-protocol.md
-
-ComboTrackerService (T-2026-056) provides combo multiplier mechanics, but no ticket wires it into the MinigameEngine lifecycle. The base engine class should expose an optional combo tracker that subclass engines can use, resetting it on level start and factoring the multiplier into score calculation.
-
-Acceptance criteria:
-- [ ] MinigameEngine base class accepts optional ComboTrackerService injection
-- [ ] `recordCorrectAction()` on engine delegates to ComboTrackerService.recordCorrect()
-- [ ] `recordIncorrectAction()` on engine delegates to ComboTrackerService.recordIncorrect()
-- [ ] Combo resets when a new level starts (via engine.reset())
-- [ ] `getComboMultiplier()` accessor for subclass engines to use in scoring
-- [ ] Unit tests for: combo tracking through engine, reset on new level, multiplier access
-- Started: 2026-03-08
-
 ### T-2026-185
 - Title: Integrate XpDiminishingReturnsService with LevelCompletionService
 - Status: todo
