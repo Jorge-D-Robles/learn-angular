@@ -30,8 +30,8 @@ Acceptance criteria:
 
 ### T-2026-052
 - Title: Create AnimationService for shared transition utilities
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -53,6 +53,7 @@ Acceptance criteria:
   - `pulse` (400ms, for game feedback)
 - [ ] All animation triggers use 0ms duration when reduced motion is active
 - [ ] Unit tests for: reduced motion detection, animation trigger definitions
+- Started: 2026-03-08
 
 ### T-2026-129
 - Title: Create EmptyStateComponent for no-content pages
@@ -629,6 +630,193 @@ Acceptance criteria:
 - [ ] Uses compact/small variant of StreakBadgeComponent
 - [ ] Responsive: hidden on mobile (bottom nav handles navigation; top bar is already tight)
 - [ ] Unit tests for: badge visibility with active streak, hidden with no streak
+
+### T-2026-321
+- Title: Create AudioService barrel export and add to core re-export
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-051
+- Blocked-by: —
+- Tags: barrel, audio, core, exports
+- Refs: src/app/core/audio/, src/app/core/index.ts
+
+AudioService (T-2026-051) was completed but has no barrel export (`index.ts`) in its directory, and the core barrel (`src/app/core/index.ts`) does not re-export the audio module. Every other core subdirectory has a barrel and is re-exported.
+
+Acceptance criteria:
+- [ ] `src/app/core/audio/index.ts` exists and exports `AudioService`, `SoundEffect`, `SOUND_PATHS`
+- [ ] `src/app/core/index.ts` includes `export * from './audio'`
+- [ ] Existing imports of AudioService elsewhere continue to work
+- [ ] Build passes with no errors
+
+### T-2026-322
+- Title: Wire AudioService into MinigameEngine lifecycle for game feedback sounds
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-051, T-2026-321
+- Blocked-by: —
+- Tags: audio, integration, minigame, engine
+- Refs: docs/research/gamification-patterns.md, src/app/core/minigame/minigame-engine.ts
+
+Gamification research principle #4: "Immediate feedback -- all minigames provide instant visual/audio feedback." AudioService exists but has zero consumers. MinigameEngine should play sounds on key lifecycle events: correct action, incorrect action, level complete, level fail.
+
+Acceptance criteria:
+- [ ] MinigameEngine injects AudioService
+- [ ] `correct` sound plays when `validateAction` returns a correct result
+- [ ] `incorrect` sound plays when `validateAction` returns an incorrect result
+- [ ] `complete` sound plays when level completion is triggered
+- [ ] `fail` sound plays when level failure is triggered
+- [ ] Sounds respect SettingsService.soundEnabled (already handled by AudioService.play)
+- [ ] Unit tests for: sound played on correct, incorrect, complete, fail; sound not played when disabled
+
+### T-2026-323
+- Title: Wire AudioService into MinigameShell for UI interaction sounds
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-051, T-2026-321
+- Blocked-by: —
+- Tags: audio, integration, minigame-shell, ui
+- Refs: docs/research/gamification-patterns.md, src/app/shared/components/minigame-shell/
+
+MinigameShell handles UI chrome around minigames (pause, hint, timer). It should play `click` on button interactions and `hint` when a hint is revealed, providing the "immediate audio feedback" specified in gamification research.
+
+Acceptance criteria:
+- [ ] MinigameShell injects AudioService
+- [ ] `click` sound plays on pause/resume button press
+- [ ] `hint` sound plays when hint is revealed
+- [ ] `tick` sound plays during timer countdown (last 5 seconds only, to avoid annoyance)
+- [ ] Unit tests for: click on pause, hint sound, tick during countdown
+
+### T-2026-324
+- Title: Create placeholder audio asset files for all SoundEffect types
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-051
+- Blocked-by: —
+- Tags: audio, assets, placeholder
+- Refs: src/app/core/audio/audio.service.ts
+
+AudioService references 9 audio files (correct.mp3, incorrect.mp3, complete.mp3, fail.mp3, levelUp.mp3, rankUp.mp3, hint.mp3, click.mp3, tick.mp3) at `audio/` path but no actual audio files exist in the project. Without these files, all play() calls silently fail. Create minimal placeholder audio files so the audio pipeline works end-to-end.
+
+Acceptance criteria:
+- [ ] `public/audio/` directory exists with all 9 .mp3 files listed in SOUND_PATHS
+- [ ] Each file is a valid, short (~100-300ms) audio file (can be generated programmatically or sourced from CC0 libraries)
+- [ ] Files are small (<50KB each) to keep the bundle lean
+- [ ] AudioService.preload() successfully loads all files without console errors
+- [ ] Manual verification: calling AudioService.play(SoundEffect.click) produces audible output
+
+### T-2026-327
+- Title: Wire AudioService to RankUpNotificationService for rank-up sound
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-051, T-2026-321
+- Blocked-by: —
+- Tags: audio, integration, notifications, rank
+- Refs: docs/progression.md, src/app/core/notifications/rank-up-notification.service.ts
+
+RankUpNotificationService detects rank-up events via an effect() but does not play the `rankUp` sound. Progression.md says rank-up is a "major achievement event" that should have strong audio/visual feedback.
+
+Acceptance criteria:
+- [ ] RankUpNotificationService injects AudioService
+- [ ] `rankUp` sound plays when a rank-up is detected (inside the existing effect)
+- [ ] Sound only plays once per rank-up event (no double-play on re-trigger)
+- [ ] Unit tests for: sound plays on rank-up, sound not played when audio disabled
+
+### T-2026-328
+- Title: Wire AudioService to XpNotificationService for XP award sound
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-051, T-2026-321
+- Blocked-by: —
+- Tags: audio, integration, notifications, xp
+- Refs: docs/progression.md, src/app/core/notifications/xp-notification.service.ts
+
+XpNotificationService displays XP award notifications but does not play the `levelUp` sound for significant XP gains. Progression.md specifies XP awards as core feedback. A subtle sound on XP notification reinforces the reward loop.
+
+Acceptance criteria:
+- [ ] XpNotificationService injects AudioService
+- [ ] `levelUp` sound plays when an XP notification is emitted (on level-up events only, not every XP tick)
+- [ ] Unit tests for: sound plays on level-up XP notification, no sound on regular XP award
+
+### T-2026-329
+- Title: Create integration test for AudioService with SettingsService sound toggle
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-051, T-2026-040
+- Blocked-by: —
+- Tags: test, integration, audio, settings
+- Refs: src/app/core/audio/audio.service.ts, src/app/core/settings/settings.service.ts
+
+AudioService reads SettingsService.soundEnabled to gate playback, but no integration test verifies this cross-service behavior. Unit tests mock SettingsService; an integration test should use the real SettingsService to verify the full toggle flow.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/audio/audio-settings.integration.spec.ts`
+- [ ] Test: when soundEnabled is true, AudioService.play() attempts playback (cloneNode is called)
+- [ ] Test: when soundEnabled is false, AudioService.play() does NOT attempt playback
+- [ ] Test: toggling soundEnabled mid-session changes play behavior immediately
+- [ ] Uses real SettingsService (not mocked) with AudioService
+
+### T-2026-330
+- Title: Update architecture.md to document AudioService and remove stale rankUp note
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-051
+- Blocked-by: —
+- Tags: docs, architecture, audio, cleanup
+- Refs: docs/architecture.md, src/app/core/audio/audio.service.ts
+
+Architecture.md does not mention AudioService in the core services section despite it being a completed P1 service. Also, architecture.md has a stale note saying RankUpNotificationService's rankUpOccurred is "not yet wired" -- it IS wired via an effect().
+
+Acceptance criteria:
+- [ ] AudioService is documented in the core services section of architecture.md
+- [ ] AudioService entry includes: purpose, SoundEffect enum values, caching strategy, SettingsService integration
+- [ ] Stale "not yet wired" note about rankUpOccurred is removed or corrected
+- [ ] No other stale notes remain in the core services section
+
+### T-2026-331
+- Title: Create P1 completion integration test for full level completion pipeline with audio
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: M
+- Milestone: P1
+- Depends: T-2026-322, T-2026-327, T-2026-328
+- Blocked-by: —
+- Tags: test, integration, pipeline, audio, progression
+- Refs: docs/architecture.md, src/app/core/minigame/, src/app/core/progression/
+
+The P1 core engine has many services that compose into a pipeline: MinigameEngine -> LevelCompletionService -> ProgressionService -> XpNotificationService -> RankUpNotificationService, with AudioService wired at multiple points. No integration test verifies the full pipeline end-to-end. This test ensures the entire chain fires correctly when a level is completed.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/level-completion-pipeline.integration.spec.ts`
+- [ ] Test: completing a level triggers score calculation, XP award, mastery update, and audio
+- [ ] Test: completing a level that causes rank-up triggers rank-up notification and rankUp sound
+- [ ] Test: completing a level with sound disabled triggers no audio but all other effects still fire
+- [ ] Uses real services (minimal mocking -- only HTMLAudioElement needs mocking)
+- [ ] Does not require DOM rendering (service-level integration only)
 
 ---
 

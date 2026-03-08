@@ -1,0 +1,61 @@
+@use 'tokens' as t;
+
+// --- Keyframes ---
+
+@keyframes nx-fade-in-kf {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes nx-fade-out-kf {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes nx-slide-in-right-kf {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes nx-slide-out-right-kf {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes nx-scale-in-kf {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes nx-pulse-kf {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+// --- Utility classes ---
+
+.nx-fade-in {
+  animation: nx-fade-in-kf t.$nx-duration-fast t.$nx-ease-out both;
+}
+
+.nx-fade-out {
+  animation: nx-fade-out-kf t.$nx-duration-fast t.$nx-ease-in both;
+}
+
+.nx-slide-in-right {
+  animation: nx-slide-in-right-kf t.$nx-duration-normal t.$nx-ease-out both;
+}
+
+.nx-slide-out-right {
+  animation: nx-slide-out-right-kf t.$nx-duration-normal t.$nx-ease-in both;
+}
+
+.nx-scale-in {
+  // Ticket AC says 200ms; no exact SCSS variable exists.
+  // Using 200ms literal. Switch to a token if one is added later.
+  animation: nx-scale-in-kf 200ms t.$nx-ease-out both;
+}
+
+.nx-pulse {
+  animation: nx-pulse-kf t.$nx-duration-game ease-in-out;
+}
