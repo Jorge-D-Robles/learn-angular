@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-417**: Add CurriculumService dependency to story mission completion handler (Assigned: claude, Status: in-progress)
 
 
 

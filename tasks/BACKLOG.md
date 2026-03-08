@@ -1630,28 +1630,6 @@ Acceptance criteria:
 - [ ] Code blocks use consistent sizing that does not overflow mobile viewport
 - [ ] Unit tests for: code editor renders in read-only mode, highlighted lines applied, multiple code blocks per step
 
-### T-2026-417
-- Title: Add CurriculumService dependency to story mission completion handler
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-407, T-2026-259
-- Blocked-by: —
-- Tags: integration, story-missions, curriculum, unlock-resolution
-- Refs: docs/curriculum.md, docs/overview.md, src/app/core/curriculum/curriculum.service.ts
-
-T-2026-259 (story mission completion handler) specifies "If mission unlocks a minigame, MissionUnlockNotificationService.showUnlock() triggered." But T-2026-259 does not list CurriculumService (T-2026-407, completed) as a dependency and has no acceptance criterion for HOW the handler determines which minigame a chapter unlocks. CurriculumService.getMinigameForChapter() provides this mapping. This ticket ensures the completion handler uses CurriculumService for unlock resolution rather than hardcoding the mapping.
-
-Acceptance criteria:
-- [ ] Story mission completion handler injects CurriculumService
-- [ ] Uses `CurriculumService.getMinigameForChapter(chapterId)` to determine which minigame (if any) to unlock
-- [ ] Chapters that don't unlock a minigame (Ch 9, 10, 27, 33, 34 per curriculum.md) skip the unlock step
-- [ ] Chapters that unlock "new levels" for an existing minigame (Ch 2, 3, 6, 8, etc.) are handled appropriately
-- [ ] Unit tests for: unlock called with correct minigameId, no unlock for non-unlocking chapters, "new levels" chapters handled
-- Started: 2026-03-08
-
 ### T-2026-418
 - Title: Create FlowCommanderGateConfigComponent for gate condition editing panel
 - Status: todo
