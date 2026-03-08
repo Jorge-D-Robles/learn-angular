@@ -15,11 +15,11 @@ Started: 2026-03-08
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-304**: Create MinigameEngine onLevelComplete hook for subclass cleanup (Priority: low, Size: S)
 - **T-2026-331**: Create P1 completion integration test for full level completion pipeline with audio (Priority: low, Size: M)
 - **T-2026-291**: Create DailyChallenge-to-StreakReward integration test (Priority: low, Size: S)
 - **T-2026-364**: Create integration test for combo tracking through full score and XP pipeline (Priority: low, Size: S)

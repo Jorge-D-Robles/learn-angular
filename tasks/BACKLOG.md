@@ -254,27 +254,6 @@ Acceptance criteria:
 - [ ] Verify `WireDescriptor` type is importable from shared barrel (already confirmed)
 - [ ] Build passes with updated barrel
 
-### T-2026-304
-- Title: Create MinigameEngine onLevelComplete hook for subclass cleanup
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-017
-- Blocked-by: —
-- Tags: minigame-framework, engine, lifecycle
-- Refs: src/app/core/minigame/minigame-engine.ts
-
-MinigameEngine has `onComplete()` abstract method called when the game is won, but `fail()` has no corresponding hook. Subclass engines that need to clean up game-specific state on failure (e.g., stop conveyor belt animation, clear pending timers, save partial progress) have no lifecycle hook for the Lost status. Adding `onFail()` as an empty virtual method (like the proposed `onPause`/`onResume` in T-2026-295) would complete the lifecycle hook set.
-
-Acceptance criteria:
-- [ ] Add `protected onFail(): void {}` empty virtual method to MinigameEngine
-- [ ] `fail()` calls `onFail()` after setting status to Lost
-- [ ] Existing tests still pass (empty default implementation is backward compatible)
-- [ ] Unit tests for: onFail called on fail, onFail called on timer expiry, onFail called on lives depleted
-- [ ] Update engine lifecycle documentation in code comments
-
 ### T-2026-305
 - Title: Add ExpressionValidator to shared components barrel export
 - Status: todo

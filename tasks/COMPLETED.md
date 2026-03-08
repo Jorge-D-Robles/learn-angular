@@ -157,3 +157,4 @@
 [2026-03-08] T-2026-355: Add ARIA landmark roles to app shell layout regions — added aria-label to header and 4 ARIA landmark tests (claude)
 [2026-03-08] T-2026-362: Add route title metadata to all route definitions for a11y and browser tab — added static route titles to all 11 routes with NexusTitleStrategy for browser tab and a11y (claude)
 [2026-03-08] T-2026-296: Migrate ReplayMode type to use PlayMode enum — replaced ReplayMode string union with PlayMode enum and routeSlug decoupling (claude)
+[2026-03-08] T-2026-304: Create MinigameEngine onLevelComplete hook for subclass cleanup — added onFail lifecycle hook to MinigameEngine for subclass cleanup (claude)
