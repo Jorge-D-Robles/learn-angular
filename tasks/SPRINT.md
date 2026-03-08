@@ -33,11 +33,11 @@ Started: 2026-03-08
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-075**: Create StoryMissionPage component for mission playback (Priority: high, Size: M)
 - **T-2026-138**: Register Wire Protocol level data with LevelLoaderService (Priority: high, Size: S)
 - **T-2026-139**: Register Flow Commander level data with LevelLoaderService (Priority: high, Size: S)
 - **T-2026-140**: Register Signal Corps level data with LevelLoaderService (Priority: high, Size: S)
