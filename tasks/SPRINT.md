@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-308**: Fix flaky DailyChallengeService streak extension test (Assigned: claude, Status: in-progress)
 
 
 

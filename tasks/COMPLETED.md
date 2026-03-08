@@ -115,3 +115,4 @@
 [2026-03-08] T-2026-295: Create MinigameEngine onPause and onResume lifecycle hooks — added protected onPause/onResume virtual methods with empty defaults, 5 new tests (claude)
 [2026-03-08] T-2026-297: Fix top bar XP progress bar hardcoded nextRankXp value — replaced hardcoded nextRankXp with dynamic rankXpRange/rankXpProgress computed signals, 3 new tests (claude)
 [2026-03-08] T-2026-298: Compute star rating via ScoreCalculationService in MinigamePlayPage — compute star rating via ScoreCalculationService in MinigamePlayPage (claude)
+[2026-03-08] T-2026-308: Fix flaky DailyChallengeService streak extension test — fixed flaky streak extension test by seeding localStorage directly and replacing toLocaleDateString with manual formatter (claude)

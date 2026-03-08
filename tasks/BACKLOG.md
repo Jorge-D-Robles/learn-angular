@@ -844,26 +844,6 @@ Acceptance criteria:
 - [ ] Responsive: hidden on mobile (bottom nav handles navigation; top bar is already tight)
 - [ ] Unit tests for: badge visibility with active streak, hidden with no streak
 
-### T-2026-308
-- Title: Fix flaky DailyChallengeService streak extension test
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: —
-- Blocked-by: —
-- Tags: bug, testing, daily-challenge, streak
-- Refs: src/app/core/progression/daily-challenge.service.spec.ts
-
-The test "should extend streak when completing daily challenge on consecutive days" in `daily-challenge.service.spec.ts` fails intermittently. The streak assertion appears to be off by 1. This was observed consistently across multiple unrelated ticket implementations, confirming it is a pre-existing bug in the test or the service logic, not a regression.
-
-Acceptance criteria:
-- [ ] Root cause identified (test timing issue, date boundary, or service logic bug)
-- [ ] Fix applied — test passes reliably
-- [ ] No other tests broken by the fix
-- Started: 2026-03-08
-
 ---
 
 ## P2 -- Foundations Bundle
