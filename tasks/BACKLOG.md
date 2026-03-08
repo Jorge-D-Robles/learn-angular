@@ -604,27 +604,6 @@ Acceptance criteria:
 - [ ] Responsive: hidden on mobile (bottom nav handles navigation; top bar is already tight)
 - [ ] Unit tests for: badge visibility with active streak, hidden with no streak
 
-### T-2026-321
-- Title: Create AudioService barrel export and add to core re-export
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-051
-- Blocked-by: —
-- Tags: barrel, audio, core, exports
-- Refs: src/app/core/audio/, src/app/core/index.ts
-
-AudioService (T-2026-051) was completed but has no barrel export (`index.ts`) in its directory, and the core barrel (`src/app/core/index.ts`) does not re-export the audio module. Every other core subdirectory has a barrel and is re-exported.
-
-Acceptance criteria:
-- [ ] `src/app/core/audio/index.ts` exists and exports `AudioService`, `SoundEffect`, `SOUND_PATHS`
-- [ ] `src/app/core/index.ts` includes `export * from './audio'`
-- [ ] Existing imports of AudioService elsewhere continue to work
-- [ ] Build passes with no errors
-- Started: 2026-03-08
-
 ### T-2026-322
 - Title: Wire AudioService into MinigameEngine lifecycle for game feedback sounds
 - Status: todo

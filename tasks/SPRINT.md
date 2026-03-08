@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-321**: Create AudioService barrel export and add to core re-export (Assigned: claude, Status: in-progress)
 
 
 ---
