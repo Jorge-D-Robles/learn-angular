@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-259**: Create story mission completion handler to award XP and trigger unlock (Assigned: claude, Status: in-progress)
 
 
 
