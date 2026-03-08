@@ -1,0 +1,100 @@
+<div class="wire-protocol" [class.wire-protocol--rejection]="rejectionFlash()">
+  <!-- Single SVG for entire game area -->
+  <svg #wireSvg
+       class="wire-protocol__svg"
+       [attr.viewBox]="viewBox"
+       preserveAspectRatio="xMidYMid meet"
+       (mousemove)="onMouseMove($event)"
+       (contextmenu)="$event.preventDefault()">
+
+    <!-- Panel backgrounds -->
+    <rect class="wire-protocol__panel-bg wire-protocol__panel-bg--source"
+          x="0" y="0" width="200" [attr.height]="600" rx="8" />
+    <rect class="wire-protocol__panel-bg wire-protocol__panel-bg--target"
+          x="800" y="0" width="200" [attr.height]="600" rx="8" />
+
+    <!-- Panel labels -->
+    <text class="wire-protocol__panel-label" x="100" y="30" text-anchor="middle">Component Class</text>
+    <text class="wire-protocol__panel-label" x="900" y="30" text-anchor="middle">Template</text>
+
+    <!-- Source ports -->
+    @for (port of sourcePorts(); track port.id) {
+      <g nx-svg-port
+         [portId]="port.id"
+         [x]="portSvgX('source')"
+         [y]="portSvgY(port)"
+         [color]="port.portType === 'method' ? '#F97316' : '#3B82F6'"
+         [label]="port.name"
+         type="source"
+         [isActive]="isPortActive(port.id)"
+         [isConnected]="isPortConnected(port.id)" />
+    }
+
+    <!-- Target ports -->
+    @for (port of targetPorts(); track port.id) {
+      <g nx-svg-port
+         [portId]="port.id"
+         [x]="portSvgX('target')"
+         [y]="portSvgY(port)"
+         [color]="selectedWireColor()"
+         [label]="port.name"
+         type="target"
+         [isActive]="false"
+         [isConnected]="isPortConnected(port.id)" />
+    }
+
+    <!-- Committed wires -->
+    @for (wire of wireDescriptors(); track wire.id) {
+      <path [attr.d]="wire.path"
+            [attr.stroke]="wire.color"
+            [class]="wire.cssClass"
+            fill="none"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            pointer-events="stroke"
+            (contextmenu)="onWireRightClick($event, wire.id)" />
+      @if (wire.animated) {
+        <path [attr.d]="wire.path"
+              class="wire-protocol__flow"
+              stroke="rgba(255, 255, 255, 0.8)"
+              fill="none"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-dasharray="8 12" />
+      }
+    }
+
+    <!-- Preview wire (during drawing) -->
+    @if (previewPath()) {
+      <path [attr.d]="previewPath()"
+            class="wire-protocol__preview"
+            [attr.stroke]="selectedWireColor()"
+            fill="none"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-dasharray="8 4" />
+    }
+  </svg>
+
+  <!-- Controls (HTML below the SVG) -->
+  <div class="wire-protocol__controls">
+    <div class="wire-protocol__type-selector" role="radiogroup" aria-label="Wire type">
+      @for (wt of wireTypes; track wt.type) {
+        <button class="wire-protocol__type-btn"
+                [class.wire-protocol__type-btn--active]="selectedWireType() === wt.type"
+                [style.--wire-color]="wt.color"
+                role="radio"
+                [attr.aria-checked]="selectedWireType() === wt.type"
+                (click)="selectWireType(wt.type)">
+          <span class="wire-protocol__type-key">{{ wt.key }}</span>
+          {{ wt.label }}
+        </button>
+      }
+    </div>
+    <button class="wire-protocol__verify-btn"
+            [disabled]="verificationsRemaining() <= 0"
+            (click)="onVerify()">
+      Verify ({{ verificationsRemaining() }} left)
+    </button>
+  </div>
+</div>

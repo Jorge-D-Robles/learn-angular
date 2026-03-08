@@ -1,0 +1,231 @@
+// Wire Protocol — Split-screen wiring game
+// Space-station "Nexus" aesthetic
+
+.wire-protocol {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: relative;
+
+  &--rejection {
+    animation: rejection-flash 0.4s ease-out;
+  }
+}
+
+// --- SVG Game Area ---
+
+.wire-protocol__svg {
+  flex: 1;
+  width: 100%;
+  display: block;
+}
+
+.wire-protocol__panel-bg {
+  &--source {
+    fill: #1a1f2e;
+    stroke: #252b3d;
+    stroke-width: 1;
+  }
+
+  &--target {
+    fill: #1a1f2e;
+    stroke: #252b3d;
+    stroke-width: 1;
+  }
+}
+
+.wire-protocol__panel-label {
+  fill: #94a3b8;
+  font-size: 16px;
+  font-family: sans-serif;
+}
+
+// --- Wire styles ---
+
+.wire-protocol__wire--correct {
+  filter: drop-shadow(0 0 6px #22c55e);
+  animation: correct-glow 1.5s ease-in-out;
+}
+
+.wire-protocol__wire--incorrect {
+  animation: spark-fizzle 1.5s ease-out;
+}
+
+.wire-protocol__flow {
+  pointer-events: none;
+  animation: wire-flow 1s linear infinite;
+}
+
+.wire-protocol__preview {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+// --- Controls (HTML) ---
+
+.wire-protocol__controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #0f1219;
+  gap: 12px;
+}
+
+.wire-protocol__type-selector {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.wire-protocol__type-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 2px solid var(--wire-color, #3b82f6);
+  border-radius: 6px;
+  background: transparent;
+  color: #e2e8f0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &--active {
+    background: var(--wire-color, #3b82f6);
+    color: #0f1219;
+    box-shadow: 0 0 10px var(--wire-color, #3b82f6);
+  }
+}
+
+.wire-protocol__type-key {
+  font-size: 0.65rem;
+  opacity: 0.6;
+  padding: 1px 4px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+}
+
+.wire-protocol__verify-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// --- Animations ---
+
+@keyframes wire-flow {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+@keyframes correct-glow {
+  0% {
+    filter: drop-shadow(0 0 2px #22c55e);
+  }
+  50% {
+    filter: drop-shadow(0 0 12px #22c55e);
+  }
+  100% {
+    filter: drop-shadow(0 0 6px #22c55e);
+  }
+}
+
+@keyframes spark-fizzle {
+  0% {
+    stroke: #ef4444;
+    stroke-width: 4;
+    filter: drop-shadow(0 0 8px #ef4444);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  50% {
+    transform: translateX(2px);
+    stroke-width: 3;
+  }
+  75% {
+    transform: translateX(-1px);
+    opacity: 0.6;
+  }
+  100% {
+    stroke-width: 2.5;
+    opacity: 0.3;
+    filter: none;
+  }
+}
+
+@keyframes rejection-flash {
+  0% {
+    box-shadow: inset 0 0 30px rgba(239, 68, 68, 0.3);
+  }
+  100% {
+    box-shadow: none;
+  }
+}
+
+// --- Reduced motion ---
+
+@media (prefers-reduced-motion: reduce) {
+  .wire-protocol__wire--correct,
+  .wire-protocol__wire--incorrect {
+    animation: none;
+  }
+
+  .wire-protocol__flow {
+    animation: none;
+  }
+
+  .wire-protocol--rejection {
+    animation: none;
+  }
+
+  .wire-protocol__wire--correct {
+    filter: drop-shadow(0 0 6px #22c55e);
+  }
+
+  .wire-protocol__wire--incorrect {
+    stroke: #ef4444;
+    opacity: 0.5;
+  }
+}
+
+// --- Responsive ---
+
+@media (max-width: 767px) {
+  .wire-protocol__controls {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .wire-protocol__type-selector {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
