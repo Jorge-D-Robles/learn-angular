@@ -145,8 +145,8 @@ Acceptance criteria:
 
 ### T-2026-073
 - Title: Register Signal Corps in MinigameRegistry and wire routes
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P2
@@ -163,6 +163,7 @@ Acceptance criteria:
 - [ ] Level data loads correctly for all 18 levels
 - [ ] MinigameShell integration works (score, timer, lives)
 - [ ] E2e smoke test: navigate to level 1, verify game renders
+- Started: 2026-03-08
 
 ### T-2026-079
 - Title: Create ProfilePage component with player stats

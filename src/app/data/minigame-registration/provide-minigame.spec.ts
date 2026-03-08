@@ -6,19 +6,9 @@ import { ModuleAssemblyEngine } from '../../features/minigames/module-assembly';
 import { WireProtocolComponent } from '../../features/minigames/wire-protocol/wire-protocol.component';
 import { WireProtocolEngine } from '../../features/minigames/wire-protocol/wire-protocol.engine';
 import { FlowCommanderComponent, FlowCommanderEngine } from '../../features/minigames/flow-commander';
-import { MinigameEngine, type ActionResult } from '../../core/minigame/minigame-engine';
+import { SignalCorpsComponent, SignalCorpsEngine } from '../../features/minigames/signal-corps';
 import type { MinigameId } from '../../core/minigame/minigame.types';
-import { provideMinigame, provideMinigameEngine } from './provide-minigame';
-
-class TestEngine extends MinigameEngine<unknown> {
-  constructor() { super({ initialLives: 3, timerDuration: null }); }
-  protected onLevelLoad(): void { /* stub */ }
-  protected onStart(): void { /* stub */ }
-  protected onComplete(): void { /* stub */ }
-  protected validateAction(): ActionResult {
-    return { valid: true, scoreChange: 0, livesChange: 0 };
-  }
-}
+import { provideMinigame } from './provide-minigame';
 
 describe('provideMinigame', () => {
   let registry: MinigameRegistryService;
@@ -144,13 +134,17 @@ describe('provideMinigame — flow-commander', () => {
   });
 });
 
-describe('provideMinigameEngine', () => {
+describe('provideMinigame — signal-corps', () => {
   let registry: MinigameRegistryService;
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
       providers: [
-        provideMinigameEngine('signal-corps', () => new TestEngine()),
+        provideMinigame(
+          'signal-corps',
+          SignalCorpsComponent,
+          () => new SignalCorpsEngine(),
+        ),
       ],
     });
 
@@ -158,29 +152,20 @@ describe('provideMinigameEngine', () => {
     registry = TestBed.inject(MinigameRegistryService);
   });
 
-  it('should register engine factory that produces a TestEngine', () => {
+  it('should register the component type for signal-corps', () => {
+    expect(registry.getComponent('signal-corps')).toBe(SignalCorpsComponent);
+  });
+
+  it('should register an engine factory that produces a SignalCorpsEngine', () => {
     const factory = registry.getEngineFactory('signal-corps');
     expect(factory).toBeTruthy();
     const engine = factory!();
-    expect(engine).toBeInstanceOf(TestEngine);
+    expect(engine).toBeInstanceOf(SignalCorpsEngine);
   });
 
-  it('should register null component for engine-only registration', () => {
-    expect(registry.getComponent('signal-corps')).toBeNull();
-  });
-
-  it('should preserve the existing config for the game', () => {
+  it('should preserve the existing config for signal-corps', () => {
     const config = registry.getConfig('signal-corps');
     expect(config).toBeDefined();
     expect(config!.name).toBe('Signal Corps');
-  });
-
-  it('should throw for a non-existent game ID', () => {
-    expect(() =>
-      provideMinigameEngine(
-        'nonexistent' as MinigameId,
-        () => new TestEngine(),
-      ),
-    ).toThrowError(/No default config found/);
   });
 });

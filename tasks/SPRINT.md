@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-073**: Register Signal Corps in MinigameRegistry and wire routes (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -18,7 +20,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-073**: Register Signal Corps in MinigameRegistry and wire routes (Priority: high, Size: S)
 - **T-2026-410**: Wire ConveyorBeltService into ModuleAssemblyEngine initialize and tick lifecycle (Priority: high, Size: S)
 - **T-2026-254**: Register story mission content with StoryMissionContentService for P2 missions (Priority: high, Size: S)
 - **T-2026-259**: Create story mission completion handler to award XP and trigger unlock (Priority: high, Size: S)

@@ -51,4 +51,11 @@ test.describe('MinigamePlayPage', () => {
     await expect(page.locator('app-minigame-shell')).toBeVisible();
     await expect(page.locator('app-flow-commander')).toBeVisible();
   });
+
+  test('should render Signal Corps game for a valid level', async ({ page }) => {
+    await page.goto('/minigames/signal-corps/level/sc-basic-01');
+
+    await expect(page.locator('app-minigame-shell')).toBeVisible();
+    await expect(page.locator('app-signal-corps')).toBeVisible();
+  });
 });
