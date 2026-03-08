@@ -526,8 +526,8 @@ Acceptance criteria:
 
 ### T-2026-224
 - Title: Create RankUpNotificationService to trigger rank-up overlay on rank change
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -547,6 +547,7 @@ Acceptance criteria:
 - [ ] Does not trigger on initial load (only on actual rank transitions during gameplay)
 - [ ] Exported from notifications barrel
 - [ ] Unit tests for: rank change detection, no trigger on init, dismiss behavior
+- Started: 2026-03-07
 
 ### T-2026-225
 - Title: Wire RankUpOverlayComponent into app shell root

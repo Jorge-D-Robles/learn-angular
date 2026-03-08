@@ -11,6 +11,8 @@ Started: 2026-03-07
 
 ## Active
 
+- **T-2026-224**: Create RankUpNotificationService to trigger rank-up overlay on rank change (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -94,7 +96,6 @@ Started: 2026-03-07
 
 ## Queue
 
-- **T-2026-224**: Create RankUpNotificationService to trigger rank-up overlay on rank change (Priority: medium, Size: S)
 - **T-2026-126**: Create core module root barrel export (Priority: low, Size: S)
 - **T-2026-050**: Create PlayTimeService for tracking session and total play time (Priority: low, Size: S)
 - **T-2026-056**: Create ComboTrackerService for combo multiplier mechanics (Priority: low, Size: S)
