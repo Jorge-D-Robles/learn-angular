@@ -591,27 +591,6 @@ Acceptance criteria:
 - [ ] Exported from curriculum barrel
 - [ ] Unit tests for: content loading by ID, step completion tracking, mission complete detection
 
-### T-2026-167
-- Title: Add campaign route to app.routes.ts
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P2
-- Depends: T-2026-012
-- Blocked-by: —
-- Tags: routing, campaign, infrastructure
-- Refs: docs/ux/navigation.md, src/app/app.routes.ts
-
-T-2026-141 creates CampaignProgressPage but doesn't explicitly mention adding the route to app.routes.ts. The current routes file has no `/campaign` route. This ticket adds the route stub so T-2026-141 can focus on the page component itself.
-
-Acceptance criteria:
-- [ ] Route `/campaign` added to `app.routes.ts` with lazy-loaded CampaignPage
-- [ ] Placeholder `CampaignPage` component at `src/app/pages/campaign/campaign.ts`
-- [ ] Placeholder displays "Campaign" heading with route title
-- [ ] Side nav "Current Mission" link updated from `/mission/:chapterId` to `/campaign`
-- [ ] Unit test for: route resolution, component creation
-
 ### T-2026-168
 - Title: Create MinigameInstructionsData for all P2 minigame tutorial content
 - Status: todo

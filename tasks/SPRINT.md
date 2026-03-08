@@ -28,11 +28,11 @@ Started: 2026-03-08
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-167**: Add campaign route to app.routes.ts (Priority: medium, Size: S)
 
 ---
 
