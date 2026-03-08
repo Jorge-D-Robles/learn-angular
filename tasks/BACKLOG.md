@@ -266,8 +266,8 @@ Acceptance criteria:
 
 ### T-2026-239
 - Title: Add engine.reset() method to MinigameEngine base class
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -283,6 +283,7 @@ AC:
 - [ ] Engine stores reference to last-used level data for reset
 - [ ] Unit tests for reset behavior
 - [ ] Update MinigamePlayPage.onRetry() to use `engine.reset()` instead of manual initialize+start
+- Started: 2026-03-08
 
 ### T-2026-242
 - Title: Wire SettingsService animationSpeed to AnimationService duration multiplier
@@ -615,6 +616,71 @@ Acceptance criteria:
 - [ ] Test: completing a level with sound disabled triggers no audio but all other effects still fire
 - [ ] Uses real services (minimal mocking -- only HTMLAudioElement needs mocking)
 - [ ] Does not require DOM rendering (service-level integration only)
+
+### T-2026-337
+- Title: Wire ScoreBreakdownComponent into LevelResultsComponent for itemized scoring
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-293, T-2026-159
+- Blocked-by: —
+- Tags: integration, ui, scoring, level-results
+- Refs: docs/progression.md, src/app/shared/components/level-results/, src/app/shared/components/score-breakdown/
+
+LevelResultsComponent (T-2026-159, completed) renders XP breakdown inline. ScoreBreakdownComponent (T-2026-293) extracts the itemized scoring into a reusable component. No ticket wires ScoreBreakdownComponent into LevelResultsComponent to replace the inline breakdown.
+
+Acceptance criteria:
+- [ ] LevelResultsComponent renders ScoreBreakdownComponent for score detail
+- [ ] Breakdown includes: base score, time bonus, accuracy bonus, combo bonus, hint penalty, total
+- [ ] Bonus items styled in Solar Gold, penalties in Emergency Red (via ScoreBreakdownComponent)
+- [ ] "New Best!" indicator shows when applicable
+- [ ] Existing LevelResultsComponent tests updated for the new child component
+- [ ] Unit tests for: breakdown data binding, new best indicator pass-through
+
+### T-2026-354
+- Title: Add skip-to-content link for keyboard accessibility
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-009
+- Blocked-by: —
+- Tags: accessibility, a11y, keyboard, app-shell
+- Refs: docs/ux/navigation.md, src/app/app.html
+
+WCAG 2.1 AA requires a "skip to main content" link for keyboard users to bypass navigation. The app shell has a top bar, side nav, and bottom nav that keyboard users must tab through on every page. No ticket adds a skip link.
+
+Acceptance criteria:
+- [ ] Visually hidden skip link rendered as first focusable element in app shell
+- [ ] Link target: `#main-content` anchor on the router-outlet container
+- [ ] Link becomes visible on focus (CSS `:focus` styling)
+- [ ] Link text: "Skip to main content"
+- [ ] Styled with station theme (Reactor Blue background when focused)
+- [ ] Unit tests for: link renders, link targets correct anchor, link visible on focus
+
+### T-2026-355
+- Title: Add ARIA landmark roles to app shell layout regions
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-009
+- Blocked-by: —
+- Tags: accessibility, a11y, landmarks, app-shell
+- Refs: docs/ux/navigation.md, src/app/app.html
+
+WCAG 2.1 AA specifies ARIA landmark roles for page regions so screen readers can navigate by structure. The app shell has distinct regions (header/top bar, navigation, main content, footer) but no ticket ensures proper landmark roles are applied.
+
+Acceptance criteria:
+- [ ] Top bar has `role="banner"` or uses `<header>` element
+- [ ] Side nav and bottom nav have `role="navigation"` with `aria-label` distinguishing them (e.g., "Main navigation", "Mobile navigation")
+- [ ] Router-outlet container has `role="main"` or uses `<main>` element with `id="main-content"`
+- [ ] No duplicate landmark roles without distinguishing `aria-label`
+- [ ] Unit tests for: landmark role presence, aria-label values
 
 ---
 
@@ -3845,6 +3911,31 @@ Acceptance criteria:
 
 ## P8 -- Polish & Replayability
 
+### T-2026-359
+- Title: Create ReplayModeHudComponent for endless/speed-run/daily challenge mode-specific HUD
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P8
+- Depends: T-2026-155, T-2026-156, T-2026-157
+- Blocked-by: —
+- Tags: ui, component, replay-modes, hud
+- Refs: docs/progression.md, docs/minigames/TEMPLATE.md
+
+Each minigame spec defines unique replay mode HUDs. Endless mode needs: round counter, running score, difficulty indicator. Speed run needs: elapsed timer, split times, par comparison. Daily challenge needs: streak display, bonus XP indicator. MinigameShell is designed for story mode play. Replay modes need their own HUD component.
+
+Acceptance criteria:
+- [ ] `ReplayModeHudComponent` at `src/app/shared/components/replay-mode-hud/`
+- [ ] Selector: `nx-replay-mode-hud`
+- [ ] Mode-specific display via `mode` input ('endless' | 'speedrun' | 'daily')
+- [ ] Endless: round counter, running score, difficulty level indicator
+- [ ] Speed run: elapsed timer (green/orange/red vs par), level progress (X/Y), split times
+- [ ] Daily challenge: streak flame icon, bonus XP badge, topic name
+- [ ] Content projection for the minigame component
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: mode-specific rendering, timer color transitions, round counter updates
+
 ### T-2026-109
 - Title: Implement achievement badge system
 - Status: todo
@@ -4345,4 +4436,501 @@ Acceptance criteria:
 - [ ] Verifies MinigameShell HUD elements render (score, timer, hints, pause)
 - [ ] Verifies pause/resume interaction
 - [ ] Tests run via `npm run e2e`
+
+### T-2026-337
+- Title: Wire ScoreBreakdownComponent into LevelResultsComponent for itemized scoring
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-293, T-2026-159
+- Blocked-by: —
+- Tags: integration, ui, scoring, level-results
+- Refs: docs/progression.md, src/app/shared/components/level-results/, src/app/shared/components/score-breakdown/
+
+LevelResultsComponent (T-2026-159, completed) renders XP breakdown inline. ScoreBreakdownComponent (T-2026-293) extracts the itemized scoring into a reusable component. No ticket wires ScoreBreakdownComponent into LevelResultsComponent to replace the inline breakdown.
+
+Acceptance criteria:
+- [ ] LevelResultsComponent renders ScoreBreakdownComponent for score detail
+- [ ] Breakdown includes: base score, time bonus, accuracy bonus, combo bonus, hint penalty, total
+- [ ] Bonus items styled in Solar Gold, penalties in Emergency Red (via ScoreBreakdownComponent)
+- [ ] "New Best!" indicator shows when applicable
+- [ ] Existing LevelResultsComponent tests updated for the new child component
+- [ ] Unit tests for: breakdown data binding, new best indicator pass-through
+
+### T-2026-338
+- Title: Wire MissionUnlockNotificationService into app shell root for global unlock toasts
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-189, T-2026-009
+- Blocked-by: —
+- Tags: integration, notifications, app-shell, minigame-unlock
+- Refs: docs/overview.md, src/app/app.html
+
+XpNotificationComponent (T-2026-125, completed) and RankUpOverlayComponent (T-2026-225, completed) are wired into the app shell root for global display. MissionUnlockNotificationService (T-2026-189) creates the unlock notification service but no ticket adds its visual output to the app shell. Without this, minigame unlock toasts have no DOM host and never render.
+
+Acceptance criteria:
+- [ ] App component imports MissionUnlockNotificationService
+- [ ] App shell template includes the unlock notification component/toast container
+- [ ] Notification displays globally when a story mission unlocks a minigame
+- [ ] Notification auto-dismisses or can be clicked to navigate to the minigame
+- [ ] Unit tests for: notification visibility on unlock trigger, dismiss behavior
+
+### T-2026-339
+- Title: Wire MinigameCardComponent into MinigameHubPage grid layout
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-187, T-2026-076
+- Blocked-by: —
+- Tags: integration, ui, minigame-hub, minigame-card
+- Refs: docs/ux/navigation.md, src/app/pages/minigame-hub/
+
+MinigameHubPage (T-2026-076, completed) renders a grid of minigame cards. MinigameCardComponent (T-2026-187) creates a dedicated card component with mastery stars, lock state, and level completion display. No ticket wires MinigameCardComponent into MinigameHubPage, replacing any inline card rendering with the reusable component.
+
+Acceptance criteria:
+- [ ] MinigameHubPage renders MinigameCardComponent for each registered minigame
+- [ ] Card inputs populated from MinigameRegistryService (config), MasteryService (mastery), and LevelProgressionService (levels completed)
+- [ ] Locked/unlocked state derived from GameProgressionService
+- [ ] Card click navigates to `/minigames/:gameId` (level select)
+- [ ] Grid layout maintained with responsive columns
+- [ ] Unit tests for: card rendering per game, data binding from services, click navigation
+
+### T-2026-340
+- Title: Wire LevelCardComponent into LevelSelectPage level list
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-238, T-2026-077
+- Blocked-by: —
+- Tags: integration, ui, level-select, level-card
+- Refs: docs/ux/navigation.md, src/app/pages/level-select/
+
+LevelSelectPage (T-2026-077, completed) displays levels grouped by tier. LevelCardComponent (T-2026-238) creates a dedicated card component. No ticket wires LevelCardComponent into LevelSelectPage, replacing inline level rendering with the reusable component.
+
+Acceptance criteria:
+- [ ] LevelSelectPage renders LevelCardComponent for each level in the tier groups
+- [ ] Card inputs populated from LevelProgressionService (star rating, best score, locked state)
+- [ ] Current level (next unplayed) highlighted via `isCurrent` input
+- [ ] Card click navigates to `/minigames/:gameId/level/:levelId`
+- [ ] Unit tests for: card rendering per level, data binding, current level highlight, click navigation
+
+### T-2026-341
+- Title: Wire StepProgressComponent into StoryMissionPage for step indicator
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-188, T-2026-075
+- Blocked-by: —
+- Tags: integration, ui, story-missions, step-progress
+- Refs: docs/ux/navigation.md, src/app/pages/mission/
+
+Navigation.md specifies the Story Mission View includes a "Progress indicator (mission steps)." StoryMissionPage (T-2026-075) lists this as an acceptance criterion. StepProgressComponent (T-2026-188) creates the reusable stepper component. No ticket wires them together.
+
+Acceptance criteria:
+- [ ] StoryMissionPage renders StepProgressComponent
+- [ ] `totalSteps` bound to mission step count from StoryMissionContentService
+- [ ] `currentStep` bound to current step index
+- [ ] `completedSteps` bound to completed step indices
+- [ ] Step indicator updates as player advances through mission
+- [ ] Unit tests for: step progress rendering, reactive updates on step advance
+
+### T-2026-342
+- Title: Wire PhaseHeaderComponent and MissionCardComponent into CampaignPage
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-190, T-2026-216, T-2026-141
+- Blocked-by: —
+- Tags: integration, ui, campaign, phase-header, mission-card
+- Refs: docs/ux/navigation.md, docs/curriculum.md, src/app/pages/campaign/
+
+CampaignPage (T-2026-141) displays all 34 missions grouped by curriculum phase. PhaseHeaderComponent (T-2026-190) creates the phase grouping header with progress bar. MissionCardComponent (T-2026-216, completed) creates the mission entry card. No ticket wires these components into CampaignPage.
+
+Acceptance criteria:
+- [ ] CampaignPage renders PhaseHeaderComponent for each of the 6 curriculum phases
+- [ ] Phase headers populated from CURRICULUM constant with completion counts from GameProgressionService
+- [ ] MissionCardComponent rendered for each mission within its phase group
+- [ ] MissionCard inputs: chapter number, title, Angular topic, completion status, locked state
+- [ ] Click on unlocked mission navigates to `/mission/:chapterId`
+- [ ] Unit tests for: phase grouping, card rendering per mission, click navigation
+
+### T-2026-343
+- Title: Wire MasteryTableComponent into ProfilePage mastery section
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-315, T-2026-079
+- Blocked-by: —
+- Tags: integration, ui, profile, mastery-table
+- Refs: docs/ux/navigation.md, src/app/pages/profile/
+
+Navigation.md specifies the Profile page shows "Mastery stars per topic (table view), sortable." MasteryTableComponent (T-2026-315) creates the sortable table. ProfilePage (T-2026-079) lists mastery table as an acceptance criterion. No ticket wires the component into the page with live service data.
+
+Acceptance criteria:
+- [ ] ProfilePage renders MasteryTableComponent in a "Mastery" section
+- [ ] `masteryData` input populated from MasteryService and SpacedRepetitionService
+- [ ] Each topic includes: topicName (from CURRICULUM), mastery level (from MasteryService), lastPracticed (from SpacedRepetitionService)
+- [ ] Degrading topics flagged via SpacedRepetitionService.getEffectiveMastery()
+- [ ] Table updates reactively when mastery changes
+- [ ] Unit tests for: table rendering with service data, degrading topic flag
+
+### T-2026-344
+- Title: Create route guard for locked mission and minigame access prevention
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-026, T-2026-012
+- Blocked-by: —
+- Tags: routing, guard, security, ux
+- Refs: docs/overview.md, docs/ux/navigation.md, src/app/app.routes.ts
+
+Design docs specify mastery-based progression: story missions unlock minigames, and missions have prerequisite chains. MinigamePlayPage has a "locked" view state, but nothing prevents direct URL navigation to a locked mission or minigame level. A `canActivate` guard redirects users to the appropriate page (campaign for missions, level select for minigames) when attempting to access locked content.
+
+Acceptance criteria:
+- [ ] `MissionGuard` functional guard at `src/app/core/guards/mission.guard.ts`
+- [ ] Checks GameProgressionService to verify mission prerequisites are met
+- [ ] Redirects to `/campaign` with a query param indicating the locked mission if prerequisites unmet
+- [ ] `MinigameLevelGuard` functional guard at `src/app/core/guards/minigame-level.guard.ts`
+- [ ] Checks LevelProgressionService to verify the level is unlocked
+- [ ] Redirects to `/minigames/:gameId` (level select) if level is locked
+- [ ] Both guards registered on their respective routes in `app.routes.ts`
+- [ ] Unit tests for: guard allows access when unlocked, guard redirects when locked, guard reads route params
+
+### T-2026-345
+- Title: Wire ProgressBarComponent into CampaignPage phase progress display
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-336, T-2026-141
+- Blocked-by: —
+- Tags: integration, ui, campaign, progress-bar
+- Refs: docs/ux/navigation.md, src/app/pages/campaign/
+
+ProgressBarComponent (T-2026-336) creates a generic progress bar. CampaignPage (T-2026-141) and PhaseHeaderComponent (T-2026-190) both need progress bars for phase completion display. No ticket wires the component into the campaign page or phase headers.
+
+Acceptance criteria:
+- [ ] PhaseHeaderComponent uses ProgressBarComponent for phase completion progress
+- [ ] Progress bar `value` bound to completed mission count, `max` bound to total missions in phase
+- [ ] CampaignPage shows overall campaign progress bar at the top
+- [ ] Unit tests for: progress bar rendering in phase headers, overall progress calculation
+
+### T-2026-346
+- Title: Create E2E smoke tests for P2 page components (Dashboard, Profile, Settings, Campaign)
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-078, T-2026-079, T-2026-080, T-2026-141
+- Blocked-by: —
+- Tags: testing, e2e, pages, smoke-test
+- Refs: docs/ux/navigation.md, playwright.config.ts
+
+E2E tests exist for dashboard routing (T-2026-005) and minigame shell (T-2026-248), but no E2E tests verify the P2 page components render correctly when populated with real data. T-2026-142 tests the full game loop but not individual page rendering.
+
+Acceptance criteria:
+- [ ] Playwright test at `e2e/pages.spec.ts`
+- [ ] Test: `/` renders DashboardPage with rank badge, XP bar, and mission prompt sections
+- [ ] Test: `/profile` renders ProfilePage with rank, mastery table, streak, and play time sections
+- [ ] Test: `/settings` renders SettingsPage with sound toggle, animation speed, theme selector, reset button
+- [ ] Test: `/campaign` renders CampaignPage with phase groupings and mission cards
+- [ ] Test: `/minigames` renders MinigameHubPage with minigame grid
+- [ ] All tests verify responsive layout at mobile breakpoint (768px) and desktop (1280px)
+- [ ] Tests run in CI (GitHub Actions)
+
+### T-2026-347
+- Title: Create guards barrel export and add to core re-export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-344, T-2026-126
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/index.ts
+
+T-2026-344 creates route guards in `src/app/core/guards/`. Per project conventions, all core subdirectories should have barrel exports and be included in the core root barrel.
+
+Acceptance criteria:
+- [ ] `src/app/core/guards/index.ts` barrel exporting MissionGuard and MinigameLevelGuard
+- [ ] `src/app/core/index.ts` re-exports from `./guards`
+- [ ] Build passes with no circular dependencies
+
+### T-2026-348
+- Title: Add ConfirmDialogService to shared services barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-335
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/shared/index.ts
+
+ConfirmDialogService (T-2026-335) creates a shared service for programmatic dialog invocation but the shared barrel may not include a services subdirectory export. Per conventions, all shared modules should be importable via the shared barrel.
+
+Acceptance criteria:
+- [ ] `src/app/shared/services/index.ts` barrel exporting ConfirmDialogService and ConfirmDialogOptions
+- [ ] `src/app/shared/index.ts` re-exports from `./services`
+- [ ] Build passes with updated barrel
+
+### T-2026-349
+- Title: Wire DailyChallengeCardComponent into dashboard via T-2026-234 dependency
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-316, T-2026-234
+- Blocked-by: —
+- Tags: integration, ui, dashboard, daily-challenge
+- Refs: docs/ux/navigation.md, src/app/pages/dashboard/
+
+T-2026-234 wires daily challenge notification into DashboardPage and T-2026-316 creates DailyChallengeCardComponent. T-2026-234 describes the widget inline in its acceptance criteria. This ticket ensures DashboardPage renders DailyChallengeCardComponent (not an inline implementation) and wires the `acceptChallenge` output to router navigation.
+
+Acceptance criteria:
+- [ ] DashboardPage renders DailyChallengeCardComponent for the daily challenge section
+- [ ] Component inputs bound to DailyChallengeService.getTodaysChallenge() and completion state
+- [ ] `acceptChallenge` output navigates to `/minigames/:gameId/daily`
+- [ ] Streak data passed from StreakService
+- [ ] Unit tests for: component rendering, accept challenge navigation
+
+### T-2026-350
+- Title: Wire ActiveMissionCardComponent into dashboard via T-2026-235 dependency
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-317, T-2026-235
+- Blocked-by: —
+- Tags: integration, ui, dashboard, story-missions
+- Refs: docs/ux/navigation.md, src/app/pages/dashboard/
+
+T-2026-235 wires active story mission prompt into DashboardPage and T-2026-317 creates ActiveMissionCardComponent. T-2026-235 describes the widget inline. This ticket ensures DashboardPage renders ActiveMissionCardComponent (not an inline implementation) and wires the `continueClicked` output to router navigation.
+
+Acceptance criteria:
+- [ ] DashboardPage renders ActiveMissionCardComponent for the mission prompt section
+- [ ] Component inputs bound to GameProgressionService next uncompleted mission
+- [ ] `continueClicked` output navigates to `/mission/:chapterId`
+- [ ] All-complete and no-mission states handled
+- [ ] Unit tests for: component rendering, continue navigation, edge states
+
+### T-2026-351
+- Title: Add MissionUnlockNotificationService to notifications barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-189
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/notifications/index.ts
+
+MissionUnlockNotificationService (T-2026-189) will create a notification service in the notifications directory. Per conventions, all services should be exported from their directory barrel.
+
+Acceptance criteria:
+- [ ] `src/app/core/notifications/index.ts` updated to export `MissionUnlockNotificationService`
+- [ ] Build passes with updated barrel
+
+### T-2026-352
+- Title: Create integration test for story mission completion triggering minigame unlock notification
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-259, T-2026-189, T-2026-338
+- Blocked-by: —
+- Tags: testing, integration, story-missions, minigame-unlock, notifications
+- Refs: docs/overview.md, docs/curriculum.md
+
+The core game loop (overview.md) specifies: Story Mission -> Unlock Minigame. T-2026-259 creates the mission completion handler and T-2026-189 creates MissionUnlockNotificationService. No integration test verifies that completing a story mission triggers the unlock notification, awards 50 XP, and updates mastery to 1 star.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/mission-completion.integration.spec.ts`
+- [ ] Test: completing mission for Ch 1 awards 50 XP via XpService
+- [ ] Test: completing mission for Ch 1 unlocks Module Assembly minigame
+- [ ] Test: MissionUnlockNotificationService.showUnlock() called with correct game name
+- [ ] Test: MasteryService updated to 1 star for the mission's topic
+- [ ] Test: completing mission for Ch 9 (no minigame unlock) does not trigger unlock notification
+- [ ] Uses real services (no mocks except notification display)
+
+### T-2026-353
+- Title: Create SettingsPage E2E test for theme switching and reset progress
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-080, T-2026-143
+- Blocked-by: —
+- Tags: testing, e2e, settings, theme
+- Refs: docs/ux/navigation.md, playwright.config.ts
+
+SettingsPage has user-facing interactions (theme switching, reset progress) that should be verified end-to-end. No E2E test specifically validates that theme switching applies body class changes or that reset progress triggers the confirmation dialog.
+
+Acceptance criteria:
+- [ ] Playwright test at `e2e/settings.spec.ts`
+- [ ] Test: navigate to `/settings`, verify all setting controls render
+- [ ] Test: toggle sound off, verify setting persists after page reload
+- [ ] Test: change theme, verify body class changes (e.g., `theme-station` -> `theme-light`)
+- [ ] Test: click "Reset All Progress", verify ConfirmDialogComponent appears with danger variant
+- [ ] Tests run in CI
+
+### T-2026-354
+- Title: Add skip-to-content link for keyboard accessibility
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-009
+- Blocked-by: —
+- Tags: accessibility, a11y, keyboard, app-shell
+- Refs: docs/ux/navigation.md, src/app/app.html
+
+WCAG 2.1 AA requires a "skip to main content" link for keyboard users to bypass navigation. The app shell has a top bar, side nav, and bottom nav that keyboard users must tab through on every page. No ticket adds a skip link.
+
+Acceptance criteria:
+- [ ] Visually hidden skip link rendered as first focusable element in app shell
+- [ ] Link target: `#main-content` anchor on the router-outlet container
+- [ ] Link becomes visible on focus (CSS `:focus` styling)
+- [ ] Link text: "Skip to main content"
+- [ ] Styled with station theme (Reactor Blue background when focused)
+- [ ] Unit tests for: link renders, link targets correct anchor, link visible on focus
+
+### T-2026-355
+- Title: Add ARIA landmark roles to app shell layout regions
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-009
+- Blocked-by: —
+- Tags: accessibility, a11y, landmarks, app-shell
+- Refs: docs/ux/navigation.md, src/app/app.html
+
+WCAG 2.1 AA specifies ARIA landmark roles for page regions so screen readers can navigate by structure. The app shell has distinct regions (header/top bar, navigation, main content, footer) but no ticket ensures proper landmark roles are applied.
+
+Acceptance criteria:
+- [ ] Top bar has `role="banner"` or uses `<header>` element
+- [ ] Side nav and bottom nav have `role="navigation"` with `aria-label` distinguishing them (e.g., "Main navigation", "Mobile navigation")
+- [ ] Router-outlet container has `role="main"` or uses `<main>` element with `id="main-content"`
+- [ ] No duplicate landmark roles without distinguishing `aria-label`
+- [ ] Unit tests for: landmark role presence, aria-label values
+
+### T-2026-356
+- Title: Add focus management on route navigation for screen reader announcements
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-012, T-2026-355
+- Blocked-by: —
+- Tags: accessibility, a11y, routing, focus-management
+- Refs: docs/ux/navigation.md, src/app/app.routes.ts
+
+Single-page applications fail to announce route changes to screen readers by default. When a user navigates between pages, the screen reader does not know the page has changed. Angular's router does not automatically manage focus. A route change handler should move focus to the main content area and announce the page title.
+
+Acceptance criteria:
+- [ ] Route change listener in app component (or a service) using Router.events
+- [ ] On NavigationEnd, focus moved to the main content region (`#main-content`)
+- [ ] Page title announced via an ARIA live region or `document.title` update
+- [ ] Route title metadata used for announcement (Angular route `title` property)
+- [ ] Focus management respects `prefers-reduced-motion` (no scroll animation)
+- [ ] Unit tests for: focus moves on navigation, title updates on navigation
+
+### T-2026-357
+- Title: Create LevelProgressSummaryComponent for minigame level completion counts
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-020, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, level-progress, shared
+- Refs: docs/ux/navigation.md, docs/progression.md
+
+Navigation.md specifies the Minigame Level Select page shows "Best score / best time" per level and the Minigame Hub shows "Quick stats (levels completed, best scores)." Multiple pages need a compact display of level completion counts (e.g., "12/18 levels completed, 36 stars earned"). No reusable component exists for this.
+
+Acceptance criteria:
+- [ ] `LevelProgressSummaryComponent` at `src/app/shared/components/level-progress-summary/`
+- [ ] Selector: `nx-level-progress-summary`
+- [ ] Inputs: `completedLevels` (number), `totalLevels` (number), `totalStars` (number), `maxStars` (number)
+- [ ] Displays: completion fraction (e.g., "12/18"), star total, progress bar
+- [ ] Compact variant for card use, full variant for page headers
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: fraction display, star count, progress bar value
+
+### T-2026-358
+- Title: Create integration test for SettingsService reset triggering StatePersistenceService clearAll
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-039, T-2026-024
+- Blocked-by: —
+- Tags: testing, integration, settings, persistence, reset
+- Refs: docs/architecture.md
+
+Architecture.md documents that "SettingsService.resetProgress() calls StatePersistenceService.clearAll() followed by a full page reload." No integration test verifies this critical destructive flow works correctly end-to-end.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/settings-reset.integration.spec.ts`
+- [ ] Test: add game state (XP, mastery, streaks), call resetProgress(), verify all localStorage cleared
+- [ ] Test: verify resetProgress() triggers page reload (document.location.reload)
+- [ ] Test: verify all services would initialize with defaults after clear (fresh state)
+- [ ] Uses real StatePersistenceService with fake localStorage
+
+### T-2026-359
+- Title: Create ReplayModeHudComponent for endless/speed-run/daily challenge mode-specific HUD
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P8
+- Depends: T-2026-155, T-2026-156, T-2026-157
+- Blocked-by: —
+- Tags: ui, component, replay-modes, hud
+- Refs: docs/progression.md, docs/minigames/TEMPLATE.md
+
+Each minigame spec defines unique replay mode HUDs. Endless mode needs: round counter, running score, difficulty indicator. Speed run needs: elapsed timer, split times, par comparison. Daily challenge needs: streak display, bonus XP indicator. MinigameShell is designed for story mode play. Replay modes need their own HUD component.
+
+Acceptance criteria:
+- [ ] `ReplayModeHudComponent` at `src/app/shared/components/replay-mode-hud/`
+- [ ] Selector: `nx-replay-mode-hud`
+- [ ] Mode-specific display via `mode` input ('endless' | 'speedrun' | 'daily')
+- [ ] Endless: round counter, running score, difficulty level indicator
+- [ ] Speed run: elapsed timer (green/orange/red vs par), level progress (X/Y), split times
+- [ ] Daily challenge: streak flame icon, bonus XP badge, topic name
+- [ ] Content projection for the minigame component
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: mode-specific rendering, timer color transitions, round counter updates
 

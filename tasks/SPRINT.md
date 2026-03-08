@@ -11,13 +11,14 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-239**: Add engine.reset() method to MinigameEngine base class (Assigned: claude, Status: in-progress)
+
 
 
 ---
 
 ## Queue
 
-- **T-2026-239**: Add engine.reset() method to MinigameEngine base class (Priority: low, Size: S)
 - **T-2026-132**: Style NotFoundPage with station theme (Priority: low, Size: S)
 - **T-2026-133**: Create StreakBadgeComponent for streak display (Priority: low, Size: S)
 - **T-2026-163**: Create MinigameTutorialOverlayComponent for first-time play instructions (Priority: low, Size: S)

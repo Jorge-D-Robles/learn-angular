@@ -329,6 +329,8 @@ export class MinigamePlayPage {
 
   onRetry(resetHints = true): void {
     const eng = this.engine();
+    // Guard on both engine and currentLevelData — currentLevelData is still
+    // needed by buildMinigameResult() (called from the completion effect).
     if (eng && this.currentLevelData) {
       this.completionFired = false;
       this.completionSummary.set(null);
@@ -340,9 +342,7 @@ export class MinigamePlayPage {
           this.hintDismissTimer = null;
         }
       }
-      eng.initialize(this.currentLevelData);
-      eng.setPlayMode(PlayMode.Story);
-      eng.start();
+      eng.reset();
     }
   }
 

@@ -1076,7 +1076,112 @@ describe('MinigameEngine', () => {
     });
   });
 
-  // --- 17. Audio feedback ---
+  // --- 17. reset() ---
+
+  describe('reset()', () => {
+    it('should call initialize and start when reset is called after initialize+start', () => {
+      const level = createTestLevel();
+      engine.initialize(level);
+      engine.start();
+      engine.complete();
+      engine.reset();
+      expect(engine.status()).toBe(MinigameStatus.Playing);
+      expect(engine.score()).toBe(0);
+      expect(engine.lives()).toBe(3);
+      expect(engine.currentLevel()).toBe(level.id);
+    });
+
+    it('should throw if reset is called before any initialize', () => {
+      const freshEngine = new TestEngine();
+      expect(() => freshEngine.reset()).toThrow('reset() called before initialize()');
+      freshEngine.destroy();
+    });
+
+    it('should reset from Won status', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      engine.complete();
+      expect(engine.status()).toBe(MinigameStatus.Won);
+      engine.reset();
+      expect(engine.status()).toBe(MinigameStatus.Playing);
+      expect(engine.score()).toBe(0);
+    });
+
+    it('should reset from Lost status', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      engine.fail();
+      expect(engine.status()).toBe(MinigameStatus.Lost);
+      engine.reset();
+      expect(engine.status()).toBe(MinigameStatus.Playing);
+      expect(engine.score()).toBe(0);
+    });
+
+    it('should reset from Playing status (mid-game restart)', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      engine.submitAction('test');
+      expect(engine.score()).toBeGreaterThan(0);
+      engine.reset();
+      expect(engine.status()).toBe(MinigameStatus.Playing);
+      expect(engine.score()).toBe(0);
+    });
+
+    it('should reset from Paused status', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      engine.pause();
+      expect(engine.status()).toBe(MinigameStatus.Paused);
+      engine.reset();
+      expect(engine.status()).toBe(MinigameStatus.Playing);
+    });
+
+    it('should call onLevelLoad and onStart on reset', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      engine.complete();
+      // Manually reset tracking flags so the assertion is not vacuously true
+      engine.onLevelLoadCalled = false;
+      engine.onStartCalled = false;
+      engine.reset();
+      expect(engine.onLevelLoadCalled).toBe(true);
+      expect(engine.onStartCalled).toBe(true);
+    });
+
+    it('should reset timer on reset', () => {
+      vi.useFakeTimers();
+      const timedEngine = new TestEngine({ timerDuration: 30 });
+      timedEngine.initialize(createTestLevel());
+      timedEngine.start();
+      vi.advanceTimersByTime(5000);
+      expect(timedEngine.timeRemaining()).toBe(25);
+      timedEngine.reset();
+      expect(timedEngine.timeRemaining()).toBe(30);
+      timedEngine.destroy();
+      vi.useRealTimers();
+    });
+
+    it('should use the most recent level data for reset', () => {
+      const levelA = createTestLevel({ id: 'level-a' });
+      const levelB = createTestLevel({ id: 'level-b' });
+      engine.initialize(levelA);
+      engine.start();
+      engine.initialize(levelB);
+      engine.start();
+      engine.complete();
+      engine.reset();
+      expect(engine.currentLevel()).toBe('level-b');
+    });
+
+    it('should clear stored level data on destroy', () => {
+      const localEngine = new TestEngine();
+      localEngine.initialize(createTestLevel());
+      localEngine.destroy();
+      expect(() => localEngine.reset()).toThrow('reset() called before initialize()');
+    });
+  });
+
+  // --- 18. Audio feedback ---
 
   describe('Audio feedback', () => {
     let mockSoundPlayer: SoundPlayer;

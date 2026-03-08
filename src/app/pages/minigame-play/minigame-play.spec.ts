@@ -1585,13 +1585,10 @@ describe('MinigamePlayPage', () => {
     testEngine.fail();
     expect(testEngine.status()).toBe(MinigameStatus.Lost);
 
-    // Spy on setPlayMode BEFORE calling onRetry
-    const spy = vi.spyOn(component.engine()!, 'setPlayMode');
-
     component.onRetry();
     fixture.detectChanges();
 
-    expect(spy).toHaveBeenCalledWith(PlayMode.Story);
+    // reset() calls initialize() which resets playMode to Story
     expect(component.engine()!.playMode()).toBe(PlayMode.Story);
     testEngine.destroy();
   });

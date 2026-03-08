@@ -83,6 +83,7 @@ export abstract class MinigameEngine<TLevelData> {
   private _playStartTime: number | null = null;
   private _accumulatedPlayTime = 0;
   private _gameIdForPlayTime: MinigameId | null = null;
+  private _lastLevel: MinigameLevel<TLevelData> | null = null;
 
   /** Public read-only accessor for the engine configuration. */
   get config(): Omit<MinigameEngineConfig, 'document' | 'comboTracker' | 'playTimeTracker' | 'soundPlayer'> {
@@ -103,6 +104,7 @@ export abstract class MinigameEngine<TLevelData> {
 
   /** Initializes the engine with a level. Resets all state. */
   initialize(level: MinigameLevel<TLevelData>): void {
+    this._lastLevel = level;
     this._removeVisibilityListener();
     this._autoPaused = false;
     this._clearTimer();
@@ -131,6 +133,15 @@ export abstract class MinigameEngine<TLevelData> {
       this._startTimer();
     }
     this.onStart();
+  }
+
+  /** Resets the engine by re-initializing with the last level data and starting. */
+  reset(): void {
+    if (!this._lastLevel) {
+      throw new Error('reset() called before initialize()');
+    }
+    this.initialize(this._lastLevel);
+    this.start();
   }
 
   /** Sets the play mode. Only valid during Loading status; throws otherwise. */
@@ -200,6 +211,7 @@ export abstract class MinigameEngine<TLevelData> {
     this._playStartTime = null;
     this._accumulatedPlayTime = 0;
     this._gameIdForPlayTime = null;
+    this._lastLevel = null;
     this._score.set(0);
     this._lives.set(0);
     this._timeRemaining.set(0);
