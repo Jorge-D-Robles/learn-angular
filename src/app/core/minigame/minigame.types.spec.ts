@@ -1,6 +1,7 @@
 import {
   MinigameId,
   DifficultyTier,
+  PlayMode,
   MinigameStatus,
   MinigameConfig,
   MinigameLevel,
@@ -110,6 +111,29 @@ describe('MinigameStatus', () => {
   });
 });
 
+describe('PlayMode', () => {
+  it('should have Story equal to "story"', () => {
+    expect(PlayMode.Story).toBe('story');
+  });
+
+  it('should have Endless equal to "endless"', () => {
+    expect(PlayMode.Endless).toBe('endless');
+  });
+
+  it('should have SpeedRun equal to "speedRun"', () => {
+    expect(PlayMode.SpeedRun).toBe('speedRun');
+  });
+
+  it('should have DailyChallenge equal to "dailyChallenge"', () => {
+    expect(PlayMode.DailyChallenge).toBe('dailyChallenge');
+  });
+
+  it('should have exactly 4 members', () => {
+    const keys = Object.keys(PlayMode);
+    expect(keys.length).toBe(4);
+  });
+});
+
 describe('MinigameConfig', () => {
   it('should accept a valid config object', () => {
     const config: MinigameConfig = {
@@ -187,6 +211,7 @@ describe('MinigameState', () => {
       lives: 3,
       timeRemaining: 60,
       status: MinigameStatus.Playing,
+      playMode: PlayMode.Story,
     };
 
     expect(state.currentLevel).toBe('ma-basic-01');
@@ -194,6 +219,7 @@ describe('MinigameState', () => {
     expect(state.lives).toBe(3);
     expect(state.timeRemaining).toBe(60);
     expect(state.status).toBe(MinigameStatus.Playing);
+    expect(state.playMode).toBe(PlayMode.Story);
   });
 
   it('should accept null for currentLevel', () => {
@@ -203,6 +229,7 @@ describe('MinigameState', () => {
       lives: 3,
       timeRemaining: 0,
       status: MinigameStatus.Loading,
+      playMode: PlayMode.Story,
     };
 
     expect(state.currentLevel).toBeNull();

@@ -6,6 +6,7 @@ import {
 } from './minigame-engine';
 import {
   MinigameStatus,
+  PlayMode,
   type MinigameLevel,
   type MinigameState,
 } from './minigame.types';
@@ -570,6 +571,7 @@ describe('MinigameEngine', () => {
         lives: 3,
         timeRemaining: 0,
         status: MinigameStatus.Loading,
+        playMode: PlayMode.Story,
       });
     });
 
@@ -583,7 +585,83 @@ describe('MinigameEngine', () => {
     });
   });
 
-  // --- 13. Page Visibility auto-pause ---
+  // --- 13. Play mode ---
+
+  describe('Play mode', () => {
+    it('should default to Story before and after initialize', () => {
+      expect(engine.playMode()).toBe(PlayMode.Story);
+      engine.initialize(createTestLevel());
+      expect(engine.playMode()).toBe(PlayMode.Story);
+    });
+
+    it('should set play mode during Loading status', () => {
+      engine.initialize(createTestLevel());
+      engine.setPlayMode(PlayMode.Endless);
+      expect(engine.playMode()).toBe(PlayMode.Endless);
+    });
+
+    it('should work for all four modes', () => {
+      engine.initialize(createTestLevel());
+      engine.setPlayMode(PlayMode.Story);
+      expect(engine.playMode()).toBe(PlayMode.Story);
+      engine.setPlayMode(PlayMode.Endless);
+      expect(engine.playMode()).toBe(PlayMode.Endless);
+      engine.setPlayMode(PlayMode.SpeedRun);
+      expect(engine.playMode()).toBe(PlayMode.SpeedRun);
+      engine.setPlayMode(PlayMode.DailyChallenge);
+      expect(engine.playMode()).toBe(PlayMode.DailyChallenge);
+    });
+
+    it('should throw when status is Playing', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      expect(() => engine.setPlayMode(PlayMode.Endless)).toThrow();
+    });
+
+    it('should throw when status is Paused', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      engine.pause();
+      expect(() => engine.setPlayMode(PlayMode.Endless)).toThrow();
+    });
+
+    it('should throw when status is Won', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      engine.complete();
+      expect(() => engine.setPlayMode(PlayMode.Endless)).toThrow();
+    });
+
+    it('should throw when status is Lost', () => {
+      engine.initialize(createTestLevel());
+      engine.start();
+      engine.fail();
+      expect(() => engine.setPlayMode(PlayMode.Endless)).toThrow();
+    });
+
+    it('should reset to Story on re-initialize', () => {
+      engine.initialize(createTestLevel());
+      engine.setPlayMode(PlayMode.Endless);
+      expect(engine.playMode()).toBe(PlayMode.Endless);
+      engine.start();
+      engine.initialize(createTestLevel());
+      expect(engine.playMode()).toBe(PlayMode.Story);
+    });
+
+    it('should be included in state computed signal', () => {
+      engine.initialize(createTestLevel());
+      engine.setPlayMode(PlayMode.SpeedRun);
+      expect(engine.state().playMode).toBe(PlayMode.SpeedRun);
+    });
+
+    it('should be read-only (set throws)', () => {
+      expect(() => {
+        (engine.playMode as unknown as { set: (v: PlayMode) => void }).set(PlayMode.Endless);
+      }).toThrow();
+    });
+  });
+
+  // --- 14. Page Visibility auto-pause ---
 
   describe('Page Visibility auto-pause', () => {
     it('should auto-pause when document becomes hidden while Playing', () => {

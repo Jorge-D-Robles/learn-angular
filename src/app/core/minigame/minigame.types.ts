@@ -24,6 +24,14 @@ export enum DifficultyTier {
   Boss = 'boss',
 }
 
+/** Play mode context for a minigame session. */
+export enum PlayMode {
+  Story = 'story',
+  Endless = 'endless',
+  SpeedRun = 'speedRun',
+  DailyChallenge = 'dailyChallenge',
+}
+
 /** Lifecycle status of a minigame session. */
 export enum MinigameStatus {
   Loading = 'loading',
@@ -80,6 +88,8 @@ export interface MinigameState {
   readonly timeRemaining: number;
   /** Current lifecycle status of the session. */
   readonly status: MinigameStatus;
+  /** Current play mode context. */
+  readonly playMode: PlayMode;
 }
 
 /** Result produced when a minigame level is completed (won). */

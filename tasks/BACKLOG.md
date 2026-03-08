@@ -608,8 +608,8 @@ Acceptance criteria:
 
 ### T-2026-289
 - Title: Add play mode context signal to MinigameEngine
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -628,6 +628,7 @@ Acceptance criteria:
 - [ ] MinigameShell reads `engine.playMode()` for mode-specific HUD adjustments
 - [ ] Exported from minigame barrel
 - [ ] Unit tests for: default mode, mode setting, mode immutability after start
+- Started: 2026-03-07
 
 ### T-2026-290
 - Title: Integrate ComboTrackerService multiplier into ScoreCalculationService formula

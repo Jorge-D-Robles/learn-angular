@@ -1,5 +1,5 @@
 import { signal, computed, type Signal } from '@angular/core';
-import { MinigameStatus, type MinigameLevel, type MinigameState } from './minigame.types';
+import { MinigameStatus, PlayMode, type MinigameLevel, type MinigameState } from './minigame.types';
 
 /** Result returned by a minigame action validation. */
 export interface ActionResult {
@@ -33,6 +33,7 @@ export abstract class MinigameEngine<TLevelData> {
   private readonly _status = signal(MinigameStatus.Loading);
   private readonly _timeRemaining = signal(0);
   private readonly _currentLevel = signal<string | null>(null);
+  private readonly _playMode = signal(PlayMode.Story);
 
   // --- Public read-only signals ---
   readonly score: Signal<number> = this._score.asReadonly();
@@ -41,6 +42,7 @@ export abstract class MinigameEngine<TLevelData> {
   readonly timeRemaining: Signal<number> = this._timeRemaining.asReadonly();
   readonly currentLevel: Signal<string | null> =
     this._currentLevel.asReadonly();
+  readonly playMode: Signal<PlayMode> = this._playMode.asReadonly();
 
   /** Aggregated state computed from all individual signals. */
   readonly state: Signal<MinigameState> = computed(() => ({
@@ -49,6 +51,7 @@ export abstract class MinigameEngine<TLevelData> {
     lives: this._lives(),
     timeRemaining: this._timeRemaining(),
     status: this._status(),
+    playMode: this._playMode(),
   }));
 
   // --- Private fields ---
@@ -80,6 +83,7 @@ export abstract class MinigameEngine<TLevelData> {
     this._score.set(0);
     this._lives.set(this._config.initialLives);
     this._status.set(MinigameStatus.Loading);
+    this._playMode.set(PlayMode.Story);
     this._currentLevel.set(level.id);
     this._timeRemaining.set(this._config.timerDuration ?? 0);
     this.onLevelLoad(level.data);
@@ -96,6 +100,14 @@ export abstract class MinigameEngine<TLevelData> {
       this._startTimer();
     }
     this.onStart();
+  }
+
+  /** Sets the play mode. Only valid during Loading status; throws otherwise. */
+  setPlayMode(mode: PlayMode): void {
+    if (this._status() !== MinigameStatus.Loading) {
+      throw new Error('setPlayMode() can only be called during Loading status');
+    }
+    this._playMode.set(mode);
   }
 
   /** Pauses the game. Only valid from Playing status. */

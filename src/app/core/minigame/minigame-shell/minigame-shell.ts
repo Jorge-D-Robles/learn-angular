@@ -2,7 +2,7 @@ import { Component, computed, input, output } from '@angular/core';
 import { LevelFailedComponent } from '../../../shared/components/level-failed/level-failed';
 import { LevelResultsComponent } from '../../../shared/components/level-results/level-results';
 import { PauseMenuComponent } from '../../../shared/components/pause-menu/pause-menu';
-import { MinigameStatus, type MinigameResult } from '../minigame.types';
+import { MinigameStatus, PlayMode, type MinigameResult } from '../minigame.types';
 
 @Component({
   selector: 'app-minigame-shell',
@@ -92,6 +92,7 @@ import { MinigameStatus, type MinigameResult } from '../minigame.types';
 })
 export class MinigameShellComponent {
   // --- Signal inputs ---
+  readonly playMode = input(PlayMode.Story);
   readonly score = input(0);
   readonly lives = input(0);
   readonly maxLives = input(3);
