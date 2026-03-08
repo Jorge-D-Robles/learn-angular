@@ -217,3 +217,4 @@
 [2026-03-08] T-2026-413: Create WireProtocolValidationService for binding type correctness checking — create WireProtocolValidationService with 5 validation methods and 35 unit tests (claude)
 [2026-03-08] T-2026-417: Add CurriculumService dependency to story mission completion handler — replace direct data access with CurriculumService injection in StoryMissionCompletionService (claude)
 [2026-03-08] T-2026-416: Wire CodeEditorComponent into StoryMissionPage for interactive code examples — wired CodeEditorComponent into StoryMissionPage with multi-block support and service injection (claude)
+[2026-03-08] T-2026-411: Create FlowCommanderSimulationService for pipeline cargo routing — created FlowCommanderSimulationService with pipeline routing, gate management, and condition evaluation (claude)
