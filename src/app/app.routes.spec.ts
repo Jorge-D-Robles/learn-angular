@@ -21,6 +21,7 @@ import { APP_ICONS } from './shared/icons';
 describe('routes', () => {
   const expectedPaths = [
     '',
+    'campaign',
     'mission/:chapterId',
     'minigames',
     'minigames/:gameId',
@@ -33,8 +34,8 @@ describe('routes', () => {
     '**',
   ];
 
-  it('should have 11 routes', () => {
-    expect(routes.length).toBe(11);
+  it('should have 12 routes', () => {
+    expect(routes.length).toBe(12);
   });
 
   it('should define all expected paths', () => {
@@ -56,6 +57,7 @@ describe('routes', () => {
 
   it('should lazy-load all non-eager routes via loadComponent', () => {
     const lazyPaths = [
+      'campaign',
       'mission/:chapterId',
       'minigames',
       'minigames/:gameId',
@@ -78,6 +80,12 @@ describe('routes', () => {
   });
 
   describe('lazy loadComponent resolution', () => {
+    it('should resolve CampaignPage', async () => {
+      const route = routes.find((r) => r.path === 'campaign');
+      const component = await (route?.loadComponent as () => Promise<unknown>)();
+      expect(component).toBeDefined();
+    });
+
     it('should resolve MissionPage', async () => {
       const route = routes.find((r) => r.path === 'mission/:chapterId');
       const component = await (route?.loadComponent as () => Promise<unknown>)();
@@ -137,6 +145,11 @@ describe('routes', () => {
     it('should have a title on the root route', () => {
       const route = routes.find((r) => r.path === '');
       expect(route?.title).toBe('Dashboard');
+    });
+
+    it('should have a title on the campaign route', () => {
+      const route = routes.find((r) => r.path === 'campaign');
+      expect(route?.title).toBe('Campaign');
     });
 
     it('should have a title on the mission route', () => {

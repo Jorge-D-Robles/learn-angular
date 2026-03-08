@@ -5,6 +5,11 @@ import { NotFoundPage } from './pages/not-found/not-found';
 export const routes: Routes = [
   { path: '', component: DashboardPage, title: 'Dashboard' },
   {
+    path: 'campaign',
+    title: 'Campaign',
+    loadComponent: () => import('./pages/campaign/campaign').then((m) => m.CampaignPage),
+  },
+  {
     path: 'mission/:chapterId',
     // dynamic title resolver deferred to T-2026-372
     title: 'Mission',
