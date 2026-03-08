@@ -1,0 +1,95 @@
+:host {
+  display: block;
+  padding: var(--nx-space-6);
+}
+
+h1 {
+  margin: 0 0 var(--nx-space-6);
+}
+
+.settings-page__section {
+  background: var(--nx-color-hull);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card);
+  padding: var(--nx-space-4);
+  margin-bottom: var(--nx-space-4);
+}
+
+.settings-page__section-title {
+  font-size: var(--nx-text-heading-size, 1.125rem);
+  color: var(--nx-color-beacon);
+  margin: 0 0 var(--nx-space-3);
+}
+
+.settings-page__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--nx-space-2) 0;
+
+  &--actions {
+    gap: var(--nx-space-3);
+    justify-content: flex-start;
+  }
+}
+
+.settings-page__label {
+  color: var(--nx-color-display);
+  font-size: var(--nx-text-body-size, 0.875rem);
+}
+
+.settings-page__toggle {
+  padding: var(--nx-space-1) var(--nx-space-3);
+  border-radius: 999px;
+  border: 1px solid var(--nx-color-bulkhead);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: var(--nx-text-body-size, 0.875rem);
+  transition: background var(--nx-duration-fast) var(--nx-ease-out);
+
+  &--active {
+    background: var(--nx-color-reactor-blue);
+    border-color: var(--nx-color-reactor-blue);
+  }
+}
+
+.settings-page__select {
+  padding: var(--nx-space-2) var(--nx-space-3);
+  border-radius: var(--nx-radius-card);
+  border: 1px solid var(--nx-color-corridor);
+  background: var(--nx-color-surface, #1a1e2e);
+  color: inherit;
+  font-size: var(--nx-text-body-size, 0.875rem);
+  min-width: 160px;
+}
+
+.settings-page__btn {
+  padding: var(--nx-space-2) var(--nx-space-4);
+  border-radius: var(--nx-radius-card);
+  font-size: var(--nx-text-body-size, 0.875rem);
+  cursor: pointer;
+  border: none;
+
+  &--danger {
+    background: var(--nx-color-emergency-red);
+    color: var(--nx-color-beacon);
+  }
+
+  &--secondary {
+    background: transparent;
+    border: 1px solid var(--nx-color-reactor-blue);
+    color: var(--nx-color-corridor);
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-page__toggle {
+    transition: none;
+  }
+}

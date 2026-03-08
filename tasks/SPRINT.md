@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-080**: Create SettingsPage component with user preferences UI (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -24,7 +26,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-080**: Create SettingsPage component with user preferences UI (Priority: medium, Size: S)
 
 ---
 

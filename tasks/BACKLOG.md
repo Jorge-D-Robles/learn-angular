@@ -564,8 +564,8 @@ Acceptance criteria:
 
 ### T-2026-080
 - Title: Create SettingsPage component with user preferences UI
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P2
@@ -586,6 +586,7 @@ Acceptance criteria:
 - [ ] "Export Progress" button that downloads state as JSON
 - [ ] "Import Progress" button that uploads and restores state from JSON
 - [ ] Unit tests for: setting controls render, toggle interactions, reset with confirmation
+- Started: 2026-03-08
 
 ### T-2026-114
 - Title: Create StationVisualizationComponent for dashboard module glow map
