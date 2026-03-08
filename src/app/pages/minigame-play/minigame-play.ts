@@ -7,6 +7,7 @@ import { MinigameRegistryService } from '../../core/minigame/minigame-registry.s
 import { MinigameShellComponent } from '../../core/minigame/minigame-shell/minigame-shell';
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
 import { LevelLoaderService } from '../../core/levels/level-loader.service';
+import { LevelNavigationService } from '../../core/levels/level-navigation.service';
 import { LevelCompletionService, type LevelCompletionSummary } from '../../core/minigame/level-completion.service';
 import { HintService } from '../../core/minigame/hint.service';
 import { KeyboardShortcutService } from '../../core/minigame/keyboard-shortcut.service';
@@ -47,8 +48,11 @@ import type { LevelDefinition } from '../../core/levels/level.types';
           [timeRemaining]="engine()?.timeRemaining() ?? 0"
           [timerDuration]="engine()?.config?.timerDuration ?? 0"
           [status]="engine()?.status() ?? loadingStatus"
-          [xpEarned]="completionSummary()?.xpEarned ?? 0"
-          [starRating]="completionSummary()?.starRating ?? 0"
+          [result]="resultForDisplay()"
+          [previousBest]="previousBest()"
+          [xpAwarded]="completionSummary()?.xpEarned ?? 0"
+          [bonuses]="displayBonuses()"
+          [nextLevelLocked]="nextLevelLocked()"
           [hintsAvailable]="hintsAvailable()"
           [hintCount]="hintCount()"
           [hintPenalty]="hintPenalty()"
@@ -76,6 +80,7 @@ export class MinigamePlayPage {
   private readonly router = inject(Router);
   private readonly levelLoader = inject(LevelLoaderService);
   private readonly levelCompletion = inject(LevelCompletionService);
+  private readonly levelNav = inject(LevelNavigationService);
   private readonly hintService = inject(HintService);
   private readonly keyboardShortcuts = inject(KeyboardShortcutService);
   private readonly destroyRef = inject(DestroyRef);
@@ -152,6 +157,38 @@ export class MinigamePlayPage {
   });
 
   readonly activeHintText = signal('');
+
+  readonly resultForDisplay = computed<MinigameResult | null>(() => {
+    const summary = this.completionSummary();
+    if (!summary) return null;
+    return this.buildMinigameResult();
+  });
+
+  readonly displayBonuses = computed<readonly { label: string; amount: number }[]>(() => {
+    const summary = this.completionSummary();
+    if (!summary) return [];
+    const bonuses: { label: string; amount: number }[] = [];
+    if (summary.perfectBonus > 0) {
+      bonuses.push({ label: 'Perfect!', amount: summary.perfectBonus });
+    }
+    if (summary.streakBonus > 0) {
+      bonuses.push({ label: 'Streak Bonus', amount: summary.streakBonus });
+    }
+    return bonuses;
+  });
+
+  readonly previousBest = computed<number | null>(() => {
+    const summary = this.completionSummary();
+    if (!summary) return null;
+    return summary.previousBestScore;
+  });
+
+  readonly nextLevelLocked = computed(() => {
+    const gid = this.gameId();
+    const lid = this.levelId();
+    if (!gid || !lid) return true;
+    return !this.levelNav.isNextLevelUnlocked(gid as MinigameId, lid);
+  });
 
   constructor() {
     // Engine lifecycle effect: watches route params and loads the engine
@@ -276,9 +313,16 @@ export class MinigamePlayPage {
   }
 
   onNextLevel(): void {
-    // LevelNavigationService (T-2026-182) does not exist yet.
-    // Placeholder: navigate to level select for now.
-    this.router.navigate(['/minigames', this.gameId()]);
+    const gid = this.gameId();
+    const lid = this.levelId();
+    if (!gid || !lid) return;
+
+    const nextLevel = this.levelNav.getNextLevel(gid as MinigameId, lid);
+    if (nextLevel) {
+      this.router.navigate(['/minigames', gid, 'level', nextLevel.levelId]);
+    } else {
+      this.router.navigate(['/minigames', gid]);
+    }
   }
 
   private buildMinigameResult(): MinigameResult {

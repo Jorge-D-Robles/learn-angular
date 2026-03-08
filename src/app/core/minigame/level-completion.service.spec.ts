@@ -293,7 +293,35 @@ describe('LevelCompletionService', () => {
     expect(summary.starRating).toBe(3);
   });
 
-  // 17. Throw for unregistered level
+  // 17. previousBestScore, perfectBonus, streakBonus returned in summary
+  it('should return previousBestScore: 0 on first completion', () => {
+    const summary = service.completeLevel(makeResult({ score: 100 }));
+    expect(summary.previousBestScore).toBe(0);
+  });
+
+  it('should return previousBestScore with prior best on subsequent completion', () => {
+    service.completeLevel(makeResult({ score: 100 }));
+    const summary = service.completeLevel(makeResult({ score: 200 }));
+    expect(summary.previousBestScore).toBe(100);
+  });
+
+  it('should return perfectBonus when perfect is true (Basic tier)', () => {
+    // Basic tier: base = 15, perfect = 30, perfectBonus = 30 - 15 = 15
+    const summary = service.completeLevel(makeResult({ perfect: true }));
+    expect(summary.perfectBonus).toBe(15);
+  });
+
+  it('should return perfectBonus of 0 when not perfect', () => {
+    const summary = service.completeLevel(makeResult({ perfect: false }));
+    expect(summary.perfectBonus).toBe(0);
+  });
+
+  it('should return streakBonus of 0 when no streak active', () => {
+    const summary = service.completeLevel(makeResult());
+    expect(summary.streakBonus).toBe(0);
+  });
+
+  // 18. Throw for unregistered level
   it('should throw for unregistered level', () => {
     expect(() =>
       service.completeLevel(makeResult({ levelId: 'unknown-level' })),

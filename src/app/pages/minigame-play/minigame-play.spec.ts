@@ -2,18 +2,40 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
+import {
+  LucideIconConfig,
+  LucideIconProvider,
+  LUCIDE_ICONS,
+} from 'lucide-angular';
 import { of, throwError } from 'rxjs';
+import { APP_ICONS } from '../../shared/icons';
 import { MinigamePlayPage } from './minigame-play';
 import { MinigameShellComponent } from '../../core/minigame/minigame-shell/minigame-shell';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
 import { LevelLoaderService } from '../../core/levels/level-loader.service';
+import { LevelNavigationService } from '../../core/levels/level-navigation.service';
 import { LevelCompletionService, type LevelCompletionSummary } from '../../core/minigame/level-completion.service';
 import { HintService, type HintResult } from '../../core/minigame/hint.service';
 import { MinigameEngine, type ActionResult } from '../../core/minigame/minigame-engine';
 import type { MinigameConfig } from '../../core/minigame/minigame.types';
 import { DifficultyTier, MinigameStatus } from '../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
+
+const ICON_PROVIDERS = [
+  {
+    provide: LUCIDE_ICONS,
+    multi: true,
+    useValue: new LucideIconProvider(APP_ICONS),
+  },
+  {
+    provide: LucideIconConfig,
+    useValue: Object.assign(new LucideIconConfig(), {
+      size: 24,
+      color: 'currentColor',
+    }),
+  },
+];
 
 // --- Test engine subclass ---
 
@@ -53,6 +75,9 @@ const TEST_COMPLETION_SUMMARY: LevelCompletionSummary = {
   starRating: 2,
   xpEarned: 30,
   bonuses: { perfect: false, streak: false },
+  previousBestScore: 0,
+  perfectBonus: 0,
+  streakBonus: 0,
   isNewBestScore: true,
   rankUpOccurred: false,
 };
@@ -114,6 +139,18 @@ function mockHintService(overrides: Partial<HintService> = {}) {
   };
 }
 
+function mockLevelNavigationService(overrides: Partial<LevelNavigationService> = {}) {
+  return {
+    provide: LevelNavigationService,
+    useValue: {
+      getNextLevel: vi.fn().mockReturnValue(null),
+      getPreviousLevel: vi.fn().mockReturnValue(null),
+      isNextLevelUnlocked: vi.fn().mockReturnValue(false),
+      ...overrides,
+    },
+  };
+}
+
 // --- Setup helper ---
 
 async function setup(options: {
@@ -123,6 +160,7 @@ async function setup(options: {
   levelLoader?: Partial<LevelLoaderService>;
   levelCompletion?: Partial<LevelCompletionService>;
   hintService?: Partial<HintService>;
+  levelNavigation?: Partial<LevelNavigationService>;
 } = {}) {
   const {
     params = { gameId: 'module-assembly', levelId: 'ma-basic-01' },
@@ -131,17 +169,20 @@ async function setup(options: {
     levelLoader = {},
     levelCompletion = {},
     hintService = {},
+    levelNavigation = {},
   } = options;
 
   await TestBed.configureTestingModule({
     imports: [MinigamePlayPage],
     providers: [
       provideRouter([]),
+      ...ICON_PROVIDERS,
       mockRegistry(registry),
       mockLevelProgression(levelProgression),
       mockLevelLoader(levelLoader),
       mockLevelCompletion(levelCompletion),
       mockHintService(hintService),
+      mockLevelNavigationService(levelNavigation),
     ],
   }).compileComponents();
 
@@ -628,14 +669,54 @@ describe('MinigamePlayPage', () => {
     expect(destroySpy).toHaveBeenCalled();
   });
 
-  // --- 24. NextLevel navigates to level select (placeholder) ---
-  it('should navigate to level select on nextLevel event', async () => {
+  // --- 24. NextLevel navigates to next level when available ---
+  it('should navigate to next level when next level exists', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const nextLevelDef: LevelDefinition = {
+      levelId: 'ma-basic-02',
+      gameId: 'module-assembly',
+      tier: DifficultyTier.Basic,
+      order: 2,
+      title: 'Next Level',
+      conceptIntroduced: 'Test',
+      description: 'Next',
+      data: {},
+    };
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelNavigation: {
+        getNextLevel: vi.fn().mockReturnValue(nextLevelDef),
+        isNextLevelUnlocked: vi.fn().mockReturnValue(true),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    component.onNextLevel();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/minigames', 'module-assembly', 'level', 'ma-basic-02']);
+    testEngine.destroy();
+  });
+
+  // --- 24b. NextLevel falls back to level select when no next level ---
+  it('should navigate to level select when no next level exists', async () => {
     const testEngine = new TestEngine();
     const factory = vi.fn().mockReturnValue(testEngine);
     const { fixture, component } = await setup({
       registry: {
         getComponent: vi.fn().mockReturnValue(DummyGameComponent),
         getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelNavigation: {
+        getNextLevel: vi.fn().mockReturnValue(null),
       },
     });
 
@@ -969,6 +1050,160 @@ describe('MinigamePlayPage', () => {
 
     expect(requestHintSpy).toHaveBeenCalledWith('ma-basic-01');
     expect(component.activeHintText()).toBe('Keyboard hint');
+    testEngine.destroy();
+  });
+
+  // --- 36. displayBonuses builds array from completion summary ---
+  it('should build bonuses array with perfect and streak entries', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const summaryWithBonuses: LevelCompletionSummary = {
+      ...TEST_COMPLETION_SUMMARY,
+      bonuses: { perfect: true, streak: true },
+      perfectBonus: 15,
+      streakBonus: 5,
+    };
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: vi.fn().mockReturnValue(summaryWithBonuses) },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    testEngine.complete();
+    fixture.detectChanges();
+
+    const bonuses = component.displayBonuses();
+    expect(bonuses).toEqual([
+      { label: 'Perfect!', amount: 15 },
+      { label: 'Streak Bonus', amount: 5 },
+    ]);
+    testEngine.destroy();
+  });
+
+  // --- 37. displayBonuses omits entries with 0 amounts ---
+  it('should omit perfect entry from bonuses when perfectBonus is 0', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: vi.fn().mockReturnValue(TEST_COMPLETION_SUMMARY) },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    testEngine.complete();
+    fixture.detectChanges();
+
+    const bonuses = component.displayBonuses();
+    expect(bonuses).toEqual([]);
+    testEngine.destroy();
+  });
+
+  // --- 38. nextLevelLocked computed correctly ---
+  it('should compute nextLevelLocked as true when next level is locked', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelNavigation: {
+        isNextLevelUnlocked: vi.fn().mockReturnValue(false),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.nextLevelLocked()).toBe(true);
+    testEngine.destroy();
+  });
+
+  // --- 39. nextLevelLocked false when next level is unlocked ---
+  it('should compute nextLevelLocked as false when next level is unlocked', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelNavigation: {
+        isNextLevelUnlocked: vi.fn().mockReturnValue(true),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.nextLevelLocked()).toBe(false);
+    testEngine.destroy();
+  });
+
+  // --- 40. previousBest derived from completion summary ---
+  it('should derive previousBest from completionSummary.previousBestScore', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const summaryWithPrior: LevelCompletionSummary = {
+      ...TEST_COMPLETION_SUMMARY,
+      previousBestScore: 42,
+    };
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: vi.fn().mockReturnValue(summaryWithPrior) },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Before completion, previousBest is null
+    expect(component.previousBest()).toBeNull();
+
+    testEngine.complete();
+    fixture.detectChanges();
+
+    expect(component.previousBest()).toBe(42);
+    testEngine.destroy();
+  });
+
+  // --- 41. resultForDisplay built from engine on completion ---
+  it('should build resultForDisplay from engine data on completion', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelCompletion: { completeLevel: vi.fn().mockReturnValue(TEST_COMPLETION_SUMMARY) },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Before completion, result is null
+    expect(component.resultForDisplay()).toBeNull();
+
+    testEngine.complete();
+    fixture.detectChanges();
+
+    const result = component.resultForDisplay();
+    expect(result).not.toBeNull();
+    expect(result!.gameId).toBe('module-assembly');
+    expect(result!.levelId).toBe('ma-basic-01');
     testEngine.destroy();
   });
 });

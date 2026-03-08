@@ -8,9 +8,10 @@ import {
 import { createComponent } from '../../../../testing/test-utils';
 import { APP_ICONS } from '../../../shared/icons';
 import { LevelFailedComponent } from '../../../shared/components/level-failed/level-failed';
+import { LevelResultsComponent } from '../../../shared/components/level-results/level-results';
 import { MinigameShellComponent } from './minigame-shell';
 import { PauseMenuComponent } from '../../../shared/components/pause-menu/pause-menu';
-import { MinigameStatus } from '../minigame.types';
+import { MinigameStatus, type MinigameResult } from '../minigame.types';
 
 const ICON_PROVIDERS = [
   {
@@ -27,11 +28,23 @@ const ICON_PROVIDERS = [
   },
 ];
 
+const TEST_RESULT: MinigameResult = {
+  gameId: 'module-assembly',
+  levelId: 'ma-basic-01',
+  score: 500,
+  perfect: false,
+  timeElapsed: 30,
+  xpEarned: 15,
+  starRating: 3,
+};
+
 @Component({
   template: `<app-minigame-shell
     [score]="score" [lives]="lives" [maxLives]="maxLives"
     [timeRemaining]="timeRemaining" [timerDuration]="timerDuration"
-    [status]="status" [xpEarned]="xpEarned" [starRating]="starRating"
+    [status]="status"
+    [result]="result" [previousBest]="previousBest" [xpAwarded]="xpAwarded"
+    [bonuses]="bonuses" [nextLevelLocked]="nextLevelLocked"
     [hintsAvailable]="hintsAvailable"
     [hintCount]="hintCount" [hintPenalty]="hintPenalty" [activeHintText]="activeHintText"
     (pauseGame)="onPause()" (resumeGame)="onResume()" (restartGame)="onRestart()"
@@ -48,8 +61,11 @@ class TestHost {
   timeRemaining = 0;
   timerDuration = 0;
   status: MinigameStatus = MinigameStatus.Playing;
-  xpEarned = 0;
-  starRating = 0;
+  result: MinigameResult | null = null;
+  previousBest = 0;
+  xpAwarded = 0;
+  bonuses: { label: string; amount: number }[] = [];
+  nextLevelLocked = false;
   hintsAvailable = false;
   hintCount = 0;
   hintPenalty = 0;
@@ -202,8 +218,9 @@ describe('MinigameShellComponent', () => {
     fixture.componentInstance.status = MinigameStatus.Playing;
     fixture.detectChanges();
     await fixture.whenStable();
-    const overlay = element.querySelector('.shell-overlay');
-    expect(overlay).toBeNull();
+    expect(element.querySelector('nx-level-results')).toBeNull();
+    expect(element.querySelector('nx-pause-menu')).toBeNull();
+    expect(element.querySelector('nx-level-failed')).toBeNull();
   });
 
   // --- 12. Pause overlay renders PauseMenuComponent ---
@@ -216,23 +233,22 @@ describe('MinigameShellComponent', () => {
     expect(element.querySelector('.shell-overlay__panel')).toBeNull();
   });
 
-  // --- 13. Completion overlay visible ---
-  it('should show completion overlay when status is Won', async () => {
+  // --- 13. Completion overlay renders nx-level-results ---
+  it('should render nx-level-results when status is Won', async () => {
     const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
-    fixture.componentInstance.score = 500;
-    fixture.componentInstance.xpEarned = 120;
-    fixture.componentInstance.starRating = 3;
+    fixture.componentInstance.result = TEST_RESULT;
+    fixture.componentInstance.xpAwarded = 120;
     fixture.detectChanges();
     await fixture.whenStable();
-    const overlay = element.querySelector('.shell-overlay--success');
-    expect(overlay).toBeTruthy();
-    expect(overlay?.getAttribute('role')).toBe('dialog');
-    expect(overlay?.getAttribute('aria-modal')).toBe('true');
-    expect(overlay?.textContent).toContain('500');
-    expect(overlay?.textContent).toContain('+120 XP');
-    expect(overlay?.textContent).toContain('Next Level');
-    expect(overlay?.textContent).toContain('Replay');
+    const results = element.querySelector('nx-level-results');
+    expect(results).toBeTruthy();
+    expect(element.querySelector('.shell-overlay--success')).toBeNull();
+    expect(element.querySelector('.shell-overlay__panel')).toBeNull();
+    expect(results?.textContent).toContain('500');
+    expect(results?.textContent).toContain('+120 XP');
+    expect(results?.textContent).toContain('Next Level');
+    expect(results?.textContent).toContain('Replay');
   });
 
   // --- 14. Failure overlay renders <nx-level-failed> ---
@@ -248,17 +264,17 @@ describe('MinigameShellComponent', () => {
     expect(element.querySelector('.level-failed__score')?.textContent?.trim()).toBe('80');
   });
 
-  // --- 15. Star rating display ---
-  it('should display correct number of filled and unfilled stars', async () => {
+  // --- 15. Star rating delegated to LevelResultsComponent (stars rendered inside nx-level-results) ---
+  it('should render stars inside nx-level-results when status is Won', async () => {
     const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
-    fixture.componentInstance.starRating = 3;
+    fixture.componentInstance.result = TEST_RESULT;
     fixture.detectChanges();
     await fixture.whenStable();
-    const filledStars = element.querySelectorAll('.shell-overlay__star--filled');
-    const allStars = element.querySelectorAll('.shell-overlay__stars span');
-    expect(filledStars.length).toBe(3);
-    expect(allStars.length).toBe(5);
+    const results = element.querySelector('nx-level-results');
+    expect(results).toBeTruthy();
+    // Stars are rendered inside the LevelResultsComponent via nx-level-stars
+    expect(results?.querySelector('nx-level-stars')).toBeTruthy();
   });
 
   // --- 16. Pause button emits ---
@@ -334,30 +350,40 @@ describe('MinigameShellComponent', () => {
     expect(fixture.componentInstance.quitCalled).toBe(true);
   });
 
-  // --- 21. Next Level button emits ---
-  it('should emit nextLevel when Next Level is clicked in completion overlay', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+  // --- 21. Next Level event forwarding from LevelResultsComponent ---
+  it('should emit nextLevel when nextLevel event fires from level-results', async () => {
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
+    fixture.componentInstance.result = TEST_RESULT;
     fixture.detectChanges();
     await fixture.whenStable();
-    const buttons = element.querySelectorAll('.shell-overlay__panel button');
-    const nextBtn = Array.from(buttons).find(b => b.textContent?.trim() === 'Next Level') as HTMLButtonElement;
-    nextBtn.click();
+    fixture.debugElement.query(By.directive(LevelResultsComponent)).triggerEventHandler('nextLevel');
     fixture.detectChanges();
     expect(fixture.componentInstance.nextLevelCalled).toBe(true);
   });
 
-  // --- 22. Replay button emits ---
-  it('should emit replay when Replay is clicked in completion overlay', async () => {
-    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+  // --- 22. Replay event forwarding from LevelResultsComponent ---
+  it('should emit replay when replay event fires from level-results', async () => {
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
     fixture.componentInstance.status = MinigameStatus.Won;
+    fixture.componentInstance.result = TEST_RESULT;
     fixture.detectChanges();
     await fixture.whenStable();
-    const buttons = element.querySelectorAll('.shell-overlay__panel button');
-    const replayBtn = Array.from(buttons).find(b => b.textContent?.trim() === 'Replay') as HTMLButtonElement;
-    replayBtn.click();
+    fixture.debugElement.query(By.directive(LevelResultsComponent)).triggerEventHandler('replay');
     fixture.detectChanges();
     expect(fixture.componentInstance.replayCalled).toBe(true);
+  });
+
+  // --- 22b. Quit event forwarding from LevelResultsComponent ---
+  it('should emit quit when quit event fires from level-results', async () => {
+    const { fixture } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.status = MinigameStatus.Won;
+    fixture.componentInstance.result = TEST_RESULT;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.debugElement.query(By.directive(LevelResultsComponent)).triggerEventHandler('quit');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.quitCalled).toBe(true);
   });
 
   // --- 23. Failure reason '3 strikes' when lives are 0 ---

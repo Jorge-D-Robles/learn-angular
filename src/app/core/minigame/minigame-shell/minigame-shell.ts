@@ -1,11 +1,12 @@
 import { Component, computed, input, output } from '@angular/core';
 import { LevelFailedComponent } from '../../../shared/components/level-failed/level-failed';
+import { LevelResultsComponent } from '../../../shared/components/level-results/level-results';
 import { PauseMenuComponent } from '../../../shared/components/pause-menu/pause-menu';
-import { MinigameStatus } from '../minigame.types';
+import { MinigameStatus, type MinigameResult } from '../minigame.types';
 
 @Component({
   selector: 'app-minigame-shell',
-  imports: [LevelFailedComponent, PauseMenuComponent],
+  imports: [LevelFailedComponent, LevelResultsComponent, PauseMenuComponent],
   template: `
     <div class="minigame-shell">
       <!-- HUD Bar -->
@@ -61,21 +62,16 @@ import { MinigameStatus } from '../minigame.types';
       }
 
       <!-- Completion Overlay -->
-      @if (status() === won) {
-        <div class="shell-overlay shell-overlay--success" role="dialog" aria-modal="true" aria-labelledby="complete-title">
-          <div class="shell-overlay__panel">
-            <h2 id="complete-title">Level Complete!</h2>
-            <div class="shell-overlay__score">{{ score() }}</div>
-            <div class="shell-overlay__xp">+{{ xpEarned() }} XP</div>
-            <div class="shell-overlay__stars">
-              @for (star of starsArray(); track $index) {
-                <span [class.shell-overlay__star--filled]="star"></span>
-              }
-            </div>
-            <button type="button" (click)="nextLevel.emit()">Next Level</button>
-            <button type="button" (click)="replay.emit()">Replay</button>
-          </div>
-        </div>
+      @if (status() === won && result()) {
+        <nx-level-results
+          [result]="result()!"
+          [previousBest]="previousBest()"
+          [xpAwarded]="xpAwarded()"
+          [bonuses]="bonuses()"
+          [nextLevelLocked]="nextLevelLocked()"
+          (nextLevel)="nextLevel.emit()"
+          (replay)="replay.emit()"
+          (quit)="quit.emit()" />
       }
 
       <!-- Failure Overlay -->
@@ -100,8 +96,11 @@ export class MinigameShellComponent {
   readonly timeRemaining = input(0);
   readonly timerDuration = input(0);
   readonly status = input(MinigameStatus.Loading);
-  readonly xpEarned = input(0);
-  readonly starRating = input(0);
+  readonly result = input<MinigameResult | null>(null);
+  readonly previousBest = input<number | null>(null);
+  readonly xpAwarded = input(0);
+  readonly bonuses = input<readonly { label: string; amount: number }[]>([]);
+  readonly nextLevelLocked = input(false);
   readonly hintsAvailable = input(false);
   readonly hintCount = input(0);
   readonly hintPenalty = input(0);
@@ -149,9 +148,5 @@ export class MinigameShellComponent {
 
   readonly livesArray = computed(() =>
     Array.from({ length: this.maxLives() }, (_, i) => ({ filled: i < this.lives() })),
-  );
-
-  readonly starsArray = computed(() =>
-    Array.from({ length: 5 }, (_, i) => i < this.starRating()),
   );
 }

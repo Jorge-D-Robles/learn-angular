@@ -20,6 +20,12 @@ export interface LevelCompletionSummary {
     /** Whether a streak bonus was applied (multiplier > 1.0). */
     readonly streak: boolean;
   };
+  /** The best score before this completion (0 if first attempt). */
+  readonly previousBestScore: number;
+  /** XP bonus amount from perfect completion (0 if not perfect). */
+  readonly perfectBonus: number;
+  /** XP bonus amount from streak (0 if no streak). */
+  readonly streakBonus: number;
   /** Whether this score exceeded the previous best for this level. */
   readonly isNewBestScore: boolean;
   /** Whether the player's rank changed as a result of this completion. */
@@ -97,6 +103,12 @@ export class LevelCompletionService {
     }
     this.xpNotification.show(xpEarned, bonuses);
 
+    // perfectBonus = XP difference between perfect and non-perfect for this tier
+    const perfectBonus = result.perfect === true
+      ? this.xpService.calculateLevelXp(levelDef.tier, true) -
+        this.xpService.calculateLevelXp(levelDef.tier, false)
+      : 0;
+
     return {
       score: result.score,
       starRating: result.starRating,
@@ -105,6 +117,9 @@ export class LevelCompletionService {
         perfect: result.perfect === true,
         streak: xpBreakdown.streakBonus > 0,
       },
+      previousBestScore: priorBestScore,
+      perfectBonus,
+      streakBonus: xpBreakdown.streakBonus,
       isNewBestScore,
       rankUpOccurred,
     };
