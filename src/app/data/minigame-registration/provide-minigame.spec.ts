@@ -5,6 +5,7 @@ import { ModuleAssemblyComponent } from '../../features/minigames/module-assembl
 import { ModuleAssemblyEngine } from '../../features/minigames/module-assembly';
 import { WireProtocolComponent } from '../../features/minigames/wire-protocol/wire-protocol.component';
 import { WireProtocolEngine } from '../../features/minigames/wire-protocol/wire-protocol.engine';
+import { FlowCommanderComponent, FlowCommanderEngine } from '../../features/minigames/flow-commander';
 import { MinigameEngine, type ActionResult } from '../../core/minigame/minigame-engine';
 import type { MinigameId } from '../../core/minigame/minigame.types';
 import { provideMinigame, provideMinigameEngine } from './provide-minigame';
@@ -104,6 +105,42 @@ describe('provideMinigame — wire-protocol', () => {
     const config = registry.getConfig('wire-protocol');
     expect(config).toBeDefined();
     expect(config!.name).toBe('Wire Protocol');
+  });
+});
+
+describe('provideMinigame — flow-commander', () => {
+  let registry: MinigameRegistryService;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideMinigame(
+          'flow-commander',
+          FlowCommanderComponent,
+          () => new FlowCommanderEngine(),
+        ),
+      ],
+    });
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    registry = TestBed.inject(MinigameRegistryService);
+  });
+
+  it('should register the component type for flow-commander', () => {
+    expect(registry.getComponent('flow-commander')).toBe(FlowCommanderComponent);
+  });
+
+  it('should register an engine factory that produces a FlowCommanderEngine', () => {
+    const factory = registry.getEngineFactory('flow-commander');
+    expect(factory).toBeTruthy();
+    const engine = factory!();
+    expect(engine).toBeInstanceOf(FlowCommanderEngine);
+  });
+
+  it('should preserve the existing config for flow-commander', () => {
+    const config = registry.getConfig('flow-commander');
+    expect(config).toBeDefined();
+    expect(config!.name).toBe('Flow Commander');
   });
 });
 

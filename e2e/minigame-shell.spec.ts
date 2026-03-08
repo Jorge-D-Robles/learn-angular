@@ -44,4 +44,11 @@ test.describe('MinigamePlayPage', () => {
     await expect(page.locator('app-minigame-shell')).toBeVisible();
     await expect(page.locator('app-wire-protocol')).toBeVisible();
   });
+
+  test('should render Flow Commander game for a valid level', async ({ page }) => {
+    await page.goto('/minigames/flow-commander/level/fc-basic-01');
+
+    await expect(page.locator('app-minigame-shell')).toBeVisible();
+    await expect(page.locator('app-flow-commander')).toBeVisible();
+  });
 });
