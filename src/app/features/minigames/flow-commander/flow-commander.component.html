@@ -1,0 +1,143 @@
+<div class="flow-commander">
+  <!-- SVG Pipeline Area -->
+  <svg #pipelineSvg
+       class="flow-commander__svg"
+       [attr.viewBox]="viewBox"
+       preserveAspectRatio="xMidYMid meet">
+
+    <!-- Pipeline edges (tubes) -->
+    @for (edge of edgePaths(); track edge.id) {
+      <path [attr.d]="edge.path" class="flow-commander__tube" />
+    }
+
+    <!-- Pipeline nodes by type -->
+    @for (node of nodePositions(); track node.id) {
+      @switch (node.nodeType) {
+        @case ('source') {
+          <g class="flow-commander__node flow-commander__node--source">
+            <circle [attr.cx]="node.x" [attr.cy]="node.y" [attr.r]="nodeRadius" />
+            <text [attr.x]="node.x" [attr.y]="node.y - nodeRadius - 6"
+                  class="flow-commander__node-label" text-anchor="middle">{{ node.label }}</text>
+          </g>
+        }
+        @case ('gate-slot') {
+          <g class="flow-commander__node flow-commander__node--gate-slot"
+             [class.flow-commander__node--has-gate]="placedGates().has(node.id)"
+             tabindex="0"
+             role="button"
+             [attr.aria-label]="placedGates().has(node.id) ? 'Edit ' + placedGates().get(node.id)!.gateType + ' gate' : 'Place gate'"
+             (click)="onGateSlotClick(node.id)"
+             (contextmenu)="onGateRightClick($event, node.id)"
+             (keydown.enter)="onGateSlotClick(node.id)">
+            <rect [attr.x]="node.x - 30" [attr.y]="node.y - 20"
+                  width="60" height="40" rx="6" />
+            @if (placedGates().get(node.id); as gate) {
+              <text [attr.x]="node.x" [attr.y]="node.y + 5"
+                    class="flow-commander__gate-label" text-anchor="middle">
+                @{{ gate.gateType }}
+              </text>
+            } @else {
+              <text [attr.x]="node.x" [attr.y]="node.y + 6"
+                    class="flow-commander__slot-hint" text-anchor="middle">+</text>
+            }
+          </g>
+        }
+        @case ('junction') {
+          <circle class="flow-commander__junction"
+                  [attr.cx]="node.x" [attr.cy]="node.y" r="4" />
+        }
+        @case ('target-zone') {
+          <!-- Handled separately via targetZonePositions -->
+        }
+      }
+    }
+
+    <!-- Target zones -->
+    @for (tz of targetZonePositions(); track tz.id) {
+      <g class="flow-commander__target-zone">
+        <rect [attr.x]="tz.x - 40" [attr.y]="tz.y - 30"
+              width="80" height="60" rx="6" />
+        <text [attr.x]="tz.x" [attr.y]="tz.y - 14"
+              class="flow-commander__target-label" text-anchor="middle">{{ tz.label }}</text>
+        @if (tz.expectedColor) {
+          <text [attr.x]="tz.x" [attr.y]="tz.y + 4"
+                class="flow-commander__target-criteria" text-anchor="middle">{{ tz.expectedColor }}</text>
+        }
+        @if (tz.expectedType) {
+          <text [attr.x]="tz.x" [attr.y]="tz.y + 18"
+                class="flow-commander__target-criteria" text-anchor="middle">{{ tz.expectedType }}</text>
+        }
+      </g>
+    }
+
+    <!-- Cargo items (pre-simulation, near source nodes) -->
+    @if (!isSimulating()) {
+      @for (item of cargoItems(); track item.id) {
+        <g class="flow-commander__cargo-source">
+          <rect [attr.fill]="item.color"
+                [attr.x]="30" [attr.y]="50 + $index * 24"
+                [attr.width]="CARGO_POD_SIZE" [attr.height]="CARGO_POD_SIZE"
+                rx="3" />
+          <text [attr.x]="52" [attr.y]="50 + $index * 24 + 12"
+                class="flow-commander__cargo-label">{{ item.label }}</text>
+        </g>
+      }
+    }
+
+    <!-- Animating cargo pods -->
+    @for (cargo of animatingItems(); track cargo.item.id) {
+      <rect class="flow-commander__cargo-pod"
+            [class.flow-commander__cargo-pod--correct]="cargo.animationComplete && cargo.correct"
+            [class.flow-commander__cargo-pod--incorrect]="cargo.animationComplete && !cargo.correct"
+            [attr.fill]="cargo.item.color"
+            [attr.x]="getCargoX(cargo)"
+            [attr.y]="getCargoY(cargo)"
+            [attr.width]="CARGO_POD_SIZE"
+            [attr.height]="CARGO_POD_SIZE"
+            rx="3" />
+    }
+  </svg>
+
+  <!-- Condition editor popover (HTML, positioned over SVG) -->
+  @if (editingGateId()) {
+    <div class="flow-commander__condition-editor"
+         [style.left]="editorPopoverStyle().left"
+         [style.top]="editorPopoverStyle().top">
+      <nx-expression-builder
+        [mode]="conditionEditorMode()"
+        [variables]="conditionVariables"
+        [operators]="conditionOperators"
+        [value]="editingGateCondition()"
+        (expressionChange)="onConditionChange($event)" />
+      <button class="flow-commander__editor-close" (click)="closeConditionEditor()">Done</button>
+    </div>
+  }
+
+  <!-- Controls (HTML below the SVG) -->
+  <div class="flow-commander__controls">
+    <div class="flow-commander__gate-toolbox" role="radiogroup" aria-label="Gate type">
+      @for (gt of gateTypeOptions; track gt.type) {
+        <button class="flow-commander__gate-btn"
+                [class.flow-commander__gate-btn--active]="selectedGateType() === gt.type"
+                [style.--gate-color]="gt.color"
+                role="radio"
+                [attr.aria-checked]="selectedGateType() === gt.type"
+                (click)="selectGateType(gt.type)">
+          <span class="flow-commander__gate-key">{{ gt.key }}</span>
+          {{ gt.label }}
+        </button>
+      }
+    </div>
+    <div class="flow-commander__action-btns">
+      <button class="flow-commander__run-btn"
+              [disabled]="isSimulating()"
+              (click)="onRun()">
+        Run
+      </button>
+      <button class="flow-commander__reset-btn"
+              (click)="onReset()">
+        Reset
+      </button>
+    </div>
+  </div>
+</div>
