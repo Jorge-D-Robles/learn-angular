@@ -125,3 +125,4 @@
 [2026-03-08] T-2026-309: Reset HintService on minigame retry to prevent penalty carry-over — reset HintService on minigame retry to prevent penalty carry-over (claude)
 [2026-03-08] T-2026-311: Create integration test for MinigameEngine auto-pause on page visibility change — create integration test for MinigameEngine auto-pause on page visibility change (claude)
 [2026-03-08] T-2026-319: Wire registry scoreConfig.maxScore into MinigamePlayPage buildMinigameResult — wire registry scoreConfig.maxScore into MinigamePlayPage buildMinigameResult (claude)
+[2026-03-08] T-2026-318: Create MinigamePlayPage retry flow integration test — create MinigamePlayPage retry flow integration test (claude)

@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-318**: Create MinigamePlayPage retry flow integration test (Assigned: claude, Status: in-progress)
 
 
 

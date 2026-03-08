@@ -678,29 +678,6 @@ Acceptance criteria:
 - [ ] Responsive: hidden on mobile (bottom nav handles navigation; top bar is already tight)
 - [ ] Unit tests for: badge visibility with active streak, hidden with no streak
 
-### T-2026-318
-- Title: Create MinigamePlayPage retry flow integration test
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-309, T-2026-184
-- Blocked-by: —
-- Tags: testing, integration, minigame-play, retry, hint, combo
-- Refs: src/app/pages/minigame-play/minigame-play.ts
-
-T-2026-309 fixes HintService reset on retry, and T-2026-184 integrates ComboTrackerService with MinigameEngine. The retry flow involves resetting multiple services (hints, combo, engine state, completion flag). No integration test verifies the full retry pipeline: player fails/completes -> clicks retry -> all services reset -> new attempt starts clean. A regression in any reset step would silently corrupt scoring or progression.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/pages/minigame-play/minigame-play-retry.integration.spec.ts`
-- [ ] Test: complete level with hints used -> retry -> verify hintService.hasUsedHints() is false
-- [ ] Test: complete level with combo active -> retry -> verify comboTracker is reset to 0
-- [ ] Test: complete level -> retry -> complete again -> verify LevelCompletionService called twice (not blocked by completionFired)
-- [ ] Test: fail level -> retry -> verify engine status returns to Playing
-- [ ] Uses TestBed with real services where possible
-- Started: 2026-03-08
-
 ---
 
 ## P2 -- Foundations Bundle
