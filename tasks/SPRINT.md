@@ -11,6 +11,8 @@ Started: 2026-03-08
 
 ## Active
 
+- **T-2026-329**: Create integration test for AudioService with SettingsService sound toggle (Assigned: claude, Status: in-progress)
+
 
 
 
@@ -18,7 +20,6 @@ Started: 2026-03-08
 
 ## Queue
 
-- **T-2026-329**: Create integration test for AudioService with SettingsService sound toggle (Priority: medium, Size: S)
 - **T-2026-165**: Create barrel exports for audio and animation core modules (Priority: low, Size: S)
 - **T-2026-129**: Create EmptyStateComponent for no-content pages (Priority: low, Size: S)
 - **T-2026-130**: Create TooltipDirective for contextual help (Priority: low, Size: S)

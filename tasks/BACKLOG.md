@@ -688,8 +688,8 @@ Acceptance criteria:
 
 ### T-2026-329
 - Title: Create integration test for AudioService with SettingsService sound toggle
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -706,6 +706,7 @@ Acceptance criteria:
 - [ ] Test: when soundEnabled is false, AudioService.play() does NOT attempt playback
 - [ ] Test: toggling soundEnabled mid-session changes play behavior immediately
 - [ ] Uses real SettingsService (not mocked) with AudioService
+- Started: 2026-03-08
 
 ### T-2026-330
 - Title: Update architecture.md to document AudioService and remove stale rankUp note
