@@ -305,4 +305,51 @@ describe('HintService', () => {
       expect(service.getUsedHints().length).toBe(2);
     });
   });
+
+  // --- getNextHintPenalty ---
+
+  describe('getNextHintPenalty', () => {
+    it('should return penalty when hints remain', () => {
+      service.registerHints('level-1', [
+        { id: 'h1', text: 'Hint 1' },
+        { id: 'h2', text: 'Hint 2' },
+      ]);
+      service.configure({ maxScore: 1000, penaltyFraction: 0.25 });
+      expect(service.getNextHintPenalty('level-1')).toBe(250);
+    });
+
+    it('should return 0 when no hints remain', () => {
+      service.registerHints('level-1', [
+        { id: 'h1', text: 'Hint 1' },
+      ]);
+      service.configure({ maxScore: 1000, penaltyFraction: 0.25 });
+      service.requestHint('level-1');
+      expect(service.getNextHintPenalty('level-1')).toBe(0);
+    });
+
+    it('should return 0 for unregistered level', () => {
+      service.configure({ maxScore: 1000, penaltyFraction: 0.25 });
+      expect(service.getNextHintPenalty('unknown')).toBe(0);
+    });
+
+    it('should return 0 after reset', () => {
+      service.registerHints('level-1', [
+        { id: 'h1', text: 'Hint 1' },
+      ]);
+      service.configure({ maxScore: 1000, penaltyFraction: 0.25 });
+      service.reset();
+      // After reset, maxScore resets to 0, so penalty = 0 * 0.25 = 0
+      expect(service.getNextHintPenalty('level-1')).toBe(0);
+    });
+
+    it('should not consume a hint', () => {
+      service.registerHints('level-1', [
+        { id: 'h1', text: 'Hint 1' },
+        { id: 'h2', text: 'Hint 2' },
+      ]);
+      service.configure({ maxScore: 1000, penaltyFraction: 0.25 });
+      service.getNextHintPenalty('level-1');
+      expect(service.getRemainingHints('level-1')).toBe(2);
+    });
+  });
 });

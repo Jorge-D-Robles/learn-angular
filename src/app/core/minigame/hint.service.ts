@@ -105,6 +105,14 @@ export class HintService {
     return this._usedHints().length > 0;
   }
 
+  /** Returns the point cost for the next hint without consuming it. Returns 0 if no hints remain. */
+  getNextHintPenalty(levelId: string): number {
+    if (this.getRemainingHints(levelId) === 0) {
+      return 0;
+    }
+    return this._config.maxScore * this._config.penaltyFraction;
+  }
+
   /** Returns the number of hints not yet used for the given level. */
   getRemainingHints(levelId: string): number {
     const hints = this._hintRegistry.get(levelId);

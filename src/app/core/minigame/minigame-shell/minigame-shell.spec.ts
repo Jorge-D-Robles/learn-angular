@@ -33,9 +33,11 @@ const ICON_PROVIDERS = [
     [timeRemaining]="timeRemaining" [timerDuration]="timerDuration"
     [status]="status" [xpEarned]="xpEarned" [starRating]="starRating"
     [hintsAvailable]="hintsAvailable"
+    [hintCount]="hintCount" [hintPenalty]="hintPenalty" [activeHintText]="activeHintText"
     (pauseGame)="onPause()" (resumeGame)="onResume()" (restartGame)="onRestart()"
     (quit)="onQuit()" (retry)="onRetry()" (useHint)="onUseHint()"
     (nextLevel)="onNextLevel()" (replay)="onReplay()"
+    (requestHint)="onRequestHint()"
   ><p class="game-content">Game here</p></app-minigame-shell>`,
   imports: [MinigameShellComponent],
 })
@@ -49,6 +51,9 @@ class TestHost {
   xpEarned = 0;
   starRating = 0;
   hintsAvailable = false;
+  hintCount = 0;
+  hintPenalty = 0;
+  activeHintText = '';
 
   pauseCalled = false;
   resumeCalled = false;
@@ -58,6 +63,7 @@ class TestHost {
   useHintCalled = false;
   nextLevelCalled = false;
   replayCalled = false;
+  requestHintCalled = false;
 
   onPause(): void { this.pauseCalled = true; }
   onResume(): void { this.resumeCalled = true; }
@@ -67,6 +73,7 @@ class TestHost {
   onUseHint(): void { this.useHintCalled = true; }
   onNextLevel(): void { this.nextLevelCalled = true; }
   onReplay(): void { this.replayCalled = true; }
+  onRequestHint(): void { this.requestHintCalled = true; }
 }
 
 describe('MinigameShellComponent', () => {
@@ -408,5 +415,102 @@ describe('MinigameShellComponent', () => {
     const useHintBtn = Array.from(element.querySelectorAll('.level-failed__btn'))
       .find(b => b.textContent?.trim() === 'Use Hint');
     expect(useHintBtn).toBeTruthy();
+  });
+
+  // --- 28. Hint button hidden when hintCount is 0 and no active hint ---
+  it('should hide hint button when hintCount is 0 and no activeHintText', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.hintCount = 0;
+    fixture.componentInstance.activeHintText = '';
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(element.querySelector('.shell-hud__hint')).toBeNull();
+  });
+
+  // --- 29. Hint button visible when hintCount > 0 ---
+  it('should show hint button when hintCount > 0', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.hintCount = 3;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(element.querySelector('.shell-hud__hint')).toBeTruthy();
+  });
+
+  // --- 30. Hint badge shows remaining count ---
+  it('should show remaining hint count in badge', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.hintCount = 2;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const badge = element.querySelector('.shell-hud__hint-badge');
+    expect(badge?.textContent?.trim()).toBe('2');
+  });
+
+  // --- 31. Hint cost label shown ---
+  it('should show hint cost label when hintPenalty > 0 and hintCount > 0', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.hintCount = 1;
+    fixture.componentInstance.hintPenalty = 50;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const cost = element.querySelector('.shell-hud__hint-cost');
+    expect(cost?.textContent).toContain('-50 pts');
+  });
+
+  // --- 32. Hint cost label hidden when hintCount is 0 ---
+  it('should hide hint cost label when hintCount is 0', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.hintCount = 0;
+    fixture.componentInstance.activeHintText = 'still showing';
+    fixture.componentInstance.hintPenalty = 50;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(element.querySelector('.shell-hud__hint-cost')).toBeNull();
+  });
+
+  // --- 33. Hint button disabled when hintCount is 0 but activeHintText is showing ---
+  it('should disable hint button when hintCount is 0 but activeHintText is showing', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.hintCount = 0;
+    fixture.componentInstance.activeHintText = 'some text';
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const btn = element.querySelector('.shell-hud__hint') as HTMLButtonElement;
+    expect(btn).toBeTruthy();
+    expect(btn.disabled).toBe(true);
+  });
+
+  // --- 34. Click emits requestHint output ---
+  it('should emit requestHint when hint button is clicked', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.hintCount = 2;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const btn = element.querySelector('.shell-hud__hint') as HTMLButtonElement;
+    btn.click();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.requestHintCalled).toBe(true);
+  });
+
+  // --- 35. Hint popover shown when activeHintText is set ---
+  it('should show hint popover when activeHintText is set', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.hintCount = 1;
+    fixture.componentInstance.activeHintText = 'Try this';
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const popover = element.querySelector('.shell-hud__hint-popover');
+    expect(popover).toBeTruthy();
+    expect(popover?.textContent?.trim()).toBe('Try this');
+  });
+
+  // --- 36. Hint popover hidden when activeHintText is empty ---
+  it('should hide hint popover when activeHintText is empty', async () => {
+    const { fixture, element } = await createComponent(TestHost, { providers: [...ICON_PROVIDERS], detectChanges: false });
+    fixture.componentInstance.hintCount = 2;
+    fixture.componentInstance.activeHintText = '';
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(element.querySelector('.shell-hud__hint-popover')).toBeNull();
   });
 });

@@ -9,7 +9,7 @@ import { MinigameRegistryService } from '../../core/minigame/minigame-registry.s
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
 import { LevelLoaderService } from '../../core/levels/level-loader.service';
 import { LevelCompletionService, type LevelCompletionSummary } from '../../core/minigame/level-completion.service';
-import { HintService } from '../../core/minigame/hint.service';
+import { HintService, type HintResult } from '../../core/minigame/hint.service';
 import { MinigameEngine, type ActionResult } from '../../core/minigame/minigame-engine';
 import type { MinigameConfig } from '../../core/minigame/minigame.types';
 import { DifficultyTier, MinigameStatus } from '../../core/minigame/minigame.types';
@@ -108,6 +108,7 @@ function mockHintService(overrides: Partial<HintService> = {}) {
     useValue: {
       getRemainingHints: vi.fn().mockReturnValue(0),
       requestHint: vi.fn().mockReturnValue(null),
+      getNextHintPenalty: vi.fn().mockReturnValue(0),
       ...overrides,
     },
   };
@@ -784,6 +785,190 @@ describe('MinigamePlayPage', () => {
     await fixture.whenStable();
 
     expect(component.hintsAvailable()).toBe(false);
+    testEngine.destroy();
+  });
+
+  // --- 30. hintCount computed from HintService ---
+  it('should compute hintCount from HintService.getRemainingHints', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      hintService: {
+        getRemainingHints: vi.fn().mockReturnValue(3),
+        requestHint: vi.fn().mockReturnValue(null),
+        getNextHintPenalty: vi.fn().mockReturnValue(0),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.hintCount()).toBe(3);
+    testEngine.destroy();
+  });
+
+  // --- 31. hintPenalty computed from HintService ---
+  it('should compute hintPenalty from HintService.getNextHintPenalty', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      hintService: {
+        getRemainingHints: vi.fn().mockReturnValue(2),
+        requestHint: vi.fn().mockReturnValue(null),
+        getNextHintPenalty: vi.fn().mockReturnValue(250),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.hintPenalty()).toBe(250);
+    testEngine.destroy();
+  });
+
+  // --- 32. onRequestHint calls requestHint and sets activeHintText ---
+  it('should call requestHint and set activeHintText on onRequestHint', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const hintResult: HintResult = {
+      hint: { id: 'h1', text: 'Try using @Input' },
+      penalty: 250,
+      remainingHints: 1,
+    };
+    const requestHintSpy = vi.fn().mockReturnValue(hintResult);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      hintService: {
+        getRemainingHints: vi.fn().mockReturnValue(2),
+        requestHint: requestHintSpy,
+        getNextHintPenalty: vi.fn().mockReturnValue(250),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    component.onRequestHint();
+
+    expect(requestHintSpy).toHaveBeenCalledWith('ma-basic-01');
+    expect(component.activeHintText()).toBe('Try using @Input');
+    testEngine.destroy();
+  });
+
+  // --- 33. onRequestHint does nothing when not Playing ---
+  it('should not call requestHint when engine is not in Playing state', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const requestHintSpy = vi.fn().mockReturnValue(null);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      hintService: {
+        getRemainingHints: vi.fn().mockReturnValue(2),
+        requestHint: requestHintSpy,
+        getNextHintPenalty: vi.fn().mockReturnValue(0),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Pause the engine
+    testEngine.pause();
+    expect(testEngine.status()).toBe(MinigameStatus.Paused);
+
+    component.onRequestHint();
+
+    expect(requestHintSpy).not.toHaveBeenCalled();
+    testEngine.destroy();
+  });
+
+  // --- 34. activeHintText auto-clears after 5 seconds ---
+  describe('auto-dismiss hint text', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should auto-clear activeHintText after 5 seconds', async () => {
+      vi.useFakeTimers();
+      const testEngine = new TestEngine();
+      const factory = vi.fn().mockReturnValue(testEngine);
+      const hintResult: HintResult = {
+        hint: { id: 'h1', text: 'Auto-dismiss hint' },
+        penalty: 100,
+        remainingHints: 0,
+      };
+      const { fixture, component } = await setup({
+        registry: {
+          getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+          getEngineFactory: vi.fn().mockReturnValue(factory),
+        },
+        hintService: {
+          getRemainingHints: vi.fn().mockReturnValue(1),
+          requestHint: vi.fn().mockReturnValue(hintResult),
+          getNextHintPenalty: vi.fn().mockReturnValue(100),
+        },
+      });
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      component.onRequestHint();
+      expect(component.activeHintText()).toBe('Auto-dismiss hint');
+
+      vi.advanceTimersByTime(5000);
+      expect(component.activeHintText()).toBe('');
+
+      // Restore real timers and destroy fixture before engine to prevent
+      // LevelFailedComponent rendering without icon providers during teardown
+      vi.useRealTimers();
+      fixture.destroy();
+    });
+  });
+
+  // --- 35. 'H' keyboard shortcut triggers hint request ---
+  it("should trigger hint request when 'H' key is pressed", async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const hintResult: HintResult = {
+      hint: { id: 'h1', text: 'Keyboard hint' },
+      penalty: 50,
+      remainingHints: 1,
+    };
+    const requestHintSpy = vi.fn().mockReturnValue(hintResult);
+    const { fixture, component } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      hintService: {
+        getRemainingHints: vi.fn().mockReturnValue(2),
+        requestHint: requestHintSpy,
+        getNextHintPenalty: vi.fn().mockReturnValue(50),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // Dispatch 'h' keydown on document (real KeyboardShortcutService)
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'h' }));
+
+    expect(requestHintSpy).toHaveBeenCalledWith('ma-basic-01');
+    expect(component.activeHintText()).toBe('Keyboard hint');
     testEngine.destroy();
   });
 });

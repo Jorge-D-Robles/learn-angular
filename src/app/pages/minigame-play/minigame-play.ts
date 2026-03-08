@@ -9,6 +9,7 @@ import { LevelProgressionService } from '../../core/levels/level-progression.ser
 import { LevelLoaderService } from '../../core/levels/level-loader.service';
 import { LevelCompletionService, type LevelCompletionSummary } from '../../core/minigame/level-completion.service';
 import { HintService } from '../../core/minigame/hint.service';
+import { KeyboardShortcutService } from '../../core/minigame/keyboard-shortcut.service';
 import { MinigameEngine } from '../../core/minigame/minigame-engine';
 import { MinigameStatus, type MinigameId, type MinigameLevel, type MinigameResult } from '../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
@@ -49,6 +50,9 @@ import type { LevelDefinition } from '../../core/levels/level.types';
           [xpEarned]="completionSummary()?.xpEarned ?? 0"
           [starRating]="completionSummary()?.starRating ?? 0"
           [hintsAvailable]="hintsAvailable()"
+          [hintCount]="hintCount()"
+          [hintPenalty]="hintPenalty()"
+          [activeHintText]="activeHintText()"
           (pauseGame)="onPause()"
           (resumeGame)="onResume()"
           (quit)="onQuit()"
@@ -57,6 +61,7 @@ import type { LevelDefinition } from '../../core/levels/level.types';
           (useHint)="onUseHint()"
           (replay)="onReplay()"
           (nextLevel)="onNextLevel()"
+          (requestHint)="onRequestHint()"
         >
           <ng-container *ngComponentOutlet="resolvedComponent()!" />
         </app-minigame-shell>
@@ -72,6 +77,7 @@ export class MinigamePlayPage {
   private readonly levelLoader = inject(LevelLoaderService);
   private readonly levelCompletion = inject(LevelCompletionService);
   private readonly hintService = inject(HintService);
+  private readonly keyboardShortcuts = inject(KeyboardShortcutService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly engine = signal<MinigameEngine<unknown> | null>(null);
@@ -79,6 +85,7 @@ export class MinigamePlayPage {
   private currentLevelData: MinigameLevel<unknown> | null = null;
   private completionFired = false;
   private loadSub: Subscription | null = null;
+  private hintDismissTimer: ReturnType<typeof setTimeout> | null = null;
 
   readonly loadingStatus = MinigameStatus.Loading;
 
@@ -128,6 +135,24 @@ export class MinigamePlayPage {
     return this.hintService.getRemainingHints(levelId) > 0;
   });
 
+  readonly hintCount = computed(() => {
+    const eng = this.engine();
+    if (!eng) return 0;
+    const levelId = eng.currentLevel();
+    if (!levelId) return 0;
+    return this.hintService.getRemainingHints(levelId);
+  });
+
+  readonly hintPenalty = computed(() => {
+    const eng = this.engine();
+    if (!eng) return 0;
+    const levelId = eng.currentLevel();
+    if (!levelId) return 0;
+    return this.hintService.getNextHintPenalty(levelId);
+  });
+
+  readonly activeHintText = signal('');
+
   constructor() {
     // Engine lifecycle effect: watches route params and loads the engine
     effect(() => {
@@ -158,6 +183,9 @@ export class MinigamePlayPage {
             eng.initialize(level);
             eng.start();
             this.engine.set(eng);
+
+            // Register hint keyboard shortcut
+            this.keyboardShortcuts.register('h', 'Use Hint', () => this.onRequestHint());
           },
           error: (err: unknown) => {
             console.error('Failed to load level:', err);
@@ -190,6 +218,9 @@ export class MinigamePlayPage {
     this.destroyRef.onDestroy(() => {
       this.loadSub?.unsubscribe();
       this.engine()?.destroy();
+      if (this.hintDismissTimer) clearTimeout(this.hintDismissTimer);
+      // WARNING: unregisterAll() clears ALL shortcuts. If other pages register shortcuts, switch to per-key unregister.
+      this.keyboardShortcuts.unregisterAll();
     });
   }
 
@@ -213,6 +244,21 @@ export class MinigamePlayPage {
       this.hintService.requestHint(levelId);
     }
     this.onRetry();
+  }
+
+  onRequestHint(): void {
+    const eng = this.engine();
+    if (!eng || eng.status() !== MinigameStatus.Playing) return;
+    const levelId = eng.currentLevel();
+    if (!levelId) return;
+    if (this.hintService.getRemainingHints(levelId) === 0) return;
+    const result = this.hintService.requestHint(levelId);
+    if (result) {
+      this.activeHintText.set(result.hint.text);
+      // Auto-dismiss hint text after 5 seconds
+      if (this.hintDismissTimer) clearTimeout(this.hintDismissTimer);
+      this.hintDismissTimer = setTimeout(() => this.activeHintText.set(''), 5000);
+    }
   }
 
   onRetry(): void {

@@ -22,6 +22,27 @@ import { MinigameStatus } from '../minigame.types';
             </span>
           }
         </div>
+        @if (hintCount() > 0 || activeHintText()) {
+          <div class="shell-hud__hint-container">
+            <button
+              class="shell-hud__hint"
+              type="button"
+              [disabled]="hintCount() === 0"
+              (click)="requestHint.emit()"
+              [attr.aria-label]="'Use hint, ' + hintCount() + ' remaining, costs ' + hintPenalty() + ' points'">
+              Hint
+              <span class="shell-hud__hint-badge">{{ hintCount() }}</span>
+              @if (hintPenalty() > 0 && hintCount() > 0) {
+                <span class="shell-hud__hint-cost">(-{{ hintPenalty() }} pts)</span>
+              }
+            </button>
+            @if (activeHintText()) {
+              <div class="shell-hud__hint-popover" role="status" aria-live="polite">
+                {{ activeHintText() }}
+              </div>
+            }
+          </div>
+        }
         <button class="shell-hud__pause" type="button" (click)="pauseGame.emit()" aria-label="Pause">
         </button>
       </div>
@@ -82,6 +103,9 @@ export class MinigameShellComponent {
   readonly xpEarned = input(0);
   readonly starRating = input(0);
   readonly hintsAvailable = input(false);
+  readonly hintCount = input(0);
+  readonly hintPenalty = input(0);
+  readonly activeHintText = input('');
 
   // --- Signal outputs ---
   readonly pauseGame = output();
@@ -92,6 +116,7 @@ export class MinigameShellComponent {
   readonly useHint = output();
   readonly nextLevel = output();
   readonly replay = output();
+  readonly requestHint = output();
 
   // --- Template enum references ---
   readonly paused = MinigameStatus.Paused;
