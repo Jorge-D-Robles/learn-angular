@@ -1,3 +1,6 @@
+// No circular dep: score-calculation.service.ts does not import from this file
+import type { ScoreConfig } from './score-calculation.service';
+
 /**
  * Union of all 12 minigame identifiers.
  * Kebab-case values match URL routing slugs (e.g., `/minigames/module-assembly`).
@@ -41,6 +44,14 @@ export enum MinigameStatus {
   Lost = 'lost',
 }
 
+/** Neutral default scoring weights — equal importance for time, accuracy, and combo. */
+export const DEFAULT_SCORE_CONFIG: ScoreConfig = {
+  timeWeight: 1,
+  accuracyWeight: 1,
+  comboWeight: 1,
+  maxScore: 1000,
+};
+
 /** Static configuration for a registered minigame. Immutable after registration. */
 export interface MinigameConfig {
   /** Unique identifier for this minigame. */
@@ -55,6 +66,8 @@ export interface MinigameConfig {
   readonly totalLevels: number;
   /** Difficulty tiers this minigame supports. */
   readonly difficultyTiers: readonly DifficultyTier[];
+  /** Per-game scoring weights and ceiling. Optional for backward compatibility. */
+  readonly scoreConfig?: ScoreConfig;
 }
 
 /**

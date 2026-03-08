@@ -7,6 +7,7 @@ import {
   MinigameLevel,
   MinigameState,
   MinigameResult,
+  DEFAULT_SCORE_CONFIG,
 } from './minigame.types';
 
 // --- Compile-time type checks ---
@@ -134,6 +135,17 @@ describe('PlayMode', () => {
   });
 });
 
+describe('DEFAULT_SCORE_CONFIG', () => {
+  it('should have neutral equal weights', () => {
+    expect(DEFAULT_SCORE_CONFIG).toEqual({
+      timeWeight: 1,
+      accuracyWeight: 1,
+      comboWeight: 1,
+      maxScore: 1000,
+    });
+  });
+});
+
 describe('MinigameConfig', () => {
   it('should accept a valid config object', () => {
     const config: MinigameConfig = {
@@ -161,6 +173,24 @@ describe('MinigameConfig', () => {
       DifficultyTier.Advanced,
       DifficultyTier.Boss,
     ]);
+  });
+
+  it('should accept scoreConfig when provided', () => {
+    const config: MinigameConfig = {
+      id: 'module-assembly',
+      name: 'Module Assembly',
+      description: 'Build Angular modules on a conveyor belt',
+      angularTopic: 'Components & Templates',
+      totalLevels: 18,
+      difficultyTiers: [DifficultyTier.Basic],
+      scoreConfig: { timeWeight: 10, accuracyWeight: 100, comboWeight: 25, maxScore: 1000 },
+    };
+
+    expect(config.scoreConfig).toBeDefined();
+    expect(config.scoreConfig!.timeWeight).toBe(10);
+    expect(config.scoreConfig!.accuracyWeight).toBe(100);
+    expect(config.scoreConfig!.comboWeight).toBe(25);
+    expect(config.scoreConfig!.maxScore).toBe(1000);
   });
 });
 

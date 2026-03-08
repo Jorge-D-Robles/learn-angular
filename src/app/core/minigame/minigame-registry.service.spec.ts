@@ -2,7 +2,7 @@ import {
   MinigameRegistryService,
   DEFAULT_MINIGAME_CONFIGS,
 } from './minigame-registry.service';
-import type { MinigameId, MinigameConfig } from './minigame.types';
+import { DEFAULT_SCORE_CONFIG, type MinigameId, type MinigameConfig } from './minigame.types';
 import { MinigameEngine, type ActionResult } from './minigame-engine';
 
 describe('MinigameRegistryService', () => {
@@ -192,6 +192,58 @@ describe('MinigameRegistryService', () => {
 
     it('should pre-register with null engine factories', () => {
       expect(service.getEngineFactory('module-assembly')).toBeNull();
+    });
+  });
+
+  // --- scoreConfig tests ---
+
+  describe('scoreConfig on DEFAULT_MINIGAME_CONFIGS', () => {
+    it('should have scoreConfig defined on all 12 default configs', () => {
+      for (const config of DEFAULT_MINIGAME_CONFIGS) {
+        expect(config.scoreConfig).toBeDefined();
+      }
+    });
+
+    it('should have spec-derived weights for module-assembly (NOT default)', () => {
+      const ma = DEFAULT_MINIGAME_CONFIGS.find(c => c.id === 'module-assembly')!;
+      expect(ma.scoreConfig).toEqual({
+        // formula from docs/minigames/01-module-assembly.md
+        timeWeight: 10,
+        accuracyWeight: 100,
+        comboWeight: 25,
+        maxScore: 1000,
+      });
+    });
+
+    it('should use DEFAULT_SCORE_CONFIG by reference for all non-module-assembly configs', () => {
+      const nonMa = DEFAULT_MINIGAME_CONFIGS.filter(c => c.id !== 'module-assembly');
+      expect(nonMa.length).toBe(11);
+      for (const config of nonMa) {
+        expect(config.scoreConfig).toBe(DEFAULT_SCORE_CONFIG);
+      }
+    });
+  });
+
+  describe('scoreConfig via getConfig()', () => {
+    it('should return scoreConfig for a registered game', () => {
+      const config = service.getConfig('module-assembly');
+      expect(config?.scoreConfig).toBeDefined();
+      expect(config?.scoreConfig?.maxScore).toBe(1000);
+    });
+
+    it('should preserve custom scoreConfig after register()', () => {
+      const customScoreConfig = { timeWeight: 5, accuracyWeight: 50, comboWeight: 15, maxScore: 500 };
+      const config: MinigameConfig = {
+        id: 'wire-protocol',
+        name: 'Wire Protocol',
+        description: 'test',
+        angularTopic: 'Data Binding',
+        totalLevels: 18,
+        difficultyTiers: [],
+        scoreConfig: customScoreConfig,
+      };
+      service.register(config, null);
+      expect(service.getConfig('wire-protocol')?.scoreConfig).toBe(customScoreConfig);
     });
   });
 

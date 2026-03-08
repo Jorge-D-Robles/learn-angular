@@ -651,8 +651,8 @@ Acceptance criteria:
 
 ### T-2026-302
 - Title: Add MinigameScoreConfig to MinigameConfig for per-game scoring parameters
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P1
@@ -670,6 +670,7 @@ Acceptance criteria:
 - [ ] MinigamePlayPage can read scoreConfig from registry to pass to ScoreCalculationService
 - [ ] Existing tests updated for new field
 - [ ] Build passes with no type errors
+- Started: 2026-03-08
 
 ### T-2026-303
 - Title: Add shared components barrel exports for SvgPort and SvgWireRenderer
@@ -4474,4 +4475,23 @@ Acceptance criteria:
 - [ ] `onRetry()` calls `hintService.reset()` before re-initializing the engine
 - [ ] Unit test: after retry, `hintService.hasUsedHints()` returns false
 - [ ] Unit test: after retry with hints used, completing level awards full XP (no carry-over penalty)
+
+### T-2026-319
+- Title: Wire registry scoreConfig.maxScore into MinigamePlayPage buildMinigameResult
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-302
+- Blocked-by: —
+- Tags: scoring, minigame-framework, minigame-play
+- Refs: src/app/pages/minigame-play/minigame-play.ts, src/app/core/minigame/minigame-registry.service.ts
+
+`MinigamePlayPage.buildMinigameResult()` currently reads `maxScore` from `eng.config.maxScore` (engine-level, hardcoded 1000). Now that per-game `scoreConfig` exists on `MinigameConfig` (T-2026-302), the page should prefer `scoreConfig.maxScore` from the registry to prevent divergence between registry and engine config.
+
+Acceptance criteria:
+- [ ] `buildMinigameResult()` uses `registryConfig.scoreConfig?.maxScore` when available, falling back to `eng.config.maxScore`
+- [ ] Unit test: score and star rating use registry scoreConfig.maxScore when it differs from engine config
+- [ ] Unit test: falls back to engine config maxScore when scoreConfig is undefined
 

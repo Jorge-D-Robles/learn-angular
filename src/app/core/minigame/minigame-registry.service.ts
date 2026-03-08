@@ -1,5 +1,5 @@
 import { Injectable, Type } from '@angular/core';
-import { DifficultyTier, type MinigameConfig, type MinigameId } from './minigame.types';
+import { DEFAULT_SCORE_CONFIG, DifficultyTier, type MinigameConfig, type MinigameId } from './minigame.types';
 import type { MinigameEngine } from './minigame-engine';
 
 interface RegistryEntry {
@@ -17,6 +17,8 @@ export const DEFAULT_MINIGAME_CONFIGS: readonly MinigameConfig[] = [
     angularTopic: 'Components',
     totalLevels: 18,
     difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+    // formula from docs/minigames/01-module-assembly.md
+    scoreConfig: { timeWeight: 10, accuracyWeight: 100, comboWeight: 25, maxScore: 1000 },
   },
   {
     id: 'wire-protocol',
@@ -25,6 +27,7 @@ export const DEFAULT_MINIGAME_CONFIGS: readonly MinigameConfig[] = [
     angularTopic: 'Data Binding (interpolation, property, event, two-way)',
     totalLevels: 18,
     difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+    scoreConfig: DEFAULT_SCORE_CONFIG, // placeholder — tune when engine is built
   },
   {
     id: 'flow-commander',
@@ -33,6 +36,7 @@ export const DEFAULT_MINIGAME_CONFIGS: readonly MinigameConfig[] = [
     angularTopic: 'Control Flow (@if, @for, @switch)',
     totalLevels: 18,
     difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+    scoreConfig: DEFAULT_SCORE_CONFIG, // placeholder — tune when engine is built
   },
   {
     id: 'signal-corps',
@@ -41,6 +45,7 @@ export const DEFAULT_MINIGAME_CONFIGS: readonly MinigameConfig[] = [
     angularTopic: 'Input/Output Properties',
     totalLevels: 18,
     difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+    scoreConfig: DEFAULT_SCORE_CONFIG, // placeholder — tune when engine is built
   },
   {
     id: 'corridor-runner',
@@ -49,6 +54,7 @@ export const DEFAULT_MINIGAME_CONFIGS: readonly MinigameConfig[] = [
     angularTopic: 'Routing',
     totalLevels: 18,
     difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+    scoreConfig: DEFAULT_SCORE_CONFIG, // placeholder — tune when engine is built
   },
   {
     id: 'terminal-hack',
@@ -57,6 +63,7 @@ export const DEFAULT_MINIGAME_CONFIGS: readonly MinigameConfig[] = [
     angularTopic: 'Forms (template-driven and reactive)',
     totalLevels: 21,
     difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+    scoreConfig: DEFAULT_SCORE_CONFIG, // placeholder — tune when engine is built
   },
   {
     id: 'power-grid',
@@ -65,6 +72,7 @@ export const DEFAULT_MINIGAME_CONFIGS: readonly MinigameConfig[] = [
     angularTopic: 'Services & Dependency Injection',
     totalLevels: 18,
     difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+    scoreConfig: DEFAULT_SCORE_CONFIG, // placeholder — tune when engine is built
   },
   {
     id: 'data-relay',
@@ -73,6 +81,7 @@ export const DEFAULT_MINIGAME_CONFIGS: readonly MinigameConfig[] = [
     angularTopic: 'Pipes',
     totalLevels: 18,
     difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+    scoreConfig: DEFAULT_SCORE_CONFIG, // placeholder — tune when engine is built
   },
   {
     id: 'reactor-core',
@@ -81,6 +90,7 @@ export const DEFAULT_MINIGAME_CONFIGS: readonly MinigameConfig[] = [
     angularTopic: 'Signals',
     totalLevels: 21,
     difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+    scoreConfig: DEFAULT_SCORE_CONFIG, // placeholder — tune when engine is built
   },
   {
     id: 'deep-space-radio',
@@ -89,6 +99,7 @@ export const DEFAULT_MINIGAME_CONFIGS: readonly MinigameConfig[] = [
     angularTopic: 'HTTP Client & Interceptors',
     totalLevels: 18,
     difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+    scoreConfig: DEFAULT_SCORE_CONFIG, // placeholder — tune when engine is built
   },
   {
     id: 'system-certification',
@@ -97,6 +108,7 @@ export const DEFAULT_MINIGAME_CONFIGS: readonly MinigameConfig[] = [
     angularTopic: 'Testing',
     totalLevels: 18,
     difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+    scoreConfig: DEFAULT_SCORE_CONFIG, // placeholder — tune when engine is built
   },
   {
     id: 'blast-doors',
@@ -105,6 +117,7 @@ export const DEFAULT_MINIGAME_CONFIGS: readonly MinigameConfig[] = [
     angularTopic: 'Lifecycle Hooks & Custom Directives',
     totalLevels: 18,
     difficultyTiers: [DifficultyTier.Basic, DifficultyTier.Intermediate, DifficultyTier.Advanced, DifficultyTier.Boss],
+    scoreConfig: DEFAULT_SCORE_CONFIG, // placeholder — tune when engine is built
   },
 ];
 
