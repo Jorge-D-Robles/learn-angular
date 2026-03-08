@@ -404,29 +404,6 @@ Acceptance criteria:
 - [ ] Exported from shared pipes barrel
 - [ ] Unit tests for: all three formats, edge cases (0, sub-minute, multi-hour)
 
-### T-2026-175
-- Title: Integrate LevelResultsComponent with MinigameShell completion flow
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-159, T-2026-162, T-2026-018
-- Blocked-by: —
-- Tags: integration, minigame-framework, level-completion, ui
-- Refs: docs/ux/navigation.md
-
-LevelResultsComponent (T-2026-159) provides the post-level display and MinigameShell (T-2026-018) has a completion overlay. This integration ticket wires them together: when the engine signals completion, the shell transitions to the results view, passing score/XP data, and the results component's navigation events (next/replay/quit) drive shell behavior.
-
-Acceptance criteria:
-- [ ] MinigameShell's completion overlay renders `<nx-level-results>` component
-- [ ] LevelCompletionService result data piped into LevelResultsComponent inputs
-- [ ] "Next Level" event loads the next level via LevelLoaderService and resets engine
-- [ ] "Replay" event resets engine with same level data
-- [ ] "Level Select" event navigates to `/minigames/:gameId`
-- [ ] Previous best score loaded from LevelProgressionService for comparison
-- [ ] Unit tests for: results display on completion, next level loading, replay reset, navigation
-
 ### T-2026-184
 - Title: Integrate ComboTrackerService with MinigameEngine base class
 - Status: todo
@@ -946,6 +923,156 @@ AC:
 - [ ] Engine stores reference to last-used level data for reset
 - [ ] Unit tests for reset behavior
 - [ ] Update MinigamePlayPage.onRetry() to use `engine.reset()` instead of manual initialize+start
+
+### T-2026-240
+- Title: Add MinigameShell timer color transitions for time pressure feedback
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-018, T-2026-007
+- Blocked-by: —
+- Tags: ui, minigame-framework, timer, visual-feedback
+- Refs: docs/ux/visual-style.md, src/app/core/minigame/minigame-shell/minigame-shell.ts
+
+Visual style guide specifies timer displays should transition: "Sensor Green (safe) -> Alert Orange (warning) -> Emergency Red (critical)." MinigameShell has a timer display but currently uses a single color. This ticket adds dynamic color transitions based on remaining time percentage.
+
+Acceptance criteria:
+- [ ] Timer text color changes based on remaining time: >50% = Sensor Green, 25-50% = Alert Orange, <25% = Emergency Red
+- [ ] Transition thresholds configurable via inputs (with sensible defaults)
+- [ ] Timer pulses/flashes when in critical range (<10%)
+- [ ] Respects `prefers-reduced-motion` (disable pulse, keep color change)
+- [ ] Unit tests for: color at each threshold, pulse activation, reduced motion behavior
+
+### T-2026-241
+- Title: Create P1 core services integration test
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P1
+- Depends: T-2026-113, T-2026-020, T-2026-021, T-2026-022, T-2026-023, T-2026-027
+- Blocked-by: —
+- Tags: testing, integration, core-engine, progression
+- Refs: docs/progression.md, docs/overview.md
+
+No integration test validates that the core progression services work together end-to-end: completing a level via LevelCompletionService should update LevelProgressionService scores, award XP via XpService, update mastery via MasteryService, refresh SpacedRepetitionService timers, and apply streak multiplier via StreakService. Each service has unit tests, but the orchestration has no integration coverage.
+
+Acceptance criteria:
+- [ ] Integration test file at `src/app/core/integration/core-progression.integration.spec.ts`
+- [ ] Test: complete a level -> LevelProgressionService records score -> XpService adds XP -> MasteryService updates mastery
+- [ ] Test: streak active -> XP calculation includes streak multiplier
+- [ ] Test: topic degraded -> complete refresher -> SpacedRepetitionService resets degradation timer
+- [ ] Test: level completion triggers XP notification
+- [ ] Test: rank up detected when XP crosses threshold
+- [ ] All tests use real service instances (not mocks) to verify integration
+
+### T-2026-242
+- Title: Wire SettingsService animationSpeed to AnimationService duration multiplier
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-052, T-2026-039
+- Blocked-by: —
+- Tags: integration, settings, animation, ui
+- Refs: docs/ux/navigation.md, docs/ux/visual-style.md
+
+Navigation.md Settings page specifies "Animation speed" as a user preference. SettingsService (completed) has an animationSpeed field and AnimationService (T-2026-052) defines ANIMATION_DURATIONS constants. But no ticket wires the animation speed setting to actually scale animation durations. Without this, the speed selector is cosmetic only.
+
+Acceptance criteria:
+- [ ] AnimationService reads SettingsService.settings().animationSpeed
+- [ ] Animation durations scaled by speed setting: 'normal' = 1x, 'fast' = 0.5x, 'off' = 0ms
+- [ ] All reusable animation triggers use scaled durations
+- [ ] Changing the setting reactively updates animation behavior
+- [ ] Unit tests for: duration scaling at each speed setting, reactive updates
+
+### T-2026-248
+- Title: Create P1 MinigameShell + engine lifecycle E2E smoke test
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P1
+- Depends: T-2026-223, T-2026-175
+- Blocked-by: —
+- Tags: testing, e2e, minigame-framework, core-engine
+- Refs: docs/overview.md, playwright.config.ts
+
+The existing E2E tests only cover basic routing (dashboard + 404). No E2E test validates that the minigame framework core works: navigating to a minigame route, seeing the shell render with HUD elements (score, timer), and verifying the page structure. This is critical before P2 builds real minigames on top.
+
+Acceptance criteria:
+- [ ] Playwright test at `e2e/minigame-shell.spec.ts`
+- [ ] Test: navigate to `/minigames/module-assembly/level/1` (or any registered game)
+- [ ] Test: verify MinigameShell renders with HUD elements (score display, timer, hint button)
+- [ ] Test: verify loading/error states render correctly for invalid gameId
+- [ ] Test runs in CI (GitHub Actions)
+- [ ] Uses production build (matching existing e2e config)
+
+### T-2026-249
+- Title: Create StreakRewardService for 7-day streak milestones
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-027, T-2026-021
+- Blocked-by: —
+- Tags: gamification, streak, rewards, service
+- Refs: docs/progression.md, docs/research/gamification-patterns.md
+
+Progression.md specifies "7-day streak rewards" under Daily Challenges. Gamification research mentions streak psychology and capping at +50% after 5 days. StreakService (T-2026-027) tracks streak count and multiplier, but no ticket implements the reward mechanic for hitting 7-day milestones (bonus XP, special notification, or badge trigger).
+
+Acceptance criteria:
+- [ ] `StreakRewardService` at `src/app/core/progression/streak-reward.service.ts`
+- [ ] `checkMilestoneReward(streakDays)`: returns a reward definition if streak hits a milestone (7, 14, 30 days)
+- [ ] 7-day milestone: 100 bonus XP + "Weekly Warrior" notification
+- [ ] 14-day milestone: 200 bonus XP
+- [ ] 30-day milestone: 500 bonus XP
+- [ ] Awards bonus XP via XpService.addXp()
+- [ ] Shows notification via XpNotificationService
+- [ ] Rewards only awarded once per milestone (persisted via StatePersistenceService)
+- [ ] Unit tests for: milestone detection, bonus XP award, no re-award, notification
+
+### T-2026-250
+- Title: Add StreakRewardService to progression barrel export
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-249
+- Blocked-by: —
+- Tags: infrastructure, barrel-export, conventions
+- Refs: src/app/core/progression/index.ts
+
+StreakRewardService (T-2026-249) will create a file in the progression directory. Per conventions, all services should be exported from their directory barrel.
+
+Acceptance criteria:
+- [ ] `src/app/core/progression/index.ts` updated to export `StreakRewardService`
+- [ ] Build passes with updated barrel
+
+### T-2026-251
+- Title: Wire StreakRewardService milestone check to StreakService daily play recording
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P1
+- Depends: T-2026-249, T-2026-027
+- Blocked-by: —
+- Tags: integration, streak, rewards
+- Refs: docs/progression.md
+
+StreakRewardService (T-2026-249) checks for milestones and StreakService (T-2026-027) records daily play. No ticket connects them: when StreakService.recordDailyPlay() updates the streak count, StreakRewardService.checkMilestoneReward() should be called to evaluate and award milestone bonuses.
+
+Acceptance criteria:
+- [ ] After StreakService.recordDailyPlay() updates streak, StreakRewardService is notified
+- [ ] If a milestone is reached, bonus XP is awarded and notification shown
+- [ ] Integration test: record 7 consecutive days, verify 100 XP bonus awarded
+- [ ] Unit tests for: milestone trigger on streak update, no trigger when below milestone
 
 ---
 
@@ -2083,6 +2210,258 @@ Acceptance criteria:
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: locked/unlocked rendering, star display, best score, click event
 
+### T-2026-244
+- Title: Create ConveyorBeltService for Module Assembly conveyor belt mechanics
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: M
+- Milestone: P2
+- Depends: T-2026-017, T-2026-058
+- Blocked-by: —
+- Tags: minigame, module-assembly, service, conveyor-belt
+- Refs: docs/minigames/01-module-assembly.md
+
+Module Assembly's core mechanic is a conveyor belt that scrolls parts from right to left. The engine (T-2026-059) needs to manage belt state: parts queue, scroll speed, part positions, and belt exhaustion. Extracting conveyor belt logic into a dedicated service keeps the engine class focused on game rules (scoring, validation) and makes the belt mechanics testable independently.
+
+Acceptance criteria:
+- [ ] `ConveyorBeltService` at `src/app/features/minigames/module-assembly/conveyor-belt.service.ts`
+- [ ] `parts` signal: current list of parts on the belt with positions
+- [ ] `beltSpeed` signal: configurable scroll speed (pixels/second)
+- [ ] `addPart(part)`: adds a part to the belt queue
+- [ ] `tick(deltaTime)`: advances all part positions by speed * delta
+- [ ] `removePart(partId)`: removes a part from the belt (picked up by player)
+- [ ] `isExhausted` computed signal: true when all parts have scrolled past the belt end
+- [ ] `reset(parts, speed)`: resets belt with new level data
+- [ ] Unit tests for: part movement, speed configuration, exhaustion detection, removal
+
+### T-2026-245
+- Title: Wire ExpressionBuilderComponent into Flow Commander gate configuration
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-160, T-2026-067
+- Blocked-by: —
+- Tags: integration, minigame, flow-commander, expression-builder
+- Refs: docs/minigames/03-flow-commander.md
+
+Flow Commander spec says "Condition editor -- simplified expression builder (not raw code at first)" for basic levels, graduating to "raw expression input at advanced levels." ExpressionBuilderComponent (T-2026-160, completed) provides guided/raw modes. But no ticket explicitly wires it into the Flow Commander gate configuration UI.
+
+Acceptance criteria:
+- [ ] FlowCommanderComponent uses ExpressionBuilderComponent for gate condition editing
+- [ ] Basic/Intermediate tiers: ExpressionBuilderComponent in guided mode
+- [ ] Advanced tier: ExpressionBuilderComponent in raw mode
+- [ ] Gate click opens condition panel with the expression builder
+- [ ] Configured expression stored in gate state for simulation
+- [ ] Unit tests for: expression builder rendering in gate config, mode switching by tier
+
+### T-2026-246
+- Title: Wire StationVisualizationComponent into DashboardPage
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-114, T-2026-078
+- Blocked-by: —
+- Tags: integration, dashboard, station-visualization
+- Refs: docs/ux/navigation.md, docs/progression.md
+
+Navigation.md specifies the dashboard includes a "Station visualization with module glow states (0-5 star mastery)." StationVisualizationComponent (T-2026-114) creates the visual map and DashboardPage (T-2026-078) creates the dashboard. No ticket wires them together.
+
+Acceptance criteria:
+- [ ] DashboardPage renders StationVisualizationComponent
+- [ ] masteryData input populated from MasteryService mastery signals
+- [ ] moduleClicked event navigates to `/minigames/:gameId`
+- [ ] Visualization updates reactively when mastery changes
+- [ ] Unit tests for: visualization rendering, mastery data binding, click navigation
+
+### T-2026-247
+- Title: Wire StreakBadgeComponent into ProfilePage
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-133, T-2026-079
+- Blocked-by: —
+- Tags: integration, profile, streak, ui
+- Refs: docs/ux/navigation.md, docs/progression.md
+
+Navigation.md specifies the profile page includes a "Streak counter." StreakBadgeComponent (T-2026-133) creates the visual badge and ProfilePage (T-2026-079) creates the profile page. No ticket wires the badge component into the page with live StreakService data.
+
+Acceptance criteria:
+- [ ] ProfilePage renders StreakBadgeComponent
+- [ ] currentStreak input bound to StreakService.displayStreak signal
+- [ ] multiplier input bound to StreakService.multiplier signal
+- [ ] Badge updates reactively when streak changes
+- [ ] Unit tests for: badge rendering with streak data, reactive updates
+
+### T-2026-254
+- Title: Register story mission content with StoryMissionContentService for P2 missions
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-074, T-2026-166
+- Blocked-by: —
+- Tags: integration, story-missions, content-loading, phase-1
+- Refs: docs/curriculum.md
+
+T-2026-074 creates the mission content data and T-2026-166 creates StoryMissionContentService. No ticket registers the Phase 1 mission content with the service so StoryMissionPage can load it by chapterId.
+
+Acceptance criteria:
+- [ ] Phase 1 mission content (Ch 1-10) registered with StoryMissionContentService
+- [ ] `getMissionContent(1)` through `getMissionContent(10)` return valid content
+- [ ] Registration happens at app initialization or on first access
+- [ ] Unit tests for: content loading for each chapter, invalid chapterId handling
+
+### T-2026-255
+- Title: Create FlowCommander pipeline graph data model
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-019
+- Blocked-by: —
+- Tags: minigame, flow-commander, data-model, pipeline
+- Refs: docs/minigames/03-flow-commander.md
+
+Flow Commander's tech notes say "Pipeline is a directed graph; gates are nodes with configurable routing logic." No ticket defines the graph data model needed before level data or the engine can be built.
+
+Acceptance criteria:
+- [ ] `PipelineGraph` interface at `src/app/features/minigames/flow-commander/pipeline.types.ts`
+- [ ] `PipelineNode` type: junction | gate-slot | target-zone | source, with position (x, y)
+- [ ] `PipelineEdge` type: connects two nodes with directional flow
+- [ ] `GateType` enum: if, for, switch
+- [ ] `GateConfig` interface: gateType, condition (expression string), inputs, outputs
+- [ ] `CargoItem` interface: id, color, label, type, priority (properties visible to the player)
+- [ ] `TargetZone` interface: expected item filter criteria
+- [ ] Exported from flow-commander barrel
+- [ ] Unit tests for: type validation, graph connectivity helpers
+
+### T-2026-256
+- Title: Create SignalCorps tower configuration data model
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-019
+- Blocked-by: —
+- Tags: minigame, signal-corps, data-model, tower-defense
+- Refs: docs/minigames/04-signal-corps.md
+
+Signal Corps' tech notes say tower config is `{ inputs: [{name, type, required, transform}], outputs: [{name, payloadType}] }`. No ticket defines this data model separately.
+
+Acceptance criteria:
+- [ ] `TowerConfig` interface at `src/app/features/minigames/signal-corps/signal-corps.types.ts`
+- [ ] `TowerInput`: name, type, required, transform (optional), aliasName (optional)
+- [ ] `TowerOutput`: name, payloadType
+- [ ] `NoiseWave`: waveId, approachDirection, typeSignature, damage
+- [ ] `GridPosition`: row, col
+- [ ] `TowerPlacement`: towerId, position, config (TowerConfig)
+- [ ] `ParentBinding`: parentProperty/handler -> tower input/output name
+- [ ] Exported from signal-corps barrel
+- [ ] Unit tests for: type validation, config completeness checking
+
+### T-2026-257
+- Title: Create ModuleAssembly part and blueprint data model
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-019
+- Blocked-by: —
+- Tags: minigame, module-assembly, data-model, parts
+- Refs: docs/minigames/01-module-assembly.md
+
+Module Assembly's tech notes say "Component parts are stored as structured data (not raw strings) with metadata about which slots they fit." No ticket defines the part, slot, and blueprint data model separately.
+
+Acceptance criteria:
+- [ ] `ComponentPart` interface at `src/app/features/minigames/module-assembly/module-assembly.types.ts`
+- [ ] Part types: decorator, selector, template, styles, classBody, imports
+- [ ] `ComponentPart`: id, type, content (code snippet), isDecoy, correctSlotId (null for decoys)
+- [ ] `BlueprintSlot`: id, slotType, label, isRequired, isOptional
+- [ ] `ComponentBlueprint`: slots[], name, expectedParts[]
+- [ ] `DecoyInfo`: originalPart, mutation (what makes it wrong)
+- [ ] Color mapping: decorators=purple, template=blue, styles=green, class=orange
+- [ ] Exported from module-assembly barrel
+- [ ] Unit tests for: part-slot type matching, decoy identification
+
+### T-2026-258
+- Title: Create WireProtocol port and wire data model
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-019
+- Blocked-by: —
+- Tags: minigame, wire-protocol, data-model, ports
+- Refs: docs/minigames/02-wire-protocol.md
+
+Wire Protocol's tech notes say binding data is structured. No ticket defines the port, wire, and binding data model separately.
+
+Acceptance criteria:
+- [ ] `SourcePort` interface at `src/app/features/minigames/wire-protocol/wire-protocol.types.ts`
+- [ ] `SourcePort`: id, name, portType (property | method), dataType, position
+- [ ] `TargetPort`: id, name, bindingSlot (interpolation | property | event | twoWay), position
+- [ ] `WireType` enum: interpolation (blue), property (green), event (orange), twoWay (purple)
+- [ ] `WireConnection`: id, sourcePortId, targetPortId, wireType, isPreWired, isCorrect (for pre-wired)
+- [ ] `VerificationResult`: correctWires[], incorrectWires[], missingWires[]
+- [ ] Exported from wire-protocol barrel
+- [ ] Unit tests for: wire type validation, source-target compatibility
+
+### T-2026-259
+- Title: Create story mission completion handler to award XP and trigger unlock
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-166, T-2026-026, T-2026-021, T-2026-189
+- Blocked-by: —
+- Tags: integration, story-missions, completion, xp, unlock
+- Refs: docs/overview.md, docs/progression.md
+
+The core game loop (overview.md) is: Story Mission (50 XP) -> Unlock Minigame. No ticket creates the completion handler that awards XP, updates campaign state, triggers unlock notifications, and updates mastery.
+
+Acceptance criteria:
+- [ ] Story mission completion awards 50 XP via XpService.addXp()
+- [ ] XpNotificationService shows "+50 Mission Complete" notification
+- [ ] GameProgressionService.completeMission(chapterId) called to update campaign state
+- [ ] If mission unlocks a minigame, MissionUnlockNotificationService.showUnlock() triggered
+- [ ] MasteryService updated: topic gets 1 star (story mission completion = 1 star per progression.md)
+- [ ] Unit tests for: XP award, unlock notification, mastery update, campaign progress
+
+### T-2026-260
+- Title: Create accessibility test infrastructure with axe-core
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-006
+- Blocked-by: —
+- Tags: accessibility, testing, infrastructure, ci
+- Refs: docs/ux/visual-style.md
+
+T-2026-171 (accessibility audit) mentions "Add axe-core or similar a11y testing library to CI." This prerequisite ticket sets up the infrastructure so the audit can run automatically.
+
+Acceptance criteria:
+- [ ] `@axe-core/playwright` (or `axe-playwright`) added as dev dependency
+- [ ] Playwright test helper function `checkAccessibility(page)` at `e2e/helpers/a11y.ts`
+- [ ] Helper runs axe-core scan and asserts no violations at a specified impact level (serious+)
+- [ ] Smoke test at `e2e/a11y-smoke.spec.ts`: scan dashboard page for violations
+- [ ] Test integrated into CI (runs with existing Playwright job)
+- [ ] Documentation: how to run a11y tests locally
+
 ---
 
 ## P3 -- Navigation Bundle
@@ -2261,6 +2640,25 @@ Acceptance criteria:
 - [ ] Test: verifies MinigameShell state transitions (ready -> playing -> completed)
 - [ ] Test: verifies LevelCompletionService is called with correct result
 - [ ] Test: verifies scoring produces expected values for known inputs
+
+### T-2026-261
+- Title: Register story mission content for P3 missions (Ch 11-13) with StoryMissionContentService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P3
+- Depends: T-2026-085, T-2026-166
+- Blocked-by: —
+- Tags: integration, story-missions, content-loading, phase-2
+- Refs: docs/curriculum.md
+
+T-2026-085 creates Phase 2 Navigation mission content (Ch 11-13) and T-2026-166 creates StoryMissionContentService. This ticket registers the content so StoryMissionPage can load it by chapterId.
+
+Acceptance criteria:
+- [ ] Phase 2 mission content (Ch 11-13) registered with StoryMissionContentService
+- [ ] `getMissionContent(11)` through `getMissionContent(13)` return valid content
+- [ ] Unit tests for: content loading for each chapter
 
 ---
 
@@ -2441,6 +2839,25 @@ Acceptance criteria:
 - [ ] Test: verifies MinigameShell state transitions (ready -> playing -> completed)
 - [ ] Test: verifies LevelCompletionService is called with correct result
 - [ ] Test: verifies scoring with time, test pass rate, and hint penalty
+
+### T-2026-262
+- Title: Register story mission content for P4 missions (Ch 14-17) with StoryMissionContentService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P4
+- Depends: T-2026-090, T-2026-166
+- Blocked-by: —
+- Tags: integration, story-missions, content-loading, phase-3
+- Refs: docs/curriculum.md
+
+T-2026-090 creates Phase 3 Data Input mission content (Ch 14-17) and T-2026-166 creates StoryMissionContentService. This ticket registers the content.
+
+Acceptance criteria:
+- [ ] Phase 3 mission content (Ch 14-17) registered with StoryMissionContentService
+- [ ] `getMissionContent(14)` through `getMissionContent(17)` return valid content
+- [ ] Unit tests for: content loading for each chapter
 
 ---
 
@@ -2722,6 +3139,25 @@ Acceptance criteria:
 - [ ] Each test: verifies LevelCompletionService is called with correct result
 - [ ] Both P5 games covered: Power Grid, Data Relay
 
+### T-2026-263
+- Title: Register story mission content for P5 missions (Ch 18-22) with StoryMissionContentService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P5
+- Depends: T-2026-097, T-2026-166
+- Blocked-by: —
+- Tags: integration, story-missions, content-loading, phase-4, phase-5
+- Refs: docs/curriculum.md
+
+T-2026-097 creates Phase 4-5 mission content (Ch 18-22) and T-2026-166 creates StoryMissionContentService. This ticket registers the content.
+
+Acceptance criteria:
+- [ ] Phase 4-5 mission content (Ch 18-22) registered with StoryMissionContentService
+- [ ] `getMissionContent(18)` through `getMissionContent(22)` return valid content
+- [ ] Unit tests for: content loading for each chapter
+
 ---
 
 ## P6 -- Signals Bundle
@@ -2892,6 +3328,25 @@ Acceptance criteria:
 - [ ] Test: verifies MinigameShell state transitions
 - [ ] Test: verifies LevelCompletionService is called with correct result
 - [ ] Test: verifies scoring for known graph configurations
+
+### T-2026-264
+- Title: Register story mission content for P6 missions (Ch 23-26) with StoryMissionContentService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P6
+- Depends: T-2026-101, T-2026-166
+- Blocked-by: —
+- Tags: integration, story-missions, content-loading, phase-6
+- Refs: docs/curriculum.md
+
+T-2026-101 creates Phase 6 Signals mission content (Ch 23-26) and T-2026-166 creates StoryMissionContentService. This ticket registers the content.
+
+Acceptance criteria:
+- [ ] Phase 6 mission content (Ch 23-26) registered with StoryMissionContentService
+- [ ] `getMissionContent(23)` through `getMissionContent(26)` return valid content
+- [ ] Unit tests for: content loading for each chapter
 
 ---
 
@@ -3314,6 +3769,25 @@ Acceptance criteria:
 - [ ] Each test: verifies MinigameShell state transitions and LevelCompletionService integration
 - [ ] All 3 P7 games covered
 
+### T-2026-265
+- Title: Register story mission content for P7 missions (Ch 27-34) with StoryMissionContentService
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P7
+- Depends: T-2026-108, T-2026-166
+- Blocked-by: —
+- Tags: integration, story-missions, content-loading, phase-6-advanced
+- Refs: docs/curriculum.md
+
+T-2026-108 creates Phase 6 Advanced mission content (Ch 27-34) and T-2026-166 creates StoryMissionContentService. This ticket registers the content.
+
+Acceptance criteria:
+- [ ] Phase 6 Advanced mission content (Ch 27-34) registered with StoryMissionContentService
+- [ ] `getMissionContent(27)` through `getMissionContent(34)` return valid content
+- [ ] Unit tests for: content loading for each chapter
+
 ---
 
 ## P8 -- Polish & Replayability
@@ -3559,6 +4033,46 @@ Acceptance criteria:
 - [ ] Progress indicator: "X of Y unlocked" per type
 - [ ] Exported from shared components barrel
 - [ ] Unit tests for: unlocked/locked rendering, equip interaction, filter tabs
+
+### T-2026-252
+- Title: Wire AchievementBadge grid into ProfilePage
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P8
+- Depends: T-2026-154, T-2026-013
+- Blocked-by: —
+- Tags: integration, ui, profile, achievements
+- Refs: docs/ux/navigation.md
+
+Navigation.md specifies the Profile page shows "Achievement badges" but no ticket wires AchievementGridComponent into ProfilePage. T-2026-154 creates the grid component and T-2026-013 created the placeholder ProfilePage.
+
+Acceptance criteria:
+- [ ] ProfilePage imports and renders `nx-achievement-grid`
+- [ ] Grid appears in its own section with "Achievements" heading
+- [ ] Responsive layout works at all breakpoints
+- [ ] Unit tests for: grid presence, heading text
+
+### T-2026-253
+- Title: Wire LeaderboardComponent into LevelSelectPage replay mode tabs
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P8
+- Depends: T-2026-219, T-2026-077
+- Blocked-by: —
+- Tags: integration, ui, leaderboard, level-select
+- Refs: docs/ux/navigation.md, docs/research/gamification-patterns.md
+
+LevelSelectPage (T-2026-077) specifies "Replay mode tabs" but no ticket wires LeaderboardComponent (T-2026-219) into those tabs. Gamification research says leaderboards drive competitive replay.
+
+Acceptance criteria:
+- [ ] LevelSelectPage includes a "Leaderboard" tab in the replay mode section
+- [ ] Tab renders `nx-leaderboard` with the current minigame's `gameId`
+- [ ] Mode tabs (story/endless/speedrun) are passed through
+- [ ] Unit tests for: leaderboard tab presence, gameId binding
 
 ### T-2026-221
 - Title: Wire DegradationAlertComponent "Practice Now" to refresher challenge route

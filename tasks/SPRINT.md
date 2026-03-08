@@ -74,11 +74,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-175**: Integrate LevelResultsComponent with MinigameShell completion flow (Priority: medium, Size: M)
 - **T-2026-211**: Integrate RefresherChallengeService practice with SpacedRepetitionService mastery restoration (Priority: medium, Size: S)
 - **T-2026-216**: Create MissionCardComponent for campaign page mission list (Priority: medium, Size: S)
 - **T-2026-218**: Create DailyChallengeCompletionHandler to award bonus XP (Priority: medium, Size: S)
