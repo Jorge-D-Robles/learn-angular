@@ -1,0 +1,126 @@
+$dk: #1a1f2e;
+$bd: #4a5270;
+$tx: #e2e8f0;
+$mt: #94a3b8;
+$bl: #3b82f6;
+$mn: 'JetBrains Mono', monospace;
+
+.signal-corps {
+  display: flex; flex-direction: column; width: 100%; height: 100%; position: relative;
+  &--damage { animation: sc-shake 0.5s ease-out; }
+}
+
+.signal-corps__svg { flex: 1; width: 100%; display: block; }
+.signal-corps__grid-line { stroke: #252b3d; stroke-width: 1; opacity: 0.4; }
+
+.signal-corps__tower {
+  cursor: pointer;
+  rect { fill: $dk; stroke: $bd; stroke-width: 2; }
+  &:hover rect { stroke: $mt; }
+  &--selected rect { stroke: $bl; stroke-width: 3; filter: drop-shadow(0 0 6px rgba($bl, 0.4)); }
+}
+
+.signal-corps__tower-label { fill: $tx; font: 10px $mn; pointer-events: none; }
+
+.signal-corps__port {
+  stroke: none;
+  &--input { filter: drop-shadow(0 0 4px $bl); }
+  &--output { filter: drop-shadow(0 0 4px #f97316); }
+}
+
+.signal-corps__wave {
+  fill: #ef4444; opacity: 0.8;
+  &--blocked { fill: #22c55e; opacity: 0.6; }
+  &--unblocked { animation: sc-pulse 0.6s ease infinite; }
+}
+
+.signal-corps__shield-pulse {
+  fill: none; stroke: $bl; stroke-width: 3; opacity: 0.7;
+  animation: sc-shield 0.6s ease-out forwards;
+}
+
+.signal-corps__config-panel {
+  position: absolute; transform: translate(-50%, -100%) translateY(-10px);
+  background: $dk; border: 1px solid #252b3d; border-radius: 8px;
+  padding: 12px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  z-index: 10; min-width: 280px; max-height: 400px; overflow-y: auto;
+}
+
+.signal-corps__config-title { color: $tx; font: 0.9rem $mn; margin: 0 0 8px; }
+
+.signal-corps__config-section {
+  margin-bottom: 10px;
+  h4 { color: $mt; font-size: 0.75rem; margin: 0 0 4px; text-transform: uppercase; }
+}
+
+.signal-corps__config-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 4px 0; color: $tx; font: 0.8rem $mn;
+}
+
+.signal-corps__config-form {
+  display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;
+  input[type='text'], select {
+    padding: 4px 6px; border: 1px solid $bd; border-radius: 4px;
+    background: #0f1219; color: $tx; font: 0.75rem $mn;
+  }
+  input[type='text'] { flex: 1; min-width: 80px; }
+}
+
+.signal-corps__input-required-label { display: inline-flex; align-items: center; gap: 4px; color: $mt; font-size: 0.75rem; }
+
+.signal-corps__remove-btn {
+  padding: 2px 8px; border: 1px solid #ef4444; border-radius: 4px;
+  background: transparent; color: #ef4444; font-size: 0.7rem; cursor: pointer;
+}
+
+.signal-corps__add-input-btn,
+.signal-corps__add-output-btn,
+.signal-corps__add-binding-btn {
+  padding: 4px 10px; border: 1px solid $bl; border-radius: 4px;
+  background: transparent; color: $bl; font-size: 0.75rem; cursor: pointer;
+}
+
+.signal-corps__config-close {
+  display: block; width: 100%; margin-top: 8px; padding: 6px 12px;
+  border: 1px solid $bd; border-radius: 4px; background: transparent;
+  color: $tx; font-size: 0.8rem; cursor: pointer;
+}
+
+.signal-corps__controls {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px; background: #0f1219; gap: 12px;
+}
+
+.signal-corps__health { color: #22c55e; font-size: 0.85rem; font-weight: 600; }
+.signal-corps__action-btns { display: flex; gap: 8px; }
+
+.signal-corps__deploy-btn {
+  padding: 8px 20px; border: none; border-radius: 6px;
+  background: $bl; color: #fff; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.signal-corps__reset-btn {
+  padding: 8px 20px; border: 1px solid $bd; border-radius: 6px;
+  background: transparent; color: $tx; font-size: 0.85rem; cursor: pointer;
+}
+
+@keyframes sc-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(6px); }
+  40% { transform: translateX(-4px); }
+  60% { transform: translateX(2px); }
+}
+
+@keyframes sc-shield { 0% { r: 30; opacity: 0.8; } 100% { r: 60; opacity: 0; } }
+@keyframes sc-pulse { 0%, 100% { opacity: 0.8; } 50% { opacity: 0.4; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .signal-corps--damage, .signal-corps__wave--unblocked, .signal-corps__shield-pulse { animation: none; }
+}
+
+@media (max-width: 767px) {
+  .signal-corps__controls { flex-direction: column; gap: 8px; }
+  .signal-corps__config-panel { min-width: 220px; }
+}

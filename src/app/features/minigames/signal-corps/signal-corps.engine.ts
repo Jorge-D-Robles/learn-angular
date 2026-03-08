@@ -183,10 +183,14 @@ export class SignalCorpsEngine extends MinigameEngine<SignalCorpsLevelData> {
   private readonly _deployResult = signal<DeployResult | null>(null);
   private readonly _deployCount = signal(0);
 
+  // --- Private writable signals (level data) ---
+  private readonly _towerPlacements = signal<readonly TowerPlacement[]>([]);
+  private readonly _noiseWaves = signal<readonly NoiseWave[]>([]);
+  private readonly _gridSize = signal<{ rows: number; cols: number }>({ rows: 0, cols: 0 });
+
   // --- Private state ---
   private _expectedTowers: readonly TowerPlacement[] = [];
   private _expectedBindingsByTower = new Map<string, readonly ParentBinding[]>();
-  private _noiseWaves: readonly NoiseWave[] = [];
   private _initialHealth = 100;
 
   // --- Public read-only signals ---
@@ -194,6 +198,9 @@ export class SignalCorpsEngine extends MinigameEngine<SignalCorpsLevelData> {
   readonly stationHealth: Signal<number> = this._stationHealth.asReadonly();
   readonly deployResult: Signal<DeployResult | null> = this._deployResult.asReadonly();
   readonly deployCount: Signal<number> = this._deployCount.asReadonly();
+  readonly towerPlacements: Signal<readonly TowerPlacement[]> = this._towerPlacements.asReadonly();
+  readonly noiseWaves: Signal<readonly NoiseWave[]> = this._noiseWaves.asReadonly();
+  readonly gridSize: Signal<{ rows: number; cols: number }> = this._gridSize.asReadonly();
 
   constructor(config?: Partial<MinigameEngineConfig>) {
     super(config);
@@ -203,7 +210,9 @@ export class SignalCorpsEngine extends MinigameEngine<SignalCorpsLevelData> {
 
   protected onLevelLoad(data: SignalCorpsLevelData): void {
     this._expectedTowers = data.towerPlacements;
-    this._noiseWaves = data.noiseWaves;
+    this._towerPlacements.set(data.towerPlacements);
+    this._noiseWaves.set(data.noiseWaves);
+    this._gridSize.set(data.gridSize);
     this._initialHealth = data.stationHealth;
 
     // Build expected bindings per tower
@@ -312,7 +321,7 @@ export class SignalCorpsEngine extends MinigameEngine<SignalCorpsLevelData> {
 
     // Run wave simulation
     const waveResults: WaveResult[] = [];
-    for (const wave of this._noiseWaves) {
+    for (const wave of this._noiseWaves()) {
       let blocked = false;
       let blockedByTowerId: string | null = null;
 
