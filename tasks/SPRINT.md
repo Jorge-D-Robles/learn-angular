@@ -19,11 +19,11 @@ Started: 2026-03-08
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-330**: Update architecture.md to document AudioService and remove stale rankUp note (Priority: low, Size: S)
 
 ---
 

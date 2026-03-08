@@ -251,26 +251,6 @@ Acceptance criteria:
 - [ ] Build passes with no circular dependencies
 - [ ] ExpressionValidator importable via `'./shared'` barrel path
 
-### T-2026-330
-- Title: Update architecture.md to document AudioService and remove stale rankUp note
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-051
-- Blocked-by: —
-- Tags: docs, architecture, audio, cleanup
-- Refs: docs/architecture.md, src/app/core/audio/audio.service.ts
-
-Architecture.md does not mention AudioService in the core services section despite it being a completed P1 service. Also, architecture.md has a stale note saying RankUpNotificationService's rankUpOccurred is "not yet wired" -- it IS wired via an effect().
-
-Acceptance criteria:
-- [ ] AudioService is documented in the core services section of architecture.md
-- [ ] AudioService entry includes: purpose, SoundEffect enum values, caching strategy, SettingsService integration
-- [ ] Stale "not yet wired" note about rankUpOccurred is removed or corrected
-- [ ] No other stale notes remain in the core services section
-
 ---
 
 ## P2 -- Foundations Bundle
