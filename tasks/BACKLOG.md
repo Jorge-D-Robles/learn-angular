@@ -604,8 +604,8 @@ Acceptance criteria:
 
 ### T-2026-254
 - Title: Register story mission content with StoryMissionContentService for P2 missions
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P2
@@ -621,6 +621,7 @@ Acceptance criteria:
 - [ ] `getMissionContent(1)` through `getMissionContent(10)` return valid content
 - [ ] Registration happens at app initialization or on first access
 - [ ] Unit tests for: content loading for each chapter, invalid chapterId handling
+- Started: 2026-03-08
 
 ### T-2026-259
 - Title: Create story mission completion handler to award XP and trigger unlock
@@ -1941,6 +1942,381 @@ Acceptance criteria:
 - [ ] At least 3 UI themes (dark, station, light already exist; add 2+ unlockable variants)
 - [ ] At least 4 achievement-tied badges
 - [ ] Unit tests for: all 3 types represented, valid unlock conditions, minimum counts
+
+### T-2026-469
+- Title: Wire FlowCommanderSimulationService into FlowCommanderEngine lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-411, T-2026-067
+- Blocked-by: —
+- Tags: integration, minigame, flow-commander, simulation, engine
+- Refs: docs/minigames/03-flow-commander.md, src/app/features/minigames/flow-commander/flow-commander.engine.ts
+
+T-2026-410 wired ConveyorBeltService into ModuleAssemblyEngine establishing the pattern: simulation service injected into engine, delegated during initialize/tick/reset. T-2026-411 creates FlowCommanderSimulationService but no ticket wires it into FlowCommanderEngine. Without this integration, the engine bundles all simulation logic internally instead of delegating to the testable service.
+
+Acceptance criteria:
+- [ ] FlowCommanderEngine constructor accepts FlowCommanderSimulationService
+- [ ] `onLevelLoad()` calls `simulationService.loadPipeline(levelData.topology)`
+- [ ] `placeGate` action delegates to `simulationService.placeGate()`
+- [ ] `removeGate` action delegates to `simulationService.removeGate()`
+- [ ] `runSimulation` action delegates to `simulationService.simulate()` and evaluates correctness
+- [ ] `reset()` calls `simulationService.reset()`
+- [ ] Unit tests for: service delegation on load, place, remove, simulate, reset
+
+### T-2026-470
+- Title: Wire SignalCorpsWaveService into SignalCorpsEngine lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-412, T-2026-071
+- Blocked-by: —
+- Tags: integration, minigame, signal-corps, wave-simulation, engine
+- Refs: docs/minigames/04-signal-corps.md, src/app/features/minigames/signal-corps/signal-corps.engine.ts
+
+T-2026-412 creates SignalCorpsWaveService but no ticket wires it into SignalCorpsEngine. Following the ConveyorBeltService pattern from T-2026-410, the wave service should be injected into the engine and delegated during initialize/deploy/tick/reset.
+
+Acceptance criteria:
+- [ ] SignalCorpsEngine constructor accepts SignalCorpsWaveService
+- [ ] `onLevelLoad()` calls `waveService.loadWaves(levelData.waves, levelData.waveConfig)`
+- [ ] `deploy` action calls `waveService.startWave(currentWaveIndex)`
+- [ ] Engine tick delegates to `waveService.tick(deltaMs)` and `waveService.evaluateBlocking(towers)`
+- [ ] Unblocked signals apply damage via `waveService.applyDamage()`, mapped to engine lives
+- [ ] `waveService.isWaveComplete()` triggers next wave or level completion
+- [ ] `waveService.stationHealth` reaching 0 triggers engine `fail()`
+- [ ] `reset()` calls `waveService.reset()`
+- [ ] Unit tests for: service delegation on load, deploy, tick, damage, completion, reset
+
+### T-2026-471
+- Title: Wire WireProtocolValidationService into WireProtocolEngine lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-413, T-2026-063
+- Blocked-by: —
+- Tags: integration, minigame, wire-protocol, validation, engine
+- Refs: docs/minigames/02-wire-protocol.md, src/app/features/minigames/wire-protocol/wire-protocol.engine.ts
+
+T-2026-413 creates WireProtocolValidationService but no ticket wires it into WireProtocolEngine. Following the established pattern, the validation service should be injected and used for wire validation and the verify action.
+
+Acceptance criteria:
+- [ ] WireProtocolEngine constructor accepts WireProtocolValidationService
+- [ ] `onLevelLoad()` provides validation service with level port/wire data
+- [ ] `drawWire` action uses `validationService.isCorrectBindingType()` for instant feedback
+- [ ] `verify` action delegates to `validationService.validateAll()` to check all wires against solution
+- [ ] `getCommonMistake()` used to provide hint text for incorrect wires
+- [ ] `reset()` clears validation service state
+- [ ] Unit tests for: service delegation on load, draw, verify, common mistake hints, reset
+
+### T-2026-472
+- Title: Wire BindingTypeSelectorComponent into WireProtocolComponent UI
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-420, T-2026-064
+- Blocked-by: —
+- Tags: integration, ui, minigame, wire-protocol, binding-type
+- Refs: docs/minigames/02-wire-protocol.md, src/app/features/minigames/wire-protocol/wire-protocol.component.ts
+
+T-2026-420 creates BindingTypeSelectorComponent for wire type toggling (interpolation/property/event/two-way). T-2026-064 created the Wire Protocol UI. No ticket wires the selector into the UI component. Without this, players have no way to switch wire types during gameplay.
+
+Acceptance criteria:
+- [ ] WireProtocolComponent renders BindingTypeSelectorComponent in the tools panel
+- [ ] `selectedType` input bound to engine's current wire type signal
+- [ ] `typeSelected` output updates the engine's active wire type for subsequent draws
+- [ ] `availableTypes` input bound to level data's available wire types (basic levels may not have all 4)
+- [ ] Keyboard shortcuts 1-4 work via KeyboardShortcutService integration
+- [ ] Unit tests for: selector rendering, type change on selection, level-specific type filtering
+
+### T-2026-473
+- Title: Wire FlowCommanderGateConfigComponent into FlowCommanderComponent UI
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-418, T-2026-068
+- Blocked-by: —
+- Tags: integration, ui, minigame, flow-commander, gate-config
+- Refs: docs/minigames/03-flow-commander.md, src/app/features/minigames/flow-commander/flow-commander.component.ts
+
+T-2026-418 creates FlowCommanderGateConfigComponent for gate condition editing. T-2026-068 created the Flow Commander UI. T-2026-245 wires ExpressionBuilderComponent into gate config but does not wire the gate config panel itself into the main UI. This ticket wires the gate config panel into FlowCommanderComponent so players can click a gate and configure its condition.
+
+Acceptance criteria:
+- [ ] FlowCommanderComponent renders FlowCommanderGateConfigComponent when a gate is selected
+- [ ] Gate click on the pipeline canvas opens the config panel for that gate
+- [ ] `gateType` input bound to the clicked gate's type (@if/@for/@switch)
+- [ ] `tierMode` input set based on current level tier (guided for basic/intermediate, raw for advanced)
+- [ ] `conditionApplied` output updates the gate condition in the engine
+- [ ] `cancelled` output closes the config panel without changes
+- [ ] Panel dismisses when clicking outside or pressing Escape
+- [ ] Unit tests for: panel opens on gate click, condition applied, cancel dismisses, tier mode switching
+
+### T-2026-474
+- Title: Wire SignalCorpsTowerConfigComponent into SignalCorpsComponent UI
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-419, T-2026-072
+- Blocked-by: —
+- Tags: integration, ui, minigame, signal-corps, tower-config
+- Refs: docs/minigames/04-signal-corps.md, src/app/features/minigames/signal-corps/signal-corps.component.ts
+
+T-2026-419 creates SignalCorpsTowerConfigComponent for tower input/output declaration. T-2026-072 created the Signal Corps UI. No ticket wires the tower config panel into the main UI. Without this, players cannot configure towers during gameplay.
+
+Acceptance criteria:
+- [ ] SignalCorpsComponent renders SignalCorpsTowerConfigComponent when a tower is selected
+- [ ] Tower click on the grid opens the config panel for that tower
+- [ ] `tower` input bound to the clicked tower's current config
+- [ ] `parentProperties` and `parentHandlers` inputs populated from level data
+- [ ] `configApplied` output updates the tower config in the engine
+- [ ] `cancelled` output closes the config panel without changes
+- [ ] Validation errors from the panel prevent applying invalid configs
+- [ ] Unit tests for: panel opens on tower click, config applied, cancel dismisses, validation blocks invalid config
+
+### T-2026-475
+- Title: Add "Launch Minigame" button to StoryMissionPage after mission completion
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-075, T-2026-407
+- Blocked-by: —
+- Tags: ui, story-missions, navigation, minigame-unlock
+- Refs: docs/ux/navigation.md, docs/curriculum.md, src/app/pages/mission/
+
+Navigation.md specifies the Story Mission View includes a "Launch Minigame" button (unlocks after mission completion). StoryMissionPage (T-2026-075) was built with step navigation and completion flow, but no ticket adds the post-completion "Launch Minigame" button that navigates to the newly unlocked minigame. This is a critical UX element in the core game loop: Story Mission -> Unlock Minigame.
+
+Acceptance criteria:
+- [ ] StoryMissionPage shows "Launch Minigame" button after mission completion
+- [ ] Button only appears for chapters that unlock a minigame (via CurriculumService.getMinigameForChapter())
+- [ ] Button navigates to `/minigames/:gameId` (level select for the unlocked minigame)
+- [ ] Button label includes minigame name (e.g., "Launch Module Assembly")
+- [ ] For chapters that don't unlock a minigame (Ch 9, 10, 27, 33, 34), shows "Continue to Next Mission" instead
+- [ ] Button styled with Reactor Blue accent and station theme glow
+- [ ] Unit tests for: button visible after completion, correct navigation target, hidden for non-unlock chapters
+
+### T-2026-476
+- Title: Create integration test for FlowCommanderSimulationService + FlowCommanderEngine coordinated lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-469
+- Blocked-by: —
+- Tags: testing, integration, flow-commander, simulation, engine
+- Refs: docs/minigames/03-flow-commander.md, src/app/features/minigames/flow-commander/
+
+After T-2026-469 wires FlowCommanderSimulationService into the engine, this integration test verifies the coordinated lifecycle: loading a pipeline, placing gates, running simulation, and evaluating results through the engine's action pipeline.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/flow-commander/simulation-engine.integration.spec.ts`
+- [ ] Test: engine.initialize() loads pipeline into simulation service
+- [ ] Test: placeGate action delegates to simulation service and updates engine state
+- [ ] Test: simulate action runs cargo through pipeline and evaluates correctness
+- [ ] Test: all cargo reaching correct targets triggers engine completion
+- [ ] Test: cargo reaching wrong targets deducts lives
+- [ ] Test: engine.reset() resets simulation service state
+- [ ] Uses real FlowCommanderEngine and FlowCommanderSimulationService with level 1 data
+
+### T-2026-477
+- Title: Create integration test for SignalCorpsWaveService + SignalCorpsEngine coordinated lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-470
+- Blocked-by: —
+- Tags: testing, integration, signal-corps, wave-simulation, engine
+- Refs: docs/minigames/04-signal-corps.md, src/app/features/minigames/signal-corps/
+
+After T-2026-470 wires SignalCorpsWaveService into the engine, this integration test verifies the coordinated lifecycle: loading waves, deploying towers, tick-based wave progression, blocking evaluation, and damage application.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/signal-corps/wave-engine.integration.spec.ts`
+- [ ] Test: engine.initialize() loads waves into wave service
+- [ ] Test: deploy action starts wave via wave service
+- [ ] Test: correctly configured towers block matching noise signals
+- [ ] Test: unblocked signals deal damage via wave service, reducing engine lives
+- [ ] Test: all waves completed triggers engine completion
+- [ ] Test: station health reaching 0 triggers engine failure
+- [ ] Test: engine.reset() resets wave service state
+- [ ] Uses real SignalCorpsEngine and SignalCorpsWaveService with level 1 data
+
+### T-2026-478
+- Title: Create integration test for WireProtocolValidationService + WireProtocolEngine coordinated lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-471
+- Blocked-by: —
+- Tags: testing, integration, wire-protocol, validation, engine
+- Refs: docs/minigames/02-wire-protocol.md, src/app/features/minigames/wire-protocol/
+
+After T-2026-471 wires WireProtocolValidationService into the engine, this integration test verifies the coordinated lifecycle: loading port data, drawing wires with type validation, verifying all connections, and scoring.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/wire-protocol/validation-engine.integration.spec.ts`
+- [ ] Test: engine.initialize() provides validation service with level port/wire data
+- [ ] Test: drawing a wire with correct type returns positive validation
+- [ ] Test: drawing a wire with wrong type returns validation failure with common mistake hint
+- [ ] Test: verify action validates all wires against solution via service
+- [ ] Test: all wires correct on first verify triggers engine completion with perfect score
+- [ ] Test: 3 failed verifications triggers engine failure
+- [ ] Test: engine.reset() clears validation state
+- [ ] Uses real WireProtocolEngine and WireProtocolValidationService with level 1 data
+
+### T-2026-479
+- Title: Create StoryMissionPage completion summary with XP award display
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-075, T-2026-259
+- Blocked-by: —
+- Tags: ui, story-missions, completion, xp
+- Refs: docs/overview.md, docs/progression.md, docs/ux/navigation.md
+
+Overview.md specifies story missions award 50 XP. When a player completes the final step of a story mission, there should be a completion summary showing the XP earned, mastery star gained, and optionally the minigame that was unlocked. Currently StoryMissionPage has a completion flow but no visual summary of rewards.
+
+Acceptance criteria:
+- [ ] StoryMissionPage shows a completion summary overlay after the final step
+- [ ] Summary displays: "Mission Complete" heading, +50 XP earned, topic mastery gained (1 star)
+- [ ] If a minigame was unlocked, summary shows unlock message with game name and icon
+- [ ] "Launch Minigame" button in summary navigates to the unlocked game (connects to T-2026-475)
+- [ ] "Continue" button navigates to campaign page or next mission
+- [ ] Summary uses station-themed styling (Sensor Green accent for success)
+- [ ] Unit tests for: summary rendering, XP display, unlock message presence/absence, navigation buttons
+
+### T-2026-480
+- Title: Add `/campaign` route to bottom nav and side nav when CampaignPage is ready
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-141, T-2026-167, T-2026-314
+- Blocked-by: —
+- Tags: navigation, campaign, routing, integration
+- Refs: docs/ux/navigation.md, src/app/side-nav/, src/app/bottom-nav/
+
+Navigation.md specifies side nav has "Current Mission" and bottom nav has "Mission". T-2026-167 creates the campaign route and T-2026-227/228 updated nav to use dynamic mission resolution. T-2026-314 plans to update bottom nav to point to `/campaign`. But no ticket coordinates updating BOTH side nav and bottom nav to consistently point to `/campaign` as the primary "Mission" destination once CampaignPage is built, replacing the dynamic individual mission resolution.
+
+Acceptance criteria:
+- [ ] Side nav "Current Mission" link updated to navigate to `/campaign`
+- [ ] Bottom nav "Mission" tab updated to navigate to `/campaign`
+- [ ] `routerLinkActive` highlights both nav items when on `/campaign` or any `/mission/:chapterId` route
+- [ ] If player has an active mission, `/campaign` page scrolls to or highlights that mission (future enhancement noted)
+- [ ] Existing unit tests updated for new route targets
+- [ ] No regression in nav behavior for other links
+
+### T-2026-481
+- Title: Create integration test for MinigameTutorialOverlay first-play detection with real persistence
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-205, T-2026-382
+- Blocked-by: —
+- Tags: testing, integration, tutorial, minigame, persistence
+- Refs: docs/minigames/01-module-assembly.md, src/app/shared/components/minigame-tutorial/
+
+T-2026-205 integrated the tutorial overlay with first-play detection. T-2026-382 wires tutorial step data into the registry. No integration test verifies the full chain: first visit to a minigame shows tutorial with correct game-specific steps -> dismiss -> persisted -> second visit skips tutorial. This is important because a broken tutorial blocks first-time gameplay.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/shared/components/minigame-tutorial/tutorial-first-play.integration.spec.ts`
+- [ ] Test: first play of Module Assembly shows tutorial with game-specific steps from MinigameInstructionsData
+- [ ] Test: dismiss tutorial -> tutorial-seen flag persisted to localStorage
+- [ ] Test: subsequent play with tutorial-seen flag -> tutorial not shown, engine starts immediately
+- [ ] Test: "How to Play" from pause menu shows tutorial without blocking engine restart
+- [ ] Uses real StatePersistenceService with fake localStorage
+
+### T-2026-482
+- Title: Create StoryMissionPage keyboard navigation for mission steps
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-075
+- Blocked-by: —
+- Tags: accessibility, a11y, story-missions, keyboard-navigation
+- Refs: docs/ux/navigation.md, docs/ux/visual-style.md, src/app/pages/mission/
+
+StoryMissionPage (T-2026-075) has step navigation (Next/Previous buttons) but no keyboard shortcuts for advancing through mission steps. Keyboard users must tab to the Next button for each step. Adding arrow key navigation (Right arrow = next step, Left arrow = previous step) improves accessibility and pacing for all users.
+
+Acceptance criteria:
+- [ ] Right arrow key advances to the next mission step (same as clicking Next)
+- [ ] Left arrow key goes to the previous step (same as clicking Previous)
+- [ ] Arrow keys only active when StoryMissionPage has focus (not when code editor or other inputs are focused)
+- [ ] Enter key on the final step triggers completion (same as clicking Complete)
+- [ ] Keyboard shortcuts disabled during completion overlay display
+- [ ] Unit tests for: right arrow advances, left arrow reverses, boundary conditions (first step, last step)
+
+### T-2026-483
+- Title: Create P2 minigame sub-service integration test for all 4 simulation/validation services with level data
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-411, T-2026-412, T-2026-413, T-2026-058, T-2026-062, T-2026-066, T-2026-070
+- Blocked-by: —
+- Tags: testing, integration, minigame, p2, data-validation
+- Refs: docs/minigames/01-module-assembly.md, docs/minigames/02-wire-protocol.md, docs/minigames/03-flow-commander.md, docs/minigames/04-signal-corps.md
+
+Each P2 minigame has a simulation/validation sub-service (ConveyorBeltService, WireProtocolValidationService, FlowCommanderSimulationService, SignalCorpsWaveService) and corresponding level data (18 levels each). No integration test verifies that all 72 level data entries are compatible with their respective simulation/validation services. Data shape mismatches would cause runtime errors.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/p2-data-service-compat.integration.spec.ts`
+- [ ] Test: all 18 Module Assembly levels load into ConveyorBeltService without errors
+- [ ] Test: all 18 Wire Protocol levels provide valid port/wire data for WireProtocolValidationService
+- [ ] Test: all 18 Flow Commander levels provide valid pipeline topology for FlowCommanderSimulationService
+- [ ] Test: all 18 Signal Corps levels provide valid wave/tower data for SignalCorpsWaveService
+- [ ] Test: each service can be reset and loaded with a different level from its pack
+- [ ] Uses real services and real level data constants
+
+### T-2026-484
+- Title: Create CampaignPage with mission list grouped by curriculum phases
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-167, T-2026-026, T-2026-038
+- Blocked-by: —
+- Tags: page, campaign, story-missions, ui
+- Refs: docs/ux/navigation.md, docs/curriculum.md, src/app/pages/campaign/
+
+T-2026-141 describes the CampaignProgressPage but depends on LockedContentComponent. The campaign route exists (T-2026-167) with a placeholder page. This ticket replaces the placeholder with a functional CampaignPage that displays all 34 missions grouped by the 6 curriculum phases with completion status from GameProgressionService.
+
+Acceptance criteria:
+- [ ] `CampaignPage` replaces placeholder at `src/app/pages/campaign/campaign.ts`
+- [ ] Displays all 34 missions grouped by curriculum phase (Foundations, Navigation, Data Input, etc.)
+- [ ] Each mission shows: chapter number, title, Angular topic, completion status
+- [ ] Completed missions show a checkmark indicator
+- [ ] Locked missions show a lock indicator with prerequisite info
+- [ ] Next available mission highlighted with "Continue" button
+- [ ] Phase headers show progress (e.g., "Phase 1: 7/10 completed")
+- [ ] Click unlocked mission navigates to `/mission/:chapterId`
+- [ ] Unit tests for: phase grouping, completion status, locked state, navigation, progress counts
 
 ---
 
