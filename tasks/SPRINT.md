@@ -1,8 +1,8 @@
 # Current Sprint
 
-Sprint: S09-p1-final
-Milestone: P1
-Goal: Complete final P1 tickets including persistence and barrel exports
+Sprint: S10-p2-foundations
+Milestone: P2
+Goal: Build P2 Foundations Bundle: Module Assembly minigame engine and UI
 Started: 2026-03-08
 
 <!-- Velocity: (recorded at sprint close) -->
@@ -11,15 +11,21 @@ Started: 2026-03-08
 
 ## Active
 
-
-
-
-
+*(none — pick from Queue)*
 
 ---
 
 ## Queue
 
+- **T-2026-257**: Create ModuleAssembly part and blueprint data model (Priority: high, Size: S)
+- **T-2026-258**: Create WireProtocol port and wire data model (Priority: high, Size: S)
+- **T-2026-255**: Create FlowCommander pipeline graph data model (Priority: high, Size: S)
+- **T-2026-256**: Create SignalCorps tower configuration data model (Priority: high, Size: S)
+- **T-2026-407**: Create CurriculumService for chapter-to-minigame mapping lookups (Priority: high, Size: S)
+- **T-2026-137**: Register Module Assembly level data with LevelLoaderService (Priority: high, Size: S)
+- **T-2026-059**: Create Module Assembly minigame engine (Priority: high, Size: L)
+- **T-2026-244**: Create ConveyorBeltService for Module Assembly conveyor belt mechanics (Priority: high, Size: M)
+- **T-2026-080**: Create SettingsPage component with user preferences UI (Priority: medium, Size: S)
 
 ---
 
