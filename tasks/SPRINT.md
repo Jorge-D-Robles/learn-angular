@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-130**: Create TooltipDirective for contextual help (Assigned: claude, Status: in-progress)
 
 
 

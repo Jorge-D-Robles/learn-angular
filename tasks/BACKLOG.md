@@ -28,33 +28,6 @@ Acceptance criteria:
 
 ## P1 -- Core Engine
 
-### T-2026-130
-- Title: Create TooltipDirective for contextual help
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P1
-- Depends: T-2026-007
-- Blocked-by: —
-- Tags: ui, directive, shared, accessibility
-- Refs: docs/ux/visual-style.md
-
-Minigame UIs, level select pages, and dashboard elements need tooltip support for contextual explanations (e.g., hovering over a mastery star to see what it means, hovering over a locked level to see unlock requirements). No shared tooltip exists.
-
-Acceptance criteria:
-- [ ] `TooltipDirective` at `src/app/shared/directives/tooltip.directive.ts`
-- [ ] Selector: `[nxTooltip]`
-- [ ] Input: `nxTooltip` (string, tooltip text)
-- [ ] Input: `nxTooltipPosition` ('top' | 'bottom' | 'left' | 'right'), default 'top'
-- [ ] Shows tooltip on hover/focus with 200ms delay
-- [ ] Hides on mouse leave/blur
-- [ ] Station-themed styling: Hull background, Display text, Bulkhead border
-- [ ] Keyboard accessible: shows on focus, hides on blur
-- [ ] Exported from shared directives barrel
-- [ ] Unit tests for: show/hide on hover, position classes, keyboard accessibility
-- Started: 2026-03-08
-
 ### T-2026-132
 - Title: Style NotFoundPage with station theme
 - Status: todo
