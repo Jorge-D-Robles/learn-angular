@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, effect, inject, signal, untracked } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, Injector, signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgComponentOutlet } from '@angular/common';
@@ -12,6 +12,7 @@ import { LevelCompletionService, type LevelCompletionSummary } from '../../core/
 import { HintService } from '../../core/minigame/hint.service';
 import { KeyboardShortcutService } from '../../core/minigame/keyboard-shortcut.service';
 import { MinigameEngine } from '../../core/minigame/minigame-engine';
+import { MINIGAME_ENGINE } from '../../core/minigame/minigame-engine.tokens';
 import { ScoreCalculationService } from '../../core/minigame/score-calculation.service';
 import { StatePersistenceService } from '../../core/persistence/state-persistence.service';
 import { MinigameStatus, PlayMode, type MinigameId, type MinigameLevel, type MinigameResult } from '../../core/minigame/minigame.types';
@@ -86,7 +87,7 @@ import { ErrorStateComponent } from '../../shared/components/error-state/error-s
           (tutorialDismissed)="onTutorialDismissed()"
           (howToPlay)="onHowToPlay()"
         >
-          <ng-container *ngComponentOutlet="resolvedComponent()!" />
+          <ng-container *ngComponentOutlet="resolvedComponent()!; injector: engineInjector()" />
         </app-minigame-shell>
       }
     }
@@ -105,6 +106,7 @@ export class MinigamePlayPage {
   private readonly scoreCalculation = inject(ScoreCalculationService);
   private readonly persistence = inject(StatePersistenceService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly parentInjector = inject(Injector);
 
   readonly loadError = signal<string | null>(null);
   readonly engine = signal<MinigameEngine<unknown> | null>(null);
@@ -225,6 +227,15 @@ export class MinigamePlayPage {
     const lid = this.levelId();
     if (!gid || !lid) return true;
     return !this.levelNav.isNextLevelUnlocked(gid as MinigameId, lid);
+  });
+
+  readonly engineInjector = computed(() => {
+    const eng = this.engine();
+    if (!eng) return this.parentInjector;
+    return Injector.create({
+      providers: [{ provide: MINIGAME_ENGINE, useValue: eng }],
+      parent: this.parentInjector,
+    });
   });
 
   constructor() {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
@@ -22,6 +22,7 @@ import type { MinigameConfig } from '../../core/minigame/minigame.types';
 import { DifficultyTier, MinigameStatus, PlayMode } from '../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
 import { StatePersistenceService } from '../../core/persistence/state-persistence.service';
+import { MINIGAME_ENGINE } from '../../core/minigame/minigame-engine.tokens';
 import type { TutorialStep } from '../../shared/components/minigame-tutorial/minigame-tutorial.types';
 
 const ICON_PROVIDERS = [
@@ -72,6 +73,17 @@ class TestEngineForScoring extends MinigameEngine<unknown> {
   template: '<p class="dummy-game">dummy</p>',
 })
 class DummyGameComponent {}
+
+@Component({
+  selector: 'app-test-engine-consumer',
+  template: '<p class="engine-consumer">{{ hasEngine }}</p>',
+})
+class DummyEngineConsumerComponent {
+  readonly injectedEngine = inject(MINIGAME_ENGINE, { optional: true });
+  get hasEngine(): string {
+    return this.injectedEngine ? 'engine-present' : 'no-engine';
+  }
+}
 
 // --- Test data ---
 
@@ -1883,6 +1895,28 @@ describe('MinigamePlayPage', () => {
 
     expect(startSpy).not.toHaveBeenCalled();
     expect(component.showTutorial()).toBe(false);
+    testEngine.destroy();
+  });
+
+  // --- Engine injection via ngComponentOutletInjector ---
+  it('should inject MINIGAME_ENGINE into dynamically loaded component', async () => {
+    const testEngine = new TestEngine();
+    const factory = vi.fn().mockReturnValue(testEngine);
+    const { fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyEngineConsumerComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+        getConfig: vi.fn().mockReturnValue(undefined),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const consumerEl = fixture.nativeElement.querySelector('.engine-consumer');
+    expect(consumerEl).toBeTruthy();
+    expect(consumerEl?.textContent).toContain('engine-present');
+
     testEngine.destroy();
   });
 });
