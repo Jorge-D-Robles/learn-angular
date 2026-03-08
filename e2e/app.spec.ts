@@ -4,7 +4,7 @@ test.describe('App', () => {
   test('should load the dashboard page', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page).toHaveTitle('LearnAngular');
+    await expect(page).toHaveTitle('Dashboard | Nexus Station');
     await expect(page.getByRole('heading', { name: 'Station Dashboard' })).toBeVisible();
   });
 
