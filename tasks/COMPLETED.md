@@ -109,3 +109,4 @@
 [2026-03-07] T-2026-288: Add Page Visibility auto-pause to MinigameEngine — added auto-pause on tab visibility change with _autoPaused flag, 7 new tests (claude)
 [2026-03-07] T-2026-289: Add play mode context signal to MinigameEngine — added PlayMode enum, playMode signal, setPlayMode() with Loading guard, 15 new tests (claude)
 [2026-03-08] T-2026-290: Integrate ComboTrackerService multiplier into ScoreCalculationService formula — added optional comboMultiplier param to calculateScore(), 7 new tests (claude)
+[2026-03-08] T-2026-292: Add MinigameShell responsive layout for mobile gameplay — added responsive HUD layout with mobile breakpoint, flex-wrap, reduced sizes, 2 new tests (claude)

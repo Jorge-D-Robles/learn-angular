@@ -628,29 +628,6 @@ Acceptance criteria:
 - [ ] Test: verify reward is not re-awarded on 8th day (idempotent milestone tracking)
 - [ ] All services use real implementations (not mocks) for true integration testing
 
-### T-2026-292
-- Title: Add MinigameShell responsive layout for mobile gameplay
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-018
-- Blocked-by: —
-- Tags: ui, responsive, minigame-framework, mobile
-- Refs: docs/ux/navigation.md, docs/ux/visual-style.md, src/app/core/minigame/minigame-shell/minigame-shell.ts
-
-Navigation.md defines responsive breakpoints: Mobile (<768px), Tablet (768-1024px), Desktop (>1024px). The MinigameShell HUD (score, timer, lives, hint button, pause button) was built without explicit responsive styling. On mobile screens, the HUD elements need to stack or reflow to avoid obscuring the game content area. Multiple minigame UIs (conveyor belt, split-screen, pipeline) also need the content projection area to adapt.
-
-Acceptance criteria:
-- [ ] MinigameShell HUD wraps gracefully at mobile breakpoint (<768px)
-- [ ] HUD elements use smaller font/icon sizes on mobile (20px icons, 0.875rem text)
-- [ ] Score and timer display inline on desktop, stacked on mobile
-- [ ] Hint and pause buttons remain accessible on all screen sizes
-- [ ] Content projection area uses `min-height: 60vh` on mobile to ensure game area is usable
-- [ ] Unit tests for: HUD element presence at both breakpoints (using viewport mocking)
-- Started: 2026-03-08
-
 ### T-2026-293
 - Title: Create ScoreBreakdownComponent for level completion detail
 - Status: todo
