@@ -72,11 +72,11 @@ Started: 2026-03-07
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-206**: Wire DailyChallengeService completion to StreakService (Priority: medium, Size: S)
 - **T-2026-202**: Add WireDrawService to minigame barrel export (Priority: low, Size: S)
 
 ---

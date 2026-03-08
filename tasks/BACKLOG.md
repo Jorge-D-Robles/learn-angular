@@ -530,26 +530,6 @@ Acceptance criteria:
 - [ ] Engine is paused while tutorial overlay is active
 - [ ] Unit tests for: first-play detection, tutorial display, dismiss-and-start, pause menu "How to Play"
 
-### T-2026-206
-- Title: Wire DailyChallengeService completion to StreakService
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P1
-- Depends: T-2026-041, T-2026-027
-- Blocked-by: —
-- Tags: integration, progression, daily-challenge, streak
-- Refs: docs/progression.md, docs/research/gamification-patterns.md
-
-Progression.md states daily challenges contribute to streaks ("7-day streak rewards") and gamification research says "Daily login streak with increasing bonus." DailyChallengeService (T-2026-041) tracks daily challenge completion and StreakService (T-2026-027) tracks login streaks. But no ticket wires daily challenge completion to trigger StreakService.recordLogin() (or equivalent), ensuring daily challenge play counts as an active day for streak purposes.
-
-Acceptance criteria:
-- [ ] DailyChallengeService.completeChallenge() calls StreakService.recordLogin() to count the day as active
-- [ ] Completing a daily challenge on a new day extends the streak
-- [ ] If StreakService already recorded today, no duplicate call occurs
-- [ ] Unit tests for: streak extension on daily challenge completion, no double-count
-
 ### T-2026-207
 - Title: Add LevelNavigationService to levels barrel export
 - Status: todo
