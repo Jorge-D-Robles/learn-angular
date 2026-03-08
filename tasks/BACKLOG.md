@@ -30,8 +30,8 @@ Acceptance criteria:
 
 ### T-2026-043
 - Title: Populate architecture.md with P1 technical decisions
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P1
@@ -51,6 +51,7 @@ Acceptance criteria:
 - [ ] Progression persistence section: localStorage strategy, auto-save, export/import
 - [ ] Testing strategy section: unit test patterns, TDD approach, coverage goals
 - [ ] Diagrams or ASCII art for key data flows (minigame lifecycle, state persistence, progression flow)
+- Started: 2026-03-08
 
 ### T-2026-051
 - Title: Create AudioService for sound effect management
