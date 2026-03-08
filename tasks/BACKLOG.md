@@ -1292,8 +1292,8 @@ Acceptance criteria:
 
 ### T-2026-255
 - Title: Create FlowCommander pipeline graph data model
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P2
@@ -1314,6 +1314,7 @@ Acceptance criteria:
 - [ ] `TargetZone` interface: expected item filter criteria
 - [ ] Exported from flow-commander barrel
 - [ ] Unit tests for: type validation, graph connectivity helpers
+- Started: 2026-03-08
 
 ### T-2026-256
 - Title: Create SignalCorps tower configuration data model
