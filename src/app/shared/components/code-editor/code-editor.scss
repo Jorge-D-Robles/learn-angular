@@ -18,7 +18,8 @@
 .code-display {
   margin: 0;
   padding: var(--nx-space-4);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   color: var(--nx-color-display);
   counter-reset: line;
 }
@@ -105,4 +106,11 @@
   overflow: auto;
   white-space: pre;
   tab-size: 2;
+}
+
+@media (max-width: 767px) {
+  .code-editor {
+    max-height: 300px;
+    font-size: 0.8125rem;
+  }
 }

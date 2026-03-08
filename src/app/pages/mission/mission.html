@@ -25,11 +25,26 @@
       <div class="mission__narrative">{{ step.narrativeText }}</div>
 
       @if (codeExample(); as ex) {
-        <nx-code-editor
-          [code]="ex.code"
-          [language]="ex.language"
-          [readOnly]="true"
-          [highlightLines]="[...(ex.highlightLines ?? [])]" />
+        @if (codeBlocks(); as blocks) {
+          @for (block of blocks; track $index) {
+            <div class="mission__code-block">
+              @if (block.label) {
+                <div class="mission__code-label">{{ block.label }}</div>
+              }
+              <nx-code-editor
+                [code]="block.code"
+                [language]="block.language"
+                [readOnly]="true"
+                [highlightLines]="[...(block.highlightLines ?? [])]" />
+            </div>
+          }
+        } @else {
+          <nx-code-editor
+            [code]="ex.code"
+            [language]="ex.language"
+            [readOnly]="true"
+            [highlightLines]="[...(ex.highlightLines ?? [])]" />
+        }
         <div class="mission__explanation">{{ ex.explanation }}</div>
       }
 

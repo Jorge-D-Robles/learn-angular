@@ -7,13 +7,16 @@ import {
   LUCIDE_ICONS,
 } from 'lucide-angular';
 import { vi } from 'vitest';
-import { createComponent, getMockProvider } from '../../../testing/test-utils';
+import { createComponent, getMockProvider, TestBed } from '../../../testing/test-utils';
 import { MissionPage } from './mission';
 import { GameProgressionService } from '../../core/progression/game-progression.service';
 import { CurriculumService } from '../../core/curriculum/curriculum.service';
 import { StoryMissionCompletionService } from '../../core/curriculum/story-mission-completion.service';
+import { StoryMissionContentService } from '../../core/curriculum/story-mission-content.service';
 import type { ChapterId, StoryMission } from '../../core/curriculum/curriculum.types';
-import { CHAPTER_01_CONTENT } from '../../data/missions/phase-1';
+import type { StoryMissionContent } from '../../core/curriculum/story-mission-content.types';
+import { CHAPTER_01_CONTENT, PHASE_1_MISSIONS } from '../../data/missions/phase-1';
+import { provideMissionContent } from '../../data/missions';
 import { APP_ICONS } from '../../shared/icons';
 
 const ICON_PROVIDERS = [
@@ -62,6 +65,7 @@ interface SetupOptions {
   chapterMeta?: StoryMission | undefined;
   prerequisites?: ChapterId[];
   completeMissionFn?: (...args: unknown[]) => void;
+  extraMissionContent?: StoryMissionContent[];
 }
 
 async function setup(options: SetupOptions = {}) {
@@ -73,6 +77,7 @@ async function setup(options: SetupOptions = {}) {
     chapterMeta = TEST_CHAPTER_META,
     prerequisites = [],
     completeMissionFn = vi.fn(),
+    extraMissionContent = [],
   } = options;
 
   const paramMapSubject = new BehaviorSubject(convertToParamMap({ chapterId }));
@@ -80,9 +85,12 @@ async function setup(options: SetupOptions = {}) {
 
   const completedMissionsSignal: WritableSignal<ReadonlySet<ChapterId>> = signal(completedMissions);
 
+  const needsExtraContent = extraMissionContent.length > 0;
+
   const result = await createComponent(MissionPage, {
     providers: [
       ...ICON_PROVIDERS,
+      provideMissionContent(PHASE_1_MISSIONS),
       {
         provide: ActivatedRoute,
         useValue: { paramMap: paramMapSubject.asObservable() },
@@ -108,7 +116,14 @@ async function setup(options: SetupOptions = {}) {
         navigate: navigateFn,
       }),
     ],
+    detectChanges: !needsExtraContent,
   });
+
+  if (needsExtraContent) {
+    TestBed.inject(StoryMissionContentService).registerContent(extraMissionContent);
+    result.fixture.detectChanges();
+    await result.fixture.whenStable();
+  }
 
   return { ...result, navigateFn, paramMapSubject, completeMissionFn, completedMissionsSignal };
 }
@@ -426,5 +441,117 @@ describe('MissionPage', () => {
     const notFound = element.querySelector('.mission__not-found');
     expect(notFound).toBeTruthy();
     expect(notFound?.textContent).toContain('Mission not found for chapter 0');
+  });
+
+  // === Multi-block code examples (3 tests) ===
+
+  it('should render multiple code editors when codeBlocks is present', async () => {
+    const testMission: StoryMissionContent = {
+      chapterId: 99 as ChapterId,
+      steps: [{
+        stepType: 'code-example',
+        narrativeText: 'Test narrative',
+        code: 'fallback',
+        language: 'typescript',
+        explanation: 'test explanation',
+        codeBlocks: [
+          { code: 'const a = 1;', language: 'typescript', label: 'Before' },
+          { code: 'const a = 2;', language: 'typescript', label: 'After' },
+        ],
+      }],
+      completionCriteria: { description: 'Test completion', minStepsViewed: 1 },
+    };
+
+    const { element } = await setup({
+      chapterId: '99',
+      chapterMeta: {
+        chapterId: 99,
+        title: 'Test Mission',
+        angularTopic: 'Testing',
+        narrative: 'Test',
+        unlocksMinigame: null,
+        deps: [],
+        phase: 1,
+      },
+      extraMissionContent: [testMission],
+    });
+
+    const codeEditors = element.querySelectorAll('nx-code-editor');
+    expect(codeEditors.length).toBe(2);
+  });
+
+  it('should display labels for code blocks with labels', async () => {
+    const testMission: StoryMissionContent = {
+      chapterId: 99 as ChapterId,
+      steps: [{
+        stepType: 'code-example',
+        narrativeText: 'Test narrative',
+        code: 'fallback',
+        language: 'typescript',
+        explanation: 'test explanation',
+        codeBlocks: [
+          { code: 'const a = 1;', language: 'typescript', label: 'Before' },
+          { code: 'const a = 2;', language: 'typescript', label: 'After' },
+        ],
+      }],
+      completionCriteria: { description: 'Test completion', minStepsViewed: 1 },
+    };
+
+    const { element } = await setup({
+      chapterId: '99',
+      chapterMeta: {
+        chapterId: 99,
+        title: 'Test Mission',
+        angularTopic: 'Testing',
+        narrative: 'Test',
+        unlocksMinigame: null,
+        deps: [],
+        phase: 1,
+      },
+      extraMissionContent: [testMission],
+    });
+
+    const labels = element.querySelectorAll('.mission__code-label');
+    expect(labels.length).toBe(2);
+    expect(labels[0].textContent?.trim()).toBe('Before');
+    expect(labels[1].textContent?.trim()).toBe('After');
+  });
+
+  it('should not render label div when code block has no label', async () => {
+    const testMission: StoryMissionContent = {
+      chapterId: 98 as ChapterId,
+      steps: [{
+        stepType: 'code-example',
+        narrativeText: 'Test narrative',
+        code: 'fallback',
+        language: 'typescript',
+        explanation: 'test explanation',
+        codeBlocks: [
+          { code: 'const x = 1;', language: 'typescript' },
+          { code: 'const x = 2;', language: 'typescript' },
+        ],
+      }],
+      completionCriteria: { description: 'Test completion', minStepsViewed: 1 },
+    };
+
+    const { element } = await setup({
+      chapterId: '98',
+      chapterMeta: {
+        chapterId: 98,
+        title: 'Test Mission No Labels',
+        angularTopic: 'Testing',
+        narrative: 'Test',
+        unlocksMinigame: null,
+        deps: [],
+        phase: 1,
+      },
+      extraMissionContent: [testMission],
+    });
+
+    const labels = element.querySelectorAll('.mission__code-label');
+    expect(labels.length).toBe(0);
+
+    const codeEditors = element.querySelectorAll('nx-code-editor');
+    expect(codeEditors.length).toBe(2);
   });
 });

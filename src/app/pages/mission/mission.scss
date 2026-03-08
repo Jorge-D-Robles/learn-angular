@@ -46,6 +46,24 @@
   margin-bottom: 1rem;
 }
 
+.mission__code-block {
+  margin-bottom: 0.75rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.mission__code-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--nx-color-corridor, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+  padding-left: 0.25rem;
+}
+
 .mission__explanation {
   background: var(--nx-color-hull, #0f172a);
   padding: 0.75rem 1rem;

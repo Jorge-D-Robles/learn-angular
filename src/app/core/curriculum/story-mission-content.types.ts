@@ -6,6 +6,14 @@ export interface NarrativeStep {
   readonly narrativeText: string;
 }
 
+/** A single code block within a code-example step. */
+export interface CodeBlock {
+  readonly label?: string;
+  readonly code: string;
+  readonly language: string;
+  readonly highlightLines?: readonly number[];
+}
+
 /** A step with a read-only code example and explanation. */
 export interface CodeExampleStep {
   readonly stepType: 'code-example';
@@ -14,6 +22,7 @@ export interface CodeExampleStep {
   readonly language: string;
   readonly highlightLines?: readonly number[];
   readonly explanation: string;
+  readonly codeBlocks?: readonly CodeBlock[];
 }
 
 /** A concept explanation panel with title, body, and optional key points. */

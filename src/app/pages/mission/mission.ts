@@ -6,8 +6,8 @@ import { GameProgressionService } from '../../core/progression/game-progression.
 import { CurriculumService } from '../../core/curriculum/curriculum.service';
 import { StoryMissionCompletionService } from '../../core/curriculum/story-mission-completion.service';
 import type { ChapterId } from '../../core/curriculum/curriculum.types';
+import { StoryMissionContentService } from '../../core/curriculum/story-mission-content.service';
 import type { CodeExampleStep, ConceptStep } from '../../core/curriculum/story-mission-content.types';
-import { PHASE_1_MISSIONS } from '../../data/missions/phase-1';
 import { CodeEditorComponent, LockedContentComponent } from '../../shared/components';
 
 @Component({
@@ -22,6 +22,7 @@ export class MissionPage {
   private readonly gameProgression = inject(GameProgressionService);
   private readonly curriculum = inject(CurriculumService);
   private readonly missionCompletion = inject(StoryMissionCompletionService);
+  private readonly missionContentService = inject(StoryMissionContentService);
 
   readonly chapterId = toSignal(
     this.route.paramMap.pipe(map((p) => p.get('chapterId') ?? '')),
@@ -31,7 +32,7 @@ export class MissionPage {
   readonly chapterIdNum = computed(() => parseInt(this.chapterId(), 10) || 0);
 
   readonly missionContent = computed(
-    () => PHASE_1_MISSIONS.find((m) => m.chapterId === this.chapterIdNum()) ?? null,
+    () => this.missionContentService.getMissionContent(this.chapterIdNum()) ?? null,
   );
 
   readonly missionMeta = computed(
@@ -85,6 +86,11 @@ export class MissionPage {
   readonly codeExample = computed(() => {
     const step = this.currentStepData();
     return step?.stepType === 'code-example' ? (step as CodeExampleStep) : null;
+  });
+
+  readonly codeBlocks = computed(() => {
+    const ex = this.codeExample();
+    return ex?.codeBlocks?.length ? ex.codeBlocks : null;
   });
 
   readonly concept = computed(() => {
