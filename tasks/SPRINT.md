@@ -11,7 +11,6 @@ Started: 2026-03-08
 
 ## Active
 
-- **T-2026-165**: Create barrel export for animation core module (Assigned: claude, Status: in-progress)
 
 
 
