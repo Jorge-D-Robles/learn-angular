@@ -1672,28 +1672,6 @@ Acceptance criteria:
 - [ ] At least 4 achievement-tied badges
 - [ ] Unit tests for: all 3 types represented, valid unlock conditions, minimum counts
 
-### T-2026-472
-- Title: Wire BindingTypeSelectorComponent into WireProtocolComponent UI
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-420, T-2026-064
-- Blocked-by: —
-- Tags: integration, ui, minigame, wire-protocol, binding-type
-- Refs: docs/minigames/02-wire-protocol.md, src/app/features/minigames/wire-protocol/wire-protocol.component.ts
-
-T-2026-420 creates BindingTypeSelectorComponent for wire type toggling (interpolation/property/event/two-way). T-2026-064 created the Wire Protocol UI. No ticket wires the selector into the UI component. Without this, players have no way to switch wire types during gameplay.
-
-Acceptance criteria:
-- [ ] WireProtocolComponent renders BindingTypeSelectorComponent in the tools panel
-- [ ] `selectedType` input bound to engine's current wire type signal
-- [ ] `typeSelected` output updates the engine's active wire type for subsequent draws
-- [ ] `availableTypes` input bound to level data's available wire types (basic levels may not have all 4)
-- [ ] Keyboard shortcuts 1-4 work via KeyboardShortcutService integration
-- [ ] Unit tests for: selector rendering, type change on selection, level-specific type filtering
-
 ### T-2026-473
 - Title: Wire FlowCommanderGateConfigComponent into FlowCommanderComponent UI
 - Status: todo

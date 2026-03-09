@@ -18,11 +18,11 @@ Started: 2026-03-08
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-472**: Wire BindingTypeSelectorComponent into WireProtocolComponent UI (Priority: high, Size: S)
 - **T-2026-473**: Wire FlowCommanderGateConfigComponent into FlowCommanderComponent UI (Priority: high, Size: S)
 
 ---

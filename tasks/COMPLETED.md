@@ -227,3 +227,4 @@
 [2026-03-08] T-2026-419: Create SignalCorpsTowerConfigComponent for tower input/output declaration panel — created SignalCorpsTowerConfigComponent with input/output declaration, wiring, and validation (claude)
 [2026-03-08] T-2026-485: Wire StoryMissionCompletionService into StoryMissionPage completion flow — wired StoryMissionCompletionService result into MissionPage completionResult signal (claude)
 [2026-03-08] T-2026-486: Wire ConveyorBeltService visual state into ModuleAssemblyComponent for belt rendering — wired ConveyorBeltService exhaustion visual state and fixed dual-tick routing (claude)
+[2026-03-08] T-2026-472: Wire BindingTypeSelectorComponent into WireProtocolComponent UI — derived availableWireTypes from level data for BindingTypeSelectorComponent (claude)
