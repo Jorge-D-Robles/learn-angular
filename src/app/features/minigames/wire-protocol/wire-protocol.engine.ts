@@ -12,6 +12,7 @@ import {
   type VerificationResult,
 } from './wire-protocol.types';
 import type { WireProtocolLevelData } from '../../../data/levels/wire-protocol.data';
+import type { WireProtocolValidationService } from './wire-protocol-validation.service';
 
 // ---------------------------------------------------------------------------
 // Action types
@@ -85,6 +86,7 @@ export class WireProtocolEngine extends MinigameEngine<WireProtocolLevelData> {
   private _targetPortMap = new Map<string, TargetPort>();
   private _hadIncorrectWire = false;
   private _nextWireId = 1;
+  private readonly _validationService: WireProtocolValidationService | undefined;
 
   // --- Public read-only signals ---
   readonly wires: Signal<readonly WireConnection[]> = this._wires.asReadonly();
@@ -93,8 +95,9 @@ export class WireProtocolEngine extends MinigameEngine<WireProtocolLevelData> {
   readonly verificationsRemaining: Signal<number> = this._verificationsRemaining.asReadonly();
   readonly verificationCount: Signal<number> = this._verificationCount.asReadonly();
 
-  constructor(config?: Partial<MinigameEngineConfig>) {
+  constructor(config?: Partial<MinigameEngineConfig>, validationService?: WireProtocolValidationService) {
     super(config);
+    this._validationService = validationService;
   }
 
   // --- Lifecycle hooks ---
@@ -144,7 +147,9 @@ export class WireProtocolEngine extends MinigameEngine<WireProtocolLevelData> {
     this._verificationsRemaining.update(v => v - 1);
     this._verificationCount.update(c => c + 1);
 
-    const result = verifyConnections(this._wires(), this._correctWires);
+    const result = this._validationService
+      ? this._validationService.validateAll(this._wires(), this._correctWires)
+      : verifyConnections(this._wires(), this._correctWires);
 
     if (result.incorrectWires.length > 0) {
       this._hadIncorrectWire = true;
@@ -164,6 +169,27 @@ export class WireProtocolEngine extends MinigameEngine<WireProtocolLevelData> {
     return result;
   }
 
+  // --- Hints ---
+
+  getHintForWire(wireId: string): string | null {
+    if (!this._validationService) {
+      return null;
+    }
+
+    const wire = this._wires().find(w => w.id === wireId);
+    if (!wire) {
+      return null;
+    }
+
+    const source = this._sourcePortMap.get(wire.sourcePortId);
+    const target = this._targetPortMap.get(wire.targetPortId);
+    if (!source || !target) {
+      return null;
+    }
+
+    return this._validationService.getCommonMistake(source, target, wire.wireType);
+  }
+
   // --- Private handlers ---
 
   private handleDrawWire(action: DrawWireAction): ActionResult {
@@ -174,7 +200,11 @@ export class WireProtocolEngine extends MinigameEngine<WireProtocolLevelData> {
       return INVALID_NO_CHANGE;
     }
 
-    if (!isSourceTargetCompatible(source, target, action.wireType)) {
+    const compatible = this._validationService
+      ? this._validationService.isCorrectBindingType(source, target, action.wireType)
+      : isSourceTargetCompatible(source, target, action.wireType);
+
+    if (!compatible) {
       return INVALID_NO_CHANGE;
     }
 

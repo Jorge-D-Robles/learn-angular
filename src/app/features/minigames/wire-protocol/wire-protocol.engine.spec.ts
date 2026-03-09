@@ -13,6 +13,7 @@ import type {
   WireConnection,
 } from './wire-protocol.types';
 import { WireType } from './wire-protocol.types';
+import { WireProtocolValidationService } from './wire-protocol-validation.service';
 import type { WireProtocolLevelData } from '../../../data/levels/wire-protocol.data';
 import {
   MinigameStatus,
@@ -114,6 +115,14 @@ function drawAllCorrectWires(engine: WireProtocolEngine): void {
   engine.submitAction({ type: 'draw-wire', sourcePortId: 'src-1', targetPortId: 'tgt-1', wireType: WireType.interpolation } as DrawWireAction);
   engine.submitAction({ type: 'draw-wire', sourcePortId: 'src-2', targetPortId: 'tgt-2', wireType: WireType.property } as DrawWireAction);
   engine.submitAction({ type: 'draw-wire', sourcePortId: 'src-3', targetPortId: 'tgt-3', wireType: WireType.event } as DrawWireAction);
+}
+
+function createEngineWithService(
+  config?: Partial<MinigameEngineConfig>,
+): { engine: WireProtocolEngine; service: WireProtocolValidationService } {
+  const service = new WireProtocolValidationService();
+  const engine = new WireProtocolEngine(config, service);
+  return { engine, service };
 }
 
 // ---------------------------------------------------------------------------
@@ -790,6 +799,187 @@ describe('WireProtocolEngine', () => {
       expect(engine.verificationCount()).toBe(0);
       expect(engine.verificationsRemaining()).toBe(3);
       expect(engine.status()).toBe(MinigameStatus.Playing);
+    });
+  });
+
+  // --- 12. ValidationService integration ---
+
+  describe('ValidationService integration', () => {
+    it('should accept validation service in constructor and behave identically for valid draw-wire', () => {
+      const { engine } = createEngineWithService();
+      initAndStart(engine);
+
+      const result = engine.submitAction({
+        type: 'draw-wire',
+        sourcePortId: 'src-1',
+        targetPortId: 'tgt-1',
+        wireType: WireType.interpolation,
+      } as DrawWireAction);
+
+      expect(result.valid).toBe(true);
+      expect(engine.wires()).toHaveLength(1);
+    });
+
+    it('should delegate isCorrectBindingType to service on draw-wire (valid case)', () => {
+      const { engine, service } = createEngineWithService();
+      initAndStart(engine);
+
+      const spy = vi.spyOn(service, 'isCorrectBindingType');
+
+      engine.submitAction({
+        type: 'draw-wire',
+        sourcePortId: 'src-1',
+        targetPortId: 'tgt-1',
+        wireType: WireType.interpolation,
+      } as DrawWireAction);
+
+      expect(spy).toHaveBeenCalledOnce();
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'src-1', portType: 'property' }),
+        expect.objectContaining({ id: 'tgt-1', bindingSlot: 'interpolation' }),
+        WireType.interpolation,
+      );
+    });
+
+    it('should delegate isCorrectBindingType to service on draw-wire (invalid case)', () => {
+      const { engine, service } = createEngineWithService();
+      initAndStart(engine);
+
+      const spy = vi.spyOn(service, 'isCorrectBindingType');
+
+      // property source + event target + WireType.event => incompatible
+      const result = engine.submitAction({
+        type: 'draw-wire',
+        sourcePortId: 'src-1',
+        targetPortId: 'tgt-3',
+        wireType: WireType.event,
+      } as DrawWireAction);
+
+      expect(spy).toHaveBeenCalledOnce();
+      expect(result.valid).toBe(false);
+      expect(engine.wires()).toHaveLength(0);
+    });
+
+    it('should delegate validateAll to service on verify()', () => {
+      const { engine, service } = createEngineWithService();
+      initAndStart(engine);
+      drawAllCorrectWires(engine);
+
+      const spy = vi.spyOn(service, 'validateAll');
+
+      engine.verify();
+
+      expect(spy).toHaveBeenCalledOnce();
+    });
+
+    it('should return hint text from getHintForWire() for pre-wired incorrect wire', () => {
+      const { engine } = createEngineWithService();
+      // Pre-wire with WRONG wireType: property source + property target, but use interpolation wireType
+      const preWired: WireConnection[] = [
+        { id: 'pw-wrong', sourcePortId: 'src-2', targetPortId: 'tgt-2', wireType: WireType.interpolation, isPreWired: true, isCorrect: false },
+      ];
+      const data = createTestLevelData({ preWiredConnections: preWired });
+      initAndStart(engine, data);
+
+      const hint = engine.getHintForWire('pw-wrong');
+
+      expect(hint).toBe('Use [property] binding instead of {{ }} when binding to an element property directly.');
+    });
+
+    it('should return null from getHintForWire() when no service is present', () => {
+      const engine = createEngine();
+      const preWired: WireConnection[] = [
+        { id: 'pw-wrong', sourcePortId: 'src-2', targetPortId: 'tgt-2', wireType: WireType.interpolation, isPreWired: true, isCorrect: false },
+      ];
+      const data = createTestLevelData({ preWiredConnections: preWired });
+      initAndStart(engine, data);
+
+      const hint = engine.getHintForWire('pw-wrong');
+
+      expect(hint).toBeNull();
+    });
+
+    it('should return null from getHintForWire() for correctly-typed wire', () => {
+      const { engine } = createEngineWithService();
+      initAndStart(engine);
+
+      // Draw a correct wire (property source + interpolation target + interpolation wireType)
+      engine.submitAction({
+        type: 'draw-wire',
+        sourcePortId: 'src-1',
+        targetPortId: 'tgt-1',
+        wireType: WireType.interpolation,
+      } as DrawWireAction);
+
+      const wireId = engine.wires()[0].id;
+      const hint = engine.getHintForWire(wireId);
+
+      expect(hint).toBeNull();
+    });
+
+    it('should return null from getHintForWire() for non-existent wireId', () => {
+      const { engine } = createEngineWithService();
+      initAndStart(engine);
+
+      const hint = engine.getHintForWire('non-existent');
+
+      expect(hint).toBeNull();
+    });
+
+    it('should preserve inline fallback when no service is provided', () => {
+      const engine = createEngine();
+      initAndStart(engine);
+
+      // Draw valid wire
+      const drawResult = engine.submitAction({
+        type: 'draw-wire',
+        sourcePortId: 'src-1',
+        targetPortId: 'tgt-1',
+        wireType: WireType.interpolation,
+      } as DrawWireAction);
+      expect(drawResult.valid).toBe(true);
+
+      // Draw remaining wires and verify
+      engine.submitAction({ type: 'draw-wire', sourcePortId: 'src-2', targetPortId: 'tgt-2', wireType: WireType.property } as DrawWireAction);
+      engine.submitAction({ type: 'draw-wire', sourcePortId: 'src-3', targetPortId: 'tgt-3', wireType: WireType.event } as DrawWireAction);
+      const verifyResult = engine.verify();
+
+      expect(verifyResult).not.toBeNull();
+      expect(verifyResult!.correctWires).toHaveLength(3);
+      expect(engine.status()).toBe(MinigameStatus.Won);
+    });
+
+    it('should complete engine when service validateAll returns all correct', () => {
+      const { engine } = createEngineWithService({ maxScore: 1000 });
+      initAndStart(engine);
+      drawAllCorrectWires(engine);
+
+      engine.verify();
+
+      expect(engine.status()).toBe(MinigameStatus.Won);
+      expect(engine.score()).toBe(1000 * PERFECT_SCORE_MULTIPLIER);
+    });
+
+    it('should work after reset() -- service remains usable', () => {
+      const { engine } = createEngineWithService();
+      initAndStart(engine);
+
+      // Draw wires and verify
+      drawAllCorrectWires(engine);
+      engine.verify();
+      expect(engine.status()).toBe(MinigameStatus.Won);
+
+      // Reset
+      engine.reset();
+      expect(engine.status()).toBe(MinigameStatus.Playing);
+
+      // Draw wires again and verify again
+      drawAllCorrectWires(engine);
+      const result = engine.verify();
+
+      expect(result).not.toBeNull();
+      expect(result!.correctWires).toHaveLength(3);
+      expect(engine.status()).toBe(MinigameStatus.Won);
     });
   });
 });
