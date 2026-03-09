@@ -73,6 +73,30 @@ export interface SignalCorpsLevelData {
   readonly stationHealth: number;
 }
 
+/** Configuration controlling wave spawning behavior. */
+export interface WaveConfig {
+  readonly signalSpeed: number;       // normalized distance per second (default ~0.33 = 3s to reach station)
+  readonly spawnIntervalMs: number;   // ms between signal spawns within a wave (default 500)
+}
+
+/** A runtime noise signal instance spawned from a NoiseWave definition. */
+export interface NoiseSignal {
+  readonly id: string;                // unique identifier (waveId + signal index)
+  readonly waveIndex: number;         // which wave this signal belongs to
+  readonly typeSignature: string;     // matches NoiseWave.typeSignature
+  readonly approachDirection: ApproachDirection;
+  readonly damage: number;            // damage dealt if unblocked
+  readonly position: number;          // 0.0 (edge) to 1.0+ (reached station)
+  readonly resolved: boolean;         // true after blocking evaluation or damage applied
+}
+
+/** Result of evaluating which signals are blocked by towers. */
+export interface BlockingResult {
+  readonly blocked: readonly { signal: NoiseSignal; towerId: string }[];
+  readonly unblocked: readonly NoiseSignal[];
+  readonly allResolved: boolean;      // true when no active unresolved signals remain
+}
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
