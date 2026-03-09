@@ -982,4 +982,63 @@ describe('WireProtocolEngine', () => {
       expect(engine.status()).toBe(MinigameStatus.Won);
     });
   });
+
+  // --- 13. Available Wire Types ---
+
+  describe('Available Wire Types', () => {
+    it('should expose available wire types derived from correctWires', () => {
+      const engine = createEngine();
+      const data = createTestLevelData({
+        correctWires: [
+          { id: 'cw-1', sourcePortId: 'src-1', targetPortId: 'tgt-1', wireType: WireType.interpolation, isPreWired: false },
+          { id: 'cw-2', sourcePortId: 'src-2', targetPortId: 'tgt-2', wireType: WireType.property, isPreWired: false },
+        ],
+      });
+      engine.initialize(createLevel(data));
+
+      expect(engine.availableWireTypes()).toEqual([WireType.interpolation, WireType.property]);
+    });
+
+    it('should include all 4 wire types when correctWires uses all types', () => {
+      const engine = createEngine();
+      const data = createTestLevelData({
+        correctWires: [
+          { id: 'cw-1', sourcePortId: 'src-1', targetPortId: 'tgt-1', wireType: WireType.interpolation, isPreWired: false },
+          { id: 'cw-2', sourcePortId: 'src-2', targetPortId: 'tgt-2', wireType: WireType.property, isPreWired: false },
+          { id: 'cw-3', sourcePortId: 'src-3', targetPortId: 'tgt-3', wireType: WireType.event, isPreWired: false },
+          { id: 'cw-4', sourcePortId: 'src-4', targetPortId: 'tgt-4', wireType: WireType.twoWay, isPreWired: false },
+        ],
+      });
+      engine.initialize(createLevel(data));
+
+      expect(engine.availableWireTypes()).toEqual([
+        WireType.interpolation,
+        WireType.property,
+        WireType.event,
+        WireType.twoWay,
+      ]);
+    });
+
+    it('should return empty array for level with no correctWires', () => {
+      const engine = createEngine();
+      const data = createTestLevelData({ correctWires: [] });
+      engine.initialize(createLevel(data));
+
+      expect(engine.availableWireTypes()).toEqual([]);
+    });
+
+    it('should deduplicate wire types', () => {
+      const engine = createEngine();
+      const data = createTestLevelData({
+        correctWires: [
+          { id: 'cw-1', sourcePortId: 'src-1', targetPortId: 'tgt-1', wireType: WireType.interpolation, isPreWired: false },
+          { id: 'cw-2', sourcePortId: 'src-2', targetPortId: 'tgt-2', wireType: WireType.interpolation, isPreWired: false },
+          { id: 'cw-3', sourcePortId: 'src-3', targetPortId: 'tgt-3', wireType: WireType.interpolation, isPreWired: false },
+        ],
+      });
+      engine.initialize(createLevel(data));
+
+      expect(engine.availableWireTypes()).toEqual([WireType.interpolation]);
+    });
+  });
 });

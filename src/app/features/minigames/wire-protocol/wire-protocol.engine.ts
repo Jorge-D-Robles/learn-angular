@@ -5,10 +5,10 @@ import { MinigameStatus } from '../../../core/minigame/minigame.types';
 import {
   isSourceTargetCompatible,
   verifyConnections,
+  WireType,
   type SourcePort,
   type TargetPort,
   type WireConnection,
-  type WireType,
   type VerificationResult,
 } from './wire-protocol.types';
 import type { WireProtocolLevelData } from '../../../data/levels/wire-protocol.data';
@@ -79,6 +79,7 @@ export class WireProtocolEngine extends MinigameEngine<WireProtocolLevelData> {
   private readonly _targetPorts = signal<readonly TargetPort[]>([]);
   private readonly _verificationsRemaining = signal(3);
   private readonly _verificationCount = signal(0);
+  private readonly _availableWireTypes = signal<WireType[]>([]);
 
   // --- Private state ---
   private _correctWires: readonly WireConnection[] = [];
@@ -94,6 +95,7 @@ export class WireProtocolEngine extends MinigameEngine<WireProtocolLevelData> {
   readonly targetPorts: Signal<readonly TargetPort[]> = this._targetPorts.asReadonly();
   readonly verificationsRemaining: Signal<number> = this._verificationsRemaining.asReadonly();
   readonly verificationCount: Signal<number> = this._verificationCount.asReadonly();
+  readonly availableWireTypes: Signal<readonly WireType[]> = this._availableWireTypes.asReadonly();
 
   constructor(config?: Partial<MinigameEngineConfig>, validationService?: WireProtocolValidationService) {
     super(config);
@@ -110,6 +112,10 @@ export class WireProtocolEngine extends MinigameEngine<WireProtocolLevelData> {
     this._verificationCount.set(0);
     this._hadIncorrectWire = false;
     this._nextWireId = 1;
+
+    // Derive available wire types from correctWires, preserving enum order
+    const typeSet = new Set(data.correctWires.map(w => w.wireType));
+    this._availableWireTypes.set(Object.values(WireType).filter(t => typeSet.has(t)));
 
     // Build lookup maps
     this._sourcePortMap = new Map(data.sourcePorts.map(p => [p.id, p]));

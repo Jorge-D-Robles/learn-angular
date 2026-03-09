@@ -56,7 +56,7 @@ export class WireProtocolComponent implements OnDestroy {
 
   // Template-accessible constants
   readonly viewBox = `0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`;
-  readonly availableWireTypes = computed(() => Object.values(WireType));
+  readonly availableWireTypes = computed(() => [...(this.engine?.availableWireTypes() ?? Object.values(WireType))]);
 
   // Computed from engine (null-safe)
   readonly sourcePorts = computed(() => this.engine?.sourcePorts() ?? []);

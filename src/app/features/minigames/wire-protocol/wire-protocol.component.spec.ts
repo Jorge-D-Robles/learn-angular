@@ -157,7 +157,16 @@ describe('WireProtocolComponent', () => {
     });
 
     it('should change selected wire type on button click', () => {
-      setup();
+      // Use level data with all 4 wire types so all buttons are enabled
+      const data = createTestLevelData({
+        correctWires: [
+          { id: 'cw-1', sourcePortId: 'src-1', targetPortId: 'tgt-1', wireType: WireType.interpolation, isPreWired: false },
+          { id: 'cw-2', sourcePortId: 'src-2', targetPortId: 'tgt-2', wireType: WireType.property, isPreWired: false },
+          { id: 'cw-3', sourcePortId: 'src-1', targetPortId: 'tgt-2', wireType: WireType.event, isPreWired: false },
+          { id: 'cw-4', sourcePortId: 'src-2', targetPortId: 'tgt-1', wireType: WireType.twoWay, isPreWired: false },
+        ],
+      });
+      setup(data);
       const buttons = fixture.nativeElement.querySelectorAll('app-binding-type-selector button') as NodeListOf<HTMLButtonElement>;
       // Click the property button (second)
       buttons[1].click();
@@ -179,6 +188,24 @@ describe('WireProtocolComponent', () => {
       const updatedButtons = fixture.nativeElement.querySelectorAll('app-binding-type-selector .binding-type-selector__btn');
       expect(updatedButtons[0].classList.contains('binding-type-selector__btn--active')).toBe(false);
       expect(updatedButtons[2].classList.contains('binding-type-selector__btn--active')).toBe(true);
+    });
+
+    it('should pass level-specific availableTypes to the selector (basic level with only interpolation)', () => {
+      const data = createTestLevelData({
+        correctWires: [
+          { id: 'cw-1', sourcePortId: 'src-1', targetPortId: 'tgt-1', wireType: WireType.interpolation, isPreWired: false },
+        ],
+      });
+      setup(data);
+
+      expect(component.availableWireTypes()).toEqual([WireType.interpolation]);
+    });
+
+    it('should pass all types from level data to selector when level uses multiple types', () => {
+      setup(); // default data uses interpolation + event
+      // Default test data has correctWires with interpolation and event
+      expect(component.availableWireTypes()).toContain(WireType.interpolation);
+      expect(component.availableWireTypes()).toContain(WireType.event);
     });
   });
 
