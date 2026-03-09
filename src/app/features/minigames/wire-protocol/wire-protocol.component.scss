@@ -74,45 +74,6 @@
   gap: 12px;
 }
 
-.wire-protocol__type-selector {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-}
-
-.wire-protocol__type-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border: 2px solid var(--wire-color, #3b82f6);
-  border-radius: 6px;
-  background: transparent;
-  color: #e2e8f0;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.05);
-  }
-
-  &--active {
-    background: var(--wire-color, #3b82f6);
-    color: #0f1219;
-    box-shadow: 0 0 10px var(--wire-color, #3b82f6);
-  }
-}
-
-.wire-protocol__type-key {
-  font-size: 0.65rem;
-  opacity: 0.6;
-  padding: 1px 4px;
-  border: 1px solid currentColor;
-  border-radius: 3px;
-}
-
 .wire-protocol__verify-btn {
   padding: 8px 20px;
   border: none;
@@ -222,10 +183,5 @@
   .wire-protocol__controls {
     flex-direction: column;
     gap: 8px;
-  }
-
-  .wire-protocol__type-selector {
-    flex-wrap: wrap;
-    justify-content: center;
   }
 }

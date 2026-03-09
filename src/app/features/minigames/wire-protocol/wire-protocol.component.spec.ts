@@ -158,7 +158,7 @@ describe('WireProtocolComponent', () => {
 
     it('should change selected wire type on button click', () => {
       setup();
-      const buttons = fixture.nativeElement.querySelectorAll('.wire-protocol__type-btn') as NodeListOf<HTMLButtonElement>;
+      const buttons = fixture.nativeElement.querySelectorAll('app-binding-type-selector button') as NodeListOf<HTMLButtonElement>;
       // Click the property button (second)
       buttons[1].click();
       fixture.detectChanges();
@@ -168,17 +168,17 @@ describe('WireProtocolComponent', () => {
     it('should highlight active wire type button', () => {
       setup();
       // Default is interpolation (first button)
-      const buttons = fixture.nativeElement.querySelectorAll('.wire-protocol__type-btn');
-      expect(buttons[0].classList.contains('wire-protocol__type-btn--active')).toBe(true);
-      expect(buttons[1].classList.contains('wire-protocol__type-btn--active')).toBe(false);
+      const buttons = fixture.nativeElement.querySelectorAll('app-binding-type-selector .binding-type-selector__btn');
+      expect(buttons[0].classList.contains('binding-type-selector__btn--active')).toBe(true);
+      expect(buttons[1].classList.contains('binding-type-selector__btn--active')).toBe(false);
 
       // Change to event (third button)
       component.selectWireType(WireType.event);
       fixture.detectChanges();
 
-      const updatedButtons = fixture.nativeElement.querySelectorAll('.wire-protocol__type-btn');
-      expect(updatedButtons[0].classList.contains('wire-protocol__type-btn--active')).toBe(false);
-      expect(updatedButtons[2].classList.contains('wire-protocol__type-btn--active')).toBe(true);
+      const updatedButtons = fixture.nativeElement.querySelectorAll('app-binding-type-selector .binding-type-selector__btn');
+      expect(updatedButtons[0].classList.contains('binding-type-selector__btn--active')).toBe(false);
+      expect(updatedButtons[2].classList.contains('binding-type-selector__btn--active')).toBe(true);
     });
   });
 

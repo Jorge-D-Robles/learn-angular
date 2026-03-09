@@ -21,6 +21,7 @@ import {
   type TargetPort,
 } from './wire-protocol.types';
 import type { WireProtocolEngine } from './wire-protocol.engine';
+import { BindingTypeSelectorComponent, WIRE_TYPE_OPTIONS } from './binding-type-selector/binding-type-selector';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -32,16 +33,9 @@ const PANEL_PADDING = 40;
 const REJECTION_FLASH_MS = 400;
 const FEEDBACK_CLEAR_MS = 1500;
 
-const WIRE_TYPE_OPTIONS = [
-  { type: WireType.interpolation, label: '{{ }}', color: WIRE_TYPE_COLORS[WireType.interpolation], key: '1' },
-  { type: WireType.property,      label: '[ ]',   color: WIRE_TYPE_COLORS[WireType.property],      key: '2' },
-  { type: WireType.event,         label: '( )',    color: WIRE_TYPE_COLORS[WireType.event],         key: '3' },
-  { type: WireType.twoWay,        label: '[( )]',  color: WIRE_TYPE_COLORS[WireType.twoWay],        key: '4' },
-];
-
 @Component({
   selector: 'app-wire-protocol',
-  imports: [SvgPortComponent],
+  imports: [SvgPortComponent, BindingTypeSelectorComponent],
   templateUrl: './wire-protocol.component.html',
   styleUrl: './wire-protocol.component.scss',
 })
@@ -61,8 +55,8 @@ export class WireProtocolComponent implements OnDestroy {
   private rejectionTimer: ReturnType<typeof setTimeout> | null = null;
 
   // Template-accessible constants
-  readonly wireTypes = WIRE_TYPE_OPTIONS;
   readonly viewBox = `0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`;
+  readonly availableWireTypes = computed(() => Object.values(WireType));
 
   // Computed from engine (null-safe)
   readonly sourcePorts = computed(() => this.engine?.sourcePorts() ?? []);

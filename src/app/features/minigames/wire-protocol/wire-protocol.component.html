@@ -78,19 +78,10 @@
 
   <!-- Controls (HTML below the SVG) -->
   <div class="wire-protocol__controls">
-    <div class="wire-protocol__type-selector" role="radiogroup" aria-label="Wire type">
-      @for (wt of wireTypes; track wt.type) {
-        <button class="wire-protocol__type-btn"
-                [class.wire-protocol__type-btn--active]="selectedWireType() === wt.type"
-                [style.--wire-color]="wt.color"
-                role="radio"
-                [attr.aria-checked]="selectedWireType() === wt.type"
-                (click)="selectWireType(wt.type)">
-          <span class="wire-protocol__type-key">{{ wt.key }}</span>
-          {{ wt.label }}
-        </button>
-      }
-    </div>
+    <app-binding-type-selector
+      [selectedType]="selectedWireType()"
+      [availableTypes]="availableWireTypes()"
+      (typeSelected)="selectWireType($event)" />
     <button class="wire-protocol__verify-btn"
             [disabled]="verificationsRemaining() <= 0"
             (click)="onVerify()">
