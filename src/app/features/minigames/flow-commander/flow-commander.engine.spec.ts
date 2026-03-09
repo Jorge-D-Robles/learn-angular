@@ -23,6 +23,7 @@ import {
   type MinigameLevel,
 } from '../../../core/minigame/minigame.types';
 import type { MinigameEngineConfig } from '../../../core/minigame/minigame-engine';
+import { FlowCommanderSimulationService } from './flow-commander-simulation.service';
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -111,6 +112,14 @@ function makeLevel(data: FlowCommanderLevelData): MinigameLevel<FlowCommanderLev
 
 function createEngine(config?: Partial<MinigameEngineConfig>): FlowCommanderEngine {
   return new FlowCommanderEngine(config);
+}
+
+function createEngineWithService(
+  config?: Partial<MinigameEngineConfig>,
+): { engine: FlowCommanderEngine; service: FlowCommanderSimulationService } {
+  const service = new FlowCommanderSimulationService();
+  const engine = new FlowCommanderEngine(config, service);
+  return { engine, service };
 }
 
 function initAndStart(engine: FlowCommanderEngine, data?: FlowCommanderLevelData): void {
@@ -1279,6 +1288,131 @@ describe('FlowCommanderEngine', () => {
       };
       engine.initialize(advancedLevel);
       expect(engine.currentTier()).toBe(DifficultyTier.Advanced);
+    });
+  });
+
+  // --- 16. SimulationService integration ---
+
+  describe('SimulationService integration', () => {
+    it('should call service.loadPipeline() on initialize with graph, items, and zones', () => {
+      const { engine, service } = createEngineWithService();
+      engine.initialize(makeLevel(makeLevelData()));
+
+      // After initialize, service gate state should be an empty map (reset + loadPipeline called)
+      expect(service.getGateState()().size).toBe(0);
+      // Prove the node map was loaded: placing a gate on 'gate' (gate-slot node) should succeed
+      expect(service.placeGate('gate', GateType.if, 'true')).toBe(true);
+    });
+
+    it('should delegate placeGate to service', () => {
+      const { engine, service } = createEngineWithService();
+      initAndStart(engine);
+
+      engine.submitAction({
+        type: 'place-gate',
+        nodeId: 'gate',
+        gateType: GateType.if,
+        condition: 'item.priority === "high"',
+      } as PlaceGateAction);
+
+      expect(service.getGateState()().has('gate')).toBe(true);
+    });
+
+    it('should delegate removeGate to service', () => {
+      const { engine, service } = createEngineWithService();
+      initAndStart(engine);
+
+      engine.submitAction({
+        type: 'place-gate',
+        nodeId: 'gate',
+        gateType: GateType.if,
+        condition: 'item.priority === "high"',
+      } as PlaceGateAction);
+
+      engine.submitAction({
+        type: 'remove-gate',
+        nodeId: 'gate',
+      } as RemoveGateAction);
+
+      expect(service.getGateState()().size).toBe(0);
+    });
+
+    it('should sync configureGate to service via remove+place', () => {
+      const { engine, service } = createEngineWithService();
+      initAndStart(engine);
+
+      engine.submitAction({
+        type: 'place-gate',
+        nodeId: 'gate',
+        gateType: GateType.if,
+        condition: 'item.priority === "high"',
+      } as PlaceGateAction);
+
+      engine.submitAction({
+        type: 'configure-gate',
+        nodeId: 'gate',
+        condition: 'item.color === "red"',
+      } as ConfigureGateAction);
+
+      const serviceGate = service.getGateState()().get('gate');
+      expect(serviceGate).toBeDefined();
+      expect(serviceGate!.condition).toBe('item.color === "red"');
+    });
+
+    it('should delegate simulate() to service and return same result', () => {
+      const { engine } = createEngineWithService();
+      initAndStart(engine);
+
+      engine.submitAction({
+        type: 'place-gate',
+        nodeId: 'gate',
+        gateType: GateType.if,
+        condition: 'item.color === "blue"',
+      } as PlaceGateAction);
+
+      const result = engine.simulate();
+      expect(result).not.toBeNull();
+      expect(result!.itemResults.length).toBe(1);
+    });
+
+    it('should complete engine when service.simulate() returns allCorrect', () => {
+      const data = makeLevelData({
+        targetZones: [makeZone({ expectedColor: 'blue' })],
+      });
+      const { engine } = createEngineWithService();
+      initAndStart(engine, data);
+
+      engine.submitAction({
+        type: 'place-gate',
+        nodeId: 'gate',
+        gateType: GateType.if,
+        condition: 'item.color === "blue"',
+      } as PlaceGateAction);
+
+      engine.simulate();
+
+      expect(engine.status()).toBe(MinigameStatus.Won);
+      expect(engine.score()).toBeGreaterThan(0);
+    });
+
+    it('should keep engine Playing when service.simulate() returns not allCorrect', () => {
+      const data = makeLevelData({
+        targetZones: [makeZone({ expectedColor: 'red' })],
+      });
+      const { engine } = createEngineWithService();
+      initAndStart(engine, data);
+
+      // Place gate that passes blue item to target expecting red -> incorrect
+      engine.submitAction({
+        type: 'place-gate',
+        nodeId: 'gate',
+        gateType: GateType.if,
+        condition: 'item.color === "blue"',
+      } as PlaceGateAction);
+
+      engine.simulate();
+
+      expect(engine.status()).toBe(MinigameStatus.Playing);
     });
   });
 });

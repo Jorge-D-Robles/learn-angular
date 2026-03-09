@@ -11,6 +11,7 @@ import type {
   PipelineNode,
 } from './pipeline.types';
 import { evaluateCondition, extractForCount, evaluateSwitchExpression } from './flow-commander.evaluator';
+import type { FlowCommanderSimulationService } from './flow-commander-simulation.service';
 
 // ---------------------------------------------------------------------------
 // Re-export types that were moved to pipeline.types.ts for use by consumers
@@ -111,6 +112,9 @@ export class FlowCommanderEngine extends MinigameEngine<FlowCommanderLevelData> 
   // --- Private lookups ---
   private _nodeMap = new Map<string, PipelineNode>();
 
+  // --- Optional simulation service (constructor-injected, matching ModuleAssemblyEngine pattern) ---
+  private readonly _simulationService: FlowCommanderSimulationService | undefined;
+
   // --- Public read-only signals ---
   readonly placedGates: Signal<ReadonlyMap<string, PlacedGate>> = this._placedGates.asReadonly();
   readonly simulationResult: Signal<SimulationResult | null> = this._simulationResult.asReadonly();
@@ -121,8 +125,9 @@ export class FlowCommanderEngine extends MinigameEngine<FlowCommanderLevelData> 
   readonly simulationCount: Signal<number> = this._simulationCount.asReadonly();
   readonly currentTier: Signal<DifficultyTier | null> = this._currentTier.asReadonly();
 
-  constructor(config?: Partial<MinigameEngineConfig>) {
+  constructor(config?: Partial<MinigameEngineConfig>, simulationService?: FlowCommanderSimulationService) {
     super(config);
+    this._simulationService = simulationService;
   }
 
   // --- Lifecycle hooks ---
@@ -141,6 +146,9 @@ export class FlowCommanderEngine extends MinigameEngine<FlowCommanderLevelData> 
     this._simulationResult.set(null);
     this._simulationCount.set(0);
     this._nodeMap = new Map(data.graph.nodes.map(n => [n.id, n]));
+
+    this._simulationService?.reset();
+    this._simulationService?.loadPipeline(data.graph, data.cargoItems, data.targetZones);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -172,6 +180,16 @@ export class FlowCommanderEngine extends MinigameEngine<FlowCommanderLevelData> 
     }
 
     this._simulationCount.update(c => c + 1);
+
+    if (this._simulationService) {
+      const result = this._simulationService.simulate();
+      this._simulationResult.set(result);
+      if (result.allCorrect) {
+        this.addScore(this.calculateScore(result));
+        this.complete();
+      }
+      return result;
+    }
 
     const graph = this._pipelineGraph();
     const items = this._cargoItems();
@@ -257,6 +275,8 @@ export class FlowCommanderEngine extends MinigameEngine<FlowCommanderLevelData> 
       return INVALID_NO_CHANGE;
     }
 
+    this._simulationService?.placeGate(action.nodeId, action.gateType, action.condition);
+
     const gate: PlacedGate = {
       nodeId: action.nodeId,
       gateType: action.gateType,
@@ -280,6 +300,8 @@ export class FlowCommanderEngine extends MinigameEngine<FlowCommanderLevelData> 
       return INVALID_NO_CHANGE;
     }
 
+    this._simulationService?.removeGate(action.nodeId);
+
     const newMap = new Map(this._placedGates());
     newMap.delete(action.nodeId);
     this._placedGates.set(newMap);
@@ -293,6 +315,12 @@ export class FlowCommanderEngine extends MinigameEngine<FlowCommanderLevelData> 
     }
 
     const existing = this._placedGates().get(action.nodeId)!;
+
+    if (this._simulationService) {
+      this._simulationService.removeGate(action.nodeId);
+      this._simulationService.placeGate(action.nodeId, existing.gateType, action.condition);
+    }
+
     const updated: PlacedGate = { ...existing, condition: action.condition };
 
     const newMap = new Map(this._placedGates());
