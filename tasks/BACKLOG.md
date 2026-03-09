@@ -1700,29 +1700,6 @@ Acceptance criteria:
 - [ ] At least 4 achievement-tied badges
 - [ ] Unit tests for: all 3 types represented, valid unlock conditions, minimum counts
 
-### T-2026-469
-- Title: Wire FlowCommanderSimulationService into FlowCommanderEngine lifecycle
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-411, T-2026-067
-- Blocked-by: —
-- Tags: integration, minigame, flow-commander, simulation, engine
-- Refs: docs/minigames/03-flow-commander.md, src/app/features/minigames/flow-commander/flow-commander.engine.ts
-
-T-2026-410 wired ConveyorBeltService into ModuleAssemblyEngine establishing the pattern: simulation service injected into engine, delegated during initialize/tick/reset. T-2026-411 creates FlowCommanderSimulationService but no ticket wires it into FlowCommanderEngine. Without this integration, the engine bundles all simulation logic internally instead of delegating to the testable service.
-
-Acceptance criteria:
-- [ ] FlowCommanderEngine constructor accepts FlowCommanderSimulationService
-- [ ] `onLevelLoad()` calls `simulationService.loadPipeline(levelData.topology)`
-- [ ] `placeGate` action delegates to `simulationService.placeGate()`
-- [ ] `removeGate` action delegates to `simulationService.removeGate()`
-- [ ] `runSimulation` action delegates to `simulationService.simulate()` and evaluates correctness
-- [ ] `reset()` calls `simulationService.reset()`
-- [ ] Unit tests for: service delegation on load, place, remove, simulate, reset
-
 ### T-2026-470
 - Title: Wire SignalCorpsWaveService into SignalCorpsEngine lifecycle
 - Status: todo
