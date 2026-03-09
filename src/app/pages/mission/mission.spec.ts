@@ -11,7 +11,7 @@ import { createComponent, getMockProvider, TestBed } from '../../../testing/test
 import { MissionPage } from './mission';
 import { GameProgressionService } from '../../core/progression/game-progression.service';
 import { CurriculumService } from '../../core/curriculum/curriculum.service';
-import { StoryMissionCompletionService } from '../../core/curriculum/story-mission-completion.service';
+import { StoryMissionCompletionService, type MissionCompletionSummary } from '../../core/curriculum/story-mission-completion.service';
 import { StoryMissionContentService } from '../../core/curriculum/story-mission-content.service';
 import type { ChapterId, StoryMission } from '../../core/curriculum/curriculum.types';
 import type { StoryMissionContent } from '../../core/curriculum/story-mission-content.types';
@@ -64,7 +64,7 @@ interface SetupOptions {
   completedMissions?: ReadonlySet<ChapterId>;
   chapterMeta?: StoryMission | undefined;
   prerequisites?: ChapterId[];
-  completeMissionFn?: (...args: unknown[]) => void;
+  completeMissionFn?: (...args: unknown[]) => MissionCompletionSummary | void;
   extraMissionContent?: StoryMissionContent[];
 }
 
@@ -76,7 +76,12 @@ async function setup(options: SetupOptions = {}) {
     completedMissions = new Set<ChapterId>(),
     chapterMeta = TEST_CHAPTER_META,
     prerequisites = [],
-    completeMissionFn = vi.fn(),
+    completeMissionFn = vi.fn(() => ({
+      xpAwarded: 50,
+      unlockedMinigame: null,
+      masteryAwarded: false,
+      alreadyCompleted: false,
+    })),
     extraMissionContent = [],
   } = options;
 
@@ -399,6 +404,65 @@ describe('MissionPage', () => {
     const error = element.querySelector('.mission__error');
     expect(error).toBeTruthy();
     expect(error?.textContent).toContain('Prerequisites not met');
+  });
+
+  // === Completion result storage (3 tests) ===
+
+  it('should store MissionCompletionSummary in completionResult signal after completion', async () => {
+    const summary: MissionCompletionSummary = {
+      xpAwarded: 50,
+      unlockedMinigame: 'module-assembly',
+      masteryAwarded: true,
+      alreadyCompleted: false,
+    };
+    const completeMissionFn = vi.fn(() => summary);
+    const { component } = await setup({ completeMissionFn });
+    component.nextStep();
+    component.nextStep();
+    component.nextStep();
+    component.completeMission();
+    expect(component.completionResult()).toEqual(summary);
+  });
+
+  it('should update completionResult with alreadyCompleted when completing again', async () => {
+    const firstSummary: MissionCompletionSummary = {
+      xpAwarded: 50,
+      unlockedMinigame: null,
+      masteryAwarded: false,
+      alreadyCompleted: false,
+    };
+    const secondSummary: MissionCompletionSummary = {
+      xpAwarded: 0,
+      unlockedMinigame: null,
+      masteryAwarded: false,
+      alreadyCompleted: true,
+    };
+    const completeMissionFn = vi.fn()
+      .mockReturnValueOnce(firstSummary)
+      .mockReturnValueOnce(secondSummary);
+    const { component } = await setup({ completeMissionFn });
+    component.nextStep();
+    component.nextStep();
+    component.nextStep();
+
+    component.completeMission();
+    expect(component.completionResult()?.alreadyCompleted).toBe(false);
+
+    component.completeMission();
+    expect(component.completionResult()?.alreadyCompleted).toBe(true);
+  });
+
+  it('should leave completionResult as null when completeMission throws', async () => {
+    const completeMissionFn = vi.fn(() => {
+      throw new Error('fail');
+    });
+    const { component } = await setup({ completeMissionFn });
+    component.nextStep();
+    component.nextStep();
+    component.nextStep();
+    component.completeMission();
+    expect(component.completionResult()).toBeNull();
+    expect(component.errorMessage()).toBe('fail');
   });
 
   // === Locked state (2 tests) ===

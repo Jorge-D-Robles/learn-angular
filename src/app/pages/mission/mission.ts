@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { GameProgressionService } from '../../core/progression/game-progression.service';
 import { CurriculumService } from '../../core/curriculum/curriculum.service';
-import { StoryMissionCompletionService } from '../../core/curriculum/story-mission-completion.service';
+import { StoryMissionCompletionService, type MissionCompletionSummary } from '../../core/curriculum/story-mission-completion.service';
 import type { ChapterId } from '../../core/curriculum/curriculum.types';
 import { StoryMissionContentService } from '../../core/curriculum/story-mission-content.service';
 import type { CodeExampleStep, ConceptStep } from '../../core/curriculum/story-mission-content.types';
@@ -66,6 +66,7 @@ export class MissionPage {
   );
 
   readonly missionCompleted = signal(false);
+  readonly completionResult = signal<MissionCompletionSummary | null>(null);
 
   readonly unlocksMinigame = computed(
     () => this.missionMeta()?.unlocksMinigame ?? null,
@@ -117,7 +118,8 @@ export class MissionPage {
 
   completeMission(): void {
     try {
-      this.missionCompletion.completeMission(this.chapterIdNum() as ChapterId);
+      const result = this.missionCompletion.completeMission(this.chapterIdNum() as ChapterId);
+      this.completionResult.set(result ?? null);
       this.missionCompleted.set(true);
     } catch (e) {
       this.errorMessage.set(e instanceof Error ? e.message : 'Failed to complete mission');
