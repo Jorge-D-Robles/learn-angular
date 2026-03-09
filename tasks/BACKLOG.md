@@ -1976,28 +1976,6 @@ Acceptance criteria:
 - [ ] Click unlocked mission navigates to `/mission/:chapterId`
 - [ ] Unit tests for: phase grouping, completion status, locked state, navigation, progress counts
 
-### T-2026-485
-- Title: Wire StoryMissionCompletionService into StoryMissionPage completion flow
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-259, T-2026-075
-- Blocked-by: —
-- Tags: integration, story-missions, completion, critical-path
-- Refs: docs/overview.md, docs/curriculum.md, src/app/pages/mission/mission.ts
-
-StoryMissionPage (T-2026-075) has step navigation and a completion flow, and StoryMissionCompletionService (T-2026-259) handles XP award, mastery update, and minigame unlock. But no ticket wires the service's `completeMission()` method into the page's final-step completion handler. Without this, completing a story mission has no progression effect -- no XP, no mastery star, no minigame unlock.
-
-Acceptance criteria:
-- [ ] StoryMissionPage injects StoryMissionCompletionService
-- [ ] When the player completes the final mission step, `StoryMissionCompletionService.completeMission(chapterId)` is called
-- [ ] Completion is idempotent: revisiting a completed mission does not re-award XP
-- [ ] Completion result (XP earned, mastery gained, minigame unlocked) is stored for display in the completion summary (T-2026-479)
-- [ ] Error handling: if completion fails, show error toast and allow retry
-- [ ] Unit tests for: completeMission called on final step, idempotent on repeat, error handling
-
 ### T-2026-486
 - Title: Wire ConveyorBeltService visual state into ModuleAssemblyComponent for belt rendering
 - Status: todo
