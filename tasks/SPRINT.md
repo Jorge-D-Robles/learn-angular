@@ -13,11 +13,11 @@ Started: 2026-03-08
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-470**: Wire SignalCorpsWaveService into SignalCorpsEngine lifecycle (Priority: high, Size: S)
 - **T-2026-471**: Wire WireProtocolValidationService into WireProtocolEngine lifecycle (Priority: high, Size: S)
 - **T-2026-419**: Create SignalCorpsTowerConfigComponent for tower input/output declaration panel (Priority: high, Size: M)
 - **T-2026-485**: Wire StoryMissionCompletionService into StoryMissionPage completion flow (Priority: high, Size: S)
