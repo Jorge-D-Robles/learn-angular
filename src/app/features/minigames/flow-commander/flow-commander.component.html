@@ -100,16 +100,21 @@
 
   <!-- Condition editor popover (HTML, positioned over SVG) -->
   @if (editingGateId()) {
+    <div class="flow-commander__config-backdrop"
+         tabindex="-1"
+         role="presentation"
+         (click)="closeConditionEditor()"
+         (keydown.escape)="closeConditionEditor()"></div>
     <div class="flow-commander__condition-editor"
          [style.left]="editorPopoverStyle().left"
          [style.top]="editorPopoverStyle().top">
-      <nx-expression-builder
-        [mode]="conditionEditorMode()"
-        [variables]="conditionVariables"
-        [operators]="conditionOperators"
-        [value]="editingGateCondition()"
-        (expressionChange)="onConditionChange($event)" />
-      <button class="flow-commander__editor-close" (click)="closeConditionEditor()">Done</button>
+      <app-flow-commander-gate-config
+        [gateType]="editingGateType()"
+        [currentCondition]="editingGateCondition()"
+        [availableProperties]="conditionVariables"
+        [tierMode]="conditionEditorMode()"
+        (conditionApplied)="onConditionApplied($event)"
+        (cancelled)="closeConditionEditor()" />
     </div>
   }
 

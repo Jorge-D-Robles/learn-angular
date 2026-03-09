@@ -238,18 +238,18 @@ describe('FlowCommanderComponent', () => {
   // --- 4. Condition Editor Tests ---
 
   describe('Condition Editor', () => {
-    it('should show ExpressionBuilderComponent when editing gate', () => {
+    it('should render gate config panel when editing gate', () => {
       setup();
 
       engine.submitAction({ type: 'place-gate', nodeId: 'gate-1', gateType: GateType.if, condition: '' });
       component.editingGateId.set('gate-1');
       fixture.detectChanges();
 
-      const expressionBuilder = fixture.nativeElement.querySelector('nx-expression-builder');
-      expect(expressionBuilder).toBeTruthy();
+      const gateConfig = fixture.nativeElement.querySelector('app-flow-commander-gate-config');
+      expect(gateConfig).toBeTruthy();
     });
 
-    it('should submit configure-gate action on valid expression change', () => {
+    it('should submit configure-gate action and close panel on condition applied', () => {
       setup();
       const submitSpy = vi.spyOn(engine, 'submitAction');
 
@@ -259,8 +259,7 @@ describe('FlowCommanderComponent', () => {
 
       submitSpy.mockClear();
 
-      // Call onConditionChange with a valid expression
-      component.onConditionChange("item.color === 'red'");
+      component.onConditionApplied("item.color === 'red'");
 
       expect(submitSpy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -269,6 +268,7 @@ describe('FlowCommanderComponent', () => {
           condition: "item.color === 'red'",
         }),
       );
+      expect(component.editingGateId()).toBeNull();
     });
 
     it('should use guided mode for @if gates and raw mode for @for gates', () => {
@@ -305,18 +305,20 @@ describe('FlowCommanderComponent', () => {
       expect(component.conditionEditorMode()).toBe('raw');
     });
 
-    it('should close editor on Done button click', () => {
+    it('should close editor on cancel without submitting configure-gate', () => {
       setup();
+      const submitSpy = vi.spyOn(engine, 'submitAction');
 
       engine.submitAction({ type: 'place-gate', nodeId: 'gate-1', gateType: GateType.if, condition: '' });
       component.editingGateId.set('gate-1');
       fixture.detectChanges();
 
-      const closeBtn = fixture.nativeElement.querySelector('.flow-commander__editor-close') as HTMLButtonElement;
-      closeBtn.click();
-      fixture.detectChanges();
+      submitSpy.mockClear();
+
+      component.closeConditionEditor();
 
       expect(component.editingGateId()).toBeNull();
+      expect(submitSpy).not.toHaveBeenCalled();
     });
 
     it('should use guided mode for @if gates on Basic tier', () => {
@@ -353,6 +355,51 @@ describe('FlowCommanderComponent', () => {
       component.editingGateId.set('gate-1');
 
       expect(component.conditionEditorMode()).toBe('raw');
+    });
+
+    it('should bind correct gateType to gate config component', () => {
+      setup(undefined, DifficultyTier.Basic);
+
+      engine.submitAction({ type: 'place-gate', nodeId: 'gate-1', gateType: GateType.switch, condition: '' });
+      component.editingGateId.set('gate-1');
+      fixture.detectChanges();
+
+      expect(component.editingGateType()).toBe(GateType.switch);
+      const gateConfig = fixture.nativeElement.querySelector('app-flow-commander-gate-config');
+      expect(gateConfig).toBeTruthy();
+    });
+
+    it('should dismiss panel on backdrop click', () => {
+      setup();
+
+      engine.submitAction({ type: 'place-gate', nodeId: 'gate-1', gateType: GateType.if, condition: '' });
+      component.editingGateId.set('gate-1');
+      fixture.detectChanges();
+
+      const backdrop = fixture.nativeElement.querySelector('.flow-commander__config-backdrop') as HTMLDivElement;
+      expect(backdrop).toBeTruthy();
+      backdrop.click();
+      fixture.detectChanges();
+
+      expect(component.editingGateId()).toBeNull();
+      const gateConfig = fixture.nativeElement.querySelector('app-flow-commander-gate-config');
+      expect(gateConfig).toBeFalsy();
+    });
+
+    it('should dismiss panel on Escape key', () => {
+      setup();
+
+      engine.submitAction({ type: 'place-gate', nodeId: 'gate-1', gateType: GateType.if, condition: '' });
+      component.editingGateId.set('gate-1');
+      fixture.detectChanges();
+
+      expect(component.editingGateId()).toBe('gate-1');
+
+      // Trigger escape shortcut
+      const escReg = shortcuts.getRegistered().find(r => r.key === 'escape');
+      escReg?.callback();
+
+      expect(component.editingGateId()).toBeNull();
     });
   });
 

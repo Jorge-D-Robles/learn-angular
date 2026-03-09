@@ -72,6 +72,14 @@
   &--incorrect { animation: fc-break 0.6s ease-out forwards; }
 }
 
+.flow-commander__config-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: all;
+  background: transparent;
+}
+
 .flow-commander__condition-editor {
   position: absolute;
   transform: translate(-50%, -100%) translateY(-10px);
@@ -81,18 +89,6 @@
   padding: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   z-index: 10;
-}
-
-.flow-commander__editor-close {
-  display: block;
-  margin-top: 8px;
-  padding: 4px 12px;
-  border: 1px solid #4a5270;
-  border-radius: 4px;
-  background: transparent;
-  color: #e2e8f0;
-  font-size: 0.8rem;
-  cursor: pointer;
 }
 
 .flow-commander__controls {

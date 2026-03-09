@@ -7,12 +7,12 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { ExpressionBuilderComponent } from '../../../shared/components';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
 import { DifficultyTier } from '../../../core/minigame/minigame.types';
 import { GateType, GATE_TYPE_COLORS } from './pipeline.types';
 import { FlowCommanderEngine, type PlacedGate, type SimulationResult } from './flow-commander.engine';
+import { FlowCommanderGateConfigComponent } from './gate-config/gate-config';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -49,7 +49,7 @@ interface AnimatingCargo {
 
 @Component({
   selector: 'app-flow-commander',
-  imports: [ExpressionBuilderComponent],
+  imports: [FlowCommanderGateConfigComponent],
   templateUrl: './flow-commander.component.html',
   styleUrl: './flow-commander.component.scss',
 })
@@ -72,7 +72,6 @@ export class FlowCommanderComponent implements OnDestroy {
   readonly nodeRadius = NODE_RADIUS;
   readonly CARGO_POD_SIZE = CARGO_POD_SIZE;
   readonly conditionVariables = ['item.color', 'item.label', 'item.type', 'item.priority'];
-  readonly conditionOperators = ['===', '!=='];
 
   // Computed from engine (null-safe)
   readonly pipelineNodes = computed(() => this.engine?.pipelineGraph().nodes ?? []);
@@ -160,6 +159,13 @@ export class FlowCommanderComponent implements OnDestroy {
     return this.placedGates().get(gateId)?.condition ?? '';
   });
 
+  // Gate type for the currently editing gate
+  readonly editingGateType = computed(() => {
+    const gateId = this.editingGateId();
+    if (!gateId) return GateType.if;
+    return this.placedGates().get(gateId)?.gateType ?? GateType.if;
+  });
+
   // Popover position (percentage-based for responsive scaling)
   readonly editorPopoverStyle = computed(() => {
     const gateId = this.editingGateId();
@@ -211,11 +217,12 @@ export class FlowCommanderComponent implements OnDestroy {
     if (this.editingGateId() === nodeId) this.editingGateId.set(null);
   }
 
-  onConditionChange(expression: string): void {
+  onConditionApplied(condition: string): void {
     if (!this.engine) return;
     const gateId = this.editingGateId();
     if (!gateId) return;
-    this.engine.submitAction({ type: 'configure-gate', nodeId: gateId, condition: expression });
+    this.engine.submitAction({ type: 'configure-gate', nodeId: gateId, condition });
+    this.closeConditionEditor();
   }
 
   closeConditionEditor(): void {
