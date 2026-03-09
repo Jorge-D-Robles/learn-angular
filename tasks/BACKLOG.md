@@ -1580,33 +1580,6 @@ Acceptance criteria:
 - [ ] Exported from signal-corps barrel
 - [ ] Unit tests for: input declaration add/remove, output declaration add/remove, required toggle, transform selection, validation errors, config apply event
 
-### T-2026-420
-- Title: Create WireProtocolBindingTypeSelectorComponent for wire type toggling
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-258, T-2026-007
-- Blocked-by: —
-- Tags: ui, component, minigame, wire-protocol, binding-type
-- Refs: docs/minigames/02-wire-protocol.md, src/app/features/minigames/wire-protocol/wire-protocol.types.ts
-
-Wire Protocol spec describes a "Wire type selector -- toggle between binding types (keyboard: 1-4)" with color-coded types: blue (interpolation), green (property), orange (event), purple (two-way). The UI component (T-2026-064) is Size L. Extracting the binding type selector into a standalone sub-component reduces complexity and provides keyboard shortcut integration.
-
-Acceptance criteria:
-- [ ] `BindingTypeSelectorComponent` at `src/app/features/minigames/wire-protocol/binding-type-selector/binding-type-selector.ts`
-- [ ] Renders 4 toggle buttons for wire types: Interpolation (blue, key 1), Property (green, key 2), Event (orange, key 3), Two-Way (purple, key 4)
-- [ ] Input: `selectedType` (WireType), `availableTypes` (WireType[]) for levels that don't use all types
-- [ ] Output: `typeSelected` event with WireType
-- [ ] Keyboard shortcuts: number keys 1-4 select the corresponding type
-- [ ] Active type highlighted with glow border matching wire color
-- [ ] Unavailable types dimmed and non-interactive
-- [ ] ARIA: role="radiogroup", each button is role="radio" with aria-checked
-- [ ] Color coding matches visual-style.md: Reactor Blue, Sensor Green, Alert Orange, Comm Purple
-- [ ] Exported from wire-protocol barrel
-- [ ] Unit tests for: type selection via click, keyboard shortcut selection, active state highlight, unavailable type dimming, ARIA attributes
-
 ### T-2026-421
 - Title: Create integration test for Flow Commander pipeline simulation with gate routing
 - Status: todo
@@ -2101,6 +2074,285 @@ Acceptance criteria:
 - [ ] Phase headers show progress (e.g., "Phase 1: 7/10 completed")
 - [ ] Click unlocked mission navigates to `/mission/:chapterId`
 - [ ] Unit tests for: phase grouping, completion status, locked state, navigation, progress counts
+
+### T-2026-485
+- Title: Wire StoryMissionCompletionService into StoryMissionPage completion flow
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-259, T-2026-075
+- Blocked-by: —
+- Tags: integration, story-missions, completion, critical-path
+- Refs: docs/overview.md, docs/curriculum.md, src/app/pages/mission/mission.ts
+
+StoryMissionPage (T-2026-075) has step navigation and a completion flow, and StoryMissionCompletionService (T-2026-259) handles XP award, mastery update, and minigame unlock. But no ticket wires the service's `completeMission()` method into the page's final-step completion handler. Without this, completing a story mission has no progression effect -- no XP, no mastery star, no minigame unlock.
+
+Acceptance criteria:
+- [ ] StoryMissionPage injects StoryMissionCompletionService
+- [ ] When the player completes the final mission step, `StoryMissionCompletionService.completeMission(chapterId)` is called
+- [ ] Completion is idempotent: revisiting a completed mission does not re-award XP
+- [ ] Completion result (XP earned, mastery gained, minigame unlocked) is stored for display in the completion summary (T-2026-479)
+- [ ] Error handling: if completion fails, show error toast and allow retry
+- [ ] Unit tests for: completeMission called on final step, idempotent on repeat, error handling
+
+### T-2026-486
+- Title: Wire ConveyorBeltService visual state into ModuleAssemblyComponent for belt rendering
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-410, T-2026-060
+- Blocked-by: —
+- Tags: integration, ui, module-assembly, conveyor-belt, visual-state
+- Refs: docs/minigames/01-module-assembly.md, src/app/features/minigames/module-assembly/module-assembly.ts
+
+T-2026-410 wires ConveyorBeltService into ModuleAssemblyEngine for lifecycle delegation (tick, exhaust detection, reset). But the Module Assembly UI component (T-2026-060) needs access to the belt service's visual state signals -- part positions on the belt, belt movement animation, and which parts are available for dragging. Without this wiring, the UI cannot render accurate belt positions synchronized with the engine's tick-based advancement.
+
+Acceptance criteria:
+- [ ] ModuleAssemblyComponent receives ConveyorBeltService state (belt parts, positions) from the engine or via DI
+- [ ] Belt parts rendered at their current positions from `ConveyorBeltService.currentParts()` signal
+- [ ] Belt movement animation driven by position changes on each engine tick
+- [ ] Parts removed from visual belt when placed in a slot or rejected
+- [ ] Belt exhaustion state visually indicated (no more parts arriving)
+- [ ] Unit tests for: parts render at positions, parts removed on placement, exhaustion visual state
+
+### T-2026-487
+- Title: Wire FlowCommanderSimulationService visual state into FlowCommanderComponent for cargo animation
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-469, T-2026-068
+- Blocked-by: —
+- Tags: integration, ui, flow-commander, simulation, visual-state
+- Refs: docs/minigames/03-flow-commander.md, src/app/features/minigames/flow-commander/flow-commander.ts
+
+T-2026-469 wires FlowCommanderSimulationService into FlowCommanderEngine for lifecycle delegation. But the Flow Commander UI component (T-2026-068) needs the simulation service's visual state to animate cargo pods flowing through pipelines, show routing results at gates, and display items reaching target zones or dead-ends. Without this, the "Run" phase has no visual cargo animation.
+
+Acceptance criteria:
+- [ ] FlowCommanderComponent receives simulation state signals from the engine or via DI
+- [ ] Cargo pods animate along pipeline paths during simulation
+- [ ] Gate routing decisions shown visually (items splitting at @if, duplicating at @for, branching at @switch)
+- [ ] Items reaching correct targets glow green; items reaching wrong targets flash red
+- [ ] Items lost to dead-ends show a break-apart animation
+- [ ] Simulation progress signal used to step through animation frames
+- [ ] Unit tests for: cargo position updates, correct/incorrect routing visual feedback, dead-end handling
+
+### T-2026-488
+- Title: Wire SignalCorpsWaveService visual state into SignalCorpsComponent for wave animation
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-470, T-2026-072
+- Blocked-by: —
+- Tags: integration, ui, signal-corps, wave-simulation, visual-state
+- Refs: docs/minigames/04-signal-corps.md, src/app/features/minigames/signal-corps/signal-corps.ts
+
+T-2026-470 wires SignalCorpsWaveService into SignalCorpsEngine for lifecycle delegation. But the Signal Corps UI component (T-2026-072) needs the wave service's visual state to animate noise waves approaching, show blocking shield pulses from configured towers, display damage when signals get through, and update the station health bar. Without this, the wave defense has no visual feedback.
+
+Acceptance criteria:
+- [ ] SignalCorpsComponent receives wave service state signals from the engine or via DI
+- [ ] Noise waves animate approaching from edges based on wave service position data
+- [ ] Tower blocking visualized: shield pulse emitted when a tower blocks a matching signal
+- [ ] Unblocked signals show impact damage animation on station
+- [ ] Station health bar reflects `waveService.stationHealth` signal
+- [ ] Wave progress indicator shows current wave number and total waves
+- [ ] Unit tests for: wave position rendering, blocking animation trigger, damage animation, health bar binding
+
+### T-2026-489
+- Title: Wire WireProtocolValidationService feedback into WireProtocolComponent for per-wire visual indicators
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P2
+- Depends: T-2026-471, T-2026-064
+- Blocked-by: —
+- Tags: integration, ui, wire-protocol, validation, visual-state
+- Refs: docs/minigames/02-wire-protocol.md, src/app/features/minigames/wire-protocol/wire-protocol.ts
+
+T-2026-471 wires WireProtocolValidationService into WireProtocolEngine for verify action delegation. But the Wire Protocol UI component (T-2026-064) needs validation results to provide per-wire visual feedback: green glow for correct wires, red spark for incorrect wires, and common mistake hint text displayed near incorrect connections. The spec says "Incorrect wires spark and fizzle." Without this wiring, the verify action has no visual wire-by-wire feedback.
+
+Acceptance criteria:
+- [ ] WireProtocolComponent receives per-wire validation results after verify action
+- [ ] Correct wires show green glow with flowing particle animation (data flowing)
+- [ ] Incorrect wires show red spark/fizzle animation
+- [ ] Common mistake hint text (from `validationService.getCommonMistake()`) displayed as tooltip near incorrect wires
+- [ ] Validation results cleared on next verify attempt or when wires are modified
+- [ ] Pre-wired incorrect connections highlighted distinctly from player-drawn incorrect wires
+- [ ] Unit tests for: correct wire green glow, incorrect wire red spark, hint text display, result clearing
+
+### T-2026-490
+- Title: Create integration test for StoryMissionCompletionService full XP-mastery-unlock pipeline
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-259, T-2026-407
+- Blocked-by: —
+- Tags: testing, integration, story-missions, progression, critical-path
+- Refs: docs/overview.md, docs/progression.md, docs/curriculum.md
+
+T-2026-259 (completed) created StoryMissionCompletionService. T-2026-352 tests the unlock notification chain. But no integration test verifies the full internal pipeline of the completion handler: calling `completeMission()` -> awarding 50 XP via XpService -> setting mastery to 1 star via MasteryService -> unlocking the minigame via GameProgressionService -> recording the mission as completed. This is the most critical progression path in the app.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/mission-completion-pipeline.integration.spec.ts`
+- [ ] Test: `completeMission(1)` awards exactly 50 XP via XpService.addXp()
+- [ ] Test: `completeMission(1)` sets mastery for 'module-assembly' topic to at least 1 star
+- [ ] Test: `completeMission(1)` marks Chapter 1 as completed in GameProgressionService
+- [ ] Test: `completeMission(1)` unlocks Module Assembly minigame (GameProgressionService reports unlocked)
+- [ ] Test: `completeMission(9)` (Ch 9: Deferrable Views, no minigame unlock) still awards XP and mastery but does not trigger unlock
+- [ ] Test: completing an already-completed mission is idempotent (no duplicate XP)
+- [ ] Uses real StoryMissionCompletionService, XpService, MasteryService, GameProgressionService, CurriculumService
+
+### T-2026-491
+- Title: Create MissionUnlockNotificationComponent for minigame unlock toast rendering
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-189, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, notifications, minigame-unlock
+- Refs: docs/overview.md, docs/ux/visual-style.md, src/app/core/notifications/
+
+T-2026-189 (completed) creates MissionUnlockNotificationService which tracks unlock events. T-2026-338 wires the service into the app shell root. But there is no visual component that renders the actual unlock toast. The service manages state (what to show, when to dismiss), but a component is needed to display the unlock message with game name, icon, and navigation action. Without this, the service fires events but nothing renders.
+
+Acceptance criteria:
+- [ ] `MissionUnlockNotificationComponent` at `src/app/shared/components/mission-unlock-notification/`
+- [ ] Selector: `nx-mission-unlock-notification`
+- [ ] Reads from MissionUnlockNotificationService unlock signal
+- [ ] Displays: "Minigame Unlocked!" heading, game name, game description, game icon/color
+- [ ] "Play Now" button navigates to `/minigames/:gameId` (level select)
+- [ ] Auto-dismiss after 8 seconds (configurable)
+- [ ] Slide-in animation from top-right (respects prefers-reduced-motion)
+- [ ] Station-themed styling: Solar Gold accent, Hull background
+- [ ] Exported from shared components barrel
+- [ ] Unit tests for: notification rendering, auto-dismiss, play-now navigation, animation
+
+### T-2026-492
+- Title: Create P2 minigame UI-to-simulation service visual state integration tests
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P2
+- Depends: T-2026-486, T-2026-487, T-2026-488, T-2026-489
+- Blocked-by: —
+- Tags: testing, integration, minigame, visual-state, p2
+- Refs: docs/minigames/01-module-assembly.md, docs/minigames/02-wire-protocol.md, docs/minigames/03-flow-commander.md, docs/minigames/04-signal-corps.md
+
+T-2026-486 through T-2026-489 wire simulation/validation service visual state into each P2 minigame UI component. No integration test verifies that the UI components correctly reflect service state changes. These tests ensure the visual feedback loop works: engine action -> service state update -> UI renders updated state.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/p2-visual-state.integration.spec.ts`
+- [ ] Test: Module Assembly -- engine tick advances belt parts, UI renders updated positions
+- [ ] Test: Wire Protocol -- verify action produces per-wire results, UI shows green/red indicators
+- [ ] Test: Flow Commander -- simulation run moves cargo through pipeline, UI renders cargo at gate positions
+- [ ] Test: Signal Corps -- deploy action starts wave, UI renders wave positions and health bar
+- [ ] Each test: uses real engine + real simulation service + component fixture
+- [ ] Each test: verifies DOM state reflects service signal values after engine action
+
+### T-2026-493
+- Title: Create MinigameHubPage filter functionality for topic and mastery level
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-076, T-2026-339
+- Blocked-by: —
+- Tags: ui, minigame-hub, filter, ux
+- Refs: docs/ux/navigation.md
+
+Navigation.md specifies the Minigame Hub includes "Filter by topic, mastery level." MinigameHubPage (T-2026-076) renders a grid of minigame cards but no ticket implements the filter functionality. Without filters, players with many unlocked minigames cannot quickly find games by Angular topic or mastery level.
+
+Acceptance criteria:
+- [ ] MinigameHubPage has filter controls above the minigame grid
+- [ ] Topic filter: dropdown/pills with Angular topics (Components, Data Binding, Control Flow, etc.)
+- [ ] Mastery filter: dropdown/pills with mastery ranges (0-1 stars, 2-3 stars, 4-5 stars, All)
+- [ ] Filters are combinable (e.g., "Data Binding" + "0-1 stars")
+- [ ] Card grid updates reactively when filters change
+- [ ] "Clear filters" button resets to show all games
+- [ ] Filter state does not persist across navigation (resets on page load)
+- [ ] Unit tests for: topic filter applies, mastery filter applies, combined filters, clear filters
+
+### T-2026-494
+- Title: Add "Continue" button to StoryMissionPage for navigating to next mission
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P2
+- Depends: T-2026-075, T-2026-026
+- Blocked-by: —
+- Tags: ui, story-missions, navigation, ux
+- Refs: docs/ux/navigation.md, docs/curriculum.md, src/app/pages/mission/mission.ts
+
+StoryMissionPage (T-2026-075) has completion flow and T-2026-475 adds "Launch Minigame" for chapters that unlock a minigame. But for chapters that do NOT unlock a minigame (Ch 9, 10, 27, 33, 34), there is no navigation after completion except the browser back button. A "Continue to Next Mission" button should be shown for all chapters, enabling the player to advance through the curriculum without returning to the campaign page.
+
+Acceptance criteria:
+- [ ] StoryMissionPage shows "Continue to Next Mission" button after mission completion
+- [ ] Button navigates to `/mission/:nextChapterId` using GameProgressionService to determine the next uncompleted chapter
+- [ ] If the current chapter is the last in its phase, button label reads "Continue to Next Phase"
+- [ ] If all missions are complete, button navigates to `/campaign` with "Back to Campaign" label
+- [ ] Button appears alongside "Launch Minigame" (T-2026-475) when both are applicable
+- [ ] Unit tests for: next mission navigation, last-in-phase label, all-complete navigation
+
+### T-2026-495
+- Title: Add keyboard shortcut hints overlay to MinigameShell HUD
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-134, T-2026-018
+- Blocked-by: —
+- Tags: ui, accessibility, keyboard, minigame, hud
+- Refs: docs/ux/visual-style.md, docs/research/gamification-patterns.md
+
+Each P2 minigame has keyboard shortcuts (Module Assembly: number keys for slots + spacebar; Wire Protocol: 1-4 for wire types; Flow Commander: arrow keys; Signal Corps: click-based). PauseMenuComponent (T-2026-135) shows keyboard shortcuts in the pause menu, but during active gameplay, players have no visible reminder of available shortcuts. A small toggleable hint overlay on the MinigameShell HUD would improve discoverability without cluttering the UI.
+
+Acceptance criteria:
+- [ ] MinigameShell HUD has a small "?" or keyboard icon button
+- [ ] Clicking the button toggles a compact shortcut hint panel (does not pause the game)
+- [ ] Panel shows registered shortcuts from KeyboardShortcutService for the current minigame
+- [ ] Panel auto-hides after 5 seconds of inactivity
+- [ ] Panel positioned to avoid overlapping game area (top-right corner, semi-transparent)
+- [ ] Keyboard shortcut to toggle: "?" key
+- [ ] Panel respects prefers-reduced-motion (no fade animation)
+- [ ] Unit tests for: panel toggle, shortcut list from service, auto-hide timer
+
+### T-2026-496
+- Title: Create integration test for theme-aware component rendering with design token CSS custom properties
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P2
+- Depends: T-2026-325, T-2026-143
+- Blocked-by: —
+- Tags: testing, integration, themes, css, visual-style
+- Refs: docs/ux/visual-style.md, src/styles.css
+
+T-2026-325 creates theme CSS variants (dark, station, light) and T-2026-143 wires theme preference to body class. But no integration test verifies that switching themes actually changes the CSS custom property values that components consume. If a theme file has a typo in a custom property name, components will silently fall back to the default theme.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/core/integration/theme-custom-properties.integration.spec.ts`
+- [ ] Test: default theme-dark body class applies expected `--color-bg-primary` value (Void #0A0E1A)
+- [ ] Test: switching to theme-station applies station-specific custom property values
+- [ ] Test: switching to theme-light applies light-specific custom property values (white backgrounds, dark text)
+- [ ] Test: all critical custom properties are defined in all 3 themes (no undefined fallbacks)
+- [ ] Test: toggling back to theme-dark after theme-light restores original values
+- [ ] Uses real DOM with getComputedStyle to verify actual CSS property resolution
 
 ---
 
