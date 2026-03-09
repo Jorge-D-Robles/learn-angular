@@ -15,11 +15,11 @@ Started: 2026-03-08
 
 
 
+
 ---
 
 ## Queue
 
-- **T-2026-419**: Create SignalCorpsTowerConfigComponent for tower input/output declaration panel (Priority: high, Size: M)
 - **T-2026-485**: Wire StoryMissionCompletionService into StoryMissionPage completion flow (Priority: high, Size: S)
 - **T-2026-486**: Wire ConveyorBeltService visual state into ModuleAssemblyComponent for belt rendering (Priority: high, Size: S)
 - **T-2026-472**: Wire BindingTypeSelectorComponent into WireProtocolComponent UI (Priority: high, Size: S)
