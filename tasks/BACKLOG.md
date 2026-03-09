@@ -1976,28 +1976,6 @@ Acceptance criteria:
 - [ ] Click unlocked mission navigates to `/mission/:chapterId`
 - [ ] Unit tests for: phase grouping, completion status, locked state, navigation, progress counts
 
-### T-2026-486
-- Title: Wire ConveyorBeltService visual state into ModuleAssemblyComponent for belt rendering
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-410, T-2026-060
-- Blocked-by: —
-- Tags: integration, ui, module-assembly, conveyor-belt, visual-state
-- Refs: docs/minigames/01-module-assembly.md, src/app/features/minigames/module-assembly/module-assembly.ts
-
-T-2026-410 wires ConveyorBeltService into ModuleAssemblyEngine for lifecycle delegation (tick, exhaust detection, reset). But the Module Assembly UI component (T-2026-060) needs access to the belt service's visual state signals -- part positions on the belt, belt movement animation, and which parts are available for dragging. Without this wiring, the UI cannot render accurate belt positions synchronized with the engine's tick-based advancement.
-
-Acceptance criteria:
-- [ ] ModuleAssemblyComponent receives ConveyorBeltService state (belt parts, positions) from the engine or via DI
-- [ ] Belt parts rendered at their current positions from `ConveyorBeltService.currentParts()` signal
-- [ ] Belt movement animation driven by position changes on each engine tick
-- [ ] Parts removed from visual belt when placed in a slot or rejected
-- [ ] Belt exhaustion state visually indicated (no more parts arriving)
-- [ ] Unit tests for: parts render at positions, parts removed on placement, exhaustion visual state
-
 ### T-2026-487
 - Title: Wire FlowCommanderSimulationService visual state into FlowCommanderComponent for cargo animation
 - Status: todo
