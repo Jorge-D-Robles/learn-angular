@@ -171,12 +171,8 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
 
   /**
    * Advances the conveyor belt by `dt` seconds and checks for exhaustion.
+   * Called by the component's animation loop each frame.
    * No-op if no ConveyorBeltService was provided.
-   *
-   * NOTE: Until the component cleanup ticket lands, the component still calls
-   * beltService.tick(dt) directly. Do NOT call engine.tick() from the component
-   * animation loop until the redundant beltService.tick() call is removed, or
-   * parts will advance at 2x speed.
    */
   tick(dt: number): void {
     this._conveyorBelt?.tick(dt);

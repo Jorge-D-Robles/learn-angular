@@ -335,7 +335,7 @@ describe('ModuleAssemblyComponent', () => {
       expect(cancelSpy).toHaveBeenCalled();
     });
 
-    it('should call beltService.tick with positive deltaTime on each frame', () => {
+    it('should call engine.tick with positive deltaTime on each frame', () => {
       // Restore real rAF mock to capture callback
       rafSpy.mockRestore();
       let rafCallback: ((timestamp: number) => void) | null = null;
@@ -345,8 +345,7 @@ describe('ModuleAssemblyComponent', () => {
       });
 
       setup();
-      const beltService = fixture.debugElement.injector.get(ConveyorBeltService);
-      const tickSpy = vi.spyOn(beltService, 'tick');
+      const tickSpy = vi.spyOn(engine, 'tick');
 
       // First frame (timestamp = 1000): dt will be 0 since lastTimestamp was 0
       if (rafCallback) (rafCallback as (t: number) => void)(1000);
@@ -366,8 +365,7 @@ describe('ModuleAssemblyComponent', () => {
       vi.spyOn(window, 'cancelAnimationFrame').mockReturnValue(undefined);
 
       setup();
-      const beltService = fixture.debugElement.injector.get(ConveyorBeltService);
-      const tickSpy = vi.spyOn(beltService, 'tick');
+      const tickSpy = vi.spyOn(engine, 'tick');
 
       // Run a frame
       if (rafCallback) (rafCallback as (t: number) => void)(1000);
@@ -468,6 +466,55 @@ describe('ModuleAssemblyComponent', () => {
       TestBed.flushEffects();
 
       expect(component.completionGlow()).toBe(true);
+    });
+  });
+
+  // --- 6. Exhaustion Visual Tests ---
+
+  describe('Exhaustion Visual', () => {
+    it('should show exhaustion overlay when belt is exhausted', () => {
+      setup();
+      const beltService = fixture.debugElement.injector.get(ConveyorBeltService);
+
+      // Drive belt parts past x < 0 by ticking a large value
+      beltService.tick(100);
+      fixture.detectChanges();
+
+      const overlay = fixture.nativeElement.querySelector('.belt__exhausted-overlay');
+      expect(overlay).toBeTruthy();
+      const label = fixture.nativeElement.querySelector('.belt__exhausted-label');
+      expect(label?.textContent).toContain('No more parts');
+    });
+
+    it('should apply belt--exhausted class when belt is exhausted', () => {
+      setup();
+      const beltService = fixture.debugElement.injector.get(ConveyorBeltService);
+
+      // Drive belt parts past x < 0 by ticking a large value
+      beltService.tick(100);
+      fixture.detectChanges();
+
+      const beltEl = fixture.nativeElement.querySelector('.belt');
+      expect(beltEl.classList.contains('belt--exhausted')).toBe(true);
+    });
+
+    it('should delegate tick to engine.tick() in animation loop', () => {
+      rafSpy.mockRestore();
+      let rafCallback: ((timestamp: number) => void) | null = null;
+      rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+        rafCallback = cb;
+        return 1;
+      });
+
+      setup();
+      const tickSpy = vi.spyOn(engine, 'tick');
+
+      // First frame sets lastTimestamp, no tick call
+      if (rafCallback) (rafCallback as (t: number) => void)(1000);
+      // Second frame should delegate to engine.tick
+      if (rafCallback) (rafCallback as (t: number) => void)(1016);
+
+      expect(tickSpy).toHaveBeenCalledWith(expect.closeTo(0.016, 3));
     });
   });
 });

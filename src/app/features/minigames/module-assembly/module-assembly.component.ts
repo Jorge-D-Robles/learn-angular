@@ -30,7 +30,7 @@ import {
   template: `
     <div class="module-assembly">
       <!-- Conveyor Belt -->
-      <div class="belt" [style.width.px]="beltService.beltLength()">
+      <div class="belt" [style.width.px]="beltService.beltLength()" [class.belt--exhausted]="isExhausted()">
         @for (bp of visibleBeltParts(); track bp.part.id) {
           <div class="belt__part"
                [nxDraggable]="bp.part.id"
@@ -42,6 +42,11 @@ import {
                (dblclick)="onPartDoubleClick(bp.part.id)">
             <span class="belt__part-label">{{ bp.part.type }}</span>
             <code class="belt__part-content">{{ bp.part.content }}</code>
+          </div>
+        }
+        @if (isExhausted()) {
+          <div class="belt__exhausted-overlay">
+            <span class="belt__exhausted-label">No more parts</span>
           </div>
         }
       </div>
@@ -91,6 +96,7 @@ export class ModuleAssemblyComponent implements OnDestroy {
       bp.x > -100 && bp.x < this.beltService.beltLength() + 200
     ),
   );
+  readonly isExhausted = this.beltService.isExhausted;
 
   constructor() {
     if (!this.engine) return; // Inert mode -- no effects, no shortcuts
@@ -138,7 +144,7 @@ export class ModuleAssemblyComponent implements OnDestroy {
     const loop = (timestamp: number) => {
       if (this.lastTimestamp > 0) {
         const dt = (timestamp - this.lastTimestamp) / 1000;
-        this.beltService.tick(dt);
+        this.engine?.tick(dt);
       }
       this.lastTimestamp = timestamp;
       this.animFrameId = requestAnimationFrame(loop);
