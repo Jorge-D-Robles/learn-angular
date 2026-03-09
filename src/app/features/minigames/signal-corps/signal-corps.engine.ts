@@ -11,6 +11,8 @@ import {
   type ParentBinding,
   type NoiseWave,
 } from './signal-corps.types';
+import type { SignalCorpsWaveService } from './signal-corps-wave.service';
+import { DEFAULT_SIGNAL_SPEED, DEFAULT_SPAWN_INTERVAL_MS } from './signal-corps-wave.service';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -192,6 +194,8 @@ export class SignalCorpsEngine extends MinigameEngine<SignalCorpsLevelData> {
   private _expectedTowers: readonly TowerPlacement[] = [];
   private _expectedBindingsByTower = new Map<string, readonly ParentBinding[]>();
   private _initialHealth = 100;
+  private readonly _waveService: SignalCorpsWaveService | undefined;
+  private _correctPlacements: TowerPlacement[] = [];
 
   // --- Public read-only signals ---
   readonly playerTowers: Signal<ReadonlyMap<string, PlayerTowerState>> = this._playerTowers.asReadonly();
@@ -202,8 +206,9 @@ export class SignalCorpsEngine extends MinigameEngine<SignalCorpsLevelData> {
   readonly noiseWaves: Signal<readonly NoiseWave[]> = this._noiseWaves.asReadonly();
   readonly gridSize: Signal<{ rows: number; cols: number }> = this._gridSize.asReadonly();
 
-  constructor(config?: Partial<MinigameEngineConfig>) {
+  constructor(config?: Partial<MinigameEngineConfig>, waveService?: SignalCorpsWaveService) {
     super(config);
+    this._waveService = waveService;
   }
 
   // --- Lifecycle hooks ---
@@ -242,6 +247,13 @@ export class SignalCorpsEngine extends MinigameEngine<SignalCorpsLevelData> {
     this._stationHealth.set(data.stationHealth);
     this._deployResult.set(null);
     this._deployCount.set(0);
+
+    this._correctPlacements = [];
+    this._waveService?.loadWaves(
+      [...data.noiseWaves],
+      { signalSpeed: DEFAULT_SIGNAL_SPEED, spawnIntervalMs: DEFAULT_SPAWN_INTERVAL_MS },
+      data.stationHealth,
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -319,7 +331,25 @@ export class SignalCorpsEngine extends MinigameEngine<SignalCorpsLevelData> {
       }
     }
 
-    // Run wave simulation
+    // Save correct placements for tick-based blocking evaluation
+    this._correctPlacements = correctPlacements;
+
+    // When wave service is present, delegate wave simulation to tick-based loop
+    if (this._waveService) {
+      this._waveService.startWave(0);
+
+      const result: DeployResult = {
+        towerResults,
+        waveResults: [],
+        totalDamage: 0,
+        allTowersCorrect: towerResults.every(t => t.allCorrect),
+        allWavesBlocked: false,
+      };
+      this._deployResult.set(result);
+      return result;
+    }
+
+    // Inline wave simulation fallback (no service)
     const waveResults: WaveResult[] = [];
     for (const wave of this._noiseWaves()) {
       let blocked = false;
@@ -372,6 +402,39 @@ export class SignalCorpsEngine extends MinigameEngine<SignalCorpsLevelData> {
     }
 
     return result;
+  }
+
+  // --- Tick-based wave simulation ---
+
+  tick(deltaMs: number): void {
+    if (this.status() !== MinigameStatus.Playing || !this._waveService) {
+      return;
+    }
+
+    this._waveService.tick(deltaMs);
+    const blockingResult = this._waveService.evaluateBlocking([...this._correctPlacements]);
+    if (blockingResult.unblocked.length > 0) {
+      this._waveService.applyDamage([...blockingResult.unblocked]);
+    }
+
+    // Sync service health to engine health signal
+    this._stationHealth.set(this._waveService.stationHealth());
+
+    // Check failure
+    if (this._waveService.stationHealth() <= 0) {
+      this.fail();
+      return;
+    }
+
+    // Check wave completion (single-wave-per-deploy model)
+    if (this._waveService.isWaveComplete()) {
+      const lastDeploy = this._deployResult();
+      if (lastDeploy?.allTowersCorrect) {
+        const score = this.calculateScore(lastDeploy);
+        this.addScore(score);
+        this.complete();
+      }
+    }
   }
 
   // --- Private handlers ---

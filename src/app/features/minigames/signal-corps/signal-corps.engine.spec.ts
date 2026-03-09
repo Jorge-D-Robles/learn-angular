@@ -19,6 +19,7 @@ import {
   type MinigameLevel,
 } from '../../../core/minigame/minigame.types';
 import type { MinigameEngineConfig } from '../../../core/minigame/minigame-engine';
+import { SignalCorpsWaveService } from './signal-corps-wave.service';
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -1001,6 +1002,167 @@ describe('SignalCorpsEngine', () => {
       expect(engine.deployResult()).toBeNull();
       expect(engine.stationHealth()).toBe(100);
       expect(engine.status()).toBe(MinigameStatus.Playing);
+    });
+  });
+
+  // --- 18. WaveService integration ---
+
+  describe('WaveService integration', () => {
+    function createEngineWithService(
+      config?: Partial<MinigameEngineConfig>,
+    ): { engine: SignalCorpsEngine; service: SignalCorpsWaveService } {
+      const service = new SignalCorpsWaveService();
+      const engine = new SignalCorpsEngine(config, service);
+      return { engine, service };
+    }
+
+    function initAndStartWithService(
+      engine: SignalCorpsEngine,
+      data?: SignalCorpsLevelData,
+    ): void {
+      engine.initialize(createLevel(data ?? createTestLevelData()));
+      engine.start();
+    }
+
+    it('should call service.loadWaves() on initialize', () => {
+      const { engine, service } = createEngineWithService();
+      engine.initialize(createLevel(createTestLevelData({ stationHealth: 100 })));
+
+      // loadWaves sets health to the level value; reset sets health to 0
+      expect(service.stationHealth()).toBe(100);
+    });
+
+    it('should set service health to custom value on initialize', () => {
+      const { engine, service } = createEngineWithService();
+      engine.initialize(createLevel(createTestLevelData({ stationHealth: 75 })));
+
+      expect(service.stationHealth()).toBe(75);
+    });
+
+    it('should call service.startWave(0) on deploy (verified via engine.tick)', () => {
+      const { engine, service } = createEngineWithService();
+      initAndStartWithService(engine);
+      configureAllCorrectly(engine);
+
+      engine.deploy();
+
+      // Tick 500ms to trigger first signal spawn, then tick again to advance it
+      engine.tick(500);  // spawn first signal at position 0
+      engine.tick(500);  // advance first signal, spawn second signal
+      const signals = service.activeSignals();
+      // First signal should have been advanced by 0.5s * 0.33/s = 0.165
+      const advancedSignals = signals.filter(s => s.position > 0);
+      expect(advancedSignals.length).toBeGreaterThan(0);
+    });
+
+    it('should not run inline wave simulation on deploy when service is present', () => {
+      const { engine } = createEngineWithService();
+      initAndStartWithService(engine);
+
+      // Don't configure any towers — inline sim would cause damage
+      const result = engine.deploy()!;
+
+      expect(result.totalDamage).toBe(0);
+      expect(result.waveResults).toEqual([]);
+      // Health should be unchanged (no inline damage)
+      expect(engine.stationHealth()).toBe(100);
+    });
+
+    it('should delegate tick to service and sync health', () => {
+      const { engine } = createEngineWithService();
+      initAndStartWithService(engine);
+
+      // No towers configured → all signals unblocked → damage on tick
+      engine.deploy();
+
+      // Tick enough for signals to reach position >= 1.0
+      // speed = 0.33/sec, need ~3030ms from spawn to reach 1.0
+      // Spawning: 500ms per wave. First signal spawns at tick(500), second at tick(1000).
+      // First signal needs ~3030ms after spawn, so total ~3530ms from first tick.
+      engine.tick(500);  // spawn 1st signal at pos 0
+      engine.tick(500);  // advance 1st to 0.165, spawn 2nd at pos 0
+      engine.tick(3000); // advance 1st by 0.99 more (total ~1.155), 2nd by 0.99 (total ~1.155)
+
+      expect(engine.stationHealth()).toBeLessThan(100);
+    });
+
+    it('should be a no-op tick without service', () => {
+      const engine = createEngine();
+      initAndStart(engine);
+
+      const healthBefore = engine.stationHealth();
+      engine.tick(1000);
+      expect(engine.stationHealth()).toBe(healthBefore);
+    });
+
+    it('should be a no-op tick when status is not Playing', () => {
+      const { engine } = createEngineWithService();
+      engine.initialize(createLevel(createTestLevelData()));
+
+      // Status is Loading, not Playing
+      expect(engine.status()).toBe(MinigameStatus.Loading);
+      engine.tick(1000); // should be a no-op, no throw
+      expect(engine.stationHealth()).toBe(100);
+    });
+
+    it('should call fail() when service health reaches 0 during tick', () => {
+      const { engine } = createEngineWithService();
+      const lowHealthData = createTestLevelData({
+        stationHealth: 5,
+        noiseWaves: [
+          { waveId: 'wave-fatal', approachDirection: 'north', typeSignature: 'boolean', damage: 50 },
+        ],
+      });
+      initAndStartWithService(engine, lowHealthData);
+
+      // No towers match boolean type, so signal will be unblocked
+      engine.deploy();
+
+      // Tick enough for the signal to spawn and then reach position >= 1.0
+      // spawn at 500ms, then needs ~3030ms to reach 1.0 (0.33/sec * 3.03s = 1.0)
+      engine.tick(500);  // spawn signal at pos 0
+      engine.tick(3100); // advance to position > 1.0 (0.33 * 3.1 = 1.023)
+
+      expect(engine.status()).toBe(MinigameStatus.Lost);
+    });
+
+    it('should update _correctPlacements on re-deploy', () => {
+      const { engine } = createEngineWithService();
+      initAndStartWithService(engine);
+
+      // First deploy with no correct towers
+      engine.deploy();
+
+      // Configure towers correctly
+      configureAllCorrectly(engine);
+      engine.deploy();
+
+      // Tick for signals to spawn and reach station — they should be blocked now
+      // speed 0.33/sec, need ~3030ms after spawn. Spawn at 500ms, 1000ms.
+      engine.tick(500);  // spawn 1st signal
+      engine.tick(500);  // advance 1st, spawn 2nd
+      engine.tick(3000); // advance both past position 1.0
+
+      // Health should be preserved because towers block the signals
+      expect(engine.stationHealth()).toBe(100);
+    });
+
+    it('should call service.reset() via onLevelLoad when engine.reset() is called', () => {
+      const { engine, service } = createEngineWithService();
+      initAndStartWithService(engine);
+
+      // Deploy and tick to mutate service state
+      engine.deploy();
+      engine.tick(500);
+
+      expect(service.activeSignals().length).toBeGreaterThan(0);
+
+      // Reset the engine
+      engine.reset();
+
+      // After reset: loadWaves is re-called, which resets service state
+      expect(service.stationHealth()).toBe(100);
+      expect(service.activeSignals()).toEqual([]);
     });
   });
 });
