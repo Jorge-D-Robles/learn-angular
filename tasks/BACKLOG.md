@@ -1700,29 +1700,6 @@ Acceptance criteria:
 - [ ] At least 4 achievement-tied badges
 - [ ] Unit tests for: all 3 types represented, valid unlock conditions, minimum counts
 
-### T-2026-471
-- Title: Wire WireProtocolValidationService into WireProtocolEngine lifecycle
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-413, T-2026-063
-- Blocked-by: —
-- Tags: integration, minigame, wire-protocol, validation, engine
-- Refs: docs/minigames/02-wire-protocol.md, src/app/features/minigames/wire-protocol/wire-protocol.engine.ts
-
-T-2026-413 creates WireProtocolValidationService but no ticket wires it into WireProtocolEngine. Following the established pattern, the validation service should be injected and used for wire validation and the verify action.
-
-Acceptance criteria:
-- [ ] WireProtocolEngine constructor accepts WireProtocolValidationService
-- [ ] `onLevelLoad()` provides validation service with level port/wire data
-- [ ] `drawWire` action uses `validationService.isCorrectBindingType()` for instant feedback
-- [ ] `verify` action delegates to `validationService.validateAll()` to check all wires against solution
-- [ ] `getCommonMistake()` used to provide hint text for incorrect wires
-- [ ] `reset()` clears validation service state
-- [ ] Unit tests for: service delegation on load, draw, verify, common mistake hints, reset
-
 ### T-2026-472
 - Title: Wire BindingTypeSelectorComponent into WireProtocolComponent UI
 - Status: todo

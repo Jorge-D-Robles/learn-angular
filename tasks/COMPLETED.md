@@ -223,3 +223,4 @@
 [2026-03-08] T-2026-420: Create WireProtocolBindingTypeSelectorComponent for wire type toggling — created BindingTypeSelectorComponent with ARIA radiogroup, disabled state, and color-coded wire type buttons (claude)
 [2026-03-08] T-2026-469: Wire FlowCommanderSimulationService into FlowCommanderEngine lifecycle — wired FlowCommanderSimulationService into engine with gate delegation and simulation routing (claude)
 [2026-03-08] T-2026-470: Wire SignalCorpsWaveService into SignalCorpsEngine lifecycle — wired SignalCorpsWaveService into SignalCorpsEngine with tick-based wave simulation (claude)
+[2026-03-08] T-2026-471: Wire WireProtocolValidationService into WireProtocolEngine lifecycle — wired WireProtocolValidationService into WireProtocolEngine with delegation and hint support (claude)
