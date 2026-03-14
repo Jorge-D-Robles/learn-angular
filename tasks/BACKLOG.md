@@ -1883,29 +1883,6 @@ Acceptance criteria:
 - [ ] Click unlocked mission navigates to `/mission/:chapterId`
 - [ ] Unit tests for: phase grouping, completion status, locked state, navigation, progress counts
 
-### T-2026-487
-- Title: Wire FlowCommanderSimulationService visual state into FlowCommanderComponent for cargo animation
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-469, T-2026-068
-- Blocked-by: —
-- Tags: integration, ui, flow-commander, simulation, visual-state
-- Refs: docs/minigames/03-flow-commander.md, src/app/features/minigames/flow-commander/flow-commander.ts
-
-T-2026-469 wires FlowCommanderSimulationService into FlowCommanderEngine for lifecycle delegation. But the Flow Commander UI component (T-2026-068) needs the simulation service's visual state to animate cargo pods flowing through pipelines, show routing results at gates, and display items reaching target zones or dead-ends. Without this, the "Run" phase has no visual cargo animation.
-
-Acceptance criteria:
-- [ ] FlowCommanderComponent receives simulation state signals from the engine or via DI
-- [ ] Cargo pods animate along pipeline paths during simulation
-- [ ] Gate routing decisions shown visually (items splitting at @if, duplicating at @for, branching at @switch)
-- [ ] Items reaching correct targets glow green; items reaching wrong targets flash red
-- [ ] Items lost to dead-ends show a break-apart animation
-- [ ] Simulation progress signal used to step through animation frames
-- [ ] Unit tests for: cargo position updates, correct/incorrect routing visual feedback, dead-end handling
-
 ### T-2026-488
 - Title: Wire SignalCorpsWaveService visual state into SignalCorpsComponent for wave animation
 - Status: todo
