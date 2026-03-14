@@ -1672,29 +1672,6 @@ Acceptance criteria:
 - [ ] At least 4 achievement-tied badges
 - [ ] Unit tests for: all 3 types represented, valid unlock conditions, minimum counts
 
-### T-2026-475
-- Title: Add "Launch Minigame" button to StoryMissionPage after mission completion
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-075, T-2026-407
-- Blocked-by: —
-- Tags: ui, story-missions, navigation, minigame-unlock
-- Refs: docs/ux/navigation.md, docs/curriculum.md, src/app/pages/mission/
-
-Navigation.md specifies the Story Mission View includes a "Launch Minigame" button (unlocks after mission completion). StoryMissionPage (T-2026-075) was built with step navigation and completion flow, but no ticket adds the post-completion "Launch Minigame" button that navigates to the newly unlocked minigame. This is a critical UX element in the core game loop: Story Mission -> Unlock Minigame.
-
-Acceptance criteria:
-- [ ] StoryMissionPage shows "Launch Minigame" button after mission completion
-- [ ] Button only appears for chapters that unlock a minigame (via CurriculumService.getMinigameForChapter())
-- [ ] Button navigates to `/minigames/:gameId` (level select for the unlocked minigame)
-- [ ] Button label includes minigame name (e.g., "Launch Module Assembly")
-- [ ] For chapters that don't unlock a minigame (Ch 9, 10, 27, 33, 34), shows "Continue to Next Mission" instead
-- [ ] Button styled with Reactor Blue accent and station theme glow
-- [ ] Unit tests for: button visible after completion, correct navigation target, hidden for non-unlock chapters
-
 ### T-2026-476
 - Title: Create integration test for FlowCommanderSimulationService + FlowCommanderEngine coordinated lifecycle
 - Status: todo
