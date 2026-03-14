@@ -1,0 +1,80 @@
+<div class="corridor-runner">
+  <!-- URL Bar -->
+  <div class="corridor-runner__url-bar"
+       [class.corridor-runner__url-bar--error]="animatingCrew()?.isHullBreach"
+       aria-live="polite">
+    <span class="corridor-runner__url-prefix">nexus://</span>{{ currentUrl() || '/' }}
+  </div>
+
+  <!-- Main content area -->
+  <div class="corridor-runner__content">
+    <!-- Config phase: code editor -->
+    @if (phase() === 'config') {
+      <div class="corridor-runner__editor-panel">
+        <nx-code-editor
+          [code]="routeConfigText()"
+          language="json"
+          (codeChange)="onCodeChange($event)" />
+        @if (parseError()) {
+          <div class="corridor-runner__parse-error" role="alert">
+            {{ parseError() }}
+          </div>
+        }
+      </div>
+    }
+
+    <!-- SVG Map (shown in both phases, full width in run phase) -->
+    <svg class="corridor-runner__svg"
+         [class.corridor-runner__svg--full]="phase() === 'run'"
+         [attr.viewBox]="viewBox"
+         preserveAspectRatio="xMidYMid meet">
+
+      <!-- Corridor edges -->
+      @for (edge of edgePaths(); track edge.id) {
+        <path [attr.d]="edge.path"
+              class="corridor-runner__corridor"
+              [class.corridor-runner__corridor--lit]="corridorGlowMap().get(edge.id)" />
+      }
+
+      <!-- Station module nodes -->
+      @for (node of nodePositions(); track node.id) {
+        <g class="corridor-runner__module">
+          <circle [attr.cx]="node.x" [attr.cy]="node.y" [attr.r]="nodeRadius" />
+          <text [attr.x]="node.x" [attr.y]="node.y - nodeRadius - 6"
+                class="corridor-runner__module-label" text-anchor="middle">{{ node.label }}</text>
+        </g>
+      }
+
+      <!-- Crew sprite -->
+      @if (animatingCrew()) {
+        <g class="corridor-runner__crew"
+           [class.corridor-runner__crew--hull-breach]="animatingCrew()!.isHullBreach && animatingCrew()!.animationComplete"
+           [class.corridor-runner__crew--success]="animatingCrew()!.isSuccess && animatingCrew()!.animationComplete">
+          <circle [attr.cx]="crewX()" [attr.cy]="crewY()" r="12"
+                  class="corridor-runner__crew-dot" />
+        </g>
+      }
+    </svg>
+  </div>
+
+  <!-- Controls bar -->
+  <div class="corridor-runner__controls">
+    @if (phase() === 'config') {
+      <button class="corridor-runner__lock-btn"
+              [disabled]="!!parseError()"
+              (click)="onLockRoutes()">
+        Lock Routes
+      </button>
+    } @else {
+      <button class="corridor-runner__run-btn"
+              [disabled]="isAnimating()"
+              (click)="onRunTest()">
+        Run Test
+      </button>
+      <button class="corridor-runner__reset-btn"
+              (click)="onReset()">
+        Reset
+      </button>
+    }
+  </div>
+</div>

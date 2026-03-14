@@ -2,7 +2,7 @@ import { signal, type Signal } from '@angular/core';
 import { MinigameEngine, type ActionResult } from '../../../core/minigame/minigame-engine';
 import type { MinigameEngineConfig } from '../../../core/minigame/minigame-engine';
 import { MinigameStatus } from '../../../core/minigame/minigame.types';
-import type { CorridorRunnerLevelData, RouteEntry, TestNavigation } from './corridor-runner.types';
+import type { CorridorRunnerLevelData, MapLayout, RouteEntry, TestNavigation } from './corridor-runner.types';
 
 // ---------------------------------------------------------------------------
 // Result types
@@ -96,6 +96,7 @@ const HULL_BREACH_RESULT: ActionResult = { valid: true, scoreChange: 0, livesCha
 
 export class CorridorRunnerEngine extends MinigameEngine<CorridorRunnerLevelData> {
   // --- Private writable signals ---
+  private readonly _mapLayout = signal<MapLayout>({ nodes: [], edges: [] });
   private readonly _playerRouteConfig = signal<readonly RouteEntry[]>([]);
   private readonly _navigationResults = signal<readonly NavigationResult[]>([]);
   private readonly _runResult = signal<RunResult | null>(null);
@@ -107,6 +108,7 @@ export class CorridorRunnerEngine extends MinigameEngine<CorridorRunnerLevelData
   private readonly _simulationService: CorridorRunnerSimulationService | undefined;
 
   // --- Public read-only signals ---
+  readonly mapLayout: Signal<MapLayout> = this._mapLayout.asReadonly();
   readonly playerRouteConfig: Signal<readonly RouteEntry[]> = this._playerRouteConfig.asReadonly();
   readonly navigationResults: Signal<readonly NavigationResult[]> = this._navigationResults.asReadonly();
   readonly runResult: Signal<RunResult | null> = this._runResult.asReadonly();
@@ -122,6 +124,7 @@ export class CorridorRunnerEngine extends MinigameEngine<CorridorRunnerLevelData
 
   protected onLevelLoad(data: CorridorRunnerLevelData): void {
     this._solutionRouteCount = data.routeConfig.length;
+    this._mapLayout.set(data.mapLayout);
     this._testNavigations.set(data.testNavigations);
     this._playerRouteConfig.set([]);
     this._navigationResults.set([]);
