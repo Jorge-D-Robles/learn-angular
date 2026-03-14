@@ -1,4 +1,5 @@
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { SignalCorpsComponent } from './signal-corps.component';
 import { SignalCorpsEngine } from './signal-corps.engine';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
@@ -9,6 +10,7 @@ import {
   type MinigameLevel,
 } from '../../../core/minigame/minigame.types';
 import type { SignalCorpsLevelData } from './signal-corps.types';
+import { SignalCorpsTowerConfigComponent, type TowerConfigResult } from './tower-config/tower-config';
 
 // ---------------------------------------------------------------------------
 // Constants (mirrored from component for assertions)
@@ -132,22 +134,20 @@ describe('SignalCorpsComponent', () => {
       tower.dispatchEvent(new Event('click', { bubbles: true }));
       fixture.detectChanges();
 
-      const panel = fixture.nativeElement.querySelector('.signal-corps__config-panel');
-      expect(panel).toBeTruthy();
+      const configComp = fixture.debugElement.query(By.directive(SignalCorpsTowerConfigComponent));
+      expect(configComp).toBeTruthy();
     });
 
-    it('should close config panel on close button click', () => {
+    it('should close config panel on cancel from child component', () => {
       setup();
-      // Open panel
       component.onTowerClick('tower-a');
       fixture.detectChanges();
 
-      const closeBtn = fixture.nativeElement.querySelector('.signal-corps__config-close') as HTMLButtonElement;
-      closeBtn.click();
+      component.onConfigCancelled();
       fixture.detectChanges();
 
-      const panel = fixture.nativeElement.querySelector('.signal-corps__config-panel');
-      expect(panel).toBeFalsy();
+      const configComp = fixture.debugElement.query(By.directive(SignalCorpsTowerConfigComponent));
+      expect(configComp).toBeFalsy();
     });
 
     it('should highlight selected tower with --selected class', () => {
@@ -162,60 +162,21 @@ describe('SignalCorpsComponent', () => {
     });
   });
 
-  // --- 3. Configuration Panel - Inputs/Outputs ---
+  // --- 3. Config Panel - Child Component Integration ---
 
-  describe('Configuration Panel - Inputs/Outputs', () => {
-    it('should submit declare-input action when input is added', () => {
+  describe('Config Panel Integration', () => {
+    it('should bind towerId input to selected tower', () => {
       setup();
-      const submitSpy = vi.spyOn(engine, 'submitAction');
-
-      // Open panel for tower-a
       component.onTowerClick('tower-a');
       fixture.detectChanges();
 
-      // Fill form and submit
-      component.newInputName.set('age');
-      component.newInputType.set('number');
-      component.newInputRequired.set(false);
-      component.onAddInput();
-
-      expect(submitSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'declare-input',
-          towerId: 'tower-a',
-          input: expect.objectContaining({
-            name: 'age',
-            type: 'number',
-            required: false,
-          }),
-        }),
-      );
+      const configDe = fixture.debugElement.query(By.directive(SignalCorpsTowerConfigComponent));
+      expect(configDe).toBeTruthy();
+      const configInstance = configDe.componentInstance as SignalCorpsTowerConfigComponent;
+      expect(configInstance.towerId()).toBe('tower-a');
     });
 
-    it('should submit declare-output action when output is added', () => {
-      setup();
-      const submitSpy = vi.spyOn(engine, 'submitAction');
-
-      component.onTowerClick('tower-b');
-      fixture.detectChanges();
-
-      component.newOutputName.set('selected');
-      component.newOutputPayloadType.set('string');
-      component.onAddOutput();
-
-      expect(submitSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'declare-output',
-          towerId: 'tower-b',
-          output: expect.objectContaining({
-            name: 'selected',
-            payloadType: 'string',
-          }),
-        }),
-      );
-    });
-
-    it('should show existing inputs and outputs for the selected tower', () => {
+    it('should bind tower config (inputs/outputs) to selected tower', () => {
       setup();
 
       // Declare an input on tower-a via engine
@@ -225,76 +186,20 @@ describe('SignalCorpsComponent', () => {
         input: { name: 'count', type: 'number', required: true },
       });
 
-      // Open panel for tower-a
       component.onTowerClick('tower-a');
       fixture.detectChanges();
 
-      const rows = fixture.nativeElement.querySelectorAll('.signal-corps__config-row');
-      expect(rows.length).toBeGreaterThan(0);
-      // Should display the input name
-      expect(rows[0].textContent).toContain('count');
+      const configDe = fixture.debugElement.query(By.directive(SignalCorpsTowerConfigComponent));
+      const configInstance = configDe.componentInstance as SignalCorpsTowerConfigComponent;
+      const towerConfig = configInstance.tower();
+      expect(towerConfig.inputs.length).toBe(1);
+      expect(towerConfig.inputs[0].name).toBe('count');
     });
 
-    it('should submit remove-input action when remove button is clicked', () => {
+    it('should bind existing bindings to selected tower', () => {
       setup();
 
-      // Declare an input first
-      engine.submitAction({
-        type: 'declare-input',
-        towerId: 'tower-a',
-        input: { name: 'count', type: 'number', required: true },
-      });
-
-      component.onTowerClick('tower-a');
-      fixture.detectChanges();
-
-      const submitSpy = vi.spyOn(engine, 'submitAction');
-
-      const removeBtn = fixture.nativeElement.querySelector('.signal-corps__remove-btn') as HTMLButtonElement;
-      removeBtn.click();
-
-      expect(submitSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'remove-input',
-          towerId: 'tower-a',
-          inputName: 'count',
-        }),
-      );
-    });
-  });
-
-  // --- 4. Configuration Panel - Bindings ---
-
-  describe('Configuration Panel - Bindings', () => {
-    it('should submit set-binding action when binding is added', () => {
-      setup();
-      const submitSpy = vi.spyOn(engine, 'submitAction');
-
-      component.onTowerClick('tower-a');
-      fixture.detectChanges();
-
-      component.newBindingPortName.set('count');
-      component.newBindingType.set('input');
-      component.newBindingParentProp.set('itemCount');
-      component.onSetBinding();
-
-      expect(submitSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'set-binding',
-          towerId: 'tower-a',
-          binding: expect.objectContaining({
-            bindingType: 'input',
-            towerPortName: 'count',
-            parentProperty: 'itemCount',
-          }),
-        }),
-      );
-    });
-
-    it('should submit remove-binding action when binding remove button is clicked', () => {
-      setup();
-
-      // Set a binding first
+      // Set a binding on tower-a
       engine.submitAction({
         type: 'set-binding',
         towerId: 'tower-a',
@@ -304,24 +209,127 @@ describe('SignalCorpsComponent', () => {
       component.onTowerClick('tower-a');
       fixture.detectChanges();
 
+      const configDe = fixture.debugElement.query(By.directive(SignalCorpsTowerConfigComponent));
+      const configInstance = configDe.componentInstance as SignalCorpsTowerConfigComponent;
+      expect(configInstance.bindings().length).toBe(1);
+      expect(configInstance.bindings()[0].towerPortName).toBe('count');
+    });
+
+    it('should populate parentProperties from level expectedBindings', () => {
+      setup();
+      component.onTowerClick('tower-a');
+      fixture.detectChanges();
+
+      const configDe = fixture.debugElement.query(By.directive(SignalCorpsTowerConfigComponent));
+      const configInstance = configDe.componentInstance as SignalCorpsTowerConfigComponent;
+      expect(configInstance.parentProperties()).toContain('itemCount');
+    });
+
+    it('should populate parentHandlers from level expectedBindings', () => {
+      setup();
+      component.onTowerClick('tower-a');
+      fixture.detectChanges();
+
+      const configDe = fixture.debugElement.query(By.directive(SignalCorpsTowerConfigComponent));
+      const configInstance = configDe.componentInstance as SignalCorpsTowerConfigComponent;
+      expect(configInstance.parentHandlers()).toContain('onClicked');
+    });
+
+    it('should update engine state on configApplied and close panel', () => {
+      setup();
       const submitSpy = vi.spyOn(engine, 'submitAction');
 
-      // Find the binding remove button (it's the only remove button since no inputs declared yet)
-      const removeBtns = fixture.nativeElement.querySelectorAll('.signal-corps__remove-btn') as NodeListOf<HTMLButtonElement>;
-      // The binding remove button is the last one
-      removeBtns[removeBtns.length - 1].click();
+      component.onTowerClick('tower-a');
+      fixture.detectChanges();
 
+      submitSpy.mockClear();
+
+      const result: TowerConfigResult = {
+        config: {
+          inputs: [{ name: 'count', type: 'number', required: true }],
+          outputs: [],
+        },
+        bindings: [
+          { bindingType: 'input', towerPortName: 'count', parentProperty: 'itemCount' },
+        ],
+      };
+
+      component.onConfigApplied(result);
+      fixture.detectChanges();
+
+      // Should have submitted declare-input and set-binding actions
       expect(submitSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'remove-binding',
-          towerId: 'tower-a',
-          towerPortName: 'count',
-        }),
+        expect.objectContaining({ type: 'declare-input', towerId: 'tower-a' }),
       );
+      expect(submitSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'set-binding', towerId: 'tower-a' }),
+      );
+
+      // Panel should be closed
+      expect(component.selectedTowerId()).toBeNull();
+      const configComp = fixture.debugElement.query(By.directive(SignalCorpsTowerConfigComponent));
+      expect(configComp).toBeFalsy();
+    });
+
+    it('should remove existing state before applying new config', () => {
+      setup();
+
+      // Pre-populate tower-a with existing inputs
+      engine.submitAction({
+        type: 'declare-input',
+        towerId: 'tower-a',
+        input: { name: 'oldInput', type: 'string', required: false },
+      });
+
+      const submitSpy = vi.spyOn(engine, 'submitAction');
+
+      component.onTowerClick('tower-a');
+      fixture.detectChanges();
+
+      submitSpy.mockClear();
+
+      const result: TowerConfigResult = {
+        config: {
+          inputs: [{ name: 'count', type: 'number', required: true }],
+          outputs: [],
+        },
+        bindings: [],
+      };
+
+      component.onConfigApplied(result);
+
+      // Should remove old input before adding new one
+      expect(submitSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'remove-input', towerId: 'tower-a', inputName: 'oldInput' }),
+      );
+      expect(submitSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'declare-input', towerId: 'tower-a' }),
+      );
+    });
+
+    it('should dismiss panel on backdrop click', () => {
+      setup();
+      component.onTowerClick('tower-a');
+      fixture.detectChanges();
+
+      const backdrop = fixture.nativeElement.querySelector('.signal-corps__config-backdrop') as HTMLDivElement;
+      expect(backdrop).toBeTruthy();
+      backdrop.click();
+      fixture.detectChanges();
+
+      expect(component.selectedTowerId()).toBeNull();
+      const configComp = fixture.debugElement.query(By.directive(SignalCorpsTowerConfigComponent));
+      expect(configComp).toBeFalsy();
+    });
+
+    it('should not render config panel when no tower is selected', () => {
+      setup();
+      const configComp = fixture.debugElement.query(By.directive(SignalCorpsTowerConfigComponent));
+      expect(configComp).toBeFalsy();
     });
   });
 
-  // --- 5. Port Visualization ---
+  // --- 4. Port Visualization ---
 
   describe('Port Visualization', () => {
     it('should render input ports with blue color (#3B82F6)', () => {
@@ -357,7 +365,7 @@ describe('SignalCorpsComponent', () => {
     });
   });
 
-  // --- 6. Deploy and Wave Animation ---
+  // --- 5. Deploy and Wave Animation ---
 
   describe('Deploy and Wave Animation', () => {
     it('should call engine.deploy() on deploy button click', () => {
@@ -430,7 +438,7 @@ describe('SignalCorpsComponent', () => {
     });
   });
 
-  // --- 7. Keyboard Shortcuts ---
+  // --- 6. Keyboard Shortcuts ---
 
   describe('Keyboard Shortcuts', () => {
     it('should register d and escape keys on init', () => {
@@ -462,7 +470,7 @@ describe('SignalCorpsComponent', () => {
     });
   });
 
-  // --- 8. Edge Cases ---
+  // --- 7. Edge Cases ---
 
   describe('Edge Cases', () => {
     it('should handle empty grid (0 towers, 0 waves)', () => {

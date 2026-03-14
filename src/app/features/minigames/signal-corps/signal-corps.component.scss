@@ -39,52 +39,15 @@ $mn: 'JetBrains Mono', monospace;
   animation: sc-shield 0.6s ease-out forwards;
 }
 
+.signal-corps__config-backdrop {
+  position: absolute; inset: 0; z-index: 9; pointer-events: all; background: transparent;
+}
+
 .signal-corps__config-panel {
   position: absolute; transform: translate(-50%, -100%) translateY(-10px);
   background: $dk; border: 1px solid #252b3d; border-radius: 8px;
   padding: 12px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   z-index: 10; min-width: 280px; max-height: 400px; overflow-y: auto;
-}
-
-.signal-corps__config-title { color: $tx; font: 0.9rem $mn; margin: 0 0 8px; }
-
-.signal-corps__config-section {
-  margin-bottom: 10px;
-  h4 { color: $mt; font-size: 0.75rem; margin: 0 0 4px; text-transform: uppercase; }
-}
-
-.signal-corps__config-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 4px 0; color: $tx; font: 0.8rem $mn;
-}
-
-.signal-corps__config-form {
-  display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;
-  input[type='text'], select {
-    padding: 4px 6px; border: 1px solid $bd; border-radius: 4px;
-    background: #0f1219; color: $tx; font: 0.75rem $mn;
-  }
-  input[type='text'] { flex: 1; min-width: 80px; }
-}
-
-.signal-corps__input-required-label { display: inline-flex; align-items: center; gap: 4px; color: $mt; font-size: 0.75rem; }
-
-.signal-corps__remove-btn {
-  padding: 2px 8px; border: 1px solid #ef4444; border-radius: 4px;
-  background: transparent; color: #ef4444; font-size: 0.7rem; cursor: pointer;
-}
-
-.signal-corps__add-input-btn,
-.signal-corps__add-output-btn,
-.signal-corps__add-binding-btn {
-  padding: 4px 10px; border: 1px solid $bl; border-radius: 4px;
-  background: transparent; color: $bl; font-size: 0.75rem; cursor: pointer;
-}
-
-.signal-corps__config-close {
-  display: block; width: 100%; margin-top: 8px; padding: 6px 12px;
-  border: 1px solid $bd; border-radius: 4px; background: transparent;
-  color: $tx; font-size: 0.8rem; cursor: pointer;
 }
 
 .signal-corps__controls {

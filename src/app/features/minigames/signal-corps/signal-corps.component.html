@@ -72,126 +72,22 @@
 
   <!-- Configuration panel overlay -->
   @if (selectedTowerId()) {
+    <div class="signal-corps__config-backdrop"
+         tabindex="-1"
+         role="presentation"
+         (click)="closeConfigPanel()"
+         (keydown.escape)="closeConfigPanel()"></div>
     <div class="signal-corps__config-panel"
          [style.left]="configPanelStyle().left"
          [style.top]="configPanelStyle().top">
-      <h3 class="signal-corps__config-title">{{ selectedTowerId() }}</h3>
-
-      @if (selectedTowerState(); as state) {
-        <!-- Inputs section -->
-        <div class="signal-corps__config-section">
-          <h4>Inputs</h4>
-          @for (inp of state.inputs; track inp.name) {
-            <div class="signal-corps__config-row">
-              <span>{{ inp.name }} : {{ inp.type }}{{ inp.required ? ' (required)' : '' }}</span>
-              <button class="signal-corps__remove-btn"
-                      (click)="onRemoveInput(selectedTowerId()!, inp.name)">Remove</button>
-            </div>
-          }
-          <div class="signal-corps__config-form">
-            <input type="text"
-                   class="signal-corps__input-name"
-                   placeholder="name"
-                   [value]="newInputName()"
-                   (input)="newInputName.set($any($event.target).value)" />
-            <select class="signal-corps__input-type"
-                    [value]="newInputType()"
-                    (change)="newInputType.set($any($event.target).value)">
-              <option value="string">string</option>
-              <option value="number">number</option>
-              <option value="boolean">boolean</option>
-              <option value="object">object</option>
-            </select>
-            <label class="signal-corps__input-required-label">
-              <input type="checkbox"
-                     [checked]="newInputRequired()"
-                     (change)="newInputRequired.set($any($event.target).checked)" />
-              required
-            </label>
-            <button class="signal-corps__add-input-btn"
-                    (click)="onAddInput()">Add Input</button>
-          </div>
-        </div>
-
-        <!-- Outputs section -->
-        <div class="signal-corps__config-section">
-          <h4>Outputs</h4>
-          @for (out of state.outputs; track out.name) {
-            <div class="signal-corps__config-row">
-              <span>{{ out.name }} : {{ out.payloadType }}</span>
-              <button class="signal-corps__remove-btn"
-                      (click)="onRemoveOutput(selectedTowerId()!, out.name)">Remove</button>
-            </div>
-          }
-          <div class="signal-corps__config-form">
-            <input type="text"
-                   class="signal-corps__output-name"
-                   placeholder="name"
-                   [value]="newOutputName()"
-                   (input)="newOutputName.set($any($event.target).value)" />
-            <select class="signal-corps__output-type"
-                    [value]="newOutputPayloadType()"
-                    (change)="newOutputPayloadType.set($any($event.target).value)">
-              <option value="string">string</option>
-              <option value="number">number</option>
-              <option value="boolean">boolean</option>
-              <option value="void">void</option>
-            </select>
-            <button class="signal-corps__add-output-btn"
-                    (click)="onAddOutput()">Add Output</button>
-          </div>
-        </div>
-
-        <!-- Bindings section -->
-        <div class="signal-corps__config-section">
-          <h4>Bindings</h4>
-          @for (binding of state.bindings; track binding.towerPortName) {
-            <div class="signal-corps__config-row">
-              <span>[{{ binding.bindingType }}] {{ binding.towerPortName }}
-                @if (binding.parentProperty) {
-                  &#x2190; {{ binding.parentProperty }}
-                }
-                @if (binding.parentHandler) {
-                  &#x2190; {{ binding.parentHandler }}
-                }
-              </span>
-              <button class="signal-corps__remove-btn"
-                      (click)="onRemoveBinding(selectedTowerId()!, binding.towerPortName)">Remove</button>
-            </div>
-          }
-          <div class="signal-corps__config-form">
-            <input type="text"
-                   class="signal-corps__binding-port-name"
-                   placeholder="port name"
-                   [value]="newBindingPortName()"
-                   (input)="newBindingPortName.set($any($event.target).value)" />
-            <select class="signal-corps__binding-type"
-                    [value]="newBindingType()"
-                    (change)="newBindingType.set($any($event.target).value)">
-              <option value="input">input</option>
-              <option value="output">output</option>
-            </select>
-            @if (newBindingType() === 'input') {
-              <input type="text"
-                     class="signal-corps__binding-parent-prop"
-                     placeholder="parent property"
-                     [value]="newBindingParentProp()"
-                     (input)="newBindingParentProp.set($any($event.target).value)" />
-            }
-            @if (newBindingType() === 'output') {
-              <input type="text"
-                     class="signal-corps__binding-parent-handler"
-                     placeholder="parent handler"
-                     [value]="newBindingParentHandler()"
-                     (input)="newBindingParentHandler.set($any($event.target).value)" />
-            }
-            <button class="signal-corps__add-binding-btn"
-                    (click)="onSetBinding()">Add Binding</button>
-          </div>
-        </div>
-      }
-
-      <button class="signal-corps__config-close" (click)="closeConfigPanel()">Close</button>
+      <app-signal-corps-tower-config
+        [towerId]="selectedTowerId()!"
+        [tower]="selectedTowerConfig()"
+        [bindings]="selectedTowerBindings()"
+        [parentProperties]="parentProperties()"
+        [parentHandlers]="parentHandlers()"
+        (configApplied)="onConfigApplied($event)"
+        (cancelled)="onConfigCancelled()" />
     </div>
   }
 

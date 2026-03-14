@@ -11,8 +11,7 @@ Started: 2026-03-08
 
 ## Active
 
-
-
+- T-2026-474: Wire SignalCorpsTowerConfigComponent into SignalCorpsComponent UI [S, high]
 
 
 

@@ -7,12 +7,7 @@ import {
 } from '@angular/core';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
-import type {
-  TowerInput,
-  TowerOutput,
-  ParentBinding,
-  InputTransform,
-} from './signal-corps.types';
+import type { TowerConfig } from './signal-corps.types';
 import { PORT_TYPE_COLORS } from './signal-corps.types';
 import {
   SignalCorpsEngine,
@@ -20,6 +15,7 @@ import {
   type DeployResult,
   type WaveResult,
 } from './signal-corps.engine';
+import { SignalCorpsTowerConfigComponent, type TowerConfigResult } from './tower-config/tower-config';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -66,6 +62,7 @@ interface ShieldPulse {
 
 @Component({
   selector: 'app-signal-corps',
+  imports: [SignalCorpsTowerConfigComponent],
   templateUrl: './signal-corps.component.html',
   styleUrl: './signal-corps.component.scss',
 })
@@ -79,18 +76,6 @@ export class SignalCorpsComponent implements OnDestroy {
   readonly shieldPulses = signal<readonly ShieldPulse[]>([]);
   readonly damageShake = signal(false);
   private readonly pendingTimers: ReturnType<typeof setTimeout>[] = [];
-
-  // Config panel form state
-  readonly newInputName = signal('');
-  readonly newInputType = signal('string');
-  readonly newInputRequired = signal(false);
-  readonly newInputTransform = signal<InputTransform | undefined>(undefined);
-  readonly newOutputName = signal('');
-  readonly newOutputPayloadType = signal('void');
-  readonly newBindingPortName = signal('');
-  readonly newBindingType = signal<'input' | 'output'>('input');
-  readonly newBindingParentProp = signal('');
-  readonly newBindingParentHandler = signal('');
 
   // Template constants
   readonly viewBox = `0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`;
@@ -133,11 +118,29 @@ export class SignalCorpsComponent implements OnDestroy {
     }))
   );
 
-  // Selected tower state
-  readonly selectedTowerState = computed(() => {
+  // Child component bindings
+  readonly selectedTowerConfig = computed((): TowerConfig => {
     const id = this.selectedTowerId();
-    if (!id) return null;
-    return this.playerTowers().get(id) ?? null;
+    if (!id) return { inputs: [], outputs: [] };
+    const state = this.playerTowers().get(id);
+    if (!state) return { inputs: [], outputs: [] };
+    return { inputs: state.inputs, outputs: state.outputs };
+  });
+
+  readonly selectedTowerBindings = computed(() => {
+    const id = this.selectedTowerId();
+    if (!id) return [];
+    return this.playerTowers().get(id)?.bindings ?? [];
+  });
+
+  readonly parentProperties = computed(() => {
+    const bindings = this.engine?.expectedBindings() ?? [];
+    return [...new Set(bindings.filter(b => b.parentProperty).map(b => b.parentProperty!))];
+  });
+
+  readonly parentHandlers = computed(() => {
+    const bindings = this.engine?.expectedBindings() ?? [];
+    return [...new Set(bindings.filter(b => b.parentHandler).map(b => b.parentHandler!))];
   });
 
   // Config panel position (percentage-based for responsive scaling)
@@ -190,91 +193,45 @@ export class SignalCorpsComponent implements OnDestroy {
 
   closeConfigPanel(): void {
     this.selectedTowerId.set(null);
-    this.resetFormState();
   }
 
-  // --- Input management ---
+  // --- Config panel handlers ---
 
-  onAddInput(): void {
+  onConfigApplied(result: TowerConfigResult): void {
     if (!this.engine) return;
     const towerId = this.selectedTowerId();
     if (!towerId) return;
 
-    const name = this.newInputName();
-    if (!name) return;
+    // Remove existing state
+    const currentState = this.playerTowers().get(towerId);
+    if (currentState) {
+      for (const binding of currentState.bindings) {
+        this.engine.submitAction({ type: 'remove-binding', towerId, towerPortName: binding.towerPortName });
+      }
+      for (const inp of currentState.inputs) {
+        this.engine.submitAction({ type: 'remove-input', towerId, inputName: inp.name });
+      }
+      for (const out of currentState.outputs) {
+        this.engine.submitAction({ type: 'remove-output', towerId, outputName: out.name });
+      }
+    }
 
-    const input: TowerInput = {
-      name,
-      type: this.newInputType(),
-      required: this.newInputRequired(),
-      transform: this.newInputTransform(),
-    };
+    // Add new state
+    for (const inp of result.config.inputs) {
+      this.engine.submitAction({ type: 'declare-input', towerId, input: inp });
+    }
+    for (const out of result.config.outputs) {
+      this.engine.submitAction({ type: 'declare-output', towerId, output: out });
+    }
+    for (const binding of result.bindings) {
+      this.engine.submitAction({ type: 'set-binding', towerId, binding });
+    }
 
-    this.engine.submitAction({ type: 'declare-input', towerId, input });
-    this.newInputName.set('');
-    this.newInputType.set('string');
-    this.newInputRequired.set(false);
-    this.newInputTransform.set(undefined);
+    this.selectedTowerId.set(null);
   }
 
-  onRemoveInput(towerId: string, name: string): void {
-    if (!this.engine) return;
-    this.engine.submitAction({ type: 'remove-input', towerId, inputName: name });
-  }
-
-  // --- Output management ---
-
-  onAddOutput(): void {
-    if (!this.engine) return;
-    const towerId = this.selectedTowerId();
-    if (!towerId) return;
-
-    const name = this.newOutputName();
-    if (!name) return;
-
-    const output: TowerOutput = {
-      name,
-      payloadType: this.newOutputPayloadType(),
-    };
-
-    this.engine.submitAction({ type: 'declare-output', towerId, output });
-    this.newOutputName.set('');
-    this.newOutputPayloadType.set('void');
-  }
-
-  onRemoveOutput(towerId: string, name: string): void {
-    if (!this.engine) return;
-    this.engine.submitAction({ type: 'remove-output', towerId, outputName: name });
-  }
-
-  // --- Binding management ---
-
-  onSetBinding(): void {
-    if (!this.engine) return;
-    const towerId = this.selectedTowerId();
-    if (!towerId) return;
-
-    const portName = this.newBindingPortName();
-    if (!portName) return;
-
-    const bindingType = this.newBindingType();
-    const binding: ParentBinding = {
-      bindingType,
-      towerPortName: portName,
-      parentProperty: bindingType === 'input' ? this.newBindingParentProp() : undefined,
-      parentHandler: bindingType === 'output' ? this.newBindingParentHandler() : undefined,
-    };
-
-    this.engine.submitAction({ type: 'set-binding', towerId, binding });
-    this.newBindingPortName.set('');
-    this.newBindingType.set('input');
-    this.newBindingParentProp.set('');
-    this.newBindingParentHandler.set('');
-  }
-
-  onRemoveBinding(towerId: string, portName: string): void {
-    if (!this.engine) return;
-    this.engine.submitAction({ type: 'remove-binding', towerId, towerPortName: portName });
+  onConfigCancelled(): void {
+    this.closeConfigPanel();
   }
 
   // --- Deploy and wave animation ---
@@ -410,19 +367,6 @@ export class SignalCorpsComponent implements OnDestroy {
       if (pos) return pos;
     }
     return { x: VIEWBOX_WIDTH / 2, y: VIEWBOX_HEIGHT / 2 };
-  }
-
-  private resetFormState(): void {
-    this.newInputName.set('');
-    this.newInputType.set('string');
-    this.newInputRequired.set(false);
-    this.newInputTransform.set(undefined);
-    this.newOutputName.set('');
-    this.newOutputPayloadType.set('void');
-    this.newBindingPortName.set('');
-    this.newBindingType.set('input');
-    this.newBindingParentProp.set('');
-    this.newBindingParentHandler.set('');
   }
 
   private clearPendingTimers(): void {

@@ -189,6 +189,7 @@ export class SignalCorpsEngine extends MinigameEngine<SignalCorpsLevelData> {
   private readonly _towerPlacements = signal<readonly TowerPlacement[]>([]);
   private readonly _noiseWaves = signal<readonly NoiseWave[]>([]);
   private readonly _gridSize = signal<{ rows: number; cols: number }>({ rows: 0, cols: 0 });
+  private readonly _expectedBindings = signal<readonly ParentBinding[]>([]);
 
   // --- Private state ---
   private _expectedTowers: readonly TowerPlacement[] = [];
@@ -205,6 +206,7 @@ export class SignalCorpsEngine extends MinigameEngine<SignalCorpsLevelData> {
   readonly towerPlacements: Signal<readonly TowerPlacement[]> = this._towerPlacements.asReadonly();
   readonly noiseWaves: Signal<readonly NoiseWave[]> = this._noiseWaves.asReadonly();
   readonly gridSize: Signal<{ rows: number; cols: number }> = this._gridSize.asReadonly();
+  readonly expectedBindings: Signal<readonly ParentBinding[]> = this._expectedBindings.asReadonly();
 
   constructor(config?: Partial<MinigameEngineConfig>, waveService?: SignalCorpsWaveService) {
     super(config);
@@ -219,6 +221,7 @@ export class SignalCorpsEngine extends MinigameEngine<SignalCorpsLevelData> {
     this._noiseWaves.set(data.noiseWaves);
     this._gridSize.set(data.gridSize);
     this._initialHealth = data.stationHealth;
+    this._expectedBindings.set(data.expectedBindings);
 
     // Build expected bindings per tower
     this._expectedBindingsByTower = new Map<string, readonly ParentBinding[]>();
