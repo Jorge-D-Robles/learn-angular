@@ -4,9 +4,11 @@ import {
   computed,
   signal,
   inject,
+  effect,
 } from '@angular/core';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
+import { MinigameStatus } from '../../../core/minigame/minigame.types';
 import type { TowerConfig } from './signal-corps.types';
 import { PORT_TYPE_COLORS } from './signal-corps.types';
 import {
@@ -15,6 +17,7 @@ import {
   type DeployResult,
   type WaveResult,
 } from './signal-corps.engine';
+import { SignalCorpsWaveService } from './signal-corps-wave.service';
 import { SignalCorpsTowerConfigComponent, type TowerConfigResult } from './tower-config/tower-config';
 
 // ---------------------------------------------------------------------------
@@ -31,6 +34,7 @@ const WAVE_STEP_MS = 300;
 const WAVE_TOTAL_STEPS = 5;
 const DAMAGE_SHAKE_MS = 500;
 const RESULT_DISPLAY_MS = 2000;
+const HEALTH_CRITICAL_THRESHOLD = 0.25;
 
 // ---------------------------------------------------------------------------
 // Interfaces
@@ -56,6 +60,12 @@ interface ShieldPulse {
   readonly y: number;
 }
 
+export interface ActiveWavePosition {
+  readonly id: string;
+  readonly x: number;
+  readonly y: number;
+}
+
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -69,6 +79,7 @@ interface ShieldPulse {
 export class SignalCorpsComponent implements OnDestroy {
   private readonly engine = inject(MINIGAME_ENGINE, { optional: true }) as SignalCorpsEngine | null;
   private readonly shortcuts = inject(KeyboardShortcutService);
+  private readonly waveService = inject(SignalCorpsWaveService, { optional: true });
 
   // Local state
   readonly selectedTowerId = signal<string | null>(null);
@@ -76,6 +87,11 @@ export class SignalCorpsComponent implements OnDestroy {
   readonly shieldPulses = signal<readonly ShieldPulse[]>([]);
   readonly damageShake = signal(false);
   private readonly pendingTimers: ReturnType<typeof setTimeout>[] = [];
+
+  // rAF loop state
+  private _animFrameId: number | null = null;
+  private _lastTimestamp = 0;
+  private _processedResolvedIds = new Set<string>();
 
   // Template constants
   readonly viewBox = `0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`;
@@ -91,7 +107,33 @@ export class SignalCorpsComponent implements OnDestroy {
   readonly stationHealth = computed(() => this.engine?.stationHealth() ?? 100);
   readonly deployResult = computed(() => this.engine?.deployResult() ?? null);
   readonly noiseWaves = computed(() => this.engine?.noiseWaves() ?? []);
-  readonly isDeploying = computed(() => this.animatingWaves().length > 0);
+  readonly isDeploying = computed(() => this.animatingWaves().length > 0 || this._isTickLoopRunning());
+
+  // Health percentage for progress bar (0-100)
+  readonly healthPercent = computed(() => Math.max(0, Math.min(100, this.stationHealth())));
+  readonly healthCritical = computed(() => this.healthPercent() <= HEALTH_CRITICAL_THRESHOLD * 100);
+
+  // Track whether tick loop is running for isDeploying
+  private readonly _isTickLoopRunning = signal(false);
+
+  // Tick-based wave positions from wave service
+  readonly activeWavePositions = computed((): readonly ActiveWavePosition[] => {
+    if (!this.waveService) return [];
+    const signals = this.waveService.activeSignals();
+    return signals
+      .filter(s => !s.resolved)
+      .map(s => ({
+        id: s.id,
+        x: this.getSignalX(s.approachDirection, s.position),
+        y: this.getSignalY(s.approachDirection, s.position),
+      }));
+  });
+
+  // Wave progress: always "Wave 1 / N" (single-wave-per-deploy model)
+  readonly waveProgress = computed(() => {
+    const waves = this.noiseWaves();
+    return { current: 1, total: waves.length };
+  });
 
   // Tower position map: towerId -> {x, y} in SVG viewBox coords
   readonly towerPositionMap = computed(() => {
@@ -182,6 +224,59 @@ export class SignalCorpsComponent implements OnDestroy {
     // Keyboard shortcuts
     this.shortcuts.register('d', 'Deploy', () => this.onDeploy());
     this.shortcuts.register('escape', 'Close config panel', () => this.closeConfigPanel());
+
+    // Effect: watch activeSignals for newly resolved signals -> shield pulses / damage
+    if (this.waveService) {
+      const ws = this.waveService;
+      effect(() => {
+        const signals = ws.activeSignals();
+        const posMap = this.towerPositionMap();
+        const newPulses: ShieldPulse[] = [];
+        let hasNewDamage = false;
+
+        for (const sig of signals) {
+          if (!sig.resolved) continue;
+          if (this._processedResolvedIds.has(sig.id)) continue;
+
+          this._processedResolvedIds.add(sig.id);
+
+          // Determine if this signal was blocked or unblocked by checking
+          // if any tower could block it (same logic as evaluateBlocking)
+          const placements = this.engine?.towerPlacements() ?? [];
+          const playerTowers = this.engine?.playerTowers() ?? new Map();
+          let wasBlocked = false;
+
+          for (const tp of placements) {
+            const state = playerTowers.get(tp.towerId);
+            if (!state) continue;
+            const hasMatchingInput = state.inputs.some((i: { type: string }) => i.type === sig.typeSignature);
+            const hasMatchingOutput = state.outputs.some((o: { payloadType: string }) => o.payloadType === sig.typeSignature);
+            if (hasMatchingInput || hasMatchingOutput) {
+              const pos = posMap.get(tp.towerId);
+              if (pos) {
+                newPulses.push({ towerId: tp.towerId, x: pos.x, y: pos.y });
+              }
+              wasBlocked = true;
+              break;
+            }
+          }
+
+          if (!wasBlocked && sig.damage > 0) {
+            hasNewDamage = true;
+          }
+        }
+
+        if (newPulses.length > 0) {
+          this.shieldPulses.update(existing => [...existing, ...newPulses]);
+        }
+
+        if (hasNewDamage) {
+          this.damageShake.set(true);
+          const timer = setTimeout(() => this.damageShake.set(false), DAMAGE_SHAKE_MS);
+          this.pendingTimers.push(timer);
+        }
+      });
+    }
   }
 
   // --- Tower interaction ---
@@ -243,12 +338,20 @@ export class SignalCorpsComponent implements OnDestroy {
     const result = this.engine.deploy();
     if (!result) return;
 
+    // When wave service is present, start the rAF tick loop
+    if (this.waveService) {
+      this.startAnimLoop();
+      return;
+    }
+
     this.startWaveAnimation(result);
   }
 
   onReset(): void {
     if (!this.engine) return;
+    this.stopAnimLoop();
     this.clearPendingTimers();
+    this._processedResolvedIds.clear();
     this.animatingWaves.set([]);
     this.shieldPulses.set([]);
     this.damageShake.set(false);
@@ -268,12 +371,66 @@ export class SignalCorpsComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.stopAnimLoop();
     this.clearPendingTimers();
     this.shortcuts.unregister('d');
     this.shortcuts.unregister('escape');
   }
 
-  // --- Private ---
+  // --- Private: rAF animation loop ---
+
+  private startAnimLoop(): void {
+    if (this._animFrameId !== null) return; // guard against re-entrant start
+    this._isTickLoopRunning.set(true);
+    this._lastTimestamp = 0;
+    this._processedResolvedIds.clear();
+
+    const loop = (timestamp: number) => {
+      if (!this.engine || this.engine.status() !== MinigameStatus.Playing) {
+        this.stopAnimLoop();
+        return;
+      }
+
+      if (this._lastTimestamp > 0) {
+        const deltaMs = timestamp - this._lastTimestamp;
+        this.engine.tick(deltaMs);
+      }
+      this._lastTimestamp = timestamp;
+      this._animFrameId = requestAnimationFrame(loop);
+    };
+
+    this._animFrameId = requestAnimationFrame(loop);
+  }
+
+  private stopAnimLoop(): void {
+    if (this._animFrameId !== null) {
+      cancelAnimationFrame(this._animFrameId);
+      this._animFrameId = null;
+    }
+    this._isTickLoopRunning.set(false);
+  }
+
+  // --- Private: signal position helpers ---
+
+  private getSignalX(direction: string, position: number): number {
+    const center = VIEWBOX_WIDTH / 2;
+    switch (direction) {
+      case 'west':  return position * center;
+      case 'east':  return VIEWBOX_WIDTH - position * center;
+      default:      return center;
+    }
+  }
+
+  private getSignalY(direction: string, position: number): number {
+    const center = VIEWBOX_HEIGHT / 2;
+    switch (direction) {
+      case 'north': return position * center;
+      case 'south': return VIEWBOX_HEIGHT - position * center;
+      default:      return center;
+    }
+  }
+
+  // --- Private: inline fallback animation ---
 
   private startWaveAnimation(result: DeployResult): void {
     const noiseWaves = this.noiseWaves();

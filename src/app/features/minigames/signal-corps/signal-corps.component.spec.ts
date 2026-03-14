@@ -2,6 +2,7 @@ import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { SignalCorpsComponent } from './signal-corps.component';
 import { SignalCorpsEngine } from './signal-corps.engine';
+import { SignalCorpsWaveService } from './signal-corps-wave.service';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
 import {
@@ -512,6 +513,155 @@ describe('SignalCorpsComponent', () => {
       component.onDeploy();
 
       expect(engine.status()).toBe(MinigameStatus.Lost);
+    });
+  });
+
+  // --- 8. Wave Service Visual State ---
+
+  describe('Wave Service Visual State', () => {
+    function setupWithWaveService(levelData?: SignalCorpsLevelData) {
+      const waveService = new SignalCorpsWaveService();
+      engine = new SignalCorpsEngine(undefined, waveService);
+      engine.initialize(createLevel(levelData ?? createTestLevelData()));
+      engine.start();
+
+      TestBed.configureTestingModule({
+        imports: [SignalCorpsComponent],
+        providers: [
+          { provide: MINIGAME_ENGINE, useValue: engine },
+          { provide: SignalCorpsWaveService, useValue: waveService },
+        ],
+      });
+
+      fixture = TestBed.createComponent(SignalCorpsComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+      return waveService;
+    }
+
+    it('should render wave circles from activeSignals after deploy and tick', () => {
+      setupWithWaveService();
+
+      // Deploy to start wave spawning
+      engine.deploy();
+      // Tick enough time for signals to spawn and advance (2000ms)
+      engine.tick(2000);
+      fixture.detectChanges();
+
+      const activeWaves = fixture.nativeElement.querySelectorAll('.signal-corps__wave--active');
+      expect(activeWaves.length).toBeGreaterThan(0);
+
+      // Verify circles have valid cx/cy attributes
+      const firstCircle = activeWaves[0] as SVGCircleElement;
+      const cx = Number(firstCircle.getAttribute('cx'));
+      const cy = Number(firstCircle.getAttribute('cy'));
+      expect(cx).toBeGreaterThanOrEqual(0);
+      expect(cy).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should show shield pulse when signal is blocked by correct tower', () => {
+      setupWithWaveService();
+
+      // Configure tower-a correctly to block wave-1 (type 'number')
+      engine.submitAction({
+        type: 'declare-input',
+        towerId: 'tower-a',
+        input: { name: 'count', type: 'number', required: true },
+      });
+      engine.submitAction({
+        type: 'set-binding',
+        towerId: 'tower-a',
+        binding: { bindingType: 'input', towerPortName: 'count', parentProperty: 'itemCount' },
+      });
+
+      engine.deploy();
+
+      // First tick (>=500ms) spawns signals at position 0, second tick advances past 1.0
+      engine.tick(600);
+      engine.tick(3200);
+      // First detectChanges triggers the effect, second renders the DOM updates
+      fixture.detectChanges();
+      fixture.detectChanges();
+
+      const pulses = fixture.nativeElement.querySelectorAll('.signal-corps__shield-pulse');
+      expect(pulses.length).toBeGreaterThan(0);
+    });
+
+    it('should trigger damage shake on unblocked signal reaching station', () => {
+      setupWithWaveService();
+
+      // Deploy without configuring towers -> all signals unblocked
+      engine.deploy();
+
+      // First tick (>=500ms) spawns signals, second tick advances them past station
+      engine.tick(600);
+      engine.tick(3200);
+      // First detectChanges triggers the effect, second renders DOM updates
+      fixture.detectChanges();
+      fixture.detectChanges();
+
+      const container = fixture.nativeElement.querySelector('.signal-corps--damage');
+      expect(container).toBeTruthy();
+    });
+
+    it('should update health bar width after damage', () => {
+      setupWithWaveService();
+
+      // Deploy without configuring towers -> damage will occur
+      engine.deploy();
+      // First tick (>=500ms) spawns signals, second tick advances them to cause damage
+      engine.tick(600);
+      engine.tick(3200);
+      // First detectChanges triggers the effect, second renders DOM updates
+      fixture.detectChanges();
+      fixture.detectChanges();
+
+      // Verify health actually decreased (engine syncs wave service health)
+      expect(engine.stationHealth()).toBeLessThan(100);
+
+      const healthFill = fixture.nativeElement.querySelector('.signal-corps__health-bar-fill') as HTMLElement;
+      expect(healthFill).toBeTruthy();
+      // Health started at 100, took some damage, so width should be less than 100%
+      const widthStyle = healthFill.style.width;
+      expect(widthStyle).toBeTruthy();
+      const widthPercent = parseFloat(widthStyle);
+      expect(widthPercent).toBeLessThan(100);
+    });
+
+    it('should show wave progress "Wave 1 / N"', () => {
+      setupWithWaveService();
+
+      engine.deploy();
+      fixture.detectChanges();
+
+      const progressEl = fixture.nativeElement.querySelector('.signal-corps__wave-progress') as HTMLElement;
+      expect(progressEl).toBeTruthy();
+      expect(progressEl.textContent).toContain('Wave 1');
+    });
+
+    it('should start rAF loop when wave service is present and Playing', () => {
+      vi.stubGlobal('requestAnimationFrame', vi.fn());
+      setupWithWaveService();
+
+      // Deploy triggers Playing + wave service -> rAF loop starts
+      engine.deploy();
+      fixture.detectChanges();
+
+      expect(requestAnimationFrame).toHaveBeenCalled();
+
+      vi.unstubAllGlobals();
+    });
+
+    it('should NOT start rAF loop when wave service is absent', () => {
+      setup();
+
+      component.onDeploy();
+
+      // The inline fallback uses setTimeout, not rAF.
+      // Our component's startAnimLoop sets _isTickLoopRunning to true,
+      // so we verify that signal is still false when no wave service is present.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((component as any)._isTickLoopRunning()).toBe(false);
     });
   });
 });

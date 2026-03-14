@@ -51,13 +51,21 @@
       </g>
     }
 
-    <!-- Animating waves -->
+    <!-- Animating waves (inline fallback mode) -->
     @for (wave of animatingWaves(); track wave.waveId) {
       <circle class="signal-corps__wave"
               [class.signal-corps__wave--blocked]="wave.animationComplete && wave.blocked"
               [class.signal-corps__wave--unblocked]="wave.animationComplete && !wave.blocked"
               [attr.cx]="getWaveX(wave)"
               [attr.cy]="getWaveY(wave)"
+              [attr.r]="waveRadius" />
+    }
+
+    <!-- Active wave circles (tick-based mode) -->
+    @for (wave of activeWavePositions(); track wave.id) {
+      <circle class="signal-corps__wave signal-corps__wave--active"
+              [attr.cx]="wave.x"
+              [attr.cy]="wave.y"
               [attr.r]="waveRadius" />
     }
 
@@ -94,8 +102,14 @@
   <!-- Controls -->
   <div class="signal-corps__controls">
     <div class="signal-corps__health">
-      Health: {{ stationHealth() }}
+      <div class="signal-corps__health-bar">
+        <div class="signal-corps__health-bar-fill"
+             [class.signal-corps__health-bar-fill--critical]="healthCritical()"
+             [style.width.%]="healthPercent()"></div>
+        <span class="signal-corps__health-bar-label">{{ stationHealth() }}</span>
+      </div>
     </div>
+    <span class="signal-corps__wave-progress">Wave {{ waveProgress().current }} / {{ waveProgress().total }}</span>
     <div class="signal-corps__action-btns">
       <button class="signal-corps__deploy-btn"
               [disabled]="isDeploying()"
