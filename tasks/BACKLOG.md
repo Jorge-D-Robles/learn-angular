@@ -2053,31 +2053,6 @@ Acceptance criteria:
 
 ## P3 -- Navigation Bundle
 
-### T-2026-083
-- Title: Create Corridor Runner minigame UI component
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P3
-- Depends: T-2026-082, T-2026-018, T-2026-031
-- Blocked-by: —
-- Tags: minigame, corridor-runner, component, ui
-- Refs: docs/minigames/05-corridor-runner.md, docs/ux/visual-style.md
-
-Build the UI: route config code editor, top-down station map, crew member navigation animation, URL bar, and hull breach visualization.
-
-Acceptance criteria:
-- [ ] `CorridorRunnerComponent` at `src/app/features/minigames/corridor-runner/corridor-runner.component.ts`
-- [ ] Config phase: CodeEditorComponent for route definitions
-- [ ] Run phase: top-down map with corridors and modules
-- [ ] Crew member sprite with walking animation along routes
-- [ ] URL bar at top showing current route path
-- [ ] Corridors light up as routes are configured
-- [ ] Hull breach: decompression animation at dead-ends
-- [ ] Successful navigation: door opens, module interior visible
-- [ ] Unit tests for: phase switching, map rendering, URL bar updates
-
 ### T-2026-084
 - Title: Register Corridor Runner in MinigameRegistry and wire routes
 - Status: todo
