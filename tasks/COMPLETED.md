@@ -229,3 +229,4 @@
 [2026-03-08] T-2026-486: Wire ConveyorBeltService visual state into ModuleAssemblyComponent for belt rendering — wired ConveyorBeltService exhaustion visual state and fixed dual-tick routing (claude)
 [2026-03-08] T-2026-472: Wire BindingTypeSelectorComponent into WireProtocolComponent UI — derived availableWireTypes from level data for BindingTypeSelectorComponent (claude)
 [2026-03-08] T-2026-473: Wire FlowCommanderGateConfigComponent into FlowCommanderComponent UI — wire FlowCommanderGateConfigComponent into FlowCommanderComponent UI with backdrop dismiss (claude)
+[2026-03-14] T-2026-474: Wire SignalCorpsTowerConfigComponent into SignalCorpsComponent UI — wired tower config child component into Signal Corps UI, replaced inline panel (unassigned)
