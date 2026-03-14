@@ -1883,29 +1883,6 @@ Acceptance criteria:
 - [ ] Click unlocked mission navigates to `/mission/:chapterId`
 - [ ] Unit tests for: phase grouping, completion status, locked state, navigation, progress counts
 
-### T-2026-488
-- Title: Wire SignalCorpsWaveService visual state into SignalCorpsComponent for wave animation
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-470, T-2026-072
-- Blocked-by: —
-- Tags: integration, ui, signal-corps, wave-simulation, visual-state
-- Refs: docs/minigames/04-signal-corps.md, src/app/features/minigames/signal-corps/signal-corps.ts
-
-T-2026-470 wires SignalCorpsWaveService into SignalCorpsEngine for lifecycle delegation. But the Signal Corps UI component (T-2026-072) needs the wave service's visual state to animate noise waves approaching, show blocking shield pulses from configured towers, display damage when signals get through, and update the station health bar. Without this, the wave defense has no visual feedback.
-
-Acceptance criteria:
-- [ ] SignalCorpsComponent receives wave service state signals from the engine or via DI
-- [ ] Noise waves animate approaching from edges based on wave service position data
-- [ ] Tower blocking visualized: shield pulse emitted when a tower blocks a matching signal
-- [ ] Unblocked signals show impact damage animation on station
-- [ ] Station health bar reflects `waveService.stationHealth` signal
-- [ ] Wave progress indicator shows current wave number and total waves
-- [ ] Unit tests for: wave position rendering, blocking animation trigger, damage animation, health bar binding
-
 ### T-2026-489
 - Title: Wire WireProtocolValidationService feedback into WireProtocolComponent for per-wire visual indicators
 - Status: todo
