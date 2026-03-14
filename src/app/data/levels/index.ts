@@ -1,3 +1,4 @@
+export * from './corridor-runner.data';
 export * from './flow-commander.data';
 export { MODULE_ASSEMBLY_LEVELS, MODULE_ASSEMBLY_LEVEL_PACK } from './module-assembly.data';
 export * from './signal-corps.data';
