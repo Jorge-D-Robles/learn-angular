@@ -1883,29 +1883,6 @@ Acceptance criteria:
 - [ ] Click unlocked mission navigates to `/mission/:chapterId`
 - [ ] Unit tests for: phase grouping, completion status, locked state, navigation, progress counts
 
-### T-2026-489
-- Title: Wire WireProtocolValidationService feedback into WireProtocolComponent for per-wire visual indicators
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P2
-- Depends: T-2026-471, T-2026-064
-- Blocked-by: —
-- Tags: integration, ui, wire-protocol, validation, visual-state
-- Refs: docs/minigames/02-wire-protocol.md, src/app/features/minigames/wire-protocol/wire-protocol.ts
-
-T-2026-471 wires WireProtocolValidationService into WireProtocolEngine for verify action delegation. But the Wire Protocol UI component (T-2026-064) needs validation results to provide per-wire visual feedback: green glow for correct wires, red spark for incorrect wires, and common mistake hint text displayed near incorrect connections. The spec says "Incorrect wires spark and fizzle." Without this wiring, the verify action has no visual wire-by-wire feedback.
-
-Acceptance criteria:
-- [ ] WireProtocolComponent receives per-wire validation results after verify action
-- [ ] Correct wires show green glow with flowing particle animation (data flowing)
-- [ ] Incorrect wires show red spark/fizzle animation
-- [ ] Common mistake hint text (from `validationService.getCommonMistake()`) displayed as tooltip near incorrect wires
-- [ ] Validation results cleared on next verify attempt or when wires are modified
-- [ ] Pre-wired incorrect connections highlighted distinctly from player-drawn incorrect wires
-- [ ] Unit tests for: correct wire green glow, incorrect wire red spark, hint text display, result clearing
-
 ### T-2026-490
 - Title: Create integration test for StoryMissionCompletionService full XP-mastery-unlock pipeline
 - Status: todo
