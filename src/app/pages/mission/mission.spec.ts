@@ -17,6 +17,8 @@ import type { ChapterId, StoryMission } from '../../core/curriculum/curriculum.t
 import type { StoryMissionContent } from '../../core/curriculum/story-mission-content.types';
 import { CHAPTER_01_CONTENT, PHASE_1_MISSIONS } from '../../data/missions/phase-1';
 import { provideMissionContent } from '../../data/missions';
+import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
+import type { MinigameId } from '../../core/minigame/minigame.types';
 import { APP_ICONS } from '../../shared/icons';
 
 const ICON_PROVIDERS = [
@@ -66,6 +68,7 @@ interface SetupOptions {
   prerequisites?: ChapterId[];
   completeMissionFn?: (...args: unknown[]) => MissionCompletionSummary | void;
   extraMissionContent?: StoryMissionContent[];
+  minigameRegistryOverrides?: Partial<Record<keyof MinigameRegistryService, unknown>>;
 }
 
 async function setup(options: SetupOptions = {}) {
@@ -83,6 +86,12 @@ async function setup(options: SetupOptions = {}) {
       alreadyCompleted: false,
     })),
     extraMissionContent = [],
+    minigameRegistryOverrides = {
+      getConfig: (gameId: MinigameId) => {
+        if (gameId === 'module-assembly') return { id: 'module-assembly', name: 'Module Assembly' };
+        return undefined;
+      },
+    },
   } = options;
 
   const paramMapSubject = new BehaviorSubject(convertToParamMap({ chapterId }));
@@ -117,6 +126,7 @@ async function setup(options: SetupOptions = {}) {
         },
         getPrerequisites: () => prerequisites,
       }),
+      getMockProvider(MinigameRegistryService, minigameRegistryOverrides),
       getMockProvider(Router, {
         navigate: navigateFn,
       }),
@@ -328,7 +338,7 @@ describe('MissionPage', () => {
     expect(completeMissionFn).toHaveBeenCalledWith(1);
   });
 
-  it('should show Launch Minigame button after completion when minigame exists', async () => {
+  it('should display minigame name in Launch button label after completion', async () => {
     const { element, fixture, component } = await setup();
     component.nextStep();
     component.nextStep();
@@ -338,12 +348,12 @@ describe('MissionPage', () => {
     fixture.detectChanges();
     const buttons = Array.from(element.querySelectorAll('footer button'));
     const launch = buttons.find(
-      (b) => b.textContent?.trim() === 'Launch Minigame',
+      (b) => b.textContent?.trim() === 'Launch Module Assembly',
     ) as HTMLButtonElement;
     expect(launch).toBeTruthy();
   });
 
-  it('should navigate to /minigames/:gameId when Launch Minigame is clicked', async () => {
+  it('should navigate to /minigames/:gameId when Launch button is clicked', async () => {
     const { element, fixture, component, navigateFn } = await setup();
     component.nextStep();
     component.nextStep();
@@ -353,37 +363,35 @@ describe('MissionPage', () => {
     fixture.detectChanges();
     const buttons = Array.from(element.querySelectorAll('footer button'));
     const launch = buttons.find(
-      (b) => b.textContent?.trim() === 'Launch Minigame',
+      (b) => b.textContent?.trim() === 'Launch Module Assembly',
     ) as HTMLButtonElement;
     launch.click();
     fixture.detectChanges();
     expect(navigateFn).toHaveBeenCalledWith(['/minigames', 'module-assembly']);
   });
 
-  it('should show "Mission Complete!" when no minigame to unlock', async () => {
+  it('should show Continue to Next Mission button for non-unlock chapters after completion', async () => {
     const { element, fixture, component } = await setup({
       chapterId: '9',
       chapterMeta: TEST_CHAPTER_META_NO_MINIGAME,
     });
-    // Chapter 9 has same content as chapter 1 (via PHASE_1_MISSIONS lookup)
-    // but missionMeta returns no-minigame metadata
     component.nextStep();
     component.nextStep();
     component.nextStep();
     fixture.detectChanges();
     component.completeMission();
     fixture.detectChanges();
-    const msg = element.querySelector('.mission__completed-msg');
-    expect(msg?.textContent?.trim()).toBe('Mission Complete!');
+    const continueBtn = element.querySelector('.mission__continue-btn') as HTMLButtonElement;
+    expect(continueBtn).toBeTruthy();
+    expect(continueBtn.textContent?.trim()).toBe('Continue to Next Mission');
+    expect(continueBtn.disabled).toBe(true);
   });
 
-  it('should show completed state if mission was already completed (isCompleted=true)', async () => {
+  it('should show Launch button with minigame name when revisiting completed mission (isCompleted=true)', async () => {
     const { element } = await setup({ isCompleted: true });
-    // When mission is already completed, the component shows the mission content
-    // and the footer should show the completed/launch state
     const buttons = Array.from(element.querySelectorAll('footer button'));
     const launch = buttons.find(
-      (b) => b.textContent?.trim() === 'Launch Minigame',
+      (b) => b.textContent?.trim() === 'Launch Module Assembly',
     ) as HTMLButtonElement;
     expect(launch).toBeTruthy();
   });
@@ -617,5 +625,66 @@ describe('MissionPage', () => {
 
     const codeEditors = element.querySelectorAll('nx-code-editor');
     expect(codeEditors.length).toBe(2);
+  });
+
+  // === Minigame launch button (4 new tests) ===
+
+  it('should not show Launch Minigame button for non-unlock chapters', async () => {
+    const { element, fixture, component } = await setup({
+      chapterId: '9',
+      chapterMeta: TEST_CHAPTER_META_NO_MINIGAME,
+    });
+    component.nextStep();
+    component.nextStep();
+    component.nextStep();
+    fixture.detectChanges();
+    component.completeMission();
+    fixture.detectChanges();
+    const launchBtn = element.querySelector('.mission__launch-btn');
+    expect(launchBtn).toBeFalsy();
+  });
+
+  it('should not show Continue to Next Mission button for chapters that unlock a minigame', async () => {
+    const { element, fixture, component } = await setup();
+    component.nextStep();
+    component.nextStep();
+    component.nextStep();
+    fixture.detectChanges();
+    component.completeMission();
+    fixture.detectChanges();
+    const continueBtn = element.querySelector('.mission__continue-btn');
+    expect(continueBtn).toBeFalsy();
+  });
+
+  it('should apply mission__launch-btn class to the launch button', async () => {
+    const { element, fixture, component } = await setup();
+    component.nextStep();
+    component.nextStep();
+    component.nextStep();
+    fixture.detectChanges();
+    component.completeMission();
+    fixture.detectChanges();
+    const launchBtn = element.querySelector('.mission__launch-btn') as HTMLButtonElement;
+    expect(launchBtn).toBeTruthy();
+    expect(launchBtn.textContent?.trim()).toBe('Launch Module Assembly');
+  });
+
+  it('should fall back to "Launch Minigame" if registry lookup returns undefined', async () => {
+    const { element, fixture, component } = await setup({
+      minigameRegistryOverrides: {
+        getConfig: () => undefined,
+      },
+    });
+    component.nextStep();
+    component.nextStep();
+    component.nextStep();
+    fixture.detectChanges();
+    component.completeMission();
+    fixture.detectChanges();
+    const buttons = Array.from(element.querySelectorAll('footer button'));
+    const launch = buttons.find(
+      (b) => b.textContent?.trim() === 'Launch Minigame',
+    ) as HTMLButtonElement;
+    expect(launch).toBeTruthy();
   });
 });

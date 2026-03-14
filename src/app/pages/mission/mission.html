@@ -81,9 +81,9 @@
     }
     @if (missionCompleted() || isCompleted()) {
       @if (unlocksMinigame()) {
-        <button class="mission__launch-btn" (click)="launchMinigame()">Launch Minigame</button>
+        <button type="button" class="mission__launch-btn" (click)="launchMinigame()">Launch {{ minigameName() }}</button>
       } @else {
-        <p class="mission__completed-msg">Mission Complete!</p>
+        <button type="button" disabled class="mission__continue-btn">Continue to Next Mission</button>
       }
     }
   </footer>

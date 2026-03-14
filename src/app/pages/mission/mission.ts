@@ -8,6 +8,8 @@ import { StoryMissionCompletionService, type MissionCompletionSummary } from '..
 import type { ChapterId } from '../../core/curriculum/curriculum.types';
 import { StoryMissionContentService } from '../../core/curriculum/story-mission-content.service';
 import type { CodeExampleStep, ConceptStep } from '../../core/curriculum/story-mission-content.types';
+import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
+import type { MinigameId } from '../../core/minigame/minigame.types';
 import { CodeEditorComponent, LockedContentComponent } from '../../shared/components';
 
 @Component({
@@ -23,6 +25,7 @@ export class MissionPage {
   private readonly curriculum = inject(CurriculumService);
   private readonly missionCompletion = inject(StoryMissionCompletionService);
   private readonly missionContentService = inject(StoryMissionContentService);
+  private readonly minigameRegistry = inject(MinigameRegistryService);
 
   readonly chapterId = toSignal(
     this.route.paramMap.pipe(map((p) => p.get('chapterId') ?? '')),
@@ -71,6 +74,13 @@ export class MissionPage {
   readonly unlocksMinigame = computed(
     () => this.missionMeta()?.unlocksMinigame ?? null,
   );
+
+  /** Human-readable minigame name from the registry; null when chapter has no minigame. */
+  readonly minigameName = computed(() => {
+    const gameId = this.unlocksMinigame();
+    if (!gameId) return null;
+    return this.minigameRegistry.getConfig(gameId as MinigameId)?.name ?? 'Minigame';
+  });
 
   readonly prerequisiteMessage = computed(() => {
     const deps = this.curriculum.getPrerequisites(this.chapterIdNum() as ChapterId);
