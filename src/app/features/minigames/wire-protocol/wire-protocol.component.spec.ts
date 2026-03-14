@@ -15,6 +15,7 @@ import {
   type WireConnection,
 } from './wire-protocol.types';
 import type { WireProtocolLevelData } from '../../../data/levels/wire-protocol.data';
+import { WireProtocolValidationService } from './wire-protocol-validation.service';
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -369,6 +370,7 @@ describe('WireProtocolComponent', () => {
         targetPortId: 'tgt-1',
         wireType: WireType.interpolation,
       });
+      TestBed.flushEffects(); // flush wire-change effect before verify
 
       component.onVerify();
 
@@ -377,24 +379,51 @@ describe('WireProtocolComponent', () => {
       expect(feedback.get('wire-1')).toBe('correct');
     });
 
-    it('should auto-clear verification feedback after 1500ms', () => {
-      vi.useFakeTimers();
+    it('should clear verification feedback when wires are modified (draw)', () => {
       setup();
 
+      // Draw a correct wire and verify
       engine.submitAction({
         type: 'draw-wire',
         sourcePortId: 'src-1',
         targetPortId: 'tgt-1',
         wireType: WireType.interpolation,
       });
-
+      TestBed.flushEffects(); // flush wire-change effect before verify
       component.onVerify();
       expect(component.verificationFeedback().size).toBeGreaterThan(0);
 
-      vi.advanceTimersByTime(FEEDBACK_CLEAR_MS);
-      expect(component.verificationFeedback().size).toBe(0);
+      // Draw another wire — this modifies wires(), should clear feedback
+      engine.submitAction({
+        type: 'draw-wire',
+        sourcePortId: 'src-2',
+        targetPortId: 'tgt-2',
+        wireType: WireType.event,
+      });
+      TestBed.flushEffects();
 
-      vi.useRealTimers();
+      expect(component.verificationFeedback().size).toBe(0);
+    });
+
+    it('should clear verification feedback when wires are modified (remove)', () => {
+      setup();
+
+      // Draw a correct wire and verify
+      engine.submitAction({
+        type: 'draw-wire',
+        sourcePortId: 'src-1',
+        targetPortId: 'tgt-1',
+        wireType: WireType.interpolation,
+      });
+      TestBed.flushEffects(); // flush wire-change effect before verify
+      component.onVerify();
+      expect(component.verificationFeedback().size).toBeGreaterThan(0);
+
+      // Remove the wire — should clear feedback
+      engine.submitAction({ type: 'remove-wire', wireId: 'wire-1' });
+      TestBed.flushEffects();
+
+      expect(component.verificationFeedback().size).toBe(0);
     });
   });
 
@@ -491,7 +520,190 @@ describe('WireProtocolComponent', () => {
     });
   });
 
-  // --- 8. Edge Cases ---
+  // --- 8. Verification Visual Feedback Tests ---
+
+  describe('Verification Visual Feedback', () => {
+    it('should retain flow animation on correct wires after verify', () => {
+      setup();
+
+      engine.submitAction({
+        type: 'draw-wire',
+        sourcePortId: 'src-1',
+        targetPortId: 'tgt-1',
+        wireType: WireType.interpolation,
+      });
+      TestBed.flushEffects(); // flush wire-change effect before verify
+
+      component.onVerify();
+      fixture.detectChanges();
+
+      const descriptors = component.wireDescriptors();
+      const correctWire = descriptors.find(d => d.id === 'wire-1');
+      expect(correctWire?.animated).toBe(true);
+      expect(correctWire?.cssClass).toContain('wire-protocol__wire--correct');
+    });
+
+    it('should suppress flow animation on incorrect wires after verify', () => {
+      // Level with pre-wired incorrect wire (wrong wireType)
+      const data = createTestLevelData({
+        preWiredConnections: [
+          { id: 'pre-1', sourcePortId: 'src-1', targetPortId: 'tgt-1', wireType: WireType.property, isPreWired: true },
+        ],
+      });
+      const validationService = new WireProtocolValidationService();
+      const eng = new WireProtocolEngine(undefined, validationService);
+      eng.initialize(createLevel(data));
+      eng.start();
+
+      TestBed.configureTestingModule({
+        imports: [WireProtocolComponent],
+        providers: [{ provide: MINIGAME_ENGINE, useValue: eng }],
+      });
+      const fix = TestBed.createComponent(WireProtocolComponent);
+      const comp = fix.componentInstance;
+      fix.detectChanges();
+
+      comp.onVerify();
+      fix.detectChanges();
+
+      const descriptors = comp.wireDescriptors();
+      const incorrectWire = descriptors.find(d => d.id === 'pre-1');
+      expect(incorrectWire?.animated).toBe(false);
+      fix.destroy();
+    });
+
+    it('should include hintText for incorrect wires from validation service', () => {
+      // Pre-wired wire with wrong type so it appears as incorrect
+      const data = createTestLevelData({
+        preWiredConnections: [
+          { id: 'pre-1', sourcePortId: 'src-1', targetPortId: 'tgt-1', wireType: WireType.property, isPreWired: true },
+        ],
+      });
+      const validationService = new WireProtocolValidationService();
+      const eng = new WireProtocolEngine(undefined, validationService);
+      eng.initialize(createLevel(data));
+      eng.start();
+
+      TestBed.configureTestingModule({
+        imports: [WireProtocolComponent],
+        providers: [{ provide: MINIGAME_ENGINE, useValue: eng }],
+      });
+      const fix = TestBed.createComponent(WireProtocolComponent);
+      const comp = fix.componentInstance;
+      fix.detectChanges();
+
+      comp.onVerify();
+      fix.detectChanges();
+
+      const descriptors = comp.wireDescriptors();
+      const incorrectWire = descriptors.find(d => d.id === 'pre-1');
+      // property:interpolation hint = "Use {{ }} interpolation to display text content..."
+      expect(incorrectWire?.hintText).toBeTruthy();
+      expect(incorrectWire?.hintText).toContain('interpolation');
+      fix.destroy();
+    });
+
+    it('should set hintText to null for correct wires', () => {
+      setup();
+
+      engine.submitAction({
+        type: 'draw-wire',
+        sourcePortId: 'src-1',
+        targetPortId: 'tgt-1',
+        wireType: WireType.interpolation,
+      });
+      TestBed.flushEffects(); // flush wire-change effect before verify
+
+      component.onVerify();
+      fixture.detectChanges();
+
+      const descriptors = component.wireDescriptors();
+      const correctWire = descriptors.find(d => d.id === 'wire-1');
+      expect(correctWire?.hintText).toBeNull();
+    });
+
+    it('should assign prewired-incorrect CSS class to pre-wired incorrect wires', () => {
+      const data = createTestLevelData({
+        preWiredConnections: [
+          { id: 'pre-1', sourcePortId: 'src-1', targetPortId: 'tgt-1', wireType: WireType.property, isPreWired: true },
+        ],
+      });
+      const validationService = new WireProtocolValidationService();
+      const eng = new WireProtocolEngine(undefined, validationService);
+      eng.initialize(createLevel(data));
+      eng.start();
+
+      TestBed.configureTestingModule({
+        imports: [WireProtocolComponent],
+        providers: [{ provide: MINIGAME_ENGINE, useValue: eng }],
+      });
+      const fix = TestBed.createComponent(WireProtocolComponent);
+      const comp = fix.componentInstance;
+      fix.detectChanges();
+
+      comp.onVerify();
+      fix.detectChanges();
+
+      const feedback = comp.verificationFeedback();
+      expect(feedback.get('pre-1')).toBe('prewired-incorrect');
+
+      const descriptors = comp.wireDescriptors();
+      const preWiredWire = descriptors.find(d => d.id === 'pre-1');
+      expect(preWiredWire?.cssClass).toContain('wire-protocol__wire--prewired-incorrect');
+      fix.destroy();
+    });
+
+    it('should assign standard incorrect CSS class to player-drawn incorrect wires', () => {
+      // Level with 3 ports: src-1 (property), tgt-1 (interpolation), tgt-2 (property)
+      // correctWire: src-1 -> tgt-1 (interpolation), src-1 -> tgt-2 (property)
+      // Draw src-1 -> tgt-2 with property — this is correct
+      // Draw src-1 -> tgt-1 with property — this is wrong (should be interpolation)
+      // But the engine rejects type-incompatible wires... so we need to find a draw
+      // that's type-compatible but not in the expected solution.
+      //
+      // Strategy: extra ports not in correctWires. Draw a wire to an extra target —
+      // it will be type-compatible but won't match any correctWire, so verify() marks it incorrect.
+      const sourcePorts: SourcePort[] = [
+        createTestSourcePort({ id: 'src-1', name: 'title', position: { x: 0, y: 25 } }),
+        createTestSourcePort({ id: 'src-2', name: 'subtitle', position: { x: 0, y: 50 } }),
+        createTestSourcePort({ id: 'src-3', name: 'onClick()', portType: 'method', position: { x: 0, y: 75 } }),
+      ];
+      const targetPorts: TargetPort[] = [
+        createTestTargetPort({ id: 'tgt-1', name: '{{ title }}', bindingSlot: 'interpolation', position: { x: 100, y: 25 } }),
+        createTestTargetPort({ id: 'tgt-2', name: '{{ subtitle }}', bindingSlot: 'interpolation', position: { x: 100, y: 50 } }),
+        createTestTargetPort({ id: 'tgt-3', name: '(click)', bindingSlot: 'event', position: { x: 100, y: 75 } }),
+      ];
+      const correctWires: WireConnection[] = [
+        { id: 'cw-1', sourcePortId: 'src-1', targetPortId: 'tgt-1', wireType: WireType.interpolation, isPreWired: false },
+        { id: 'cw-2', sourcePortId: 'src-2', targetPortId: 'tgt-2', wireType: WireType.interpolation, isPreWired: false },
+        { id: 'cw-3', sourcePortId: 'src-3', targetPortId: 'tgt-3', wireType: WireType.event, isPreWired: false },
+      ];
+      const data = createTestLevelData({ sourcePorts, targetPorts, correctWires });
+      setup(data);
+
+      // Draw src-1 -> tgt-2 (interpolation) — compatible but wrong target (solution says src-2 -> tgt-2)
+      engine.submitAction({
+        type: 'draw-wire',
+        sourcePortId: 'src-1',
+        targetPortId: 'tgt-2',
+        wireType: WireType.interpolation,
+      });
+      TestBed.flushEffects(); // flush wire-change effect before verify
+
+      component.onVerify();
+      fixture.detectChanges();
+
+      const feedback = component.verificationFeedback();
+      expect(feedback.get('wire-1')).toBe('incorrect');
+
+      const descriptors = component.wireDescriptors();
+      const incorrectWire = descriptors.find(d => d.id === 'wire-1');
+      expect(incorrectWire?.cssClass).toContain('wire-protocol__wire--incorrect');
+      expect(incorrectWire?.cssClass).not.toContain('wire-protocol__wire--prewired-incorrect');
+    });
+  });
+
+  // --- 9. Edge Cases ---
 
   describe('Edge Cases', () => {
     it('should handle empty port lists (0 ports rendered)', () => {
@@ -523,4 +735,3 @@ describe('WireProtocolComponent', () => {
 
 // Private constant re-declarations for test assertions
 const REJECTION_FLASH_MS = 400;
-const FEEDBACK_CLEAR_MS = 1500;

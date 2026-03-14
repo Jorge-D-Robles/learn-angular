@@ -52,9 +52,28 @@
   animation: spark-fizzle 1.5s ease-out;
 }
 
+.wire-protocol__wire--prewired-incorrect {
+  stroke: #f59e0b;
+  stroke-dasharray: 6 4;
+  filter: drop-shadow(0 0 4px #f59e0b);
+  opacity: 0.8;
+}
+
 .wire-protocol__flow {
   pointer-events: none;
   animation: wire-flow 1s linear infinite;
+}
+
+.wire-protocol__hint-text {
+  fill: #fef3c7;
+  font-size: 11px;
+  font-family: sans-serif;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: #1a1f2e;
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .wire-protocol__preview {
@@ -155,7 +174,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .wire-protocol__wire--correct,
-  .wire-protocol__wire--incorrect {
+  .wire-protocol__wire--incorrect,
+  .wire-protocol__wire--prewired-incorrect {
     animation: none;
   }
 
@@ -174,6 +194,12 @@
   .wire-protocol__wire--incorrect {
     stroke: #ef4444;
     opacity: 0.5;
+  }
+
+  .wire-protocol__wire--prewired-incorrect {
+    stroke: #f59e0b;
+    stroke-dasharray: 6 4;
+    opacity: 0.7;
   }
 }
 

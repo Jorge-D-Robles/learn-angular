@@ -31,7 +31,6 @@ const VIEWBOX_WIDTH = 1000;
 const VIEWBOX_HEIGHT = 600;
 const PANEL_PADDING = 40;
 const REJECTION_FLASH_MS = 400;
-const FEEDBACK_CLEAR_MS = 1500;
 
 @Component({
   selector: 'app-wire-protocol',
@@ -49,9 +48,8 @@ export class WireProtocolComponent implements OnDestroy {
 
   // Local state
   readonly selectedWireType = signal<WireType>(WireType.interpolation);
-  readonly verificationFeedback = signal<Map<string, 'correct' | 'incorrect'>>(new Map());
+  readonly verificationFeedback = signal<Map<string, 'correct' | 'incorrect' | 'prewired-incorrect'>>(new Map());
   readonly rejectionFlash = signal(false);
-  private feedbackTimer: ReturnType<typeof setTimeout> | null = null;
   private rejectionTimer: ReturnType<typeof setTimeout> | null = null;
 
   // Template-accessible constants
@@ -99,14 +97,22 @@ export class WireProtocolComponent implements OnDestroy {
       const color = WIRE_TYPE_COLORS[wire.wireType];
       const feedbackStatus = feedback.get(wire.id);
       const cssClass = feedbackStatus === 'correct' ? 'wire-protocol__wire--correct'
+                     : feedbackStatus === 'prewired-incorrect' ? 'wire-protocol__wire--prewired-incorrect'
                      : feedbackStatus === 'incorrect' ? 'wire-protocol__wire--incorrect'
                      : '';
+      const isIncorrect = feedbackStatus === 'incorrect' || feedbackStatus === 'prewired-incorrect';
+      const hintText = isIncorrect && this.engine ? this.engine.getHintForWire(wire.id) : null;
+      const midpointX = (start.x + end.x) / 2;
+      const midpointY = (start.y + end.y) / 2;
       return {
         id: wire.id,
         path: this.buildBezierPath(start.x, start.y, end.x, end.y),
         color,
         cssClass,
-        animated: !feedbackStatus,
+        animated: feedbackStatus === 'correct' || !feedbackStatus,
+        hintText,
+        midpointX,
+        midpointY,
       };
     }).filter(d => d !== null);
   });
@@ -157,6 +163,16 @@ export class WireProtocolComponent implements OnDestroy {
       });
     });
 
+    // Effect: clear verification feedback when wires change
+    effect(() => {
+      this.wires(); // track wire changes
+      untracked(() => {
+        if (this.verificationFeedback().size > 0) {
+          this.verificationFeedback.set(new Map());
+        }
+      });
+    });
+
     // Keyboard shortcuts: 1-4 for wire types, Escape to cancel
     for (const opt of WIRE_TYPE_OPTIONS) {
       this.shortcuts.register(opt.key, `Select ${opt.label}`, () => this.selectedWireType.set(opt.type));
@@ -183,13 +199,12 @@ export class WireProtocolComponent implements OnDestroy {
     const result = this.engine.verify();
     if (!result) return;
 
-    const feedback = new Map<string, 'correct' | 'incorrect'>();
+    const feedback = new Map<string, 'correct' | 'incorrect' | 'prewired-incorrect'>();
     for (const w of result.correctWires) feedback.set(w.id, 'correct');
-    for (const w of result.incorrectWires) feedback.set(w.id, 'incorrect');
+    for (const w of result.incorrectWires) {
+      feedback.set(w.id, w.isPreWired ? 'prewired-incorrect' : 'incorrect');
+    }
     this.verificationFeedback.set(feedback);
-
-    if (this.feedbackTimer) clearTimeout(this.feedbackTimer);
-    this.feedbackTimer = setTimeout(() => this.verificationFeedback.set(new Map()), FEEDBACK_CLEAR_MS);
   }
 
   selectWireType(type: WireType): void {
@@ -214,7 +229,6 @@ export class WireProtocolComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.feedbackTimer) clearTimeout(this.feedbackTimer);
     if (this.rejectionTimer) clearTimeout(this.rejectionTimer);
     for (const opt of WIRE_TYPE_OPTIONS) this.shortcuts.unregister(opt.key);
     this.shortcuts.unregister('escape');

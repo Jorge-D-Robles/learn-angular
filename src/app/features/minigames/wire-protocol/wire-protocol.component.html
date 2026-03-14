@@ -64,6 +64,16 @@
       }
     }
 
+    <!-- Hint text for incorrect wires -->
+    @for (wire of wireDescriptors(); track wire.id) {
+      @if (wire.hintText) {
+        <text class="wire-protocol__hint-text"
+              [attr.x]="wire.midpointX"
+              [attr.y]="wire.midpointY - 10"
+              text-anchor="middle">{{ wire.hintText }}</text>
+      }
+    }
+
     <!-- Preview wire (during drawing) -->
     @if (previewPath()) {
       <path [attr.d]="previewPath()"
