@@ -2053,29 +2053,6 @@ Acceptance criteria:
 
 ## P3 -- Navigation Bundle
 
-### T-2026-081
-- Title: Define Corridor Runner level data for 18 levels
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P3
-- Depends: T-2026-019, T-2026-038
-- Blocked-by: —
-- Tags: minigame, corridor-runner, level-data, content
-- Refs: docs/minigames/05-corridor-runner.md
-
-Define the static level data for all 18 Corridor Runner levels covering Angular routing concepts.
-
-Acceptance criteria:
-- [ ] Level data file at `src/app/data/levels/corridor-runner.data.ts`
-- [ ] `CorridorRunnerLevelData` interface: routeConfig (initial), mapLayout (nodes + edges), testNavigations[], targetDestinations[]
-- [ ] 6 Basic levels (single route through RouterLink)
-- [ ] 6 Intermediate levels (route params through mixed challenge)
-- [ ] 5 Advanced levels (lazy loading through complex navigation)
-- [ ] 1 Boss level ("Station-Wide Navigation" with 10 modules, 3 decks)
-- [ ] Unit tests verify: 18 total levels, valid route configs, valid map layouts
-
 ### T-2026-082
 - Title: Create Corridor Runner minigame engine
 - Status: todo

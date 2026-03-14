@@ -1,9 +1,9 @@
 # Current Sprint
 
-Sprint: S14-p2-wiring
-Milestone: P2
-Goal: Wire simulation services into UI components and complete mission integration
-Started: 2026-03-08
+Sprint: S15-p3-corridor-runner
+Milestone: P3
+Goal: Build Corridor Runner minigame — level data, engine, UI, story missions Ch 11-13
+Started: 2026-03-14
 
 <!-- Velocity: (recorded at sprint close) -->
 

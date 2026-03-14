@@ -234,3 +234,4 @@
 [2026-03-14] T-2026-487: Wire FlowCommanderSimulationService visual state into FlowCommanderComponent for cargo animation — wired simulation service into UI, added dead-end animation with mutual exclusion (claude)
 [2026-03-14] T-2026-488: Wire SignalCorpsWaveService visual state into SignalCorpsComponent for wave animation — wired wave service visual state: rAF loop, active wave positions, shield pulses, damage shake, health bar, wave progress (claude)
 [2026-03-14] T-2026-489: Wire WireProtocolValidationService feedback into WireProtocolComponent for per-wire visual indicators — wired per-wire validation feedback: green glow, red spark, amber pre-wired, hint text, clearing on modification (claude)
+[2026-03-14] T-2026-081: Define Corridor Runner level data for 18 levels — defined 18 Corridor Runner levels with types, data, and 32 unit tests (claude)
