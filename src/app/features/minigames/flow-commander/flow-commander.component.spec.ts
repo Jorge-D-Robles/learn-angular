@@ -1,6 +1,7 @@
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { FlowCommanderComponent } from './flow-commander.component';
 import { FlowCommanderEngine } from './flow-commander.engine';
+import { FlowCommanderSimulationService } from './flow-commander-simulation.service';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
 import {
@@ -83,7 +84,8 @@ describe('FlowCommanderComponent', () => {
   let shortcuts: KeyboardShortcutService;
 
   function setup(levelData?: FlowCommanderLevelData, tier?: DifficultyTier) {
-    engine = new FlowCommanderEngine();
+    const simulationService = new FlowCommanderSimulationService();
+    engine = new FlowCommanderEngine(undefined, simulationService);
     engine.initialize(createLevel(levelData ?? createTestLevelData(), tier));
     engine.start();
 
@@ -579,6 +581,162 @@ describe('FlowCommanderComponent', () => {
 
       expect(simulateSpy).toHaveBeenCalled();
       expect(component.animatingItems().length).toBe(1);
+    });
+  });
+
+  // --- 9. Cargo Animation & Dead-End Visual State Tests ---
+
+  describe('Cargo Animation & Dead-End Visual State', () => {
+    it('should advance cargo currentSegment during animation (Test 1)', () => {
+      vi.useFakeTimers();
+      setup();
+
+      engine.submitAction({ type: 'place-gate', nodeId: 'gate-1', gateType: GateType.if, condition: "item.color === 'red'" });
+
+      component.onRun();
+      fixture.detectChanges();
+
+      const initial = component.animatingItems();
+      expect(initial.length).toBeGreaterThan(0);
+      expect(initial[0].currentSegment).toBe(0);
+
+      // Advance by one animation step
+      vi.advanceTimersByTime(ANIMATION_STEP_MS);
+      fixture.detectChanges();
+
+      const updated = component.animatingItems();
+      expect(updated[0].currentSegment).toBe(1);
+
+      vi.useRealTimers();
+    });
+
+    it('should show --correct class and NOT --dead-end or --incorrect for correct cargo (Test 2)', () => {
+      vi.useFakeTimers();
+      setup();
+
+      // Place @if gate routing red -> first edge (junc-1 -> target-1 = Red Bay = correct)
+      engine.submitAction({ type: 'place-gate', nodeId: 'gate-1', gateType: GateType.if, condition: "item.color === 'red'" });
+
+      component.onRun();
+      fixture.detectChanges();
+
+      // Path length 4, complete at 4 * 400 = 1600ms
+      vi.advanceTimersByTime(4 * ANIMATION_STEP_MS + 1);
+      fixture.detectChanges();
+
+      const correctPods = fixture.nativeElement.querySelectorAll('.flow-commander__cargo-pod--correct');
+      const incorrectPods = fixture.nativeElement.querySelectorAll('.flow-commander__cargo-pod--incorrect');
+      const deadEndPods = fixture.nativeElement.querySelectorAll('.flow-commander__cargo-pod--dead-end');
+
+      // Red cargo goes to Red Bay (correct), blue goes to Blue Bay (correct)
+      expect(correctPods.length).toBeGreaterThan(0);
+      expect(deadEndPods.length).toBe(0);
+      expect(incorrectPods.length).toBe(0);
+
+      vi.useRealTimers();
+    });
+
+    it('should show --incorrect class and NOT --dead-end for wrong-target cargo (Test 3)', () => {
+      vi.useFakeTimers();
+      // Swap target zone expectations so red cargo at Red Bay is "wrong"
+      setup(createTestLevelData({
+        targetZones: [
+          { id: 'tz-1', nodeId: 'target-1', label: 'Red Bay', expectedColor: 'blue' },
+          { id: 'tz-2', nodeId: 'target-2', label: 'Blue Bay', expectedColor: 'red' },
+        ],
+      }));
+
+      engine.submitAction({ type: 'place-gate', nodeId: 'gate-1', gateType: GateType.if, condition: "item.color === 'red'" });
+
+      component.onRun();
+      fixture.detectChanges();
+
+      vi.advanceTimersByTime(4 * ANIMATION_STEP_MS + 1);
+      fixture.detectChanges();
+
+      const incorrectPods = fixture.nativeElement.querySelectorAll('.flow-commander__cargo-pod--incorrect');
+      const deadEndPods = fixture.nativeElement.querySelectorAll('.flow-commander__cargo-pod--dead-end');
+
+      expect(incorrectPods.length).toBeGreaterThan(0);
+      expect(deadEndPods.length).toBe(0);
+
+      vi.useRealTimers();
+    });
+
+    it('should show --dead-end class and NOT --incorrect for dead-end cargo (Test 4)', () => {
+      vi.useFakeTimers();
+      // Create graph with a dead-end branch (junction with no outgoing edges)
+      setup(createTestLevelData({
+        graph: {
+          nodes: [
+            { id: 'source-1', nodeType: 'source', position: { x: 0, y: 50 }, label: 'Intake' },
+            { id: 'junc-dead', nodeType: 'junction', position: { x: 50, y: 50 }, label: '' },
+          ],
+          edges: [
+            { id: 'e-1', sourceNodeId: 'source-1', targetNodeId: 'junc-dead' },
+            // junc-dead has no outgoing edges -- dead end
+          ],
+        },
+        cargoItems: [
+          { id: 'cargo-red', color: 'red', label: 'R1', type: 'fuel', priority: 'high' },
+        ],
+        targetZones: [],
+      }));
+
+      component.onRun();
+      fixture.detectChanges();
+
+      // Path: source-1 -> junc-dead (length 2), maxSegments=2, complete at 2*400 = 800ms
+      vi.advanceTimersByTime(2 * ANIMATION_STEP_MS + 1);
+      fixture.detectChanges();
+
+      const deadEndPods = fixture.nativeElement.querySelectorAll('.flow-commander__cargo-pod--dead-end');
+      const incorrectPods = fixture.nativeElement.querySelectorAll('.flow-commander__cargo-pod--incorrect');
+
+      expect(deadEndPods.length).toBe(1);
+      expect(incorrectPods.length).toBe(0);
+
+      // Also verify data model
+      const cargo = component.animatingItems()[0];
+      expect(cargo.correct).toBe(false);
+      expect(cargo.deadEnd).toBe(true);
+
+      vi.useRealTimers();
+    });
+
+    it('should duplicate items at @for gate (Test 5)', () => {
+      vi.useFakeTimers();
+      setup(createTestLevelData({
+        graph: {
+          nodes: [
+            { id: 'source-1', nodeType: 'source', position: { x: 0, y: 50 }, label: 'Intake' },
+            { id: 'gate-1', nodeType: 'gate-slot', position: { x: 40, y: 50 }, label: 'Gate A' },
+            { id: 'target-1', nodeType: 'target-zone', position: { x: 90, y: 50 }, label: 'Out' },
+          ],
+          edges: [
+            { id: 'e-1', sourceNodeId: 'source-1', targetNodeId: 'gate-1' },
+            { id: 'e-2', sourceNodeId: 'gate-1', targetNodeId: 'target-1' },
+          ],
+        },
+        cargoItems: [
+          { id: 'cargo-red', color: 'red', label: 'R1', type: 'fuel', priority: 'high' },
+        ],
+        availableGateTypes: [GateType.for],
+        targetZones: [
+          { id: 'tz-1', nodeId: 'target-1', label: 'Out', expectedColor: 'red' },
+        ],
+      }));
+
+      // Place @for gate with condition '3' (creates 3 copies)
+      engine.submitAction({ type: 'place-gate', nodeId: 'gate-1', gateType: GateType.for, condition: '3' });
+
+      component.onRun();
+      fixture.detectChanges();
+
+      // 1 item duplicated into 3 copies
+      expect(component.animatingItems().length).toBe(3);
+
+      vi.useRealTimers();
     });
   });
 });

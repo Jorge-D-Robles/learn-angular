@@ -23,7 +23,7 @@ import { provideMinigame } from './data/minigame-registration';
 import { PHASE_1_MISSIONS, provideMissionContent } from './data/missions';
 import { ModuleAssemblyComponent, ModuleAssemblyEngine } from './features/minigames/module-assembly';
 import { WireProtocolComponent, WireProtocolEngine } from './features/minigames/wire-protocol';
-import { FlowCommanderComponent, FlowCommanderEngine } from './features/minigames/flow-commander';
+import { FlowCommanderComponent, FlowCommanderEngine, FlowCommanderSimulationService } from './features/minigames/flow-commander';
 import { SignalCorpsComponent, SignalCorpsEngine } from './features/minigames/signal-corps';
 
 export const appConfig: ApplicationConfig = {
@@ -50,7 +50,7 @@ export const appConfig: ApplicationConfig = {
     provideLevelData(SIGNAL_CORPS_LEVEL_PACK),
     provideMissionContent(PHASE_1_MISSIONS),
     provideMinigame('wire-protocol', WireProtocolComponent, () => new WireProtocolEngine()),
-    provideMinigame('flow-commander', FlowCommanderComponent, () => new FlowCommanderEngine()),
+    provideMinigame('flow-commander', FlowCommanderComponent, () => new FlowCommanderEngine(undefined, new FlowCommanderSimulationService())),
     provideMinigame('signal-corps', SignalCorpsComponent, () => new SignalCorpsEngine()),
     provideMinigame('module-assembly', ModuleAssemblyComponent, () => new ModuleAssemblyEngine()),
   ],

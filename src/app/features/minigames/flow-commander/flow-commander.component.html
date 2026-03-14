@@ -88,7 +88,8 @@
     @for (cargo of animatingItems(); track cargo.item.id) {
       <rect class="flow-commander__cargo-pod"
             [class.flow-commander__cargo-pod--correct]="cargo.animationComplete && cargo.correct"
-            [class.flow-commander__cargo-pod--incorrect]="cargo.animationComplete && !cargo.correct"
+            [class.flow-commander__cargo-pod--incorrect]="cargo.animationComplete && !cargo.correct && !cargo.deadEnd"
+            [class.flow-commander__cargo-pod--dead-end]="cargo.animationComplete && cargo.deadEnd"
             [attr.fill]="cargo.item.color"
             [attr.x]="getCargoX(cargo)"
             [attr.y]="getCargoY(cargo)"

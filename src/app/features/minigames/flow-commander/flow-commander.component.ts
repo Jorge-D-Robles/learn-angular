@@ -40,6 +40,7 @@ interface AnimatingCargo {
   readonly waypoints: readonly { x: number; y: number }[];
   readonly currentSegment: number;
   readonly correct: boolean;
+  readonly deadEnd: boolean;
   readonly animationComplete: boolean;
 }
 
@@ -279,6 +280,7 @@ export class FlowCommanderComponent implements OnDestroy {
       waypoints: r.path.map(nodeId => posMap.get(nodeId) ?? { x: 0, y: 0 }),
       currentSegment: 0,
       correct: r.correct,
+      deadEnd: r.destinationNodeId === null,
       animationComplete: false,
     }));
 

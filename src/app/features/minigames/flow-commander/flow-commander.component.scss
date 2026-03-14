@@ -70,6 +70,7 @@
   transition: x 400ms linear, y 400ms linear;
   &--correct { filter: drop-shadow(0 0 6px #22c55e); animation: fc-glow 0.5s ease; }
   &--incorrect { animation: fc-break 0.6s ease-out forwards; }
+  &--dead-end { animation: fc-dead-end 0.7s ease-out forwards; }
 }
 
 .flow-commander__config-backdrop {
@@ -168,10 +169,17 @@
   100% { fill: #ef4444; opacity: 0; transform: translateY(-8px) scale(0); }
 }
 
+@keyframes fc-dead-end {
+  0% { fill: #94a3b8; opacity: 1; transform: scale(1); }
+  40% { opacity: 0.6; transform: scale(0.7); }
+  100% { fill: #64748b; opacity: 0; transform: scale(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .flow-commander__cargo-pod { transition: none; }
   .flow-commander__cargo-pod--correct { animation: none; filter: drop-shadow(0 0 6px #22c55e); }
   .flow-commander__cargo-pod--incorrect { animation: none; fill: #ef4444; opacity: 0.5; }
+  .flow-commander__cargo-pod--dead-end { animation: none; fill: #64748b; opacity: 0.3; }
 }
 
 @media (max-width: 767px) {
