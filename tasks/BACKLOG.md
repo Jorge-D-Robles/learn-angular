@@ -2053,26 +2053,6 @@ Acceptance criteria:
 
 ## P3 -- Navigation Bundle
 
-### T-2026-084
-- Title: Register Corridor Runner in MinigameRegistry and wire routes
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P3
-- Depends: T-2026-083, T-2026-029, T-2026-042
-- Blocked-by: —
-- Tags: minigame, corridor-runner, registration, routing
-- Refs: docs/minigames/05-corridor-runner.md
-
-Register Corridor Runner and ensure end-to-end playability.
-
-Acceptance criteria:
-- [ ] Corridor Runner registered in MinigameRegistryService
-- [ ] Navigating to `/minigames/corridor-runner/level/1` loads the game
-- [ ] MinigameShell integration works
-- [ ] E2e smoke test: navigate to level 1, verify game renders
-
 ### T-2026-085
 - Title: Create story mission content for Chapters 11-13 (Phase 2 Navigation)
 - Status: todo
