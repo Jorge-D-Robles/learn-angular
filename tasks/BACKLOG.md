@@ -2053,31 +2053,6 @@ Acceptance criteria:
 
 ## P3 -- Navigation Bundle
 
-### T-2026-082
-- Title: Create Corridor Runner minigame engine
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P3
-- Depends: T-2026-017, T-2026-081
-- Blocked-by: —
-- Tags: minigame, corridor-runner, engine
-- Refs: docs/minigames/05-corridor-runner.md
-
-Implement the Corridor Runner engine with two phases: Config (route editor) and Run (navigation simulation).
-
-Acceptance criteria:
-- [ ] `CorridorRunnerEngine` at `src/app/features/minigames/corridor-runner/corridor-runner.engine.ts`
-- [ ] Extends `MinigameEngine<CorridorRunnerLevelData>`
-- [ ] Config phase: player edits route configuration array
-- [ ] Run phase: simulates Angular router resolution for test navigations
-- [ ] Route matching: path, redirects, wildcards, params, children, guards
-- [ ] Hull breach (404) detection on unmatched routes
-- [ ] 2 hull breaches = level fails
-- [ ] Scoring: all routes correct on first try + efficient config
-- [ ] Unit tests for: route matching, redirect resolution, 404 detection, scoring
-
 ### T-2026-083
 - Title: Create Corridor Runner minigame UI component
 - Status: todo
