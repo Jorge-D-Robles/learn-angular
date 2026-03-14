@@ -18,6 +18,7 @@ import { MODULE_ASSEMBLY_LEVEL_PACK } from './data/levels/module-assembly.data';
 import { WIRE_PROTOCOL_LEVEL_PACK } from './data/levels/wire-protocol.data';
 import { FLOW_COMMANDER_LEVEL_PACK } from './data/levels/flow-commander.data';
 import { SIGNAL_CORPS_LEVEL_PACK } from './data/levels/signal-corps.data';
+import { CORRIDOR_RUNNER_LEVEL_PACK } from './data/levels/corridor-runner.data';
 import { provideLevelData } from './data/levels/provide-level-data';
 import { provideMinigame } from './data/minigame-registration';
 import { PHASE_1_MISSIONS, provideMissionContent } from './data/missions';
@@ -25,6 +26,7 @@ import { ModuleAssemblyComponent, ModuleAssemblyEngine } from './features/miniga
 import { WireProtocolComponent, WireProtocolEngine } from './features/minigames/wire-protocol';
 import { FlowCommanderComponent, FlowCommanderEngine, FlowCommanderSimulationService } from './features/minigames/flow-commander';
 import { SignalCorpsComponent, SignalCorpsEngine, SignalCorpsWaveService } from './features/minigames/signal-corps';
+import { CorridorRunnerComponent, CorridorRunnerEngine } from './features/minigames/corridor-runner';
 
 // Shared wave service instance: passed to the engine AND available for DI injection
 // in the component. engine.reset() + waveService.loadWaves() fully resets state for replays.
@@ -52,11 +54,13 @@ export const appConfig: ApplicationConfig = {
     provideLevelData(WIRE_PROTOCOL_LEVEL_PACK),
     provideLevelData(FLOW_COMMANDER_LEVEL_PACK),
     provideLevelData(SIGNAL_CORPS_LEVEL_PACK),
+    provideLevelData(CORRIDOR_RUNNER_LEVEL_PACK),
     provideMissionContent(PHASE_1_MISSIONS),
     provideMinigame('wire-protocol', WireProtocolComponent, () => new WireProtocolEngine()),
     provideMinigame('flow-commander', FlowCommanderComponent, () => new FlowCommanderEngine(undefined, new FlowCommanderSimulationService())),
     { provide: SignalCorpsWaveService, useValue: signalCorpsWaveService },
     provideMinigame('signal-corps', SignalCorpsComponent, () => new SignalCorpsEngine(undefined, signalCorpsWaveService)),
     provideMinigame('module-assembly', ModuleAssemblyComponent, () => new ModuleAssemblyEngine()),
+    provideMinigame('corridor-runner', CorridorRunnerComponent, () => new CorridorRunnerEngine()),
   ],
 };

@@ -7,6 +7,7 @@ import { WireProtocolComponent } from '../../features/minigames/wire-protocol/wi
 import { WireProtocolEngine } from '../../features/minigames/wire-protocol/wire-protocol.engine';
 import { FlowCommanderComponent, FlowCommanderEngine } from '../../features/minigames/flow-commander';
 import { SignalCorpsComponent, SignalCorpsEngine } from '../../features/minigames/signal-corps';
+import { CorridorRunnerComponent, CorridorRunnerEngine } from '../../features/minigames/corridor-runner';
 import type { MinigameId } from '../../core/minigame/minigame.types';
 import { getMinigameTutorial } from '../tutorials/minigame-tutorials.data';
 import { provideMinigame } from './provide-minigame';
@@ -194,6 +195,42 @@ describe('provideMinigame — signal-corps', () => {
     const config = registry.getConfig('signal-corps');
     expect(config!.tutorialSteps).toBeDefined();
     expect(config!.tutorialSteps!.length).toBe(4);
+  });
+});
+
+describe('provideMinigame — corridor-runner', () => {
+  let registry: MinigameRegistryService;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideMinigame(
+          'corridor-runner',
+          CorridorRunnerComponent,
+          () => new CorridorRunnerEngine(),
+        ),
+      ],
+    });
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    registry = TestBed.inject(MinigameRegistryService);
+  });
+
+  it('should register the component type for corridor-runner', () => {
+    expect(registry.getComponent('corridor-runner')).toBe(CorridorRunnerComponent);
+  });
+
+  it('should register an engine factory that produces a CorridorRunnerEngine', () => {
+    const factory = registry.getEngineFactory('corridor-runner');
+    expect(factory).toBeTruthy();
+    const engine = factory!();
+    expect(engine).toBeInstanceOf(CorridorRunnerEngine);
+  });
+
+  it('should preserve the existing config for corridor-runner', () => {
+    const config = registry.getConfig('corridor-runner');
+    expect(config).toBeDefined();
+    expect(config!.name).toBe('Corridor Runner');
   });
 });
 
