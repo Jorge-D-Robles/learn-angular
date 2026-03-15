@@ -2395,29 +2395,6 @@ Acceptance criteria:
 - [ ] Uses real TerminalHackFormEvaluationService with level 1 data
 
 
-### T-2026-508
-- Title: Wire TerminalHackFormEvaluationService into TerminalHackEngine lifecycle
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P4
-- Depends: T-2026-429, T-2026-087
-- Blocked-by: —
-- Tags: integration, minigame, terminal-hack, engine, evaluation
-- Refs: docs/minigames/06-terminal-hack.md, src/app/features/minigames/terminal-hack/terminal-hack.engine.ts
-
-T-2026-429 creates TerminalHackFormEvaluationService and T-2026-087 (completed) created the engine. Following the P2 pattern (T-2026-469 wired FlowCommanderSimulationService, T-2026-470 wired SignalCorpsWaveService, T-2026-471 wired WireProtocolValidationService), this ticket wires the evaluation service into the engine lifecycle. The engine currently bundles form evaluation inline. This ticket delegates evaluation to the service, enabling independent testing and reducing engine complexity.
-
-Acceptance criteria:
-- [ ] TerminalHackEngine delegates form element evaluation to TerminalHackFormEvaluationService
-- [ ] Engine `initialize()` provides level data (target spec, test cases) to the evaluation service
-- [ ] Engine `submitForm()` action delegates to `evaluateFormCode()` on the service
-- [ ] Engine `runTests()` action delegates to `runTestCases()` on the service
-- [ ] Engine `reset()` calls `service.reset()`
-- [ ] Existing engine unit tests updated to verify delegation
-- [ ] Unit tests for: service initialization on engine init, delegation on submit, delegation on test run, reset propagation
-- Started: 2026-03-15
 
 ### T-2026-509
 - Title: Create TerminalHackLivePreviewComponent for real-time form preview panel
