@@ -2309,25 +2309,6 @@ Acceptance criteria:
 ## P4 -- Forms Bundle
 
 
-### T-2026-193
-- Title: Create Terminal Hack minigame tutorial data
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P4
-- Depends: T-2026-163, T-2026-086
-- Blocked-by: —
-- Tags: content, tutorial, minigame, terminal-hack
-- Refs: docs/minigames/06-terminal-hack.md
-
-T-2026-168 covers P2 minigame tutorials but not Terminal Hack (P4). This ticket creates the tutorial step data for Terminal Hack so MinigameTutorialOverlayComponent can display first-time play instructions.
-
-Acceptance criteria:
-- [ ] Terminal Hack tutorial data added to `src/app/data/tutorials/minigame-tutorials.data.ts`
-- [ ] 3-4 tutorial steps covering: target form reading, code editor usage, live preview, test runner, hint system
-- [ ] Unit tests for: tutorial data exists, has 3-4 steps, required fields populated
-- Started: 2026-03-15
 
 ### T-2026-194
 - Title: Create P4 minigame engine integration test for Terminal Hack

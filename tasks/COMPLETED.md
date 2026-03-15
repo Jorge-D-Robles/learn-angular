@@ -263,3 +263,4 @@
 [2026-03-15] T-2026-511: Wire TerminalHackCodePanelComponent into TerminalHackComponent UI — wired code panel into parent, replaced inline spec/palette/editor with sub-component (claude)
 [2026-03-15] T-2026-512: Wire TerminalHackLivePreviewComponent into TerminalHackComponent UI — wired live preview into parent sidebar with independent @if guard and 6 tests (claude)
 [2026-03-15] T-2026-513: Wire TerminalHackTestRunnerComponent into TerminalHackComponent UI — wired test runner into parent, replaced inline bottom panel, removed 5 dead computeds (claude)
+[2026-03-15] T-2026-193: Create Terminal Hack minigame tutorial data — created 4-step Terminal Hack tutorial data with timer/hint mechanics covered (claude)
