@@ -2334,8 +2334,8 @@ Acceptance criteria:
 
 ### T-2026-092
 - Title: Create Power Grid minigame engine
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: L
 - Milestone: P5
@@ -2353,6 +2353,7 @@ Acceptance criteria:
 - [ ] Scope types: root, component-level, hierarchical
 - [ ] Short circuit detection on wrong connections
 - [ ] Unit tests for: connection validation, scope checking, short circuit detection
+- Started: 2026-03-15
 
 ### T-2026-093
 - Title: Create Power Grid minigame UI component
