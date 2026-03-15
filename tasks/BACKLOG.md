@@ -2342,31 +2342,6 @@ Acceptance criteria:
 
 
 
-### T-2026-515
-- Title: Create integration test for Terminal Hack level data compatibility with engine
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P4
-- Depends: T-2026-086, T-2026-087, T-2026-145
-- Blocked-by: —
-- Tags: testing, integration, terminal-hack, level-data, engine
-- Refs: docs/minigames/06-terminal-hack.md, src/app/data/levels/terminal-hack.data.ts
-
-T-2026-086 (completed) defined 21 Terminal Hack levels and T-2026-087 (completed) created the engine. T-2026-145 registers the level data. Following the P3 pattern of T-2026-501 (Corridor Runner level data compatibility), this integration test verifies all 21 levels load into the engine without errors and produce valid evaluation results.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/features/minigames/terminal-hack/level-data-compat.integration.spec.ts`
-- [ ] Test: all 21 Terminal Hack levels load into the engine via `initialize()` without errors
-- [ ] Test: each level's `targetFormSpec` has at least 1 form element
-- [ ] Test: each level's `testCases` has at least 1 test case
-- [ ] Test: each level's `availableElements` is non-empty
-- [ ] Test: each level's `timeLimit` is a positive number
-- [ ] Test: level 1 basic configuration produces expected evaluation results when correct form elements are submitted
-- [ ] Test: engine can be reset and loaded with a different level from the pack
-- [ ] Uses real TerminalHackEngine with real level data constants
-- Started: 2026-03-15
 
 ### T-2026-516
 - Title: Create integration test for TerminalHackFormEvaluationService + TerminalHackEngine coordinated lifecycle
