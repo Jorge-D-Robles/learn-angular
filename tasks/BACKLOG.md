@@ -2335,8 +2335,8 @@ Acceptance criteria:
 
 ### T-2026-430
 - Title: Create integration test for TerminalHackFormEvaluationService test case execution
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P4
@@ -2355,6 +2355,7 @@ Acceptance criteria:
 - [ ] Test: form with incorrect validators fails test cases with specific inputs
 - [ ] Test: test pass rate calculation matches manual count
 - [ ] Uses real TerminalHackFormEvaluationService with level 1 data
+- Started: 2026-03-15
 
 
 
