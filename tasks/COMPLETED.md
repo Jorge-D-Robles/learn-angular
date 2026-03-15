@@ -245,3 +245,4 @@
 [2026-03-14] T-2026-426: Create CorridorRunnerSimulationService for route resolution and navigation testing — created simulation service with extracted route resolution algorithms (52 tests) (claude)
 [2026-03-14] T-2026-460: Create CorridorRunnerMapComponent for top-down station map navigation visualization — created pure presentation map component with corridor glow, crew animation, 15 tests (claude)
 [2026-03-14] T-2026-428: Create CorridorRunnerRouteEditorComponent for config phase route editing — created route editor component with semantic validation and one-shot seeding (18 tests) (claude)
+[2026-03-14] T-2026-497: Wire CorridorRunnerSimulationService into CorridorRunnerEngine lifecycle — wired simulation service into engine lifecycle with delegation and reset propagation (4 tests) (claude)
