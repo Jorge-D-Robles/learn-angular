@@ -2308,29 +2308,6 @@ Acceptance criteria:
 
 ## P4 -- Forms Bundle
 
-### T-2026-086
-- Title: Define Terminal Hack level data for 21 levels
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P4
-- Depends: T-2026-019, T-2026-038
-- Blocked-by: —
-- Tags: minigame, terminal-hack, level-data, content
-- Refs: docs/minigames/06-terminal-hack.md
-
-Define the static level data for all 21 Terminal Hack levels covering Angular forms.
-
-Acceptance criteria:
-- [ ] Level data file at `src/app/data/levels/terminal-hack.data.ts`
-- [ ] `TerminalHackLevelData` interface: targetFormSpec, testCases[], availableElements[], timeLimit, hints[]
-- [ ] 7 Basic levels (text input through template-driven form)
-- [ ] 7 Intermediate levels (FormControl through error messages)
-- [ ] 6 Advanced levels (custom validators through nested FormGroups)
-- [ ] 1 Boss level ("Engineering Diagnostic Terminal" with all form concepts)
-- [ ] Unit tests verify: 21 total levels, all levels have valid test cases
-
 ### T-2026-087
 - Title: Create Terminal Hack minigame engine
 - Status: todo

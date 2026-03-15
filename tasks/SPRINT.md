@@ -1,8 +1,8 @@
 # Current Sprint
 
-Sprint: S15-p3-corridor-runner
-Milestone: P3
-Goal: Build Corridor Runner minigame — level data, engine, UI, story missions Ch 11-13
+Sprint: S16-p4-terminal-hack
+Milestone: P4
+Goal: Build Terminal Hack minigame — level data, engine, UI, story missions Ch 14-17
 Started: 2026-03-14
 
 <!-- Velocity: (recorded at sprint close) -->
