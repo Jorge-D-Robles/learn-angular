@@ -2312,8 +2312,8 @@ Acceptance criteria:
 
 ### T-2026-194
 - Title: Create P4 minigame engine integration test for Terminal Hack
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P4
@@ -2330,6 +2330,7 @@ Acceptance criteria:
 - [ ] Test: verifies MinigameShell state transitions (ready -> playing -> completed)
 - [ ] Test: verifies LevelCompletionService is called with correct result
 - [ ] Test: verifies scoring with time, test pass rate, and hint penalty
+- Started: 2026-03-15
 
 
 ### T-2026-269
