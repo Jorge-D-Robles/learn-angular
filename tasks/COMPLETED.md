@@ -270,3 +270,4 @@
 [2026-03-15] T-2026-515: Create integration test for Terminal Hack level data compatibility with engine — created 107 integration tests verifying all 21 levels load into engine with valid signals (claude)
 [2026-03-15] T-2026-516: Create integration test for TerminalHackFormEvaluationService + TerminalHackEngine coordinated lifecycle — created 6 integration tests for engine+service coordinated lifecycle with real level data (claude)
 [2026-03-15] T-2026-517: Create Terminal Hack visual state integration test — retired as redundant, coverage already provided by component+child specs, added gauge width assertion (claude)
+[2026-03-15] T-2026-269: Create P4 end-to-end smoke test for Terminal Hack game loop — created 3 Playwright E2E smoke tests for Terminal Hack game rendering (claude)

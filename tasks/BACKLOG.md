@@ -2312,27 +2312,6 @@ Acceptance criteria:
 
 
 
-### T-2026-269
-- Title: Create P4 end-to-end smoke test for Terminal Hack game loop
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P4
-- Depends: T-2026-089
-- Blocked-by: —
-- Tags: testing, e2e, terminal-hack, game-loop
-- Refs: docs/minigames/06-terminal-hack.md, playwright.config.ts
-
-P2 has an end-to-end smoke test (T-2026-142) but P4 does not. This E2E test validates Terminal Hack renders and is playable via browser navigation.
-
-Acceptance criteria:
-- [ ] Playwright test at `e2e/terminal-hack.spec.ts`
-- [ ] Test: navigate to `/minigames/terminal-hack/level/1`, verify game renders with target form preview and code editor
-- [ ] Test: verify MinigameShell HUD is present (score, timer, hint button)
-- [ ] Test: verify live preview panel renders
-- [ ] Test runs in CI (GitHub Actions)
-- Started: 2026-03-15
 
 
 
