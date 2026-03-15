@@ -2394,31 +2394,6 @@ Acceptance criteria:
 - [ ] Test: test pass rate calculation matches manual count
 - [ ] Uses real TerminalHackFormEvaluationService with level 1 data
 
-### T-2026-431
-- Title: Create TerminalHackCodePanelComponent for target form and code editor split view
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P4
-- Depends: T-2026-086, T-2026-031, T-2026-007
-- Blocked-by: —
-- Tags: ui, component, minigame, terminal-hack, code-panel
-- Refs: docs/minigames/06-terminal-hack.md, docs/ux/visual-style.md
-
-Terminal Hack spec describes a split-panel layout: left panel (target form preview, read-only) and right panel (code editor for form code). The UI component (T-2026-088) is L-size. Extracting the split code panel into a standalone sub-component reduces complexity. The component provides the retro terminal aesthetic (green-on-black, scanlines) per the spec.
-
-Acceptance criteria:
-- [ ] `TerminalHackCodePanelComponent` at `src/app/features/minigames/terminal-hack/code-panel/code-panel.ts`
-- [ ] Left panel: renders target form specification as read-only preview with required fields highlighted
-- [ ] Right panel: renders CodeEditorComponent in editable mode for form code
-- [ ] Input: `targetSpec` (TargetFormSpec), `initialCode` (string), `availableTools` (AvailableFormTool[])
-- [ ] Output: `codeChanged` event with updated code string on user edits
-- [ ] Retro terminal aesthetic: green-on-black text, scanline overlay effect, terminal cursor blink
-- [ ] Tool availability hints: disabled tools shown as dimmed in the available tools palette
-- [ ] Exported from terminal-hack barrel
-- [ ] Unit tests for: target spec rendering, code editor rendering, code change emission, retro theme applied, tool hints
-- Started: 2026-03-15
 
 ### T-2026-508
 - Title: Wire TerminalHackFormEvaluationService into TerminalHackEngine lifecycle
