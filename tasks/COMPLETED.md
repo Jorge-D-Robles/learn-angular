@@ -265,3 +265,4 @@
 [2026-03-15] T-2026-513: Wire TerminalHackTestRunnerComponent into TerminalHackComponent UI — wired test runner into parent, replaced inline bottom panel, removed 5 dead computeds (claude)
 [2026-03-15] T-2026-193: Create Terminal Hack minigame tutorial data — created 4-step Terminal Hack tutorial data with timer/hint mechanics covered (claude)
 [2026-03-15] T-2026-194: Create P4 minigame engine integration test for Terminal Hack — created 8 integration tests verifying engine-level-data pipeline, state transitions, and scoring (claude)
+[2026-03-15] T-2026-430: Create integration test for TerminalHackFormEvaluationService test case execution — created 6 integration tests verifying evaluation service with real level 1 data (claude)

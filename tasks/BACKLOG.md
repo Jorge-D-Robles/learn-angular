@@ -2333,29 +2333,6 @@ Acceptance criteria:
 - [ ] Test: verify live preview panel renders
 - [ ] Test runs in CI (GitHub Actions)
 
-### T-2026-430
-- Title: Create integration test for TerminalHackFormEvaluationService test case execution
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P4
-- Depends: T-2026-429
-- Blocked-by: —
-- Tags: testing, integration, terminal-hack, evaluation
-- Refs: docs/minigames/06-terminal-hack.md
-
-After T-2026-429 creates the evaluation service, this integration test verifies the full form evaluation pipeline: writing form code, running test cases, and validating pass/fail results.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/features/minigames/terminal-hack/form-evaluation.integration.spec.ts`
-- [ ] Test: correct form code passes all test cases
-- [ ] Test: incomplete form code fails specific test cases
-- [ ] Test: form with missing required field fails structure validation
-- [ ] Test: form with incorrect validators fails test cases with specific inputs
-- [ ] Test: test pass rate calculation matches manual count
-- [ ] Uses real TerminalHackFormEvaluationService with level 1 data
-- Started: 2026-03-15
 
 
 
