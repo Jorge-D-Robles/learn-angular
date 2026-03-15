@@ -2311,8 +2311,8 @@ Acceptance criteria:
 
 ### T-2026-193
 - Title: Create Terminal Hack minigame tutorial data
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P4
@@ -2327,6 +2327,7 @@ Acceptance criteria:
 - [ ] Terminal Hack tutorial data added to `src/app/data/tutorials/minigame-tutorials.data.ts`
 - [ ] 3-4 tutorial steps covering: target form reading, code editor usage, live preview, test runner, hint system
 - [ ] Unit tests for: tutorial data exists, has 3-4 steps, required fields populated
+- Started: 2026-03-15
 
 ### T-2026-194
 - Title: Create P4 minigame engine integration test for Terminal Hack
@@ -3092,6 +3093,171 @@ Acceptance criteria:
 - [ ] Test: stream with wrong pipe type fails output comparison
 - [ ] Uses real DataRelayTransformService with sample stream data
 
+### T-2026-519
+- Title: Wire Power Grid and Data Relay tutorial data into MinigameRegistryService config
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P5
+- Depends: T-2026-195, T-2026-115, T-2026-116
+- Blocked-by: —
+- Tags: integration, tutorial, minigame, power-grid, data-relay, registry
+- Refs: docs/minigames/07-power-grid.md, docs/minigames/08-data-relay.md, src/app/data/tutorials/minigame-tutorials.data.ts
+
+T-2026-195 creates tutorial step data for both Power Grid and Data Relay. T-2026-115 and T-2026-116 register them in the MinigameRegistryService. Following the P2 pattern of T-2026-382 (which wired tutorial data for all 4 P2 games), the P3 pattern of T-2026-500 (Corridor Runner), and the P4 pattern of T-2026-514 (Terminal Hack), this ticket wires the tutorial data into the registry config for both P5 minigames. Without this, the MinigameTutorialOverlayComponent cannot display first-play instructions for Power Grid or Data Relay.
+
+Acceptance criteria:
+- [ ] Power Grid `provideMinigame()` call updated to include tutorial steps from MinigameInstructionsData
+- [ ] Data Relay `provideMinigame()` call updated to include tutorial steps from MinigameInstructionsData
+- [ ] Tutorial steps accessible via `MinigameRegistryService.getConfig('power-grid').tutorialSteps`
+- [ ] Tutorial steps accessible via `MinigameRegistryService.getConfig('data-relay').tutorialSteps`
+- [ ] Tutorial overlay displays game-specific steps on first play for both games
+- [ ] Unit tests for: tutorial data present in registry config for both games, correct step counts
+
+### T-2026-520
+- Title: Create integration test for Power Grid level data compatibility with engine
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P5
+- Depends: T-2026-091, T-2026-092, T-2026-146
+- Blocked-by: —
+- Tags: testing, integration, power-grid, level-data, engine
+- Refs: docs/minigames/07-power-grid.md, src/app/data/levels/power-grid.data.ts
+
+T-2026-091 defines 18 Power Grid levels and T-2026-092 creates the engine. T-2026-146 registers the level data. Following the P3 pattern of T-2026-501 (Corridor Runner) and P4 pattern of T-2026-515 (Terminal Hack), this integration test verifies all 18 levels load into the engine without errors and produce valid validation results.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/power-grid/level-data-compat.integration.spec.ts`
+- [ ] Test: all 18 Power Grid levels load into the engine via `initialize()` without errors
+- [ ] Test: each level's `services` array has at least 1 service node
+- [ ] Test: each level's `components` array has at least 1 component node
+- [ ] Test: each level's `validConnections` array has at least 1 valid connection
+- [ ] Test: each level's `scopeRules` are non-empty
+- [ ] Test: level 1 basic configuration produces expected validation results when correct connections are submitted
+- [ ] Test: engine can be reset and loaded with a different level from the pack
+- [ ] Uses real PowerGridEngine with real level data constants
+
+### T-2026-521
+- Title: Create integration test for Data Relay level data compatibility with engine
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P5
+- Depends: T-2026-094, T-2026-095, T-2026-147
+- Blocked-by: —
+- Tags: testing, integration, data-relay, level-data, engine
+- Refs: docs/minigames/08-data-relay.md, src/app/data/levels/data-relay.data.ts
+
+T-2026-094 defines 18 Data Relay levels and T-2026-095 creates the engine. T-2026-147 registers the level data. Following the established pattern, this integration test verifies all 18 levels load into the engine without errors.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/data-relay/level-data-compat.integration.spec.ts`
+- [ ] Test: all 18 Data Relay levels load into the engine via `initialize()` without errors
+- [ ] Test: each level's `streams` array has at least 1 data stream
+- [ ] Test: each level's `availablePipes` array is non-empty
+- [ ] Test: each level's `targetOutputs` match stream count
+- [ ] Test: each level's `testData` has at least 1 test data pair per stream
+- [ ] Test: level 1 basic configuration produces expected transform results when correct pipes are placed
+- [ ] Test: engine can be reset and loaded with a different level from the pack
+- [ ] Uses real DataRelayEngine with real level data constants
+
+### T-2026-522
+- Title: Create integration test for PowerGridInjectionService + PowerGridEngine coordinated lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P5
+- Depends: T-2026-433, T-2026-092
+- Blocked-by: —
+- Tags: testing, integration, power-grid, injection, engine
+- Refs: docs/minigames/07-power-grid.md, src/app/features/minigames/power-grid/
+
+After the engine is wired with PowerGridInjectionService, this integration test verifies the coordinated lifecycle: loading service/component data, drawing connections with scope selection, verifying all connections, detecting short circuits, and scoring. Follows the P2 pattern of T-2026-476/477/478.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/power-grid/injection-engine.integration.spec.ts`
+- [ ] Test: engine.initialize() loads services and components into injection service
+- [ ] Test: draw-connection action validates scope via injection service and updates engine state
+- [ ] Test: all connections correct with correct scopes triggers engine completion
+- [ ] Test: wrong scope connection returns validation failure with scope error message
+- [ ] Test: short circuit detected when circular injection pattern is created
+- [ ] Test: engine.reset() resets injection service state
+- [ ] Uses real PowerGridEngine and PowerGridInjectionService with level 1 data
+
+### T-2026-523
+- Title: Create integration test for DataRelayTransformService + DataRelayEngine coordinated lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P5
+- Depends: T-2026-435, T-2026-095
+- Blocked-by: —
+- Tags: testing, integration, data-relay, transform, engine
+- Refs: docs/minigames/08-data-relay.md, src/app/features/minigames/data-relay/
+
+After the engine is wired with DataRelayTransformService, this integration test verifies the coordinated lifecycle: loading stream data, placing pipes, running transforms, and comparing outputs. Follows the P2 pattern of T-2026-476/477/478.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/data-relay/transform-engine.integration.spec.ts`
+- [ ] Test: engine.initialize() loads streams into transform service
+- [ ] Test: place-pipe action delegates to transform service and updates stream state
+- [ ] Test: run-transform action processes data through pipe chain and compares outputs
+- [ ] Test: all streams producing correct outputs triggers engine completion
+- [ ] Test: wrong pipe type returns output mismatch with expected vs actual
+- [ ] Test: engine.reset() resets transform service state
+- [ ] Uses real DataRelayEngine and DataRelayTransformService with level 1 data
+
+### T-2026-524
+- Title: Create P5 minigame visual state integration tests for Power Grid and Data Relay
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P5
+- Depends: T-2026-093, T-2026-096, T-2026-461, T-2026-462
+- Blocked-by: —
+- Tags: testing, integration, power-grid, data-relay, visual-state, ui
+- Refs: docs/minigames/07-power-grid.md, docs/minigames/08-data-relay.md
+
+T-2026-492 covers P2 minigame UI-to-simulation visual state tests and T-2026-504/517 cover P3/P4. No equivalent exists for P5. This test verifies the UI components correctly reflect engine state for both Power Grid and Data Relay.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/p5-visual-state.integration.spec.ts`
+- [ ] Test: Power Grid -- draw-connection action updates board with colored power line (blue for root, green for component)
+- [ ] Test: Power Grid -- short circuit detected produces spark/flash visual state on board
+- [ ] Test: Data Relay -- place-pipe action updates stream visualizer with pipe block at correct position
+- [ ] Test: Data Relay -- run-transform action animates data particles through pipe chain, output comparison shows green/red
+- [ ] Each test: uses real engine + component fixture
+- [ ] Each test: verifies DOM state reflects engine signal values after action
+
+### T-2026-525
+- Title: Update architecture.md with P5 Power Grid and Data Relay patterns and conventions
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P5
+- Depends: T-2026-433, T-2026-435, T-2026-092, T-2026-095
+- Blocked-by: —
+- Tags: documentation, architecture, conventions, power-grid, data-relay
+- Refs: docs/architecture.md, src/app/features/minigames/power-grid/, src/app/features/minigames/data-relay/
+
+Architecture.md documents P1 technical decisions and is updated for each milestone (P3: T-2026-507, P4: T-2026-518). P5 adds Power Grid and Data Relay with new patterns: DI scope validation, circuit board connection model, pipe transformation chain with Angular pipe integration, and stream processing visualization. These patterns should be documented for consistency.
+
+Acceptance criteria:
+- [ ] architecture.md documents Power Grid's DI scope validation pattern (root, component, hierarchical, factory)
+- [ ] Documents the circuit board connection model (services as sources, components as consumers)
+- [ ] Documents Data Relay's pipe transformation chain approach using Angular's actual pipe transforms
+- [ ] Lists PowerGridInjectionService and DataRelayTransformService in the simulation services table
+- [ ] Updates the persistence table if any new localStorage keys are added
+- [ ] Documents the pipe toolbox pattern (category-grouped tools) as a reusable pattern
+
 ---
 
 ## P6 -- Signals Bundle
@@ -3439,6 +3605,121 @@ Acceptance criteria:
 - [ ] Test: removing a dependency edge breaks propagation chain
 - [ ] Test: orphaned computed node detected by graph validation
 - [ ] Uses real ReactorCoreGraphService with sample graph data
+
+### T-2026-526
+- Title: Wire Reactor Core tutorial data into MinigameRegistryService config
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P6
+- Depends: T-2026-197, T-2026-117
+- Blocked-by: —
+- Tags: integration, tutorial, minigame, reactor-core, registry
+- Refs: docs/minigames/09-reactor-core.md, src/app/data/tutorials/minigame-tutorials.data.ts
+
+T-2026-197 creates Reactor Core tutorial step data and T-2026-117 registers the minigame in the registry. Following the established pattern (P2: T-2026-382, P3: T-2026-500, P4: T-2026-514, P5: T-2026-519), this ticket wires the tutorial data into the registry config. Without this, the MinigameTutorialOverlayComponent cannot display Reactor Core first-play instructions.
+
+Acceptance criteria:
+- [ ] Reactor Core `provideMinigame()` call updated to include tutorial steps from MinigameInstructionsData
+- [ ] Tutorial steps accessible via `MinigameRegistryService.getConfig('reactor-core').tutorialSteps`
+- [ ] Tutorial overlay displays Reactor Core-specific steps on first play
+- [ ] Unit tests for: tutorial data present in registry config, correct step count
+
+### T-2026-527
+- Title: Create integration test for Reactor Core level data compatibility with engine
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P6
+- Depends: T-2026-098, T-2026-099, T-2026-148
+- Blocked-by: —
+- Tags: testing, integration, reactor-core, level-data, engine
+- Refs: docs/minigames/09-reactor-core.md, src/app/data/levels/reactor-core.data.ts
+
+T-2026-098 defines 21 Reactor Core levels and T-2026-099 creates the engine. T-2026-148 registers the level data. Following the established pattern (P3: T-2026-501, P4: T-2026-515, P5: T-2026-520/521), this integration test verifies all 21 levels load into the engine without errors.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/reactor-core/level-data-compat.integration.spec.ts`
+- [ ] Test: all 21 Reactor Core levels load into the engine via `initialize()` without errors
+- [ ] Test: each level's `requiredNodes` array has at least 1 node
+- [ ] Test: each level's `scenarios` array has at least 1 simulation scenario
+- [ ] Test: each level's `validGraphs` array has at least 1 valid graph configuration
+- [ ] Test: each level's `constraints` are non-null with valid maxNodes value
+- [ ] Test: level 1 basic configuration produces expected simulation results when correct signal graph is submitted
+- [ ] Test: engine can be reset and loaded with a different level from the pack
+- [ ] Uses real ReactorCoreEngine with real level data constants
+
+### T-2026-528
+- Title: Create integration test for ReactorCoreGraphService + ReactorCoreEngine coordinated lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P6
+- Depends: T-2026-438, T-2026-099
+- Blocked-by: —
+- Tags: testing, integration, reactor-core, graph, engine
+- Refs: docs/minigames/09-reactor-core.md, src/app/features/minigames/reactor-core/
+
+After the engine is wired with ReactorCoreGraphService, this integration test verifies the coordinated lifecycle: loading required nodes, placing nodes and edges, running simulations, and evaluating scenario results through the engine's action pipeline. Follows the established pattern (P2: T-2026-476/477/478, P3: T-2026-502, P4: T-2026-516).
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/reactor-core/graph-engine.integration.spec.ts`
+- [ ] Test: engine.initialize() loads required nodes and scenarios into graph service
+- [ ] Test: add-node action delegates to graph service and updates engine state
+- [ ] Test: add-edge action validates no cycles via graph service before accepting
+- [ ] Test: simulate action runs scenarios through graph service and evaluates correctness
+- [ ] Test: all scenarios passing triggers engine completion with scoring
+- [ ] Test: circular dependency rejection deducts lives
+- [ ] Test: engine.reset() resets graph service state
+- [ ] Uses real ReactorCoreEngine and ReactorCoreGraphService with level 1 data
+
+### T-2026-529
+- Title: Create Reactor Core visual state integration test for UI-to-engine signal binding
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P6
+- Depends: T-2026-100, T-2026-455, T-2026-439
+- Blocked-by: —
+- Tags: testing, integration, reactor-core, visual-state, ui
+- Refs: docs/minigames/09-reactor-core.md, src/app/features/minigames/reactor-core/
+
+T-2026-492 covers P2, T-2026-504 covers P3, T-2026-517 covers P4, and T-2026-524 covers P5 visual state tests. No equivalent exists for P6 Reactor Core. This test verifies the UI components correctly reflect engine state: graph canvas shows placed nodes, edges render between nodes, simulation propagation animates energy flow, and scenario results update node value displays.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/reactor-core/visual-state.integration.spec.ts`
+- [ ] Test: add-node action renders new node at position on graph canvas with correct type color
+- [ ] Test: add-edge action renders wire between nodes on canvas with directional arrow
+- [ ] Test: simulate action triggers energy flow animation along wires
+- [ ] Test: scenario with incorrect output shows warning indicator on mismatched nodes
+- [ ] Each test: uses real engine + component fixture
+- [ ] Each test: verifies DOM state reflects engine signal values after action
+
+### T-2026-530
+- Title: Update architecture.md with P6 Reactor Core signal graph patterns and conventions
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P6
+- Depends: T-2026-438, T-2026-099
+- Blocked-by: —
+- Tags: documentation, architecture, conventions, reactor-core
+- Refs: docs/architecture.md, src/app/features/minigames/reactor-core/
+
+Architecture.md is updated for each milestone. P6 adds Reactor Core with new patterns: directed acyclic graph (DAG) editing with cycle detection, signal/computed/effect node types mirroring Angular's signal API semantics, topological sort for change propagation, expression builder integration for computed node formulas, and multi-scenario simulation execution. These patterns should be documented.
+
+Acceptance criteria:
+- [ ] architecture.md documents Reactor Core's DAG editing pattern with cycle detection algorithm
+- [ ] Documents the signal/computed/effect node type system and how it mirrors Angular's signal API
+- [ ] Documents the change propagation algorithm (topological sort of dependency graph)
+- [ ] Documents the expression builder integration for computed node formula editing
+- [ ] Lists ReactorCoreGraphService in the simulation services table
+- [ ] Updates the persistence table if any new localStorage keys are added
 
 ---
 
@@ -4253,6 +4534,203 @@ Acceptance criteria:
 - [ ] Documents the sub-component pattern for complex minigame UIs (gate config, tower config, binding selector, etc.)
 - [ ] Updates the persistence table with any new localStorage keys added by P3-P7 services
 - [ ] Documents the route guard pattern (canActivate, canDeactivate) established in P2
+
+### T-2026-531
+- Title: Wire Deep Space Radio, System Certification, and Blast Doors tutorial data into MinigameRegistryService config
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-199, T-2026-119, T-2026-121, T-2026-123
+- Blocked-by: —
+- Tags: integration, tutorial, minigame, deep-space-radio, system-certification, blast-doors, registry
+- Refs: docs/minigames/10-deep-space-radio.md, docs/minigames/11-system-certification.md, docs/minigames/12-blast-doors.md, src/app/data/tutorials/minigame-tutorials.data.ts
+
+T-2026-199 creates tutorial step data for all 3 P7 minigames. T-2026-119/121/123 register them in the MinigameRegistryService. Following the established pattern (P2: T-2026-382, P3: T-2026-500, P4: T-2026-514, P5: T-2026-519, P6: T-2026-526), this ticket wires the tutorial data into the registry config for all 3 P7 games. Without this, the MinigameTutorialOverlayComponent cannot display first-play instructions.
+
+Acceptance criteria:
+- [ ] Deep Space Radio `provideMinigame()` call updated to include tutorial steps from MinigameInstructionsData
+- [ ] System Certification `provideMinigame()` call updated to include tutorial steps from MinigameInstructionsData
+- [ ] Blast Doors `provideMinigame()` call updated to include tutorial steps from MinigameInstructionsData
+- [ ] Tutorial steps accessible via `MinigameRegistryService.getConfig('deep-space-radio').tutorialSteps`
+- [ ] Tutorial steps accessible via `MinigameRegistryService.getConfig('system-certification').tutorialSteps`
+- [ ] Tutorial steps accessible via `MinigameRegistryService.getConfig('blast-doors').tutorialSteps`
+- [ ] Unit tests for: tutorial data present in registry config for all 3 games, correct step counts
+
+### T-2026-532
+- Title: Create integration test for Deep Space Radio level data compatibility with engine
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-102, T-2026-103, T-2026-149
+- Blocked-by: —
+- Tags: testing, integration, deep-space-radio, level-data, engine
+- Refs: docs/minigames/10-deep-space-radio.md, src/app/data/levels/deep-space-radio.data.ts
+
+Following the established pattern (P3-P6 level data compatibility tests), this integration test verifies all 18 Deep Space Radio levels load into the engine without errors.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/deep-space-radio/level-data-compat.integration.spec.ts`
+- [ ] Test: all 18 Deep Space Radio levels load into the engine via `initialize()` without errors
+- [ ] Test: each level's `endpoints` array has at least 1 mock endpoint
+- [ ] Test: each level's `testScenarios` has at least 1 test scenario
+- [ ] Test: each level's `expectedResults` match scenario count
+- [ ] Test: level 1 basic configuration produces expected transmission results when correct request is submitted
+- [ ] Test: engine can be reset and loaded with a different level from the pack
+- [ ] Uses real DeepSpaceRadioEngine with real level data constants
+
+### T-2026-533
+- Title: Create integration test for System Certification level data compatibility with engine
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-104, T-2026-105, T-2026-150
+- Blocked-by: —
+- Tags: testing, integration, system-certification, level-data, engine
+- Refs: docs/minigames/11-system-certification.md, src/app/data/levels/system-certification.data.ts
+
+Following the established pattern, this integration test verifies all 18 System Certification levels load into the engine without errors.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/system-certification/level-data-compat.integration.spec.ts`
+- [ ] Test: all 18 System Certification levels load into the engine via `initialize()` without errors
+- [ ] Test: each level's `sourceCode` is a non-empty string
+- [ ] Test: each level's `coverageThreshold` is between 0 and 100
+- [ ] Test: each level's `timeLimit` is a positive number
+- [ ] Test: each level's `availableTestUtilities` is a non-empty array
+- [ ] Test: level 1 basic configuration produces expected coverage results when correct tests are written
+- [ ] Test: engine can be reset and loaded with a different level from the pack
+- [ ] Uses real SystemCertificationEngine with real level data constants
+
+### T-2026-534
+- Title: Create integration test for Blast Doors level data compatibility with engine
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-106, T-2026-107, T-2026-151
+- Blocked-by: —
+- Tags: testing, integration, blast-doors, level-data, engine
+- Refs: docs/minigames/12-blast-doors.md, src/app/data/levels/blast-doors.data.ts
+
+Following the established pattern, this integration test verifies all 18 Blast Doors levels load into the engine without errors.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/blast-doors/level-data-compat.integration.spec.ts`
+- [ ] Test: all 18 Blast Doors levels load into the engine via `initialize()` without errors
+- [ ] Test: each level's `doors` array has at least 1 blast door
+- [ ] Test: each level's `hooks` array has at least 1 lifecycle hook type
+- [ ] Test: each level's `scenarios` has at least 1 door scenario
+- [ ] Test: each level's `expectedBehavior` matches scenario count
+- [ ] Test: level 1 basic configuration produces expected behavior results when correct hooks are assigned
+- [ ] Test: engine can be reset and loaded with a different level from the pack
+- [ ] Uses real BlastDoorsEngine with real level data constants
+
+### T-2026-535
+- Title: Create integration test for DeepSpaceRadioInterceptorService + DeepSpaceRadioEngine coordinated lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-441, T-2026-103
+- Blocked-by: —
+- Tags: testing, integration, deep-space-radio, interceptor, engine
+- Refs: docs/minigames/10-deep-space-radio.md, src/app/features/minigames/deep-space-radio/
+
+After the engine is wired with DeepSpaceRadioInterceptorService, this integration test verifies the coordinated lifecycle: loading endpoints and interceptors, building requests, running through the interceptor chain, transmitting to mock backend, and evaluating responses. Follows the established pattern (P2-P6).
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/deep-space-radio/interceptor-engine.integration.spec.ts`
+- [ ] Test: engine.initialize() loads endpoints and interceptor toolbox into interceptor service
+- [ ] Test: configure-request action builds HTTP request via interceptor service
+- [ ] Test: place-interceptor action adds interceptor to chain in service
+- [ ] Test: transmit action processes request through interceptor chain, mock backend, and response chain
+- [ ] Test: all test scenarios passing triggers engine completion with scoring
+- [ ] Test: misconfigured interceptor (wrong order) returns validation failure
+- [ ] Test: engine.reset() resets interceptor service state
+- [ ] Uses real DeepSpaceRadioEngine and DeepSpaceRadioInterceptorService with level 1 data
+
+### T-2026-536
+- Title: Create integration test for SystemCertificationTestRunnerService + SystemCertificationEngine coordinated lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-443, T-2026-105
+- Blocked-by: —
+- Tags: testing, integration, system-certification, test-runner, engine
+- Refs: docs/minigames/11-system-certification.md, src/app/features/minigames/system-certification/
+
+After the engine is wired with SystemCertificationTestRunnerService, this integration test verifies the coordinated lifecycle: loading source code, writing tests, calculating coverage, and evaluating quality through the engine's action pipeline. Follows the established pattern (P2-P6).
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/system-certification/testrunner-engine.integration.spec.ts`
+- [ ] Test: engine.initialize() loads source code into test runner service
+- [ ] Test: run-tests action executes player test code via test runner service and returns results
+- [ ] Test: coverage calculation updates after each test run
+- [ ] Test: coverage threshold met triggers engine completion with scoring
+- [ ] Test: timer expiry without meeting threshold triggers engine failure
+- [ ] Test: redundant tests penalized in quality score via test runner service
+- [ ] Test: engine.reset() resets test runner service state
+- [ ] Uses real SystemCertificationEngine and SystemCertificationTestRunnerService with level 1 data
+
+### T-2026-537
+- Title: Create integration test for BlastDoorsLifecycleService + BlastDoorsEngine coordinated lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P7
+- Depends: T-2026-444, T-2026-107
+- Blocked-by: —
+- Tags: testing, integration, blast-doors, lifecycle, engine
+- Refs: docs/minigames/12-blast-doors.md, src/app/features/minigames/blast-doors/
+
+After the engine is wired with BlastDoorsLifecycleService, this integration test verifies the coordinated lifecycle: loading doors, assigning behaviors to hook slots, running scenario simulations, and evaluating door states through the engine's action pipeline. Follows the established pattern (P2-P6).
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/blast-doors/lifecycle-engine.integration.spec.ts`
+- [ ] Test: engine.initialize() loads doors and hook slots into lifecycle service
+- [ ] Test: assign-behavior action places behavior block in hook slot via lifecycle service
+- [ ] Test: simulate action runs scenario through lifecycle service and checks door states
+- [ ] Test: all scenarios correct triggers engine completion with scoring
+- [ ] Test: wrong hook order detected by lifecycle service deducts lives
+- [ ] Test: directive application modifies door behavior during simulation
+- [ ] Test: engine.reset() resets lifecycle service state
+- [ ] Uses real BlastDoorsEngine and BlastDoorsLifecycleService with level 1 data
+
+### T-2026-538
+- Title: Create P7 minigame visual state integration tests for Deep Space Radio, System Certification, and Blast Doors
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: M
+- Milestone: P7
+- Depends: T-2026-118, T-2026-120, T-2026-122, T-2026-463, T-2026-464, T-2026-445
+- Blocked-by: —
+- Tags: testing, integration, deep-space-radio, system-certification, blast-doors, visual-state, ui
+- Refs: docs/minigames/10-deep-space-radio.md, docs/minigames/11-system-certification.md, docs/minigames/12-blast-doors.md
+
+T-2026-492 through T-2026-529 cover P2-P6 visual state tests. No equivalent exists for P7. This test verifies the UI components correctly reflect engine state for all 3 P7 minigames.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/p7-visual-state.integration.spec.ts`
+- [ ] Test: Deep Space Radio -- transmit action animates radio wave through interceptor pipeline, response viewer shows result
+- [ ] Test: Deep Space Radio -- interceptor placement updates pipeline visualization with type icons
+- [ ] Test: System Certification -- run-tests action updates test runner output with pass/fail indicators per test
+- [ ] Test: System Certification -- coverage overlay shows green/red line gutters matching coverage result
+- [ ] Test: Blast Doors -- assign-behavior action renders behavior block in timeline hook slot
+- [ ] Test: Blast Doors -- simulate action animates door open/close sequences with hook fire indicators
+- [ ] Each test: uses real engine + component fixture
+- [ ] Each test: verifies DOM state reflects engine signal values after action
 
 ---
 

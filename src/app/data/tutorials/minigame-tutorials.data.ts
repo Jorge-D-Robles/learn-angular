@@ -111,15 +111,43 @@ const SIGNAL_CORPS_STEPS: readonly TutorialStep[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Terminal Hack (4 steps)
+// ---------------------------------------------------------------------------
+
+const TERMINAL_HACK_STEPS: readonly TutorialStep[] = [
+  {
+    title: 'Read the Target Form',
+    description:
+      'The left panel shows the target form you must rebuild. The right panel shows a live preview of your form taking shape. Match the target layout, fields, and behavior.',
+  },
+  {
+    title: 'Write Form Code',
+    description:
+      'Use the code editor to write Angular form code — template HTML and component class. Available form tools for each level are shown in the toolbox.',
+  },
+  {
+    title: 'Run Tests',
+    description:
+      'Press the Test button to run predefined inputs against your form. The timer at the top depletes as you work — if it runs out or you fail more than 3 tests, you lose the level.',
+  },
+  {
+    title: 'Use Hints',
+    description:
+      'Stuck? Press the Hint button to reveal one form element or validation rule. Hints cost points — avoid them for a perfect score.',
+  },
+];
+
+// ---------------------------------------------------------------------------
 // Exports
 // ---------------------------------------------------------------------------
 
-/** Tutorial data for all P2 minigames. */
+/** Tutorial data for all minigames with tutorial content. */
 export const MINIGAME_TUTORIALS: readonly MinigameTutorialData[] = [
   { gameId: 'module-assembly', steps: MODULE_ASSEMBLY_STEPS },
   { gameId: 'wire-protocol', steps: WIRE_PROTOCOL_STEPS },
   { gameId: 'flow-commander', steps: FLOW_COMMANDER_STEPS },
   { gameId: 'signal-corps', steps: SIGNAL_CORPS_STEPS },
+  { gameId: 'terminal-hack', steps: TERMINAL_HACK_STEPS },
 ];
 
 /** Look up tutorial data for a specific minigame. */

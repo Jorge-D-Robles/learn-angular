@@ -5,17 +5,18 @@ import {
   type MinigameTutorialData,
 } from './minigame-tutorials.data';
 
-const P2_GAME_IDS: MinigameId[] = [
+const GAME_IDS_WITH_TUTORIALS: MinigameId[] = [
   'module-assembly',
   'wire-protocol',
   'flow-commander',
   'signal-corps',
+  'terminal-hack',
 ];
 
 describe('MINIGAME_TUTORIALS', () => {
-  it('should have tutorial data for all 4 P2 minigames', () => {
+  it('should have tutorial data for all minigames with tutorials', () => {
     const gameIds = MINIGAME_TUTORIALS.map(t => t.gameId);
-    for (const id of P2_GAME_IDS) {
+    for (const id of GAME_IDS_WITH_TUTORIALS) {
       expect(gameIds).toContain(id);
     }
   });
@@ -73,6 +74,27 @@ describe('getMinigameTutorial', () => {
   it('should return undefined for an unknown gameId', () => {
     const result = getMinigameTutorial('corridor-runner');
     expect(result).toBeUndefined();
+  });
+});
+
+describe('Terminal Hack tutorial', () => {
+  it('should have tutorial data for terminal-hack', () => {
+    const result = getMinigameTutorial('terminal-hack');
+    expect(result).toBeDefined();
+    expect(result!.gameId).toBe('terminal-hack');
+  });
+
+  it('should have 4 steps', () => {
+    const result = getMinigameTutorial('terminal-hack');
+    expect(result!.steps.length).toBe(4);
+  });
+
+  it('should have non-empty title and description for every step', () => {
+    const result = getMinigameTutorial('terminal-hack');
+    for (const step of result!.steps) {
+      expect(step.title.length).toBeGreaterThan(0);
+      expect(step.description.length).toBeGreaterThan(0);
+    }
   });
 });
 
