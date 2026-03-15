@@ -2262,6 +2262,261 @@ Acceptance criteria:
 - [ ] Exported from corridor-runner barrel
 - [ ] Unit tests for: initial config rendering, config change emission, validation feedback, submit event
 
+### T-2026-497
+- Title: Wire CorridorRunnerSimulationService into CorridorRunnerEngine lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P3
+- Depends: T-2026-426, T-2026-082
+- Blocked-by: —
+- Tags: integration, minigame, corridor-runner, simulation, engine
+- Refs: docs/minigames/05-corridor-runner.md, src/app/features/minigames/corridor-runner/corridor-runner.engine.ts
+
+T-2026-082 (completed) built CorridorRunnerEngine with a placeholder `CorridorRunnerSimulationService` interface and inline route resolution logic. T-2026-426 creates the standalone simulation service. This ticket wires the simulation service into the engine lifecycle, following the P2 pattern (T-2026-469 FlowCommander, T-2026-470 SignalCorps, T-2026-471 WireProtocol). The engine constructor already accepts an optional `simulationService` parameter. This ticket replaces the inline resolution logic with delegation to the service.
+
+Acceptance criteria:
+- [ ] CorridorRunnerEngine delegates `resolveUrl()` to CorridorRunnerSimulationService when provided
+- [ ] Engine factory in minigame registration creates and injects the simulation service
+- [ ] `onLevelLoad()` passes route config to simulation service via `loadRouteConfig()`
+- [ ] `runNavigation()` delegates URL resolution to the service instead of inline logic
+- [ ] `runAllNavigations()` delegates to service for full run evaluation
+- [ ] `reset()` / `onLevelLoad()` calls `simulationService.reset()`
+- [ ] Fallback: inline resolution still works when no service is provided (backwards compatibility)
+- [ ] Unit tests for: delegation to service, reset propagation, fallback behavior, integration with real level data
+
+### T-2026-498
+- Title: Wire CorridorRunnerMapComponent into CorridorRunnerComponent UI
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P3
+- Depends: T-2026-460, T-2026-083
+- Blocked-by: —
+- Tags: integration, ui, minigame, corridor-runner, map
+- Refs: docs/minigames/05-corridor-runner.md, src/app/features/minigames/corridor-runner/corridor-runner.component.ts
+
+T-2026-460 creates the CorridorRunnerMapComponent sub-component for the top-down station map. T-2026-083 (completed) builds the main CorridorRunnerComponent with inline SVG map rendering. This ticket replaces the inline SVG map with the dedicated MapComponent, wiring engine signals (mapLayout, playerRouteConfig, crew position, crew path) to the sub-component inputs and connecting moduleClicked output to engine actions. Follows the P2 sub-component wiring pattern (T-2026-472/473/474).
+
+Acceptance criteria:
+- [ ] CorridorRunnerComponent imports and renders CorridorRunnerMapComponent in the run phase
+- [ ] `stationMap` input bound to engine's `mapLayout` signal
+- [ ] `configuredRoutes` input bound to engine's `playerRouteConfig` signal
+- [ ] `crewPosition` and `crewPath` inputs bound to component's crew animation state
+- [ ] `moduleClicked` output connected to navigation action trigger
+- [ ] Hull breach and success animations delegate to map component
+- [ ] Inline SVG map rendering code removed from CorridorRunnerComponent
+- [ ] Unit tests for: sub-component rendering, signal binding, click event forwarding
+
+### T-2026-499
+- Title: Wire CorridorRunnerRouteEditorComponent into CorridorRunnerComponent UI
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P3
+- Depends: T-2026-428, T-2026-083
+- Blocked-by: —
+- Tags: integration, ui, minigame, corridor-runner, route-editor
+- Refs: docs/minigames/05-corridor-runner.md, src/app/features/minigames/corridor-runner/corridor-runner.component.ts
+
+T-2026-428 creates the RouteEditorComponent sub-component for the config phase. T-2026-083 (completed) builds the main CorridorRunnerComponent with inline CodeEditorComponent usage for route editing. This ticket replaces the inline code editor setup with the dedicated RouteEditorComponent, wiring engine signals (initial config, available components) to inputs and connecting configChanged/configSubmitted outputs to engine actions. Follows the P2 sub-component wiring pattern.
+
+Acceptance criteria:
+- [ ] CorridorRunnerComponent imports and renders RouteEditorComponent in the config phase
+- [ ] `initialConfig` input bound to engine's solution config (empty for player to fill)
+- [ ] `availableComponents` input derived from level data's target destinations
+- [ ] `configChanged` output updates engine's player route config via `submitAction({ type: 'set-route-config' })`
+- [ ] `configSubmitted` output transitions game from config phase to run phase
+- [ ] Inline CodeEditorComponent setup removed from CorridorRunnerComponent's config phase section
+- [ ] Unit tests for: sub-component rendering in config phase, config change forwarding, phase transition on submit
+
+### T-2026-500
+- Title: Wire Corridor Runner tutorial data into MinigameRegistryService config
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P3
+- Depends: T-2026-191, T-2026-084
+- Blocked-by: —
+- Tags: integration, tutorial, minigame, corridor-runner, registry
+- Refs: docs/minigames/05-corridor-runner.md, src/app/data/tutorials/minigame-tutorials.data.ts
+
+T-2026-191 creates Corridor Runner tutorial step data and T-2026-084 (completed) registers the minigame in the registry. But no ticket wires the tutorial data into the MinigameRegistryService config, following the P2 pattern of T-2026-382 which wired tutorial step data for all 4 P2 games. Without this, the MinigameTutorialOverlayComponent cannot display Corridor Runner first-play instructions.
+
+Acceptance criteria:
+- [ ] Corridor Runner `provideMinigame()` call updated to include tutorial steps from MinigameInstructionsData
+- [ ] Tutorial steps accessible via `MinigameRegistryService.getConfig('corridor-runner').tutorialSteps`
+- [ ] Tutorial overlay displays Corridor Runner-specific steps on first play
+- [ ] Unit tests for: tutorial data present in registry config, correct step count
+
+### T-2026-501
+- Title: Create integration test for Corridor Runner level data compatibility with engine
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P3
+- Depends: T-2026-081, T-2026-082, T-2026-144
+- Blocked-by: —
+- Tags: testing, integration, corridor-runner, level-data, engine
+- Refs: docs/minigames/05-corridor-runner.md, src/app/data/levels/corridor-runner.data.ts
+
+T-2026-081 (completed) defined 18 Corridor Runner levels and T-2026-082 (completed) created the engine. T-2026-144 (completed) registered the level data. But no integration test verifies that all 18 levels load into the engine without errors and produce valid run results. This follows the P2 pattern of T-2026-483 which tests all 4 P2 minigame level data against their services.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/corridor-runner/level-data-compat.integration.spec.ts`
+- [ ] Test: all 18 Corridor Runner levels load into the engine via `initialize()` without errors
+- [ ] Test: each level's `routeConfig` has at least 1 route entry
+- [ ] Test: each level's `mapLayout` has at least 2 nodes and 1 edge
+- [ ] Test: each level's `testNavigations` has at least 1 navigation test
+- [ ] Test: level 1 basic configuration produces expected navigation results when correct routes are submitted
+- [ ] Test: engine can be reset and loaded with a different level from the pack
+- [ ] Uses real CorridorRunnerEngine with real level data constants
+
+### T-2026-502
+- Title: Create integration test for Corridor Runner simulation service with engine coordinated lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P3
+- Depends: T-2026-497
+- Blocked-by: —
+- Tags: testing, integration, corridor-runner, simulation, engine
+- Refs: docs/minigames/05-corridor-runner.md
+
+After T-2026-497 wires CorridorRunnerSimulationService into the engine, this integration test verifies the coordinated lifecycle: loading routes, resolving navigations, detecting hull breaches, and evaluating run results through the engine's action pipeline. Follows the P2 pattern of T-2026-476/477/478.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/corridor-runner/simulation-engine.integration.spec.ts`
+- [ ] Test: engine.initialize() loads route config into simulation service
+- [ ] Test: set-route-config action delegates player routes to simulation service
+- [ ] Test: runNavigation resolves URL through simulation service and returns correct result
+- [ ] Test: hull breach detected when route config has no matching path
+- [ ] Test: redirect chain resolved through simulation service to final destination
+- [ ] Test: all navigations correct triggers engine completion with scoring
+- [ ] Test: engine.reset() resets simulation service state
+- [ ] Uses real CorridorRunnerEngine and CorridorRunnerSimulationService with level 1 data
+
+### T-2026-503
+- Title: Mark T-2026-266 as superseded by T-2026-081 and T-2026-082
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P3
+- Depends: —
+- Blocked-by: —
+- Tags: cleanup, backlog-hygiene, corridor-runner
+- Refs: src/app/features/minigames/corridor-runner/corridor-runner.types.ts
+
+T-2026-266 ("Create Corridor Runner route configuration and map data model") defines RouteEntry, MapNode, MapEdge, StationMap, TestNavigation, and HullBreachResult types. These types were created as part of T-2026-081 (level data) and T-2026-082 (engine) under the names RouteEntry, MapNode, MapEdge, MapLayout, TestNavigation, and NavigationResult. The types file exists at `src/app/features/minigames/corridor-runner/corridor-runner.types.ts`. T-2026-266 is fully superseded.
+
+Acceptance criteria:
+- [ ] T-2026-266 removed from BACKLOG.md
+- [ ] T-2026-460 and T-2026-428 dependencies updated to reference T-2026-082 instead of T-2026-266
+- [ ] T-2026-426 dependency updated to reference T-2026-082 instead of T-2026-266
+- [ ] No broken dependency chains remain
+
+### T-2026-504
+- Title: Create Corridor Runner visual state integration test for UI-to-engine signal binding
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P3
+- Depends: T-2026-498, T-2026-499
+- Blocked-by: —
+- Tags: testing, integration, corridor-runner, visual-state, ui
+- Refs: docs/minigames/05-corridor-runner.md, src/app/features/minigames/corridor-runner/
+
+T-2026-492 covers P2 minigame UI-to-simulation visual state tests. No equivalent exists for P3 Corridor Runner. This test verifies the UI components correctly reflect engine state: config phase shows route editor, run phase shows map with crew animation, hull breach triggers decompression visual, and successful arrival shows door open animation.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/corridor-runner/visual-state.integration.spec.ts`
+- [ ] Test: config phase -- route editor visible, map dimmed/hidden
+- [ ] Test: set-route-config action updates map corridor glow state
+- [ ] Test: run phase -- crew member position updates along corridor path
+- [ ] Test: hull breach -- decompression animation state set on map
+- [ ] Test: successful arrival -- door open animation state set on target module
+- [ ] Each test: uses real engine + component fixture
+- [ ] Each test: verifies DOM state reflects engine signal values after action
+
+### T-2026-505
+- Title: Create CorridorRunner URL bar component for run phase navigation display
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P3
+- Depends: T-2026-082, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, corridor-runner, url-bar
+- Refs: docs/minigames/05-corridor-runner.md, docs/ux/visual-style.md
+
+Corridor Runner spec describes a "URL bar at top mimics browser address bar" where "Shows current route; player can type paths directly." The spec also says "Run phase: Click destination on map, or type URL in address bar." No ticket creates this URL bar component. The main UI component (T-2026-083) has the run phase with SVG map but no address bar for direct URL typing.
+
+Acceptance criteria:
+- [ ] `CorridorRunnerUrlBarComponent` at `src/app/features/minigames/corridor-runner/url-bar/url-bar.ts`
+- [ ] Renders a browser-like address bar at the top of the run phase
+- [ ] Input: `currentUrl` (string) -- the URL being navigated to
+- [ ] Input: `resolvedComponent` (string | null) -- the resolved destination (displayed as breadcrumb)
+- [ ] Input: `isHullBreach` (boolean) -- shows "404 - Hull Breach" indicator
+- [ ] Editable: player can type a URL and press Enter to trigger navigation
+- [ ] Output: `urlSubmitted` event with typed URL string
+- [ ] Styling: monospace font, dark background, forward/back placeholders, "nexus://" prefix
+- [ ] Exported from corridor-runner barrel
+- [ ] Unit tests for: URL display, hull breach indicator, editable input, submit on Enter key
+
+### T-2026-506
+- Title: Wire CorridorRunnerUrlBarComponent into CorridorRunnerComponent run phase
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P3
+- Depends: T-2026-505, T-2026-083
+- Blocked-by: —
+- Tags: integration, ui, minigame, corridor-runner, url-bar
+- Refs: docs/minigames/05-corridor-runner.md
+
+T-2026-505 creates the URL bar component. This ticket wires it into CorridorRunnerComponent's run phase, connecting engine signals for current URL and resolved component, and routing the urlSubmitted output to the engine's runNavigation method.
+
+Acceptance criteria:
+- [ ] CorridorRunnerComponent renders CorridorRunnerUrlBarComponent above the map in the run phase
+- [ ] `currentUrl` input bound to the URL of the current/last navigation
+- [ ] `resolvedComponent` input bound to the navigation result's resolved component
+- [ ] `isHullBreach` input bound to the last navigation result's hull breach flag
+- [ ] `urlSubmitted` output triggers `engine.runNavigation(url)` and processes the result
+- [ ] URL bar hidden during config phase
+- [ ] Unit tests for: URL bar rendering in run phase, hidden in config phase, URL submission forwarding
+
+### T-2026-507
+- Title: Update architecture.md with P3 Corridor Runner patterns and conventions
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P3
+- Depends: T-2026-497, T-2026-082
+- Blocked-by: —
+- Tags: documentation, architecture, conventions, corridor-runner
+- Refs: docs/architecture.md, src/app/features/minigames/corridor-runner/
+
+Architecture.md documents P1 technical decisions and patterns. P3 adds the Corridor Runner minigame which introduces new patterns: two-phase gameplay (config + run), inline route resolution engine with simulation service placeholder, BFS pathfinding for crew animation, and the URL bar navigation mechanic. These patterns should be documented for consistency with future minigames.
+
+Acceptance criteria:
+- [ ] architecture.md documents Corridor Runner's two-phase (config/run) gameplay pattern
+- [ ] Documents the route resolution algorithm (path matching, redirect following, wildcard catching)
+- [ ] Documents the BFS pathfinding approach for crew corridor animation
+- [ ] Lists CorridorRunnerSimulationService in the simulation services table
+- [ ] Updates the persistence table if any new localStorage keys are added
+- [ ] Documents the URL bar navigation mechanic as a reusable pattern for future minigames
+
 ---
 
 ## P4 -- Forms Bundle
