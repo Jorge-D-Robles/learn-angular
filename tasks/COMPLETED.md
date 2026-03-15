@@ -253,3 +253,4 @@
 [2026-03-15] T-2026-088: Create Terminal Hack minigame UI component — created three-panel UI with retro terminal theme, power gauge, hint system (32 tests) (claude)
 [2026-03-15] T-2026-089: Register Terminal Hack in MinigameRegistry and wire routes — registered Terminal Hack with provideMinigame/provideLevelData, updated E2E tests (claude)
 [2026-03-15] T-2026-090: Create story mission content for Chapters 14-17 (Phase 3 Data Input) — created Phase 3 Data Input mission content for Ch 14-17 (17 steps, 18 tests) (claude)
+[2026-03-15] T-2026-145: Register Terminal Hack level data with LevelLoaderService — created registration integration tests for Terminal Hack level data (6 tests) (claude)

@@ -2309,26 +2309,6 @@ Acceptance criteria:
 ## P4 -- Forms Bundle
 
 
-### T-2026-145
-- Title: Register Terminal Hack level data with LevelLoaderService
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P4
-- Depends: T-2026-086, T-2026-030
-- Blocked-by: —
-- Tags: minigame, terminal-hack, level-data, integration
-- Refs: docs/minigames/06-terminal-hack.md, src/app/core/levels/level-loader.service.ts
-
-Register Terminal Hack level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
-
-Acceptance criteria:
-- [ ] Terminal Hack level pack registered with LevelLoaderService
-- [ ] `LevelLoaderService.loadLevel('terminal-hack', levelId)` returns correct level data
-- [ ] `LevelLoaderService.getLevelPack('terminal-hack')` returns all 21 levels grouped by tier
-- [ ] Unit tests for: level loading by ID, level pack retrieval
-
 ### T-2026-193
 - Title: Create Terminal Hack minigame tutorial data
 - Status: todo
