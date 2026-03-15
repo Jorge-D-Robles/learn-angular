@@ -2314,8 +2314,8 @@ Acceptance criteria:
 
 ### T-2026-269
 - Title: Create P4 end-to-end smoke test for Terminal Hack game loop
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P4
@@ -2332,6 +2332,7 @@ Acceptance criteria:
 - [ ] Test: verify MinigameShell HUD is present (score, timer, hint button)
 - [ ] Test: verify live preview panel renders
 - [ ] Test runs in CI (GitHub Actions)
+- Started: 2026-03-15
 
 
 
