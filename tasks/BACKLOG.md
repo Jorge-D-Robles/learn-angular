@@ -2341,26 +2341,6 @@ Acceptance criteria:
 
 
 
-### T-2026-514
-- Title: Wire Terminal Hack tutorial data into MinigameRegistryService config
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P4
-- Depends: T-2026-193, T-2026-089
-- Blocked-by: —
-- Tags: integration, tutorial, minigame, terminal-hack, registry
-- Refs: docs/minigames/06-terminal-hack.md, src/app/data/tutorials/minigame-tutorials.data.ts
-
-T-2026-193 creates Terminal Hack tutorial step data and T-2026-089 (in-progress) registers the minigame in the registry. Following the P2 pattern of T-2026-382 (which wired tutorial data for all 4 P2 games) and the P3 pattern of T-2026-500 (Corridor Runner), this ticket wires the tutorial data into the registry config. Without this, the MinigameTutorialOverlayComponent cannot display Terminal Hack first-play instructions.
-
-Acceptance criteria:
-- [ ] Terminal Hack `provideMinigame()` call updated to include tutorial steps from MinigameInstructionsData
-- [ ] Tutorial steps accessible via `MinigameRegistryService.getConfig('terminal-hack').tutorialSteps`
-- [ ] Tutorial overlay displays Terminal Hack-specific steps on first play
-- [ ] Unit tests for: tutorial data present in registry config, correct step count
-- Started: 2026-03-15
 
 ### T-2026-515
 - Title: Create integration test for Terminal Hack level data compatibility with engine
