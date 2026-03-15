@@ -2399,8 +2399,8 @@ Acceptance criteria:
 
 ### T-2026-510
 - Title: Create TerminalHackTestRunnerComponent for test case execution panel
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P4
@@ -2423,6 +2423,7 @@ Acceptance criteria:
 - [ ] Output: `runTestsRequested` event
 - [ ] Exported from terminal-hack barrel
 - [ ] Unit tests for: test case listing, pass/fail rendering, pass rate display, running state, run request event
+- Started: 2026-03-15
 
 ### T-2026-511
 - Title: Wire TerminalHackCodePanelComponent into TerminalHackComponent UI
