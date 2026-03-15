@@ -23,38 +23,17 @@
       </div>
     }
 
-    <!-- SVG Map (shown in both phases, full width in run phase) -->
-    <svg class="corridor-runner__svg"
-         [class.corridor-runner__svg--full]="phase() === 'run'"
-         [attr.viewBox]="viewBox"
-         preserveAspectRatio="xMidYMid meet">
-
-      <!-- Corridor edges -->
-      @for (edge of edgePaths(); track edge.id) {
-        <path [attr.d]="edge.path"
-              class="corridor-runner__corridor"
-              [class.corridor-runner__corridor--lit]="corridorGlowMap().get(edge.id)" />
-      }
-
-      <!-- Station module nodes -->
-      @for (node of nodePositions(); track node.id) {
-        <g class="corridor-runner__module">
-          <circle [attr.cx]="node.x" [attr.cy]="node.y" [attr.r]="nodeRadius" />
-          <text [attr.x]="node.x" [attr.y]="node.y - nodeRadius - 6"
-                class="corridor-runner__module-label" text-anchor="middle">{{ node.label }}</text>
-        </g>
-      }
-
-      <!-- Crew sprite -->
-      @if (animatingCrew()) {
-        <g class="corridor-runner__crew"
-           [class.corridor-runner__crew--hull-breach]="animatingCrew()!.isHullBreach && animatingCrew()!.animationComplete"
-           [class.corridor-runner__crew--success]="animatingCrew()!.isSuccess && animatingCrew()!.animationComplete">
-          <circle [attr.cx]="crewX()" [attr.cy]="crewY()" r="12"
-                  class="corridor-runner__crew-dot" />
-        </g>
-      }
-    </svg>
+    <!-- Station Map (shown in both phases, full width in run phase) -->
+    <app-corridor-runner-map
+      [stationMap]="mapLayout()"
+      [configuredRoutes]="playerRouteConfig()"
+      [crewPath]="crewPath()"
+      [crewStep]="crewStep()"
+      [isHullBreach]="crewIsHullBreach()"
+      [isSuccess]="crewIsSuccess()"
+      [animationComplete]="crewAnimationComplete()"
+      [expanded]="mapExpanded()"
+      (moduleClicked)="onModuleClicked($event)" />
   </div>
 
   <!-- Controls bar -->

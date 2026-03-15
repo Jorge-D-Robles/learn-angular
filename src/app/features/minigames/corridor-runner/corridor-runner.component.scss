@@ -51,57 +51,6 @@
   padding: 4px 8px;
 }
 
-.corridor-runner__svg {
-  flex: 1;
-  width: 100%;
-  display: block;
-  &--full { flex: 2; }
-}
-
-.corridor-runner__corridor {
-  stroke: #252b3d;
-  stroke-width: 6;
-  fill: none;
-  stroke-linecap: round;
-  opacity: 0.6;
-  transition: stroke 0.3s ease, opacity 0.3s ease;
-  &--lit {
-    stroke: #3b82f6;
-    opacity: 1;
-    filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4));
-  }
-}
-
-.corridor-runner__module {
-  circle {
-    fill: #1a1f2e;
-    stroke: #4a5270;
-    stroke-width: 2;
-  }
-}
-
-.corridor-runner__module-label {
-  fill: #94a3b8;
-  font-family: sans-serif;
-  font-size: 11px;
-}
-
-.corridor-runner__crew-dot {
-  fill: #3b82f6;
-  transition: cx 300ms linear, cy 300ms linear;
-}
-
-.corridor-runner__crew {
-  &--hull-breach .corridor-runner__crew-dot {
-    fill: #ef4444;
-    animation: hull-breach-shake 0.5s ease;
-  }
-  &--success .corridor-runner__crew-dot {
-    fill: #22c55e;
-    animation: door-open-glow 0.6s ease;
-  }
-}
-
 .corridor-runner__controls {
   display: flex;
   justify-content: center;
@@ -136,20 +85,6 @@
   &:hover { background: rgba(255, 255, 255, 0.05); }
 }
 
-@keyframes hull-breach-shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-4px); }
-  40% { transform: translateX(4px); }
-  60% { transform: translateX(-3px); }
-  80% { transform: translateX(2px); }
-}
-
-@keyframes door-open-glow {
-  0% { filter: drop-shadow(0 0 2px #22c55e); }
-  50% { filter: drop-shadow(0 0 14px #22c55e); }
-  100% { filter: drop-shadow(0 0 6px #22c55e); }
-}
-
 @keyframes url-shake {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-3px); }
@@ -157,10 +92,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .corridor-runner__crew-dot { transition: none; }
-  .corridor-runner__crew--hull-breach .corridor-runner__crew-dot { animation: none; fill: #ef4444; }
-  .corridor-runner__crew--success .corridor-runner__crew-dot { animation: none; fill: #22c55e; }
-  .corridor-runner__corridor { transition: none; }
   .corridor-runner__url-bar--error { animation: none; }
 }
 

@@ -1,6 +1,8 @@
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { CorridorRunnerComponent } from './corridor-runner.component';
 import { CorridorRunnerEngine } from './corridor-runner.engine';
+import { CorridorRunnerMapComponent } from './map/map';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
 import {
@@ -124,13 +126,13 @@ describe('CorridorRunnerComponent', () => {
 
     it('should render map nodes matching engine mapLayout node count', () => {
       setup();
-      const nodes = fixture.nativeElement.querySelectorAll('.corridor-runner__module');
+      const nodes = fixture.nativeElement.querySelectorAll('.cr-map__module');
       expect(nodes.length).toBe(3);
     });
 
     it('should render corridor edges matching engine mapLayout edge count', () => {
       setup();
-      const edges = fixture.nativeElement.querySelectorAll('.corridor-runner__corridor');
+      const edges = fixture.nativeElement.querySelectorAll('.cr-map__corridor');
       expect(edges.length).toBe(2);
     });
   });
@@ -213,8 +215,8 @@ describe('CorridorRunnerComponent', () => {
   describe('Config Phase - Corridor Glow', () => {
     it('should show dark corridors when no routes are configured', () => {
       setup();
-      const corridors = fixture.nativeElement.querySelectorAll('.corridor-runner__corridor');
-      const litCorridors = fixture.nativeElement.querySelectorAll('.corridor-runner__corridor--lit');
+      const corridors = fixture.nativeElement.querySelectorAll('.cr-map__corridor');
+      const litCorridors = fixture.nativeElement.querySelectorAll('.cr-map__corridor--lit');
       expect(corridors.length).toBe(2);
       expect(litCorridors.length).toBe(0);
     });
@@ -226,7 +228,7 @@ describe('CorridorRunnerComponent', () => {
       component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
       fixture.detectChanges();
 
-      const litCorridors = fixture.nativeElement.querySelectorAll('.corridor-runner__corridor--lit');
+      const litCorridors = fixture.nativeElement.querySelectorAll('.cr-map__corridor--lit');
       expect(litCorridors.length).toBeGreaterThan(0);
     });
   });
@@ -308,7 +310,7 @@ describe('CorridorRunnerComponent', () => {
 
       const crew = component.animatingCrew();
       expect(crew).not.toBeNull();
-      expect(crew!.waypoints.length).toBeGreaterThan(0);
+      expect(crew!.path.length).toBeGreaterThan(0);
 
       vi.useRealTimers();
     });
@@ -366,8 +368,8 @@ describe('CorridorRunnerComponent', () => {
       fixture.detectChanges();
 
       // Fast forward past all animation + completion
-      const waypoints = component.animatingCrew()!.waypoints.length;
-      vi.advanceTimersByTime(waypoints * CREW_STEP_MS + 1);
+      const pathLen = component.animatingCrew()!.path.length;
+      vi.advanceTimersByTime(pathLen * CREW_STEP_MS + 1);
       fixture.detectChanges();
 
       const crew = component.animatingCrew();
@@ -396,7 +398,7 @@ describe('CorridorRunnerComponent', () => {
       expect(crew!.isHullBreach).toBe(true);
 
       // Advance to completion
-      vi.advanceTimersByTime((crew!.waypoints.length) * CREW_STEP_MS + 1);
+      vi.advanceTimersByTime((crew!.path.length) * CREW_STEP_MS + 1);
       fixture.detectChanges();
 
       const updatedCrew = component.animatingCrew();
@@ -454,8 +456,8 @@ describe('CorridorRunnerComponent', () => {
       }));
       fixture.detectChanges();
 
-      const nodes = fixture.nativeElement.querySelectorAll('.corridor-runner__module');
-      const edges = fixture.nativeElement.querySelectorAll('.corridor-runner__corridor');
+      const nodes = fixture.nativeElement.querySelectorAll('.cr-map__module');
+      const edges = fixture.nativeElement.querySelectorAll('.cr-map__corridor');
       expect(nodes.length).toBe(0);
       expect(edges.length).toBe(0);
     });
@@ -495,6 +497,115 @@ describe('CorridorRunnerComponent', () => {
       expect(result).not.toBeNull();
       // Should have at most 2 results (engine stops after 2 hull breaches with default lives=2)
       expect(result!.navigationResults.length).toBeLessThanOrEqual(2);
+
+      vi.useRealTimers();
+    });
+  });
+
+  // --- 10. Child Component Wiring Tests ---
+
+  describe('Child Component Wiring', () => {
+    it('should render CorridorRunnerMapComponent child in the template', () => {
+      setup();
+      const mapEl = fixture.nativeElement.querySelector('app-corridor-runner-map');
+      expect(mapEl).toBeTruthy();
+    });
+
+    it('should bind stationMap input to engine mapLayout signal', () => {
+      setup();
+      const mapDebug = fixture.debugElement.query(By.directive(CorridorRunnerMapComponent));
+      const mapChild = mapDebug.componentInstance as CorridorRunnerMapComponent;
+      expect(mapChild.stationMap()).toEqual(engine.mapLayout());
+    });
+
+    it('should bind configuredRoutes input to engine playerRouteConfig signal', () => {
+      setup();
+      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
+      fixture.detectChanges();
+
+      const mapDebug = fixture.debugElement.query(By.directive(CorridorRunnerMapComponent));
+      const mapChild = mapDebug.componentInstance as CorridorRunnerMapComponent;
+      expect(mapChild.configuredRoutes()).toEqual(engine.playerRouteConfig());
+    });
+
+    it('should bind crewPath and crewStep inputs during animation', () => {
+      vi.useFakeTimers();
+      setup();
+
+      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
+      component.onLockRoutes();
+      component.onRunTest();
+      fixture.detectChanges();
+
+      const mapDebug = fixture.debugElement.query(By.directive(CorridorRunnerMapComponent));
+      const mapChild = mapDebug.componentInstance as CorridorRunnerMapComponent;
+      expect(mapChild.crewPath().length).toBeGreaterThan(0);
+      expect(mapChild.crewPath().every(id => typeof id === 'string')).toBe(true);
+      expect(mapChild.crewStep()).toBe(0);
+
+      vi.useRealTimers();
+    });
+
+    it('should bind isHullBreach input during hull breach animation', () => {
+      vi.useFakeTimers();
+      setup(createTestLevelData({
+        testNavigations: [
+          { url: '/unknown', expectedDestination: 'SomeBay', description: 'Fails' },
+        ],
+      }));
+
+      component.onCodeChange('[]');
+      component.onLockRoutes();
+      component.onRunTest();
+      fixture.detectChanges();
+
+      const mapDebug = fixture.debugElement.query(By.directive(CorridorRunnerMapComponent));
+      const mapChild = mapDebug.componentInstance as CorridorRunnerMapComponent;
+      expect(mapChild.isHullBreach()).toBe(true);
+
+      vi.useRealTimers();
+    });
+
+    it('should bind expanded input to true when in run phase', () => {
+      setup();
+      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
+      component.onLockRoutes();
+      fixture.detectChanges();
+
+      const mapDebug = fixture.debugElement.query(By.directive(CorridorRunnerMapComponent));
+      const mapChild = mapDebug.componentInstance as CorridorRunnerMapComponent;
+      expect(mapChild.expanded()).toBe(true);
+    });
+
+    it('should forward moduleClicked output to parent handler', () => {
+      setup();
+      const spy = vi.spyOn(component, 'onModuleClicked');
+
+      // Click a module circle in the child
+      const circle = fixture.nativeElement.querySelector('.cr-map__module circle') as SVGCircleElement;
+      expect(circle).toBeTruthy();
+      circle.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      fixture.detectChanges();
+
+      expect(spy).toHaveBeenCalledWith(expect.any(String));
+    });
+
+    it('should bind animationComplete input after animation finishes', () => {
+      vi.useFakeTimers();
+      setup();
+
+      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
+      component.onLockRoutes();
+      component.onRunTest();
+      fixture.detectChanges();
+
+      const pathLen = component.animatingCrew()!.path.length;
+      vi.advanceTimersByTime(pathLen * CREW_STEP_MS + 1);
+      fixture.detectChanges();
+
+      const mapDebug = fixture.debugElement.query(By.directive(CorridorRunnerMapComponent));
+      const mapChild = mapDebug.componentInstance as CorridorRunnerMapComponent;
+      expect(mapChild.animationComplete()).toBe(true);
 
       vi.useRealTimers();
     });
