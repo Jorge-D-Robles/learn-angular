@@ -2093,30 +2093,6 @@ Acceptance criteria:
 - [ ] Test: verifies LevelCompletionService is called with correct result
 - [ ] Test: verifies scoring produces expected values for known inputs
 
-### T-2026-266
-- Title: Create Corridor Runner route configuration and map data model
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P3
-- Depends: T-2026-019
-- Blocked-by: —
-- Tags: minigame, corridor-runner, data-model, routing
-- Refs: docs/minigames/05-corridor-runner.md
-
-Corridor Runner's tech notes say "Route config is validated against a schema matching Angular's Routes type" and "Map layout is data-driven: nodes (modules) + edges (corridors)." P2 minigames have data model tickets (T-2026-255 through T-2026-258) but Corridor Runner does not. This ticket defines the type-safe data model before level data or engine can be built.
-
-Acceptance criteria:
-- [ ] `RouteConfig` interface at `src/app/features/minigames/corridor-runner/corridor-runner.types.ts`
-- [ ] `RouteEntry`: path, component (string), redirectTo, pathMatch, children (recursive), canActivate, resolve, loadComponent
-- [ ] `MapNode`: id, label, position (x, y), moduleType, isAccessible
-- [ ] `MapEdge`: sourceId, targetId, corridorType
-- [ ] `StationMap`: nodes[], edges[]
-- [ ] `TestNavigation`: startUrl, expectedDestination, description
-- [ ] `HullBreachResult`: url, reason (no-match | guard-blocked)
-- [ ] Exported from corridor-runner barrel
-- [ ] Unit tests for: route config validation, map connectivity helpers
 
 ### T-2026-267
 - Title: Create P3 end-to-end smoke test for Corridor Runner game loop
@@ -2146,7 +2122,7 @@ Acceptance criteria:
 - Priority: high
 - Size: M
 - Milestone: P3
-- Depends: T-2026-266
+- Depends: T-2026-082
 - Blocked-by: —
 - Tags: minigame, corridor-runner, service, simulation, routing
 - Refs: docs/minigames/05-corridor-runner.md
@@ -2197,7 +2173,7 @@ Acceptance criteria:
 - Priority: high
 - Size: S
 - Milestone: P3
-- Depends: T-2026-266, T-2026-007
+- Depends: T-2026-082, T-2026-007
 - Blocked-by: —
 - Tags: ui, component, minigame, corridor-runner, map
 - Refs: docs/minigames/05-corridor-runner.md, docs/ux/visual-style.md
@@ -2225,7 +2201,7 @@ Acceptance criteria:
 - Priority: high
 - Size: S
 - Milestone: P3
-- Depends: T-2026-266, T-2026-031, T-2026-007
+- Depends: T-2026-082, T-2026-031, T-2026-007
 - Blocked-by: —
 - Tags: ui, component, minigame, corridor-runner, route-editor
 - Refs: docs/minigames/05-corridor-runner.md
@@ -2385,8 +2361,8 @@ Acceptance criteria:
 
 ### T-2026-503
 - Title: Mark T-2026-266 as superseded by T-2026-081 and T-2026-082
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P3
@@ -2402,6 +2378,7 @@ Acceptance criteria:
 - [ ] T-2026-460 and T-2026-428 dependencies updated to reference T-2026-082 instead of T-2026-266
 - [ ] T-2026-426 dependency updated to reference T-2026-082 instead of T-2026-266
 - [ ] No broken dependency chains remain
+- Started: 2026-03-14
 
 ### T-2026-504
 - Title: Create Corridor Runner visual state integration test for UI-to-engine signal binding
