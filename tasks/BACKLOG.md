@@ -2308,25 +2308,6 @@ Acceptance criteria:
 
 ## P4 -- Forms Bundle
 
-### T-2026-089
-- Title: Register Terminal Hack in MinigameRegistry and wire routes
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P4
-- Depends: T-2026-088, T-2026-029, T-2026-042
-- Blocked-by: —
-- Tags: minigame, terminal-hack, registration, routing
-- Refs: docs/minigames/06-terminal-hack.md
-
-Register Terminal Hack and ensure end-to-end playability.
-
-Acceptance criteria:
-- [ ] Terminal Hack registered in MinigameRegistryService
-- [ ] Navigating to `/minigames/terminal-hack/level/1` loads the game
-- [ ] MinigameShell integration works
-- [ ] E2e smoke test: navigate to level 1, verify game renders
 
 ### T-2026-090
 - Title: Create story mission content for Chapters 14-17 (Phase 3 Data Input)
@@ -2524,6 +2505,264 @@ Acceptance criteria:
 - [ ] Tool availability hints: disabled tools shown as dimmed in the available tools palette
 - [ ] Exported from terminal-hack barrel
 - [ ] Unit tests for: target spec rendering, code editor rendering, code change emission, retro theme applied, tool hints
+
+### T-2026-508
+- Title: Wire TerminalHackFormEvaluationService into TerminalHackEngine lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P4
+- Depends: T-2026-429, T-2026-087
+- Blocked-by: —
+- Tags: integration, minigame, terminal-hack, engine, evaluation
+- Refs: docs/minigames/06-terminal-hack.md, src/app/features/minigames/terminal-hack/terminal-hack.engine.ts
+
+T-2026-429 creates TerminalHackFormEvaluationService and T-2026-087 (completed) created the engine. Following the P2 pattern (T-2026-469 wired FlowCommanderSimulationService, T-2026-470 wired SignalCorpsWaveService, T-2026-471 wired WireProtocolValidationService), this ticket wires the evaluation service into the engine lifecycle. The engine currently bundles form evaluation inline. This ticket delegates evaluation to the service, enabling independent testing and reducing engine complexity.
+
+Acceptance criteria:
+- [ ] TerminalHackEngine delegates form element evaluation to TerminalHackFormEvaluationService
+- [ ] Engine `initialize()` provides level data (target spec, test cases) to the evaluation service
+- [ ] Engine `submitForm()` action delegates to `evaluateFormCode()` on the service
+- [ ] Engine `runTests()` action delegates to `runTestCases()` on the service
+- [ ] Engine `reset()` calls `service.reset()`
+- [ ] Existing engine unit tests updated to verify delegation
+- [ ] Unit tests for: service initialization on engine init, delegation on submit, delegation on test run, reset propagation
+
+### T-2026-509
+- Title: Create TerminalHackLivePreviewComponent for real-time form preview panel
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P4
+- Depends: T-2026-086, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, terminal-hack, live-preview
+- Refs: docs/minigames/06-terminal-hack.md, docs/ux/visual-style.md
+
+Terminal Hack spec describes "Live preview updates as the player types" and "Left panel: target form preview; Right panel: form code editor." The live preview panel shows the player's form taking shape in real time. The UI component (T-2026-088) is L-size. Extracting the live preview into a standalone sub-component follows the established pattern and keeps the main component manageable.
+
+Acceptance criteria:
+- [ ] `TerminalHackLivePreviewComponent` at `src/app/features/minigames/terminal-hack/live-preview/live-preview.ts`
+- [ ] Input: `formElements` (PlayerFormElement[]) -- the player's current form structure
+- [ ] Input: `targetSpec` (TargetFormSpec) -- the target form for reference comparison
+- [ ] Renders a visual representation of the form the player is building (labels, input fields, buttons)
+- [ ] Updates reactively as the player adds/modifies form elements
+- [ ] Visual indicators: correctly-placed elements glow green, missing elements shown as dashed placeholders
+- [ ] Terminal aesthetic: green-on-black rendering matching the retro theme
+- [ ] Output: `elementClicked` event with elementId for editing
+- [ ] Exported from terminal-hack barrel
+- [ ] Unit tests for: form element rendering, reactive updates, correct/missing indicators, terminal theme applied
+
+### T-2026-510
+- Title: Create TerminalHackTestRunnerComponent for test case execution panel
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P4
+- Depends: T-2026-086, T-2026-007
+- Blocked-by: —
+- Tags: ui, component, minigame, terminal-hack, test-runner
+- Refs: docs/minigames/06-terminal-hack.md, docs/ux/visual-style.md
+
+Terminal Hack spec describes: "Test inputs are provided -- the form must handle them correctly" and "Test button -- run predefined test inputs against the form." The test runner panel displays test cases, their execution status, and pass/fail indicators. Extracting this into a sub-component follows the established pattern.
+
+Acceptance criteria:
+- [ ] `TerminalHackTestRunnerComponent` at `src/app/features/minigames/terminal-hack/test-runner/test-runner.ts`
+- [ ] Input: `testCases` (FormTestCase[]) -- the level's predefined test cases
+- [ ] Input: `testResults` (TestCaseResult[] | null) -- results after running tests (null before first run)
+- [ ] Input: `isRunning` (boolean) -- whether tests are currently executing
+- [ ] Displays each test case with description and expected outcome
+- [ ] After run: pass/fail icons per test (green checkmark / red X)
+- [ ] Pass rate counter: "5/7 tests passed"
+- [ ] Test input animation: when running, inputs animate into form fields (per spec)
+- [ ] Output: `runTestsRequested` event
+- [ ] Exported from terminal-hack barrel
+- [ ] Unit tests for: test case listing, pass/fail rendering, pass rate display, running state, run request event
+
+### T-2026-511
+- Title: Wire TerminalHackCodePanelComponent into TerminalHackComponent UI
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P4
+- Depends: T-2026-431, T-2026-088
+- Blocked-by: —
+- Tags: integration, ui, minigame, terminal-hack, code-panel
+- Refs: docs/minigames/06-terminal-hack.md
+
+T-2026-431 creates TerminalHackCodePanelComponent and T-2026-088 (completed) created the UI component. This ticket wires the code panel child component into the parent, replacing any inline target spec and code editor rendering with the dedicated sub-component. Follows the P2 wiring pattern (T-2026-472 for WireProtocol, T-2026-473 for FlowCommander).
+
+Acceptance criteria:
+- [ ] TerminalHackComponent renders TerminalHackCodePanelComponent in the main panel area
+- [ ] `targetSpec` input bound to the engine's current level target form spec
+- [ ] `initialCode` input bound to the engine's starter code (if any)
+- [ ] `availableTools` input bound to the level's available form tools
+- [ ] `codeChanged` output updates the engine's player code state
+- [ ] Inline target spec and code editor rendering removed from parent component
+- [ ] Unit tests for: child component rendering, input bindings, code change forwarding
+
+### T-2026-512
+- Title: Wire TerminalHackLivePreviewComponent into TerminalHackComponent UI
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P4
+- Depends: T-2026-509, T-2026-088
+- Blocked-by: —
+- Tags: integration, ui, minigame, terminal-hack, live-preview
+- Refs: docs/minigames/06-terminal-hack.md
+
+T-2026-509 creates TerminalHackLivePreviewComponent and T-2026-088 (completed) created the UI component. This ticket wires the live preview child component into the parent, connecting engine signals for the player's form structure and the target spec.
+
+Acceptance criteria:
+- [ ] TerminalHackComponent renders TerminalHackLivePreviewComponent in the preview area
+- [ ] `formElements` input bound to the engine's current player form elements signal
+- [ ] `targetSpec` input bound to the engine's level target spec
+- [ ] `elementClicked` output triggers the code panel to focus on the corresponding element
+- [ ] Preview updates reactively as the player edits form code
+- [ ] Unit tests for: child component rendering, input bindings, element click forwarding
+
+### T-2026-513
+- Title: Wire TerminalHackTestRunnerComponent into TerminalHackComponent UI
+- Status: todo
+- Assigned: unassigned
+- Priority: high
+- Size: S
+- Milestone: P4
+- Depends: T-2026-510, T-2026-088
+- Blocked-by: —
+- Tags: integration, ui, minigame, terminal-hack, test-runner
+- Refs: docs/minigames/06-terminal-hack.md
+
+T-2026-510 creates TerminalHackTestRunnerComponent and T-2026-088 (completed) created the UI component. This ticket wires the test runner child component into the parent, connecting engine signals for test cases and results.
+
+Acceptance criteria:
+- [ ] TerminalHackComponent renders TerminalHackTestRunnerComponent in the test panel area
+- [ ] `testCases` input bound to the engine's current level test cases
+- [ ] `testResults` input bound to the engine's last test run results signal
+- [ ] `isRunning` input bound to a running state signal
+- [ ] `runTestsRequested` output triggers the engine's `runTests()` action
+- [ ] Inline test case rendering removed from parent component
+- [ ] Unit tests for: child component rendering, input bindings, run tests forwarding
+
+### T-2026-514
+- Title: Wire Terminal Hack tutorial data into MinigameRegistryService config
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P4
+- Depends: T-2026-193, T-2026-089
+- Blocked-by: —
+- Tags: integration, tutorial, minigame, terminal-hack, registry
+- Refs: docs/minigames/06-terminal-hack.md, src/app/data/tutorials/minigame-tutorials.data.ts
+
+T-2026-193 creates Terminal Hack tutorial step data and T-2026-089 (in-progress) registers the minigame in the registry. Following the P2 pattern of T-2026-382 (which wired tutorial data for all 4 P2 games) and the P3 pattern of T-2026-500 (Corridor Runner), this ticket wires the tutorial data into the registry config. Without this, the MinigameTutorialOverlayComponent cannot display Terminal Hack first-play instructions.
+
+Acceptance criteria:
+- [ ] Terminal Hack `provideMinigame()` call updated to include tutorial steps from MinigameInstructionsData
+- [ ] Tutorial steps accessible via `MinigameRegistryService.getConfig('terminal-hack').tutorialSteps`
+- [ ] Tutorial overlay displays Terminal Hack-specific steps on first play
+- [ ] Unit tests for: tutorial data present in registry config, correct step count
+
+### T-2026-515
+- Title: Create integration test for Terminal Hack level data compatibility with engine
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P4
+- Depends: T-2026-086, T-2026-087, T-2026-145
+- Blocked-by: —
+- Tags: testing, integration, terminal-hack, level-data, engine
+- Refs: docs/minigames/06-terminal-hack.md, src/app/data/levels/terminal-hack.data.ts
+
+T-2026-086 (completed) defined 21 Terminal Hack levels and T-2026-087 (completed) created the engine. T-2026-145 registers the level data. Following the P3 pattern of T-2026-501 (Corridor Runner level data compatibility), this integration test verifies all 21 levels load into the engine without errors and produce valid evaluation results.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/terminal-hack/level-data-compat.integration.spec.ts`
+- [ ] Test: all 21 Terminal Hack levels load into the engine via `initialize()` without errors
+- [ ] Test: each level's `targetFormSpec` has at least 1 form element
+- [ ] Test: each level's `testCases` has at least 1 test case
+- [ ] Test: each level's `availableElements` is non-empty
+- [ ] Test: each level's `timeLimit` is a positive number
+- [ ] Test: level 1 basic configuration produces expected evaluation results when correct form elements are submitted
+- [ ] Test: engine can be reset and loaded with a different level from the pack
+- [ ] Uses real TerminalHackEngine with real level data constants
+
+### T-2026-516
+- Title: Create integration test for TerminalHackFormEvaluationService + TerminalHackEngine coordinated lifecycle
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P4
+- Depends: T-2026-508
+- Blocked-by: —
+- Tags: testing, integration, terminal-hack, evaluation, engine
+- Refs: docs/minigames/06-terminal-hack.md
+
+After T-2026-508 wires TerminalHackFormEvaluationService into the engine, this integration test verifies the coordinated lifecycle: loading form specs, evaluating player code, running test cases, and scoring through the engine's action pipeline. Follows the P2 pattern of T-2026-476/477/478 and P3 pattern of T-2026-502.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/terminal-hack/evaluation-engine.integration.spec.ts`
+- [ ] Test: engine.initialize() loads form spec into evaluation service
+- [ ] Test: submitForm action delegates to evaluation service and returns element-by-element results
+- [ ] Test: runTests action executes test cases through evaluation service and returns pass/fail per case
+- [ ] Test: all test cases passing triggers engine completion with scoring
+- [ ] Test: 3 failed test runs triggers engine failure
+- [ ] Test: engine.reset() resets evaluation service state
+- [ ] Uses real TerminalHackEngine and TerminalHackFormEvaluationService with level 1 data
+
+### T-2026-517
+- Title: Create Terminal Hack visual state integration test for UI-to-engine signal binding
+- Status: todo
+- Assigned: unassigned
+- Priority: medium
+- Size: S
+- Milestone: P4
+- Depends: T-2026-511, T-2026-512, T-2026-513
+- Blocked-by: —
+- Tags: testing, integration, terminal-hack, visual-state, ui
+- Refs: docs/minigames/06-terminal-hack.md, src/app/features/minigames/terminal-hack/
+
+T-2026-492 covers P2 minigame UI-to-simulation visual state tests and T-2026-504 covers P3. No equivalent exists for P4 Terminal Hack. This test verifies the UI components correctly reflect engine state: code panel shows target spec, live preview reflects player elements, test runner shows results, and power gauge reflects timer.
+
+Acceptance criteria:
+- [ ] Integration test at `src/app/features/minigames/terminal-hack/visual-state.integration.spec.ts`
+- [ ] Test: code panel renders target form spec from engine level data
+- [ ] Test: code change triggers engine state update, live preview reflects new elements
+- [ ] Test: runTests action produces results, test runner panel shows pass/fail indicators
+- [ ] Test: timer signal updates power gauge visual state
+- [ ] Each test: uses real engine + component fixture
+- [ ] Each test: verifies DOM state reflects engine signal values after action
+
+### T-2026-518
+- Title: Update architecture.md with P4 Terminal Hack patterns and conventions
+- Status: todo
+- Assigned: unassigned
+- Priority: low
+- Size: S
+- Milestone: P4
+- Depends: T-2026-508, T-2026-087
+- Blocked-by: —
+- Tags: documentation, architecture, conventions, terminal-hack
+- Refs: docs/architecture.md, src/app/features/minigames/terminal-hack/
+
+Architecture.md documents P1 technical decisions and was updated for P3 Corridor Runner (T-2026-507). P4 adds Terminal Hack with new patterns: form code evaluation, live preview rendering, test case execution with pass/fail scoring, and the retro terminal aesthetic. These patterns should be documented for consistency with future minigames.
+
+Acceptance criteria:
+- [ ] architecture.md documents Terminal Hack's form evaluation pattern (code input -> evaluation -> test cases)
+- [ ] Documents the live preview rendering approach for real-time form building
+- [ ] Documents the test case execution model (predefined inputs, expected validation states)
+- [ ] Lists TerminalHackFormEvaluationService in the simulation services table
+- [ ] Updates the persistence table if any new localStorage keys are added
+- [ ] Notes the retro terminal aesthetic (green-on-black, scanlines) as a game-specific visual pattern
 
 ---
 

@@ -251,3 +251,4 @@
 [2026-03-14] T-2026-086: Define Terminal Hack level data for 21 levels — defined 21 Terminal Hack levels with types, data, and 27 unit tests (claude)
 [2026-03-15] T-2026-087: Create Terminal Hack minigame engine — created engine with form evaluation, timer management, 3-failure lose condition, scoring (49 tests) (claude)
 [2026-03-15] T-2026-088: Create Terminal Hack minigame UI component — created three-panel UI with retro terminal theme, power gauge, hint system (32 tests) (claude)
+[2026-03-15] T-2026-089: Register Terminal Hack in MinigameRegistry and wire routes — registered Terminal Hack with provideMinigame/provideLevelData, updated E2E tests (claude)
