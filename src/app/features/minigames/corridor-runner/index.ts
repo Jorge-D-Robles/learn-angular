@@ -20,3 +20,4 @@ export {
 } from './corridor-runner-simulation.service';
 export { CorridorRunnerComponent } from './corridor-runner.component';
 export { CorridorRunnerMapComponent } from './map/map';
+export { CorridorRunnerRouteEditorComponent } from './route-editor/route-editor';
