@@ -2325,28 +2325,7 @@ Acceptance criteria:
 
 
 
-### T-2026-518
-- Title: Update architecture.md with P4 Terminal Hack patterns and conventions
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P4
-- Depends: T-2026-508, T-2026-087
-- Blocked-by: —
-- Tags: documentation, architecture, conventions, terminal-hack
-- Refs: docs/architecture.md, src/app/features/minigames/terminal-hack/
 
-Architecture.md documents P1 technical decisions and was updated for P3 Corridor Runner (T-2026-507). P4 adds Terminal Hack with new patterns: form code evaluation, live preview rendering, test case execution with pass/fail scoring, and the retro terminal aesthetic. These patterns should be documented for consistency with future minigames.
-
-Acceptance criteria:
-- [ ] architecture.md documents Terminal Hack's form evaluation pattern (code input -> evaluation -> test cases)
-- [ ] Documents the live preview rendering approach for real-time form building
-- [ ] Documents the test case execution model (predefined inputs, expected validation states)
-- [ ] Lists TerminalHackFormEvaluationService in the simulation services table
-- [ ] Updates the persistence table if any new localStorage keys are added
-- [ ] Notes the retro terminal aesthetic (green-on-black, scanlines) as a game-specific visual pattern
-- Started: 2026-03-15
 
 ---
 

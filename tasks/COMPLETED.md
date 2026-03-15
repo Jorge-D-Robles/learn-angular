@@ -271,3 +271,4 @@
 [2026-03-15] T-2026-516: Create integration test for TerminalHackFormEvaluationService + TerminalHackEngine coordinated lifecycle — created 6 integration tests for engine+service coordinated lifecycle with real level data (claude)
 [2026-03-15] T-2026-517: Create Terminal Hack visual state integration test — retired as redundant, coverage already provided by component+child specs, added gauge width assertion (claude)
 [2026-03-15] T-2026-269: Create P4 end-to-end smoke test for Terminal Hack game loop — created 3 Playwright E2E smoke tests for Terminal Hack game rendering (claude)
+[2026-03-15] T-2026-518: Update architecture.md with P4 Terminal Hack patterns and conventions — documented Terminal Hack patterns: form evaluation pipeline, live preview, test runner, simulation services, retro terminal aesthetic (claude)
