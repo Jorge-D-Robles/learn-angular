@@ -2343,8 +2343,8 @@ Acceptance criteria:
 
 ### T-2026-514
 - Title: Wire Terminal Hack tutorial data into MinigameRegistryService config
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P4
@@ -2360,6 +2360,7 @@ Acceptance criteria:
 - [ ] Tutorial steps accessible via `MinigameRegistryService.getConfig('terminal-hack').tutorialSteps`
 - [ ] Tutorial overlay displays Terminal Hack-specific steps on first play
 - [ ] Unit tests for: tutorial data present in registry config, correct step count
+- Started: 2026-03-15
 
 ### T-2026-515
 - Title: Create integration test for Terminal Hack level data compatibility with engine

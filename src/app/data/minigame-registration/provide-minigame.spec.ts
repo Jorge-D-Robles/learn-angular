@@ -269,6 +269,15 @@ describe('provideMinigame — terminal-hack', () => {
     expect(config).toBeDefined();
     expect(config!.name).toBe('Terminal Hack');
   });
+
+  it('should include tutorialSteps for terminal-hack after registration', () => {
+    const config = registry.getConfig('terminal-hack');
+    const tutorial = getMinigameTutorial('terminal-hack');
+    expect(config!.tutorialSteps).toBeDefined();
+    expect(tutorial).toBeDefined();
+    expect(config!.tutorialSteps!.length).toBe(tutorial!.steps.length);
+    expect(config!.tutorialSteps![0].title).toBe(tutorial!.steps[0].title);
+  });
 });
 
 describe('provideMinigame — game without tutorial data', () => {
