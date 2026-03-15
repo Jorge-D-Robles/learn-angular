@@ -246,3 +246,4 @@
 [2026-03-14] T-2026-460: Create CorridorRunnerMapComponent for top-down station map navigation visualization — created pure presentation map component with corridor glow, crew animation, 15 tests (claude)
 [2026-03-14] T-2026-428: Create CorridorRunnerRouteEditorComponent for config phase route editing — created route editor component with semantic validation and one-shot seeding (18 tests) (claude)
 [2026-03-14] T-2026-497: Wire CorridorRunnerSimulationService into CorridorRunnerEngine lifecycle — wired simulation service into engine lifecycle with delegation and reset propagation (4 tests) (claude)
+[2026-03-14] T-2026-498: Wire CorridorRunnerMapComponent into CorridorRunnerComponent UI — wired map sub-component, removed inline SVG and 7 duplicated signals (8 wiring tests) (claude)
