@@ -2359,26 +2359,6 @@ Acceptance criteria:
 - [ ] Test: engine.reset() resets simulation service state
 - [ ] Uses real CorridorRunnerEngine and CorridorRunnerSimulationService with level 1 data
 
-### T-2026-503
-- Title: Mark T-2026-266 as superseded by T-2026-081 and T-2026-082
-- Status: in-progress
-- Assigned: claude
-- Priority: low
-- Size: S
-- Milestone: P3
-- Depends: —
-- Blocked-by: —
-- Tags: cleanup, backlog-hygiene, corridor-runner
-- Refs: src/app/features/minigames/corridor-runner/corridor-runner.types.ts
-
-T-2026-266 ("Create Corridor Runner route configuration and map data model") defines RouteEntry, MapNode, MapEdge, StationMap, TestNavigation, and HullBreachResult types. These types were created as part of T-2026-081 (level data) and T-2026-082 (engine) under the names RouteEntry, MapNode, MapEdge, MapLayout, TestNavigation, and NavigationResult. The types file exists at `src/app/features/minigames/corridor-runner/corridor-runner.types.ts`. T-2026-266 is fully superseded.
-
-Acceptance criteria:
-- [ ] T-2026-266 removed from BACKLOG.md
-- [ ] T-2026-460 and T-2026-428 dependencies updated to reference T-2026-082 instead of T-2026-266
-- [ ] T-2026-426 dependency updated to reference T-2026-082 instead of T-2026-266
-- [ ] No broken dependency chains remain
-- Started: 2026-03-14
 
 ### T-2026-504
 - Title: Create Corridor Runner visual state integration test for UI-to-engine signal binding
