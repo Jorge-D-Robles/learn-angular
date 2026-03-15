@@ -261,3 +261,4 @@
 [2026-03-15] T-2026-509: Create TerminalHackLivePreviewComponent for real-time form preview panel — created TerminalHackLivePreviewComponent with reactive form preview, status indicators, and 14 tests (claude)
 [2026-03-15] T-2026-510: Create TerminalHackTestRunnerComponent for test case execution panel — created TerminalHackTestRunnerComponent with pass/fail display, animation, and 16 tests (claude)
 [2026-03-15] T-2026-511: Wire TerminalHackCodePanelComponent into TerminalHackComponent UI — wired code panel into parent, replaced inline spec/palette/editor with sub-component (claude)
+[2026-03-15] T-2026-512: Wire TerminalHackLivePreviewComponent into TerminalHackComponent UI — wired live preview into parent sidebar with independent @if guard and 6 tests (claude)

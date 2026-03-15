@@ -2399,28 +2399,6 @@ Acceptance criteria:
 
 
 
-### T-2026-512
-- Title: Wire TerminalHackLivePreviewComponent into TerminalHackComponent UI
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P4
-- Depends: T-2026-509, T-2026-088
-- Blocked-by: —
-- Tags: integration, ui, minigame, terminal-hack, live-preview
-- Refs: docs/minigames/06-terminal-hack.md
-
-T-2026-509 creates TerminalHackLivePreviewComponent and T-2026-088 (completed) created the UI component. This ticket wires the live preview child component into the parent, connecting engine signals for the player's form structure and the target spec.
-
-Acceptance criteria:
-- [ ] TerminalHackComponent renders TerminalHackLivePreviewComponent in the preview area
-- [ ] `formElements` input bound to the engine's current player form elements signal
-- [ ] `targetSpec` input bound to the engine's level target spec
-- [ ] `elementClicked` output triggers the code panel to focus on the corresponding element
-- [ ] Preview updates reactively as the player edits form code
-- [ ] Unit tests for: child component rendering, input bindings, element click forwarding
-- Started: 2026-03-15
 
 ### T-2026-513
 - Title: Wire TerminalHackTestRunnerComponent into TerminalHackComponent UI
