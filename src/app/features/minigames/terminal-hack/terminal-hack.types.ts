@@ -81,6 +81,29 @@ export interface FormHint {
   readonly text: string;
 }
 
+// ---------------------------------------------------------------------------
+// Shared tool constant sets
+// ---------------------------------------------------------------------------
+
+/** Template-driven form tools. */
+export const TEMPLATE_DRIVEN_TOOLS: ReadonlySet<FormToolType> = new Set(['ngModel', 'ngSubmit']);
+
+/** Reactive form tools. */
+export const REACTIVE_TOOLS: ReadonlySet<FormToolType> = new Set([
+  'FormControl', 'FormGroup', 'FormArray', 'FormBuilder',
+]);
+
+/** Validator tools (valid for both form types). */
+export const VALIDATOR_TOOLS: ReadonlySet<FormToolType> = new Set([
+  'Validators.required', 'Validators.email', 'Validators.pattern',
+  'Validators.min', 'Validators.max', 'Validators.minLength', 'Validators.maxLength',
+  'customValidator', 'asyncValidator', 'crossFieldValidator',
+]);
+
+// ---------------------------------------------------------------------------
+// Level data
+// ---------------------------------------------------------------------------
+
 /** Game-specific level data for Terminal Hack. */
 export interface TerminalHackLevelData {
   readonly targetFormSpec: TargetFormSpec;

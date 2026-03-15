@@ -7,12 +7,15 @@
 // ---------------------------------------------------------------------------
 
 import { Injectable } from '@angular/core';
-import type {
-  TargetFormSpec,
-  FormTestCase,
-  FormElementSpec,
-  FormToolType,
-  FormValidationRule,
+import {
+  TEMPLATE_DRIVEN_TOOLS,
+  REACTIVE_TOOLS,
+  VALIDATOR_TOOLS,
+  type TargetFormSpec,
+  type FormTestCase,
+  type FormElementSpec,
+  type FormToolType,
+  type FormValidationRule,
 } from './terminal-hack.types';
 import type {
   PlayerFormElement,
@@ -33,25 +36,6 @@ export interface StructureResult {
   readonly missingElements: readonly string[];
   readonly incorrectTypes: readonly string[];
 }
-
-// ---------------------------------------------------------------------------
-// Constants (copied from engine; T-2026-508 will consolidate)
-// ---------------------------------------------------------------------------
-
-/** Template-driven form tools. */
-const TEMPLATE_DRIVEN_TOOLS: ReadonlySet<FormToolType> = new Set(['ngModel', 'ngSubmit']);
-
-/** Reactive form tools. */
-const REACTIVE_TOOLS: ReadonlySet<FormToolType> = new Set([
-  'FormControl', 'FormGroup', 'FormArray', 'FormBuilder',
-]);
-
-/** Validator tools (valid for both form types). */
-const VALIDATOR_TOOLS: ReadonlySet<FormToolType> = new Set([
-  'Validators.required', 'Validators.email', 'Validators.pattern',
-  'Validators.min', 'Validators.max', 'Validators.minLength', 'Validators.maxLength',
-  'customValidator', 'asyncValidator', 'crossFieldValidator',
-]);
 
 // ---------------------------------------------------------------------------
 // Service

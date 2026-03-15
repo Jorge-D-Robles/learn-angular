@@ -2,14 +2,17 @@ import { signal, computed, type Signal } from '@angular/core';
 import { MinigameEngine, type ActionResult } from '../../../core/minigame/minigame-engine';
 import type { MinigameEngineConfig } from '../../../core/minigame/minigame-engine';
 import { MinigameStatus } from '../../../core/minigame/minigame.types';
-import type {
-  TerminalHackLevelData,
-  TargetFormSpec,
-  FormTestCase,
-  FormToolType,
-  FormElementType,
-  FormValidationRule,
-  FormHint,
+import {
+  TEMPLATE_DRIVEN_TOOLS,
+  REACTIVE_TOOLS,
+  VALIDATOR_TOOLS,
+  type TerminalHackLevelData,
+  type TargetFormSpec,
+  type FormTestCase,
+  type FormToolType,
+  type FormElementType,
+  type FormValidationRule,
+  type FormHint,
 } from './terminal-hack.types';
 
 // ---------------------------------------------------------------------------
@@ -159,21 +162,6 @@ export const DEFAULT_TERMINAL_HACK_LIVES = 3;
 const INVALID_NO_CHANGE: ActionResult = { valid: false, scoreChange: 0, livesChange: 0 };
 const VALID_NO_CHANGE: ActionResult = { valid: true, scoreChange: 0, livesChange: 0 };
 const TEST_FAILURE_RESULT: ActionResult = { valid: true, scoreChange: 0, livesChange: -1 };
-
-/** Template-driven form tools. */
-const TEMPLATE_DRIVEN_TOOLS: ReadonlySet<FormToolType> = new Set(['ngModel', 'ngSubmit']);
-
-/** Reactive form tools. */
-const REACTIVE_TOOLS: ReadonlySet<FormToolType> = new Set([
-  'FormControl', 'FormGroup', 'FormArray', 'FormBuilder',
-]);
-
-/** Validator tools (valid for both form types). */
-const VALIDATOR_TOOLS: ReadonlySet<FormToolType> = new Set([
-  'Validators.required', 'Validators.email', 'Validators.pattern',
-  'Validators.min', 'Validators.max', 'Validators.minLength', 'Validators.maxLength',
-  'customValidator', 'asyncValidator', 'crossFieldValidator',
-]);
 
 // ---------------------------------------------------------------------------
 // Engine
@@ -384,6 +372,24 @@ export class TerminalHackEngine extends MinigameEngine<TerminalHackLevelData> {
     }
 
     return result;
+  }
+
+  // --- Form element evaluation ---
+
+  /**
+   * Evaluates placed form elements against the target spec via the simulation service.
+   * Returns null when not Playing or when no simulation service is provided.
+   */
+  evaluateFormElements(): readonly ElementEvaluationResult[] | null {
+    if (this.status() !== MinigameStatus.Playing) {
+      return null;
+    }
+    if (!this._simulationService) {
+      return null;
+    }
+    const spec = this._targetFormSpec();
+    if (!spec) return null;
+    return this._simulationService.evaluateForm(this._placedElements(), spec);
   }
 
   // --- Hint tracking ---

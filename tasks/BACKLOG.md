@@ -2397,8 +2397,8 @@ Acceptance criteria:
 
 ### T-2026-508
 - Title: Wire TerminalHackFormEvaluationService into TerminalHackEngine lifecycle
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P4
@@ -2417,6 +2417,7 @@ Acceptance criteria:
 - [ ] Engine `reset()` calls `service.reset()`
 - [ ] Existing engine unit tests updated to verify delegation
 - [ ] Unit tests for: service initialization on engine init, delegation on submit, delegation on test run, reset propagation
+- Started: 2026-03-15
 
 ### T-2026-509
 - Title: Create TerminalHackLivePreviewComponent for real-time form preview panel

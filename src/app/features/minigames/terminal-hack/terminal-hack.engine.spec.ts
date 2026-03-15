@@ -7,6 +7,7 @@ import {
   type TerminalHackSimulationService,
   type TestRunResult,
 } from './terminal-hack.engine';
+import { TerminalHackFormEvaluationService } from './terminal-hack-evaluation.service';
 import type {
   TerminalHackLevelData,
   TargetFormSpec,
@@ -793,6 +794,135 @@ describe('TerminalHackEngine', () => {
       expect(HINT_SCORE_PENALTY).toBe(50);
       expect(MIN_MULTIPLIER).toBe(0.5);
       expect(DEFAULT_TERMINAL_HACK_LIVES).toBe(3);
+    });
+  });
+
+  // =========================================================================
+  // 15. evaluateFormElements Tests
+  // =========================================================================
+  describe('evaluateFormElements', () => {
+    it('returns per-element results via service', () => {
+      const service = new TerminalHackFormEvaluationService();
+      const engine = new TerminalHackEngine(undefined, service);
+      initAndStart(engine);
+      placeCorrectElement(engine);
+      const results = engine.evaluateFormElements();
+      expect(results).not.toBeNull();
+      expect(results!.length).toBe(1);
+      expect(results![0].correctType).toBe(true);
+      expect(results![0].correctTool).toBe(true);
+      expect(results![0].elementId).toBe('el-1');
+    });
+
+    it('returns null when no service provided', () => {
+      const engine = createEngine();
+      initAndStart(engine);
+      placeCorrectElement(engine);
+      const results = engine.evaluateFormElements();
+      expect(results).toBeNull();
+    });
+
+    it('returns all-false for missing elements', () => {
+      const service = new TerminalHackFormEvaluationService();
+      const engine = new TerminalHackEngine(undefined, service);
+      initAndStart(engine);
+      // Do NOT place any elements
+      const results = engine.evaluateFormElements();
+      expect(results).not.toBeNull();
+      expect(results!.length).toBe(1);
+      expect(results![0].correctType).toBe(false);
+      expect(results![0].correctTool).toBe(false);
+      expect(results![0].missingValidations).toEqual(['required']);
+    });
+
+    it('returns null when not Playing', () => {
+      const service = new TerminalHackFormEvaluationService();
+      const engine = new TerminalHackEngine(undefined, service);
+      engine.initialize(makeLevel());
+      // Status is Loading, not Playing
+      const results = engine.evaluateFormElements();
+      expect(results).toBeNull();
+    });
+  });
+
+  // =========================================================================
+  // 16. Real Service Wiring Tests
+  // =========================================================================
+  describe('real service wiring', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('runTestCases delegates to service and completes', () => {
+      const service = new TerminalHackFormEvaluationService();
+      const engine = new TerminalHackEngine(undefined, service);
+      initAndStart(engine);
+      placeCorrectElement(engine);
+      const result = engine.runTestCases();
+      expect(result).not.toBeNull();
+      expect(result!.allPassed).toBe(true);
+      expect(engine.status()).toBe(MinigameStatus.Won);
+      expect(engine.score()).toBeGreaterThan(0);
+    });
+
+    it('failed tests cost a life', () => {
+      const service = new TerminalHackFormEvaluationService();
+      const engine = new TerminalHackEngine({ initialLives: 5 }, service);
+      initAndStart(engine);
+      // Place wrong element type
+      engine.submitAction({
+        type: 'place-element',
+        elementId: 'el-1',
+        elementType: 'email', // Wrong -- target expects 'text'
+        toolType: 'FormControl',
+      });
+      const result = engine.runTestCases();
+      expect(result!.allPassed).toBe(false);
+      expect(engine.lives()).toBe(4);
+    });
+
+    it('reset propagates to service', () => {
+      const service = new TerminalHackFormEvaluationService();
+      const engine = new TerminalHackEngine({ initialLives: 10 }, service);
+      initAndStart(engine);
+      // Place wrong element and run tests to produce non-zero _lastTestRunResult
+      engine.submitAction({
+        type: 'place-element',
+        elementId: 'el-1',
+        elementType: 'email',
+        toolType: 'FormControl',
+      });
+      engine.runTestCases();
+      // Service now has cached test pass rate
+      expect(service.getTestPassRate()).toBeGreaterThanOrEqual(0);
+      // Re-initialize triggers onLevelLoad which calls reset()
+      engine.initialize(makeLevel());
+      expect(service.getTestPassRate()).toBe(0);
+    });
+
+    it('evaluateFormElements returns per-element feedback for partial form', () => {
+      const service = new TerminalHackFormEvaluationService();
+      const engine = new TerminalHackEngine(undefined, service);
+      initAndStart(engine);
+      // Place correct type but NO validations (target expects 'required')
+      engine.submitAction({
+        type: 'place-element',
+        elementId: 'el-1',
+        elementType: 'text',
+        toolType: 'FormControl',
+      });
+      // Do NOT set validations -- so correctValidations should be false
+      const results = engine.evaluateFormElements();
+      expect(results).not.toBeNull();
+      expect(results!.length).toBe(1);
+      expect(results![0].correctType).toBe(true);
+      expect(results![0].correctTool).toBe(true);
+      expect(results![0].correctValidations).toBe(false);
+      expect(results![0].missingValidations).toEqual(['required']);
     });
   });
 });
