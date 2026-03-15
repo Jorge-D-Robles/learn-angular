@@ -2401,8 +2401,8 @@ Acceptance criteria:
 
 ### T-2026-512
 - Title: Wire TerminalHackLivePreviewComponent into TerminalHackComponent UI
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P4
@@ -2420,6 +2420,7 @@ Acceptance criteria:
 - [ ] `elementClicked` output triggers the code panel to focus on the corresponding element
 - [ ] Preview updates reactively as the player edits form code
 - [ ] Unit tests for: child component rendering, input bindings, element click forwarding
+- Started: 2026-03-15
 
 ### T-2026-513
 - Title: Wire TerminalHackTestRunnerComponent into TerminalHackComponent UI

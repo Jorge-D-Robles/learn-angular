@@ -8,6 +8,7 @@ import {
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
 import { TerminalHackCodePanelComponent } from './code-panel/code-panel';
+import { TerminalHackLivePreviewComponent } from './live-preview/live-preview';
 import {
   TerminalHackEngine,
   HINT_SCORE_PENALTY,
@@ -25,7 +26,7 @@ import type {
 
 @Component({
   selector: 'app-terminal-hack',
-  imports: [TerminalHackCodePanelComponent],
+  imports: [TerminalHackCodePanelComponent, TerminalHackLivePreviewComponent],
   templateUrl: './terminal-hack.component.html',
   styleUrl: './terminal-hack.component.scss',
 })
@@ -41,6 +42,7 @@ export class TerminalHackComponent implements OnDestroy {
   // --- Engine-delegated signals (null-safe) ---
   readonly targetFormSpec = computed(() => this.engine?.targetFormSpec() ?? null);
   readonly placedElements = computed(() => this.engine?.placedElements() ?? new Map<string, PlayerFormElement>());
+  readonly placedElementsArray = computed(() => Array.from(this.placedElements().values()));
   readonly formPreview = computed<FormPreview>(() =>
     this.engine?.formPreview() ?? { elements: [], formType: 'reactive', isComplete: false, completionRatio: 0 },
   );

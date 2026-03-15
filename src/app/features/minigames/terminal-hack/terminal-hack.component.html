@@ -21,6 +21,13 @@
     }
 
     <div class="terminal-hack__sidebar">
+      @if (targetFormSpec(); as previewSpec) {
+        <app-terminal-hack-live-preview
+          [targetSpec]="previewSpec"
+          [formElements]="placedElementsArray()"
+          (elementClicked)="onSelectSlot($event)" />
+      }
+
       <!-- Completion indicator -->
       <div class="terminal-hack__completion">
         {{ completionPercent() }}%

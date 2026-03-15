@@ -2,6 +2,7 @@ import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { TerminalHackComponent } from './terminal-hack.component';
 import { TerminalHackCodePanelComponent } from './code-panel/code-panel';
+import { TerminalHackLivePreviewComponent } from './live-preview/live-preview';
 import { TerminalHackEngine } from './terminal-hack.engine';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
@@ -473,6 +474,61 @@ describe('TerminalHackComponent', () => {
       expect(resetSpy).toHaveBeenCalled();
       expect(component.revealedHintCount()).toBe(0);
       expect(component.selectedSlotId()).toBeNull();
+    });
+  });
+
+  // --- 11. Live Preview Wiring ---
+
+  describe('Live Preview Wiring', () => {
+    it('should render live preview child component when engine has targetFormSpec', async () => {
+      await asyncSetup();
+      const livePreview = fixture.nativeElement.querySelector('app-terminal-hack-live-preview');
+      expect(livePreview).toBeTruthy();
+    });
+
+    it('should not render live preview when targetFormSpec is null (inert mode)', () => {
+      TestBed.configureTestingModule({
+        imports: [TerminalHackComponent],
+      });
+      const inertFixture = TestBed.createComponent(TerminalHackComponent);
+      inertFixture.detectChanges();
+
+      const livePreview = inertFixture.nativeElement.querySelector('app-terminal-hack-live-preview');
+      expect(livePreview).toBeFalsy();
+      inertFixture.destroy();
+    });
+
+    it('should bind targetSpec input to engine targetFormSpec', async () => {
+      await asyncSetup();
+      const livePreviewDe = fixture.debugElement.query(By.directive(TerminalHackLivePreviewComponent));
+      const livePreviewInstance = livePreviewDe.componentInstance as TerminalHackLivePreviewComponent;
+      expect(livePreviewInstance.targetSpec()).toEqual(engine.targetFormSpec());
+    });
+
+    it('should pass empty formElements when no elements placed', async () => {
+      await asyncSetup();
+      const livePreviewDe = fixture.debugElement.query(By.directive(TerminalHackLivePreviewComponent));
+      const livePreviewInstance = livePreviewDe.componentInstance as TerminalHackLivePreviewComponent;
+      expect(livePreviewInstance.formElements()).toEqual([]);
+    });
+
+    it('should pass formElements after placement', async () => {
+      await asyncSetup();
+      component.onPlaceElement('el-1', 'text', 'FormControl');
+      fixture.detectChanges();
+
+      const livePreviewDe = fixture.debugElement.query(By.directive(TerminalHackLivePreviewComponent));
+      const livePreviewInstance = livePreviewDe.componentInstance as TerminalHackLivePreviewComponent;
+      expect(livePreviewInstance.formElements().length).toBe(1);
+    });
+
+    it('should forward elementClicked to selectedSlotId', async () => {
+      await asyncSetup();
+      const slot = fixture.nativeElement.querySelector('.live-preview__slot') as HTMLElement;
+      expect(slot).toBeTruthy();
+      slot.click();
+      fixture.detectChanges();
+      expect(component.selectedSlotId()).toBe('el-1');
     });
   });
 });
