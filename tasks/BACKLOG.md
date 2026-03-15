@@ -2344,8 +2344,8 @@ Acceptance criteria:
 
 ### T-2026-515
 - Title: Create integration test for Terminal Hack level data compatibility with engine
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P4
@@ -2366,6 +2366,7 @@ Acceptance criteria:
 - [ ] Test: level 1 basic configuration produces expected evaluation results when correct form elements are submitted
 - [ ] Test: engine can be reset and loaded with a different level from the pack
 - [ ] Uses real TerminalHackEngine with real level data constants
+- Started: 2026-03-15
 
 ### T-2026-516
 - Title: Create integration test for TerminalHackFormEvaluationService + TerminalHackEngine coordinated lifecycle
