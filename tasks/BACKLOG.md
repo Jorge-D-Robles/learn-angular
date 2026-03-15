@@ -2400,29 +2400,6 @@ Acceptance criteria:
 
 
 
-### T-2026-513
-- Title: Wire TerminalHackTestRunnerComponent into TerminalHackComponent UI
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P4
-- Depends: T-2026-510, T-2026-088
-- Blocked-by: —
-- Tags: integration, ui, minigame, terminal-hack, test-runner
-- Refs: docs/minigames/06-terminal-hack.md
-
-T-2026-510 creates TerminalHackTestRunnerComponent and T-2026-088 (completed) created the UI component. This ticket wires the test runner child component into the parent, connecting engine signals for test cases and results.
-
-Acceptance criteria:
-- [ ] TerminalHackComponent renders TerminalHackTestRunnerComponent in the test panel area
-- [ ] `testCases` input bound to the engine's current level test cases
-- [ ] `testResults` input bound to the engine's last test run results signal
-- [ ] `isRunning` input bound to a running state signal
-- [ ] `runTestsRequested` output triggers the engine's `runTests()` action
-- [ ] Inline test case rendering removed from parent component
-- [ ] Unit tests for: child component rendering, input bindings, run tests forwarding
-- Started: 2026-03-15
 
 ### T-2026-514
 - Title: Wire Terminal Hack tutorial data into MinigameRegistryService config
