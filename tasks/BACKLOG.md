@@ -2396,32 +2396,6 @@ Acceptance criteria:
 
 
 
-### T-2026-509
-- Title: Create TerminalHackLivePreviewComponent for real-time form preview panel
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P4
-- Depends: T-2026-086, T-2026-007
-- Blocked-by: —
-- Tags: ui, component, minigame, terminal-hack, live-preview
-- Refs: docs/minigames/06-terminal-hack.md, docs/ux/visual-style.md
-
-Terminal Hack spec describes "Live preview updates as the player types" and "Left panel: target form preview; Right panel: form code editor." The live preview panel shows the player's form taking shape in real time. The UI component (T-2026-088) is L-size. Extracting the live preview into a standalone sub-component follows the established pattern and keeps the main component manageable.
-
-Acceptance criteria:
-- [ ] `TerminalHackLivePreviewComponent` at `src/app/features/minigames/terminal-hack/live-preview/live-preview.ts`
-- [ ] Input: `formElements` (PlayerFormElement[]) -- the player's current form structure
-- [ ] Input: `targetSpec` (TargetFormSpec) -- the target form for reference comparison
-- [ ] Renders a visual representation of the form the player is building (labels, input fields, buttons)
-- [ ] Updates reactively as the player adds/modifies form elements
-- [ ] Visual indicators: correctly-placed elements glow green, missing elements shown as dashed placeholders
-- [ ] Terminal aesthetic: green-on-black rendering matching the retro theme
-- [ ] Output: `elementClicked` event with elementId for editing
-- [ ] Exported from terminal-hack barrel
-- [ ] Unit tests for: form element rendering, reactive updates, correct/missing indicators, terminal theme applied
-- Started: 2026-03-15
 
 ### T-2026-510
 - Title: Create TerminalHackTestRunnerComponent for test case execution panel
