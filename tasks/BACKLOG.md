@@ -2053,26 +2053,6 @@ Acceptance criteria:
 
 ## P3 -- Navigation Bundle
 
-### T-2026-144
-- Title: Register Corridor Runner level data with LevelLoaderService
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P3
-- Depends: T-2026-081, T-2026-030
-- Blocked-by: —
-- Tags: minigame, corridor-runner, level-data, integration
-- Refs: docs/minigames/05-corridor-runner.md, src/app/core/levels/level-loader.service.ts
-
-Register Corridor Runner level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
-
-Acceptance criteria:
-- [ ] Corridor Runner level pack registered with LevelLoaderService
-- [ ] `LevelLoaderService.loadLevel('corridor-runner', levelId)` returns correct level data
-- [ ] `LevelLoaderService.getLevelPack('corridor-runner')` returns all 18 levels grouped by tier
-- [ ] Unit tests for: level loading by ID, level pack retrieval
-
 ### T-2026-191
 - Title: Create Corridor Runner minigame tutorial data
 - Status: todo
