@@ -2398,29 +2398,6 @@ Acceptance criteria:
 
 
 
-### T-2026-511
-- Title: Wire TerminalHackCodePanelComponent into TerminalHackComponent UI
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P4
-- Depends: T-2026-431, T-2026-088
-- Blocked-by: —
-- Tags: integration, ui, minigame, terminal-hack, code-panel
-- Refs: docs/minigames/06-terminal-hack.md
-
-T-2026-431 creates TerminalHackCodePanelComponent and T-2026-088 (completed) created the UI component. This ticket wires the code panel child component into the parent, replacing any inline target spec and code editor rendering with the dedicated sub-component. Follows the P2 wiring pattern (T-2026-472 for WireProtocol, T-2026-473 for FlowCommander).
-
-Acceptance criteria:
-- [ ] TerminalHackComponent renders TerminalHackCodePanelComponent in the main panel area
-- [ ] `targetSpec` input bound to the engine's current level target form spec
-- [ ] `initialCode` input bound to the engine's starter code (if any)
-- [ ] `availableTools` input bound to the level's available form tools
-- [ ] `codeChanged` output updates the engine's player code state
-- [ ] Inline target spec and code editor rendering removed from parent component
-- [ ] Unit tests for: child component rendering, input bindings, code change forwarding
-- Started: 2026-03-15
 
 ### T-2026-512
 - Title: Wire TerminalHackLivePreviewComponent into TerminalHackComponent UI
