@@ -2139,29 +2139,6 @@ Acceptance criteria:
 - [ ] Test: wildcard route catches all unmatched paths
 - [ ] Uses real CorridorRunnerSimulationService with level 1 data
 
-### T-2026-499
-- Title: Wire CorridorRunnerRouteEditorComponent into CorridorRunnerComponent UI
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P3
-- Depends: T-2026-428, T-2026-083
-- Blocked-by: —
-- Tags: integration, ui, minigame, corridor-runner, route-editor
-- Refs: docs/minigames/05-corridor-runner.md, src/app/features/minigames/corridor-runner/corridor-runner.component.ts
-
-T-2026-428 creates the RouteEditorComponent sub-component for the config phase. T-2026-083 (completed) builds the main CorridorRunnerComponent with inline CodeEditorComponent usage for route editing. This ticket replaces the inline code editor setup with the dedicated RouteEditorComponent, wiring engine signals (initial config, available components) to inputs and connecting configChanged/configSubmitted outputs to engine actions. Follows the P2 sub-component wiring pattern.
-
-Acceptance criteria:
-- [ ] CorridorRunnerComponent imports and renders RouteEditorComponent in the config phase
-- [ ] `initialConfig` input bound to engine's solution config (empty for player to fill)
-- [ ] `availableComponents` input derived from level data's target destinations
-- [ ] `configChanged` output updates engine's player route config via `submitAction({ type: 'set-route-config' })`
-- [ ] `configSubmitted` output transitions game from config phase to run phase
-- [ ] Inline CodeEditorComponent setup removed from CorridorRunnerComponent's config phase section
-- [ ] Unit tests for: sub-component rendering in config phase, config change forwarding, phase transition on submit
-
 ### T-2026-500
 - Title: Wire Corridor Runner tutorial data into MinigameRegistryService config
 - Status: todo
