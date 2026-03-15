@@ -2310,27 +2310,6 @@ Acceptance criteria:
 
 
 
-### T-2026-194
-- Title: Create P4 minigame engine integration test for Terminal Hack
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P4
-- Depends: T-2026-089
-- Blocked-by: —
-- Tags: testing, integration, minigame, terminal-hack
-- Refs: docs/minigames/06-terminal-hack.md
-
-P2 has integration tests (T-2026-178) but P4 does not. This ticket creates integration tests for Terminal Hack verifying the engine-shell-level-data pipeline.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/features/minigames/terminal-hack/terminal-hack.integration.spec.ts`
-- [ ] Test: creates engine with real level data (level 1), writes form code, runs tests, verifies completion
-- [ ] Test: verifies MinigameShell state transitions (ready -> playing -> completed)
-- [ ] Test: verifies LevelCompletionService is called with correct result
-- [ ] Test: verifies scoring with time, test pass rate, and hint penalty
-- Started: 2026-03-15
 
 
 ### T-2026-269
