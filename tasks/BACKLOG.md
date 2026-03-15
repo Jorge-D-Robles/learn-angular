@@ -2398,8 +2398,8 @@ Acceptance criteria:
 
 ### T-2026-509
 - Title: Create TerminalHackLivePreviewComponent for real-time form preview panel
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P4
@@ -2421,6 +2421,7 @@ Acceptance criteria:
 - [ ] Output: `elementClicked` event with elementId for editing
 - [ ] Exported from terminal-hack barrel
 - [ ] Unit tests for: form element rendering, reactive updates, correct/missing indicators, terminal theme applied
+- Started: 2026-03-15
 
 ### T-2026-510
 - Title: Create TerminalHackTestRunnerComponent for test case execution panel
