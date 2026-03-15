@@ -2309,29 +2309,6 @@ Acceptance criteria:
 ## P4 -- Forms Bundle
 
 
-### T-2026-090
-- Title: Create story mission content for Chapters 14-17 (Phase 3 Data Input)
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P4
-- Depends: T-2026-038, T-2026-031
-- Blocked-by: —
-- Tags: story-missions, content, curriculum, phase-3
-- Refs: docs/curriculum.md
-
-Create narrative content for the 4 Data Input phase story missions.
-
-Acceptance criteria:
-- [ ] Mission data files at `src/app/data/missions/phase-3/`
-- [ ] Ch 14 (Forms Introduction): Basic Crew Report with template-driven form examples
-- [ ] Ch 15 (Form Control Values): Real-time Preview with form value reading examples
-- [ ] Ch 16 (Reactive Forms): Engineering Diagnostic with FormBuilder examples
-- [ ] Ch 17 (Forms Validation): Data Integrity Checks with validator examples
-- [ ] Each mission has 3-5 steps
-- [ ] Unit tests verify: all 4 missions have valid content
-
 ### T-2026-145
 - Title: Register Terminal Hack level data with LevelLoaderService
 - Status: todo
