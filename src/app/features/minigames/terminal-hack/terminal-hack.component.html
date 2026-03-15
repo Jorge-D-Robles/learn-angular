@@ -1,0 +1,96 @@
+<div class="terminal-hack">
+  <div class="terminal-hack__scanlines"></div>
+
+  <!-- Power gauge (hidden when timeLimit is 0) -->
+  @if (timeLimit() > 0) {
+    <div class="terminal-hack__power-gauge">
+      <div class="terminal-hack__power-gauge-fill"
+           [style.width.%]="powerGaugeRatio() * 100"
+           [style.backgroundColor]="powerGaugeColor()">
+      </div>
+    </div>
+  }
+
+  <div class="terminal-hack__content">
+    <!-- Left panel: Target form spec -->
+    <div class="terminal-hack__left-panel">
+      <h3>Target: {{ formName() }}</h3>
+      <span class="terminal-hack__form-type">{{ formType() }}</span>
+
+      <div class="terminal-hack__spec-list">
+        @for (element of targetElements(); track element.id) {
+          <div class="terminal-hack__spec-item"
+               [class.terminal-hack__spec-item--selected]="selectedSlotId() === element.id"
+               [class.terminal-hack__spec-item--filled]="placedElementIds().has(element.id)"
+               tabindex="0"
+               role="button"
+               (click)="onSelectSlot(element.id)"
+               (keydown.enter)="onSelectSlot(element.id)">
+            <span class="terminal-hack__spec-label">{{ element.label }}</span>
+            <span class="terminal-hack__spec-type">{{ element.elementType }}</span>
+            @for (v of element.validations; track v.type) {
+              <span class="terminal-hack__spec-validation">{{ v.type }}</span>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Completion indicator -->
+      <div class="terminal-hack__completion">
+        {{ completionPercent() }}%
+        @if (formPreview().isComplete) {
+          <span class="terminal-hack__complete-badge">COMPLETE</span>
+        }
+      </div>
+
+      <!-- Hints section -->
+      <div class="terminal-hack__hints">
+        <button class="terminal-hack__hint-btn"
+                [disabled]="allHintsRevealed()"
+                (click)="onUseHint()">
+          Hint (-{{ hintScorePenalty }} pts)
+        </button>
+        @for (hint of revealedHints(); track hint.order) {
+          <div class="terminal-hack__hint-text">{{ hint.text }}</div>
+        }
+      </div>
+    </div>
+
+    <!-- Right panel: Palette + Code preview -->
+    <div class="terminal-hack__right-panel">
+      <div class="terminal-hack__palette">
+        @for (tool of availableElements(); track tool) {
+          <button class="terminal-hack__tool-btn"
+                  (click)="onToolSelected(tool)">
+            {{ tool }}
+          </button>
+        }
+      </div>
+      <nx-code-editor [code]="synthesizedCode()" [readOnly]="true" />
+    </div>
+  </div>
+
+  <!-- Bottom panel: Test runner -->
+  <div class="terminal-hack__bottom-panel">
+    <button class="terminal-hack__run-btn"
+            [disabled]="!canRunTests()"
+            (click)="onRunTests()">
+      Run Tests
+    </button>
+    @if (testRunResult()) {
+      <div class="terminal-hack__test-results">
+        @for (result of testResults(); track result.testCaseId) {
+          <div class="terminal-hack__test-case"
+               [class.terminal-hack__test-case--pass]="result.passed"
+               [class.terminal-hack__test-case--fail]="!result.passed">
+            <span class="terminal-hack__test-icon">{{ result.passed ? '\u2713' : '\u2717' }}</span>
+            {{ result.testCaseId }}
+          </div>
+        }
+        <div class="terminal-hack__pass-rate">
+          Pass rate: {{ passRatePercent() }}%
+        </div>
+      </div>
+    }
+  </div>
+</div>
