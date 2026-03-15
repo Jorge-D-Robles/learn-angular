@@ -240,3 +240,4 @@
 [2026-03-14] T-2026-084: Register Corridor Runner in MinigameRegistry and wire routes — registered Corridor Runner with provideMinigame/provideLevelData, updated E2E tests (claude)
 [2026-03-14] T-2026-085: Create story mission content for Chapters 11-13 (Phase 2 Navigation) — created Phase 2 Navigation mission content for Ch 11-13 (13 steps, 17 tests) (claude)
 [2026-03-14] T-2026-144: Register Corridor Runner level data with LevelLoaderService — created registration integration tests for Corridor Runner level data (6 tests) (claude)
+[2026-03-14] T-2026-261: Register story mission content for P3 missions (Ch 11-13) with StoryMissionContentService — registered Phase 2 mission content with StoryMissionContentService (5 integration tests) (claude)

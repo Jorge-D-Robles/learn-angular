@@ -2093,25 +2093,6 @@ Acceptance criteria:
 - [ ] Test: verifies LevelCompletionService is called with correct result
 - [ ] Test: verifies scoring produces expected values for known inputs
 
-### T-2026-261
-- Title: Register story mission content for P3 missions (Ch 11-13) with StoryMissionContentService
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P3
-- Depends: T-2026-085, T-2026-166
-- Blocked-by: —
-- Tags: integration, story-missions, content-loading, phase-2
-- Refs: docs/curriculum.md
-
-T-2026-085 creates Phase 2 Navigation mission content (Ch 11-13) and T-2026-166 creates StoryMissionContentService. This ticket registers the content so StoryMissionPage can load it by chapterId.
-
-Acceptance criteria:
-- [ ] Phase 2 mission content (Ch 11-13) registered with StoryMissionContentService
-- [ ] `getMissionContent(11)` through `getMissionContent(13)` return valid content
-- [ ] Unit tests for: content loading for each chapter
-
 ### T-2026-266
 - Title: Create Corridor Runner route configuration and map data model
 - Status: todo
