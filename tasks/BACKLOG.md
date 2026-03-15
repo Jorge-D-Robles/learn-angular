@@ -2308,31 +2308,6 @@ Acceptance criteria:
 
 ## P4 -- Forms Bundle
 
-### T-2026-087
-- Title: Create Terminal Hack minigame engine
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P4
-- Depends: T-2026-017, T-2026-086
-- Blocked-by: —
-- Tags: minigame, terminal-hack, engine
-- Refs: docs/minigames/06-terminal-hack.md
-
-Implement the Terminal Hack engine: form code evaluation, test case execution, live preview, and hint system integration.
-
-Acceptance criteria:
-- [ ] `TerminalHackEngine` at `src/app/features/minigames/terminal-hack/terminal-hack.engine.ts`
-- [ ] Extends `MinigameEngine<TerminalHackLevelData>`
-- [ ] Evaluates player's form code against test cases
-- [ ] Live preview generation from form code
-- [ ] Test execution: runs predefined inputs, validates outputs
-- [ ] Timer management with configurable time limits per level
-- [ ] Hint integration via HintService
-- [ ] Scoring: speed + test pass rate + no hints = perfect
-- [ ] Unit tests for: form evaluation, test case passing/failing, hint penalty, scoring
-
 ### T-2026-088
 - Title: Create Terminal Hack minigame UI component
 - Status: todo
