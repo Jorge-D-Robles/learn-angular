@@ -268,3 +268,4 @@
 [2026-03-15] T-2026-430: Create integration test for TerminalHackFormEvaluationService test case execution — created 6 integration tests verifying evaluation service with real level 1 data (claude)
 [2026-03-15] T-2026-514: Wire Terminal Hack tutorial data into MinigameRegistryService config — verified tutorial data wiring via registry test, no production changes needed (claude)
 [2026-03-15] T-2026-515: Create integration test for Terminal Hack level data compatibility with engine — created 107 integration tests verifying all 21 levels load into engine with valid signals (claude)
+[2026-03-15] T-2026-516: Create integration test for TerminalHackFormEvaluationService + TerminalHackEngine coordinated lifecycle — created 6 integration tests for engine+service coordinated lifecycle with real level data (claude)

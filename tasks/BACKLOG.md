@@ -2343,30 +2343,6 @@ Acceptance criteria:
 
 
 
-### T-2026-516
-- Title: Create integration test for TerminalHackFormEvaluationService + TerminalHackEngine coordinated lifecycle
-- Status: in-progress
-- Assigned: claude
-- Priority: medium
-- Size: S
-- Milestone: P4
-- Depends: T-2026-508
-- Blocked-by: —
-- Tags: testing, integration, terminal-hack, evaluation, engine
-- Refs: docs/minigames/06-terminal-hack.md
-
-After T-2026-508 wires TerminalHackFormEvaluationService into the engine, this integration test verifies the coordinated lifecycle: loading form specs, evaluating player code, running test cases, and scoring through the engine's action pipeline. Follows the P2 pattern of T-2026-476/477/478 and P3 pattern of T-2026-502.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/features/minigames/terminal-hack/evaluation-engine.integration.spec.ts`
-- [ ] Test: engine.initialize() loads form spec into evaluation service
-- [ ] Test: submitForm action delegates to evaluation service and returns element-by-element results
-- [ ] Test: runTests action executes test cases through evaluation service and returns pass/fail per case
-- [ ] Test: all test cases passing triggers engine completion with scoring
-- [ ] Test: 3 failed test runs triggers engine failure
-- [ ] Test: engine.reset() resets evaluation service state
-- [ ] Uses real TerminalHackEngine and TerminalHackFormEvaluationService with level 1 data
-- Started: 2026-03-15
 
 ### T-2026-517
 - Title: Create Terminal Hack visual state integration test for UI-to-engine signal binding
