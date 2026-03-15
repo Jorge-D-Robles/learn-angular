@@ -2349,25 +2349,6 @@ Acceptance criteria:
 - [ ] Test: verifies LevelCompletionService is called with correct result
 - [ ] Test: verifies scoring with time, test pass rate, and hint penalty
 
-### T-2026-262
-- Title: Register story mission content for P4 missions (Ch 14-17) with StoryMissionContentService
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P4
-- Depends: T-2026-090, T-2026-166
-- Blocked-by: —
-- Tags: integration, story-missions, content-loading, phase-3
-- Refs: docs/curriculum.md
-
-T-2026-090 creates Phase 3 Data Input mission content (Ch 14-17) and T-2026-166 creates StoryMissionContentService. This ticket registers the content.
-
-Acceptance criteria:
-- [ ] Phase 3 mission content (Ch 14-17) registered with StoryMissionContentService
-- [ ] `getMissionContent(14)` through `getMissionContent(17)` return valid content
-- [ ] Unit tests for: content loading for each chapter
-
 
 ### T-2026-269
 - Title: Create P4 end-to-end smoke test for Terminal Hack game loop
