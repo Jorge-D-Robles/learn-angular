@@ -242,3 +242,4 @@
 [2026-03-14] T-2026-144: Register Corridor Runner level data with LevelLoaderService — created registration integration tests for Corridor Runner level data (6 tests) (claude)
 [2026-03-14] T-2026-261: Register story mission content for P3 missions (Ch 11-13) with StoryMissionContentService — registered Phase 2 mission content with StoryMissionContentService (5 integration tests) (claude)
 [2026-03-14] T-2026-503: Mark T-2026-266 as superseded by T-2026-081 and T-2026-082 — removed superseded T-2026-266, updated dependent ticket deps to T-2026-082 (claude)
+[2026-03-14] T-2026-426: Create CorridorRunnerSimulationService for route resolution and navigation testing — created simulation service with extracted route resolution algorithms (52 tests) (claude)
