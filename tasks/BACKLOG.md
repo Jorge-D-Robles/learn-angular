@@ -2053,28 +2053,6 @@ Acceptance criteria:
 
 ## P3 -- Navigation Bundle
 
-### T-2026-085
-- Title: Create story mission content for Chapters 11-13 (Phase 2 Navigation)
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P3
-- Depends: T-2026-038, T-2026-031
-- Blocked-by: —
-- Tags: story-missions, content, curriculum, phase-2
-- Refs: docs/curriculum.md
-
-Create narrative content for the 3 Navigation phase story missions.
-
-Acceptance criteria:
-- [ ] Mission data files at `src/app/data/missions/phase-2/`
-- [ ] Ch 11 (Enable Routing): Station Map narrative with router-outlet examples
-- [ ] Ch 12 (Define Routes): Corridor Paths with route config, params, 404 examples
-- [ ] Ch 13 (RouterLink): Navigation Console with routerLink directive examples
-- [ ] Each mission has 3-5 steps
-- [ ] Unit tests verify: all 3 missions have valid content
-
 ### T-2026-144
 - Title: Register Corridor Runner level data with LevelLoaderService
 - Status: todo

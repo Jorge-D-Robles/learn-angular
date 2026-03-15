@@ -238,3 +238,4 @@
 [2026-03-14] T-2026-082: Create Corridor Runner minigame engine — created engine with route matching, hull breach detection, and scoring (52 tests) (claude)
 [2026-03-14] T-2026-083: Create Corridor Runner minigame UI component — created two-phase UI with SVG map, crew animation, BFS pathfinding, corridor glow (27 tests) (claude)
 [2026-03-14] T-2026-084: Register Corridor Runner in MinigameRegistry and wire routes — registered Corridor Runner with provideMinigame/provideLevelData, updated E2E tests (claude)
+[2026-03-14] T-2026-085: Create story mission content for Chapters 11-13 (Phase 2 Navigation) — created Phase 2 Navigation mission content for Ch 11-13 (13 steps, 17 tests) (claude)
