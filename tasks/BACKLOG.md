@@ -2327,8 +2327,8 @@ Acceptance criteria:
 
 ### T-2026-518
 - Title: Update architecture.md with P4 Terminal Hack patterns and conventions
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: low
 - Size: S
 - Milestone: P4
@@ -2346,6 +2346,7 @@ Acceptance criteria:
 - [ ] Lists TerminalHackFormEvaluationService in the simulation services table
 - [ ] Updates the persistence table if any new localStorage keys are added
 - [ ] Notes the retro terminal aesthetic (green-on-black, scanlines) as a game-specific visual pattern
+- Started: 2026-03-15
 
 ---
 

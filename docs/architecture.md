@@ -1,6 +1,6 @@
 # Technical Architecture
 
-This document describes the Learn Angular codebase as built during P1 (Core Engine). Every claim is traceable to actual source files. Last updated after completion of 128 P1 tickets.
+This document describes the Learn Angular codebase as built. Every claim is traceable to actual source files. Last updated after P4 (Terminal Hack).
 
 See `overview.md` for project vision and `curriculum.md` for content scope.
 
@@ -569,3 +569,86 @@ Singleton service for playing sound effects. Defined in `src/app/core/audio/audi
 **Volume control**: Private `_volume` signal (default 0.5), exposed as read-only. `setVolume(v)` clamps to [0, 1]. Each cloned audio element's `volume` is set to the current signal value.
 
 **Consumers**: `RankUpNotificationService` injects `AudioService` to play `SoundEffect.rankUp` when a rank change is detected via its `effect()`.
+
+---
+
+## 10. Minigame-Specific Patterns
+
+This section documents patterns that are unique to individual minigames, as opposed to the shared abstract framework described in Section 2. Each minigame may introduce domain-specific services, UI components, and visual styles. As new minigames ship (P5 through P7), their patterns will be appended here as subsections.
+
+### Simulation Services
+
+Every implemented minigame uses a component-scoped `@Injectable()` service for domain-specific logic. These are **not** `providedIn: 'root'` -- they are provided in the component tree so that Angular automatically destroys them when the minigame component is torn down, preventing leaked state between sessions.
+
+| Service | File | Minigame | Purpose |
+|---------|------|----------|---------|
+| `ConveyorBeltService` | `features/minigames/module-assembly/conveyor-belt.service.ts` | Module Assembly | Visual conveyor belt state management |
+| `WireProtocolValidationService` | `features/minigames/wire-protocol/wire-protocol-validation.service.ts` | Wire Protocol | Wire connection validation |
+| `FlowCommanderSimulationService` | `features/minigames/flow-commander/flow-commander-simulation.service.ts` | Flow Commander | Control flow simulation |
+| `SignalCorpsWaveService` | `features/minigames/signal-corps/signal-corps-wave.service.ts` | Signal Corps | Wave/signal state management |
+| `CorridorRunnerSimulationService` | `features/minigames/corridor-runner/corridor-runner-simulation.service.ts` | Corridor Runner | Route segment simulation |
+| `TerminalHackFormEvaluationService` | `features/minigames/terminal-hack/terminal-hack-evaluation.service.ts` | Terminal Hack | Form evaluation and test case execution |
+
+Pattern: all are `@Injectable()` without `providedIn: 'root'`, scoped to their component tree for automatic cleanup.
+
+### Terminal Hack: Form Evaluation Pattern
+
+Terminal Hack's core gameplay follows a 3-phase pipeline: element placement, form evaluation, and test case execution. Defined across `terminal-hack.engine.ts` and `terminal-hack-evaluation.service.ts` in `src/app/features/minigames/terminal-hack/`.
+
+**Phase 1 -- Element Placement**: The player places form elements via `PlaceElementAction`, `RemoveElementAction`, and `SetValidationAction` dispatched through the engine's `submitAction()` pipeline. The engine maintains a `ReadonlyMap<string, PlayerFormElement>` of placed elements as a signal. Each `PlayerFormElement` captures `elementId`, `elementType` (text, email, number, etc.), `toolType` (template-driven or reactive API), and `validations` (array of `FormValidationRule`).
+
+**Phase 2 -- Form Evaluation**: `TerminalHackFormEvaluationService.evaluateForm()` compares placed elements against the `TargetFormSpec`. For each spec element it checks: (1) element type match, (2) tool type compatibility with the form type (template-driven vs reactive -- validator tools are valid for both), and (3) validation rule completeness. Returns per-element `ElementEvaluationResult[]` with `correctType`, `correctTool`, `correctValidations`, and `missingValidations` fields. This provides granular UI feedback at the element level.
+
+**Phase 3 -- Test Case Execution**: `TerminalHackFormEvaluationService.runTestCases()` runs predefined `FormTestCase[]` against the placed elements. Each test case provides `inputValues` (`Record<string, string>`) and `expectedValid` (boolean) plus optional `expectedErrors`. The service applies the player's validation rules to inputs and compares actual form validity against expected. Returns a `TestRunResult` with per-case `TestCaseResult[]` and aggregate `passRate` (0 to 1).
+
+**Scoring formula**:
+
+```
+Math.max(0, Math.round(maxScore * correctnessRatio * speedMultiplier * attemptMultiplier) - hintDeduction)
+```
+
+- `correctnessRatio` = `testResult.passRate`
+- `speedMultiplier` = `max(0.5, localTimeRemaining / timeLimit)`
+- `attemptMultiplier` = `max(0.5, 1.0 - 0.1 * (runCount - 1))`
+- `hintDeduction` = `hintsUsedCount * 50`
+
+The result is rounded before subtracting the hint deduction and floored at 0.
+
+**Lose condition**: 3 lives. Each failed test run (any test case fails) dispatches a `TestFailureAction` through the engine's standard `submitAction()` pipeline with `livesChange: -1`. Three failed runs = game over.
+
+### Terminal Hack: Live Preview
+
+`TerminalHackLivePreviewComponent` (`app-terminal-hack-live-preview`) provides real-time visual feedback of the player's form construction. Defined in `src/app/features/minigames/terminal-hack/live-preview/live-preview.ts`.
+
+**Inputs**: `TargetFormSpec` (the target form) + `PlayerFormElement[]` (what the player has placed).
+
+**Computed `previewSlots` signal**: Maps each spec element to a `PreviewSlot` with one of three statuses:
+
+| Status | Condition |
+|--------|-----------|
+| `'missing'` | No element placed for that slot |
+| `'correct'` | Placed element's `elementType` matches the spec's `elementType` |
+| `'incorrect'` | Element placed but type-mismatched |
+
+Uses a `Map<string, PlayerFormElement>` lookup computed from the input array for O(1) matching per spec element.
+
+The engine also exposes a `formPreview` computed signal with `completionRatio` (placed count / required count), used by the sidebar for a progress indicator.
+
+### Terminal Hack: Test Runner
+
+`TerminalHackTestRunnerComponent` (`app-terminal-hack-test-runner`) displays test cases with pass/fail indicators. Defined in `src/app/features/minigames/terminal-hack/test-runner/test-runner.ts`.
+
+- Uses a `Map<string, TestCaseResult>` lookup for O(1) result matching per test case
+- Staggered animation delay (`i * 80ms`) for a visual test execution effect
+- "Run Tests" button triggers `engine.runTestCases()` which either auto-completes the level (all tests pass) or costs a life (any test fails)
+- Displays aggregate pass rate (`passCount / totalCount tests passed`)
+
+### Terminal Hack: Visual Style
+
+Terminal Hack introduces the first game-specific visual pattern: a retro terminal aesthetic. Future minigames may introduce their own themed aesthetics as subsections here.
+
+- **Color scheme**: Green-on-black (`#00ff41` on `#0a0a0a`)
+- **Scanline overlay**: CSS `repeating-linear-gradient` with an 8-second `scanline-flicker` animation (opacity cycles between 0.4 and 0.6)
+- **Font**: Monospace via `var(--nx-font-mono, 'JetBrains Mono', monospace)`
+- **Power gauge timer**: Horizontal bar depleting over time, replacing the shell's built-in timer. Color transitions from green (`#00ff41`) at >50% to orange (`#f97316`) at >25% to red (`#ef4444`) at <=25%
+- **`prefers-reduced-motion` support**: Disables the scanline animation (sets opacity to a static 0.3) and removes power gauge fill transitions
