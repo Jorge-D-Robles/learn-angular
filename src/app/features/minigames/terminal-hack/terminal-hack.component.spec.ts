@@ -3,6 +3,7 @@ import { By } from '@angular/platform-browser';
 import { TerminalHackComponent } from './terminal-hack.component';
 import { TerminalHackCodePanelComponent } from './code-panel/code-panel';
 import { TerminalHackLivePreviewComponent } from './live-preview/live-preview';
+import { TerminalHackTestRunnerComponent } from './test-runner/test-runner';
 import { TerminalHackEngine } from './terminal-hack.engine';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
@@ -240,53 +241,63 @@ describe('TerminalHackComponent', () => {
     });
   });
 
-  // --- 5. Test Runner Tests ---
+  // --- 5. Test Runner Wiring Tests ---
 
-  describe('Test Runner', () => {
-    it('should call engine.runTestCases() on "Run Tests" button click', () => {
+  describe('Test Runner Wiring', () => {
+    it('should render the test runner child component', () => {
       setup();
-      const runSpy = vi.spyOn(engine, 'runTestCases');
+      const testRunnerDe = fixture.debugElement.query(By.directive(TerminalHackTestRunnerComponent));
+      expect(testRunnerDe).toBeTruthy();
+    });
 
+    it('should bind testCases input to engine testCases', async () => {
+      await asyncSetup();
+      const testRunnerDe = fixture.debugElement.query(By.directive(TerminalHackTestRunnerComponent));
+      const childInstance = testRunnerDe.componentInstance as TerminalHackTestRunnerComponent;
+      expect(childInstance.testCases()).toEqual(engine.testCases());
+    });
+
+    it('should bind testResults input: null before run, engine results after run', async () => {
+      await asyncSetup();
+      const testRunnerDe = fixture.debugElement.query(By.directive(TerminalHackTestRunnerComponent));
+      const childInstance = testRunnerDe.componentInstance as TerminalHackTestRunnerComponent;
+
+      // Before running tests, testResults should be null
+      expect(childInstance.testResults()).toBeNull();
+
+      // Place an element and run tests
+      component.onPlaceElement('el-1', 'text', 'FormControl');
+      component.onRunTests();
+      fixture.detectChanges();
+
+      expect(childInstance.testResults()).toEqual(engine.testRunResult()?.testCaseResults ?? null);
+    });
+
+    it('should set isTestsRunning to true during engine.runTestCases call', () => {
+      setup();
       component.onPlaceElement('el-1', 'text', 'FormControl');
       fixture.detectChanges();
 
-      const runBtn = fixture.nativeElement.querySelector('.terminal-hack__run-btn') as HTMLButtonElement;
+      vi.spyOn(engine, 'runTestCases').mockImplementation(() => {
+        expect(component.isTestsRunning()).toBe(true);
+        return null as any;
+      });
+
+      component.onRunTests();
+    });
+
+    it('should forward runTestsRequested output to engine.runTestCases via child button', async () => {
+      await asyncSetup();
+      const runSpy = vi.spyOn(engine, 'runTestCases');
+
+      const testRunnerDe = fixture.debugElement.query(By.directive(TerminalHackTestRunnerComponent));
+      const runBtn = testRunnerDe.nativeElement.querySelector('.test-runner__run-btn') as HTMLButtonElement;
+      expect(runBtn).toBeTruthy();
+
       runBtn.click();
       fixture.detectChanges();
 
       expect(runSpy).toHaveBeenCalled();
-    });
-
-    it('should display pass/fail indicator per test case from TestRunResult', () => {
-      vi.useFakeTimers();
-      setup();
-
-      component.onPlaceElement('el-1', 'text', 'FormControl');
-      component.onRunTests();
-      fixture.detectChanges();
-
-      const testCases = fixture.nativeElement.querySelectorAll('.terminal-hack__test-case');
-      expect(testCases.length).toBeGreaterThan(0);
-      vi.useRealTimers();
-    });
-
-    it('should show overall pass rate from TestRunResult', () => {
-      vi.useFakeTimers();
-      setup();
-
-      component.onPlaceElement('el-1', 'text', 'FormControl');
-      component.onRunTests();
-      fixture.detectChanges();
-
-      const passRate = fixture.nativeElement.querySelector('.terminal-hack__pass-rate');
-      expect(passRate).toBeTruthy();
-      vi.useRealTimers();
-    });
-
-    it('should disable run button when no elements are placed', () => {
-      setup();
-      const runBtn = fixture.nativeElement.querySelector('.terminal-hack__run-btn') as HTMLButtonElement;
-      expect(runBtn.disabled).toBe(true);
     });
   });
 

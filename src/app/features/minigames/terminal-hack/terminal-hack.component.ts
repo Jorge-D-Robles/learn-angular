@@ -9,6 +9,7 @@ import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
 import { TerminalHackCodePanelComponent } from './code-panel/code-panel';
 import { TerminalHackLivePreviewComponent } from './live-preview/live-preview';
+import { TerminalHackTestRunnerComponent } from './test-runner/test-runner';
 import {
   TerminalHackEngine,
   HINT_SCORE_PENALTY,
@@ -26,7 +27,7 @@ import type {
 
 @Component({
   selector: 'app-terminal-hack',
-  imports: [TerminalHackCodePanelComponent, TerminalHackLivePreviewComponent],
+  imports: [TerminalHackCodePanelComponent, TerminalHackLivePreviewComponent, TerminalHackTestRunnerComponent],
   templateUrl: './terminal-hack.component.html',
   styleUrl: './terminal-hack.component.scss',
 })
@@ -38,6 +39,7 @@ export class TerminalHackComponent implements OnDestroy {
   readonly selectedSlotId = signal<string | null>(null);
   readonly revealedHintCount = signal(0);
   readonly playerCode = signal('');
+  readonly isTestsRunning = signal(false);
 
   // --- Engine-delegated signals (null-safe) ---
   readonly targetFormSpec = computed(() => this.engine?.targetFormSpec() ?? null);
@@ -52,6 +54,7 @@ export class TerminalHackComponent implements OnDestroy {
   readonly timeLimit = computed(() => this.engine?.timeLimit() ?? 0);
   readonly levelHints = computed(() => this.engine?.levelHints() ?? []);
   readonly hintsUsedCount = computed(() => this.engine?.hintsUsedCount() ?? 0);
+  readonly testCasesForRunner = computed(() => [...(this.engine?.testCases() ?? [])]);
 
   // --- Derived signals (UI-only) ---
   readonly powerGaugeRatio = computed(() => {
@@ -67,13 +70,6 @@ export class TerminalHackComponent implements OnDestroy {
   });
 
   readonly placedElementIds = computed(() => new Set(this.placedElements().keys()));
-
-  readonly testResults = computed(() => this.testRunResult()?.testCaseResults ?? []);
-  readonly allTestsPassed = computed(() => this.testRunResult()?.allPassed ?? false);
-  readonly passRate = computed(() => this.testRunResult()?.passRate ?? 0);
-
-  readonly canRunTests = computed(() => this.placedElements().size > 0);
-  readonly passRatePercent = computed(() => Math.round(this.passRate() * 100));
 
   readonly completionPercent = computed(() => Math.round(this.formPreview().completionRatio * 100));
 
@@ -124,7 +120,9 @@ export class TerminalHackComponent implements OnDestroy {
 
   onRunTests(): void {
     if (!this.engine) return;
+    this.isTestsRunning.set(true);
     this.engine.runTestCases();
+    setTimeout(() => this.isTestsRunning.set(false), 0);
   }
 
   onReset(): void {

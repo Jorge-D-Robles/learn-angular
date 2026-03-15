@@ -2,8 +2,6 @@ $tg: #00ff41;
 $bg: #0a0a0a;
 $tb: rgba(0, 255, 65, 0.3);
 $orange: #f97316;
-$red: #ef4444;
-$glow: 0 0 8px rgba(0, 255, 65, 0.4);
 
 .terminal-hack {
   display: flex;
@@ -100,44 +98,6 @@ $glow: 0 0 8px rgba(0, 255, 65, 0.4);
   color: $orange;
   font-size: 0.75rem;
 }
-
-.terminal-hack__bottom-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 8px;
-  border-top: 1px solid $tb;
-  z-index: 1;
-}
-
-.terminal-hack__run-btn {
-  align-self: flex-start;
-  padding: 6px 16px;
-  border: 1px solid $tg;
-  border-radius: 4px;
-  background: transparent;
-  color: $tg;
-  font-family: inherit;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  &:hover:not(:disabled) { background: rgba(0, 255, 65, 0.1); box-shadow: $glow; }
-  &:disabled { opacity: 0.35; cursor: not-allowed; }
-}
-
-.terminal-hack__test-results { display: flex; flex-direction: column; gap: 4px; }
-
-.terminal-hack__test-case {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  &--pass { color: $tg; }
-  &--fail { color: $red; }
-}
-
-.terminal-hack__test-icon { font-weight: 700; width: 16px; text-align: center; }
-.terminal-hack__pass-rate { font-size: 0.8rem; opacity: 0.8; margin-top: 4px; }
 
 @media (prefers-reduced-motion: reduce) {
   .terminal-hack__scanlines { animation: none; opacity: 0.3; }

@@ -2402,8 +2402,8 @@ Acceptance criteria:
 
 ### T-2026-513
 - Title: Wire TerminalHackTestRunnerComponent into TerminalHackComponent UI
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P4
@@ -2422,6 +2422,7 @@ Acceptance criteria:
 - [ ] `runTestsRequested` output triggers the engine's `runTests()` action
 - [ ] Inline test case rendering removed from parent component
 - [ ] Unit tests for: child component rendering, input bindings, run tests forwarding
+- Started: 2026-03-15
 
 ### T-2026-514
 - Title: Wire Terminal Hack tutorial data into MinigameRegistryService config
