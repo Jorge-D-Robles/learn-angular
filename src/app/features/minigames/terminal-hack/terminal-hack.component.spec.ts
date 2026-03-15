@@ -322,6 +322,7 @@ describe('TerminalHackComponent', () => {
       // Advance to 40% remaining -> orange zone (ratio=0.4, which is > 0.25 but <= 0.5)
       vi.advanceTimersByTime(60_000);
       fixture.detectChanges();
+      expect(fill.style.width).toBe('40%');
       expect(fill.style.backgroundColor).toBe('rgb(249, 115, 22)');
 
       // Advance to 10% remaining -> red zone (ratio=0.1, which is <= 0.25)

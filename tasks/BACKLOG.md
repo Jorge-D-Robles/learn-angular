@@ -2344,28 +2344,6 @@ Acceptance criteria:
 
 
 
-### T-2026-517
-- Title: Create Terminal Hack visual state integration test for UI-to-engine signal binding
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P4
-- Depends: T-2026-511, T-2026-512, T-2026-513
-- Blocked-by: —
-- Tags: testing, integration, terminal-hack, visual-state, ui
-- Refs: docs/minigames/06-terminal-hack.md, src/app/features/minigames/terminal-hack/
-
-T-2026-492 covers P2 minigame UI-to-simulation visual state tests and T-2026-504 covers P3. No equivalent exists for P4 Terminal Hack. This test verifies the UI components correctly reflect engine state: code panel shows target spec, live preview reflects player elements, test runner shows results, and power gauge reflects timer.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/features/minigames/terminal-hack/visual-state.integration.spec.ts`
-- [ ] Test: code panel renders target form spec from engine level data
-- [ ] Test: code change triggers engine state update, live preview reflects new elements
-- [ ] Test: runTests action produces results, test runner panel shows pass/fail indicators
-- [ ] Test: timer signal updates power gauge visual state
-- [ ] Each test: uses real engine + component fixture
-- [ ] Each test: verifies DOM state reflects engine signal values after action
 
 ### T-2026-518
 - Title: Update architecture.md with P4 Terminal Hack patterns and conventions
