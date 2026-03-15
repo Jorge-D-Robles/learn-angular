@@ -8,6 +8,7 @@ import { WireProtocolEngine } from '../../features/minigames/wire-protocol/wire-
 import { FlowCommanderComponent, FlowCommanderEngine } from '../../features/minigames/flow-commander';
 import { SignalCorpsComponent, SignalCorpsEngine } from '../../features/minigames/signal-corps';
 import { CorridorRunnerComponent, CorridorRunnerEngine } from '../../features/minigames/corridor-runner';
+import { TerminalHackComponent, TerminalHackEngine } from '../../features/minigames/terminal-hack';
 import type { MinigameId } from '../../core/minigame/minigame.types';
 import { getMinigameTutorial } from '../tutorials/minigame-tutorials.data';
 import { provideMinigame } from './provide-minigame';
@@ -231,6 +232,42 @@ describe('provideMinigame — corridor-runner', () => {
     const config = registry.getConfig('corridor-runner');
     expect(config).toBeDefined();
     expect(config!.name).toBe('Corridor Runner');
+  });
+});
+
+describe('provideMinigame — terminal-hack', () => {
+  let registry: MinigameRegistryService;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideMinigame(
+          'terminal-hack',
+          TerminalHackComponent,
+          () => new TerminalHackEngine(),
+        ),
+      ],
+    });
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    registry = TestBed.inject(MinigameRegistryService);
+  });
+
+  it('should register the component type for terminal-hack', () => {
+    expect(registry.getComponent('terminal-hack')).toBe(TerminalHackComponent);
+  });
+
+  it('should register an engine factory that produces a TerminalHackEngine', () => {
+    const factory = registry.getEngineFactory('terminal-hack');
+    expect(factory).toBeTruthy();
+    const engine = factory!();
+    expect(engine).toBeInstanceOf(TerminalHackEngine);
+  });
+
+  it('should preserve the existing config for terminal-hack', () => {
+    const config = registry.getConfig('terminal-hack');
+    expect(config).toBeDefined();
+    expect(config!.name).toBe('Terminal Hack');
   });
 });
 

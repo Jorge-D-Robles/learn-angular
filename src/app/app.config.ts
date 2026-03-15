@@ -27,6 +27,8 @@ import { WireProtocolComponent, WireProtocolEngine } from './features/minigames/
 import { FlowCommanderComponent, FlowCommanderEngine, FlowCommanderSimulationService } from './features/minigames/flow-commander';
 import { SignalCorpsComponent, SignalCorpsEngine, SignalCorpsWaveService } from './features/minigames/signal-corps';
 import { CorridorRunnerComponent, CorridorRunnerEngine, CorridorRunnerSimulationService } from './features/minigames/corridor-runner';
+import { TERMINAL_HACK_LEVEL_PACK } from './data/levels/terminal-hack.data';
+import { TerminalHackComponent, TerminalHackEngine } from './features/minigames/terminal-hack';
 
 // Shared wave service instance: passed to the engine AND available for DI injection
 // in the component. engine.reset() + waveService.loadWaves() fully resets state for replays.
@@ -55,6 +57,7 @@ export const appConfig: ApplicationConfig = {
     provideLevelData(FLOW_COMMANDER_LEVEL_PACK),
     provideLevelData(SIGNAL_CORPS_LEVEL_PACK),
     provideLevelData(CORRIDOR_RUNNER_LEVEL_PACK),
+    provideLevelData(TERMINAL_HACK_LEVEL_PACK),
     provideMissionContent(PHASE_1_MISSIONS),
     provideMissionContent(PHASE_2_MISSIONS),
     provideMinigame('wire-protocol', WireProtocolComponent, () => new WireProtocolEngine()),
@@ -63,5 +66,6 @@ export const appConfig: ApplicationConfig = {
     provideMinigame('signal-corps', SignalCorpsComponent, () => new SignalCorpsEngine(undefined, signalCorpsWaveService)),
     provideMinigame('module-assembly', ModuleAssemblyComponent, () => new ModuleAssemblyEngine()),
     provideMinigame('corridor-runner', CorridorRunnerComponent, () => new CorridorRunnerEngine(undefined, new CorridorRunnerSimulationService())),
+    provideMinigame('terminal-hack', TerminalHackComponent, () => new TerminalHackEngine()),
   ],
 };
