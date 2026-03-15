@@ -2332,28 +2332,7 @@ Acceptance criteria:
 ## P5 -- Architecture Bundle
 
 
-### T-2026-092
-- Title: Create Power Grid minigame engine
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: L
-- Milestone: P5
-- Depends: T-2026-017, T-2026-091
-- Blocked-by: —
-- Tags: minigame, power-grid, engine
-- Refs: docs/minigames/07-power-grid.md
 
-Implement the Power Grid engine: service-component wiring, injection scope validation, and circuit board puzzle logic.
-
-Acceptance criteria:
-- [ ] `PowerGridEngine` at `src/app/features/minigames/power-grid/power-grid.engine.ts`
-- [ ] Extends `MinigameEngine<PowerGridLevelData>`
-- [ ] Connection validation: correct service to component, correct scope
-- [ ] Scope types: root, component-level, hierarchical
-- [ ] Short circuit detection on wrong connections
-- [ ] Unit tests for: connection validation, scope checking, short circuit detection
-- Started: 2026-03-15
 
 ### T-2026-093
 - Title: Create Power Grid minigame UI component
