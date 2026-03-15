@@ -7,9 +7,9 @@ import {
 } from '@angular/core';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
-import { CodeEditorComponent } from '../../../shared/components/code-editor/code-editor';
 import { CorridorRunnerEngine, type NavigationResult, type RunResult } from './corridor-runner.engine';
 import { CorridorRunnerMapComponent } from './map/map';
+import { CorridorRunnerRouteEditorComponent } from './route-editor/route-editor';
 import type { MapLayout, RouteEntry } from './corridor-runner.types';
 
 // ---------------------------------------------------------------------------
@@ -39,7 +39,7 @@ interface AnimatingCrew {
 
 @Component({
   selector: 'app-corridor-runner',
-  imports: [CodeEditorComponent, CorridorRunnerMapComponent],
+  imports: [CorridorRunnerRouteEditorComponent, CorridorRunnerMapComponent],
   templateUrl: './corridor-runner.component.html',
   styleUrl: './corridor-runner.component.scss',
 })
@@ -51,8 +51,6 @@ export class CorridorRunnerComponent implements OnDestroy {
   readonly phase = signal<GamePhase>('config');
   readonly currentUrl = signal('');
   readonly animatingCrew = signal<AnimatingCrew | null>(null);
-  readonly routeConfigText = signal('');
-  readonly parseError = signal<string | null>(null);
   readonly navigationIndex = signal(0);
   private readonly pendingTimers: ReturnType<typeof setTimeout>[] = [];
 
@@ -73,12 +71,21 @@ export class CorridorRunnerComponent implements OnDestroy {
   readonly crewAnimationComplete = computed(() => this.animatingCrew()?.animationComplete ?? false);
   readonly mapExpanded = computed(() => this.phase() === 'run');
 
+  // Available component names for route editor, derived from map nodes (excluding entry node)
+  readonly availableComponents = computed(() => {
+    const layout = this.mapLayout();
+    return layout.nodes
+      .filter(n => n.id !== layout.nodes[0]?.id)
+      .map(n => n.label);
+  });
+  readonly emptyConfig: RouteEntry[] = [];
+
   constructor() {
     if (!this.engine) return;
 
     this.shortcuts.register('enter', 'Lock routes / Run test', () => {
       if (this.phase() === 'config') {
-        this.onLockRoutes();
+        this.onConfigSubmitted();
       } else {
         this.onRunTest();
       }
@@ -88,20 +95,11 @@ export class CorridorRunnerComponent implements OnDestroy {
 
   // --- Public methods ---
 
-  onCodeChange(text: string): void {
-    this.routeConfigText.set(text);
-    try {
-      const routes = JSON.parse(text) as RouteEntry[];
-      if (!Array.isArray(routes)) throw new Error('Must be an array');
-      this.parseError.set(null);
-      this.engine?.submitAction({ type: 'set-route-config', routes });
-    } catch {
-      this.parseError.set('Invalid route configuration');
-    }
+  onConfigChanged(routes: RouteEntry[]): void {
+    this.engine?.submitAction({ type: 'set-route-config', routes });
   }
 
-  onLockRoutes(): void {
-    if (this.parseError()) return;
+  onConfigSubmitted(): void {
     this.phase.set('run');
   }
 

@@ -37,20 +37,6 @@
   padding: 0 12px;
 }
 
-.corridor-runner__editor-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-}
-
-.corridor-runner__parse-error {
-  color: #ef4444;
-  font-size: 0.8rem;
-  padding: 4px 8px;
-}
-
 .corridor-runner__controls {
   display: flex;
   justify-content: center;
@@ -60,7 +46,6 @@
   gap: 12px;
 }
 
-.corridor-runner__lock-btn,
 .corridor-runner__run-btn {
   padding: 8px 20px;
   border: none;

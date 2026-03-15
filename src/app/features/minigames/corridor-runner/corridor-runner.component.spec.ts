@@ -3,6 +3,7 @@ import { By } from '@angular/platform-browser';
 import { CorridorRunnerComponent } from './corridor-runner.component';
 import { CorridorRunnerEngine } from './corridor-runner.engine';
 import { CorridorRunnerMapComponent } from './map/map';
+import { CorridorRunnerRouteEditorComponent } from './route-editor/route-editor';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
 import {
@@ -145,15 +146,11 @@ describe('CorridorRunnerComponent', () => {
       expect(component.phase()).toBe('config');
     });
 
-    it('should switch to run phase when "Lock Routes" is clicked after setting config', () => {
+    it('should switch to run phase on configSubmitted', () => {
       setup();
 
-      // Set a valid route config
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
-      fixture.detectChanges();
-
-      const lockBtn = fixture.nativeElement.querySelector('.corridor-runner__lock-btn') as HTMLButtonElement;
-      lockBtn.click();
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
+      component.onConfigSubmitted();
       fixture.detectChanges();
 
       expect(component.phase()).toBe('run');
@@ -163,8 +160,8 @@ describe('CorridorRunnerComponent', () => {
       setup();
 
       // Go to run phase
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
-      component.onLockRoutes();
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
+      component.onConfigSubmitted();
       fixture.detectChanges();
       expect(component.phase()).toBe('run');
 
@@ -175,20 +172,20 @@ describe('CorridorRunnerComponent', () => {
     });
   });
 
-  // --- 3. Config Phase - Code Editor Tests ---
+  // --- 3. Config Phase - Route Editor Tests ---
 
-  describe('Config Phase - Code Editor', () => {
-    it('should render code editor in config phase', () => {
+  describe('Config Phase - Route Editor', () => {
+    it('should render route editor child in config phase', () => {
       setup();
-      const editor = fixture.nativeElement.querySelector('nx-code-editor');
+      const editor = fixture.nativeElement.querySelector('app-corridor-runner-route-editor');
       expect(editor).toBeTruthy();
     });
 
-    it('should submit set-route-config action on code change (synchronous parse)', () => {
+    it('should submit set-route-config action on configChanged', () => {
       setup();
       const submitSpy = vi.spyOn(engine, 'submitAction');
 
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
 
       expect(submitSpy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -196,17 +193,6 @@ describe('CorridorRunnerComponent', () => {
           routes: [{ path: 'engineering', component: 'EngineeringBay' }],
         }),
       );
-    });
-
-    it('should show validation error for unparseable config', () => {
-      setup();
-
-      component.onCodeChange('not valid json {{{');
-      fixture.detectChanges();
-
-      expect(component.parseError()).toBe('Invalid route configuration');
-      const errorEl = fixture.nativeElement.querySelector('.corridor-runner__parse-error');
-      expect(errorEl).toBeTruthy();
     });
   });
 
@@ -225,7 +211,7 @@ describe('CorridorRunnerComponent', () => {
       setup();
 
       // Configure a route with component matching node label "EngineeringBay"
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
       fixture.detectChanges();
 
       const litCorridors = fixture.nativeElement.querySelectorAll('.cr-map__corridor--lit');
@@ -247,8 +233,8 @@ describe('CorridorRunnerComponent', () => {
       vi.useFakeTimers();
       setup();
 
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
-      component.onLockRoutes();
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
+      component.onConfigSubmitted();
       component.onRunTest();
       fixture.detectChanges();
 
@@ -268,8 +254,8 @@ describe('CorridorRunnerComponent', () => {
       }));
 
       // No routes configured, so any URL will be a hull breach
-      component.onCodeChange('[]');
-      component.onLockRoutes();
+      component.onConfigChanged([]);
+      component.onConfigSubmitted();
       component.onRunTest();
       fixture.detectChanges();
 
@@ -288,8 +274,8 @@ describe('CorridorRunnerComponent', () => {
       setup();
       const runSpy = vi.spyOn(engine, 'runAllNavigations');
 
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
-      component.onLockRoutes();
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
+      component.onConfigSubmitted();
       fixture.detectChanges();
 
       const runBtn = fixture.nativeElement.querySelector('.corridor-runner__run-btn') as HTMLButtonElement;
@@ -303,8 +289,8 @@ describe('CorridorRunnerComponent', () => {
       vi.useFakeTimers();
       setup();
 
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
-      component.onLockRoutes();
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
+      component.onConfigSubmitted();
       component.onRunTest();
       fixture.detectChanges();
 
@@ -319,8 +305,8 @@ describe('CorridorRunnerComponent', () => {
       vi.useFakeTimers();
       setup();
 
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
-      component.onLockRoutes();
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
+      component.onConfigSubmitted();
       component.onRunTest();
       fixture.detectChanges();
 
@@ -342,8 +328,8 @@ describe('CorridorRunnerComponent', () => {
         ],
       }));
 
-      component.onCodeChange('[]');
-      component.onLockRoutes();
+      component.onConfigChanged([]);
+      component.onConfigSubmitted();
       component.onRunTest();
       fixture.detectChanges();
 
@@ -362,8 +348,8 @@ describe('CorridorRunnerComponent', () => {
       vi.useFakeTimers();
       setup();
 
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
-      component.onLockRoutes();
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
+      component.onConfigSubmitted();
       component.onRunTest();
       fixture.detectChanges();
 
@@ -387,8 +373,8 @@ describe('CorridorRunnerComponent', () => {
         ],
       }));
 
-      component.onCodeChange('[]');
-      component.onLockRoutes();
+      component.onConfigChanged([]);
+      component.onConfigSubmitted();
       component.onRunTest();
       fixture.detectChanges();
 
@@ -422,10 +408,7 @@ describe('CorridorRunnerComponent', () => {
     it('should trigger appropriate action on key press', () => {
       setup();
 
-      // Set config so lock routes will work
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
-
-      // Pressing enter in config phase -> lock routes
+      // Pressing enter in config phase -> config submitted
       const enterReg = shortcuts.getRegistered().find(r => r.key === 'enter');
       enterReg?.callback();
       expect(component.phase()).toBe('run');
@@ -466,8 +449,8 @@ describe('CorridorRunnerComponent', () => {
       setup();
       vi.spyOn(engine, 'runAllNavigations').mockReturnValue(null);
 
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
-      component.onLockRoutes();
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
+      component.onConfigSubmitted();
       component.onRunTest();
       fixture.detectChanges();
 
@@ -487,8 +470,8 @@ describe('CorridorRunnerComponent', () => {
       }));
 
       // No routes => all hull breaches, engine stops after 2 lives lost
-      component.onCodeChange('[]');
-      component.onLockRoutes();
+      component.onConfigChanged([]);
+      component.onConfigSubmitted();
       component.onRunTest();
       fixture.detectChanges();
 
@@ -520,7 +503,7 @@ describe('CorridorRunnerComponent', () => {
 
     it('should bind configuredRoutes input to engine playerRouteConfig signal', () => {
       setup();
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
       fixture.detectChanges();
 
       const mapDebug = fixture.debugElement.query(By.directive(CorridorRunnerMapComponent));
@@ -532,8 +515,8 @@ describe('CorridorRunnerComponent', () => {
       vi.useFakeTimers();
       setup();
 
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
-      component.onLockRoutes();
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
+      component.onConfigSubmitted();
       component.onRunTest();
       fixture.detectChanges();
 
@@ -554,8 +537,8 @@ describe('CorridorRunnerComponent', () => {
         ],
       }));
 
-      component.onCodeChange('[]');
-      component.onLockRoutes();
+      component.onConfigChanged([]);
+      component.onConfigSubmitted();
       component.onRunTest();
       fixture.detectChanges();
 
@@ -568,8 +551,8 @@ describe('CorridorRunnerComponent', () => {
 
     it('should bind expanded input to true when in run phase', () => {
       setup();
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
-      component.onLockRoutes();
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
+      component.onConfigSubmitted();
       fixture.detectChanges();
 
       const mapDebug = fixture.debugElement.query(By.directive(CorridorRunnerMapComponent));
@@ -594,8 +577,8 @@ describe('CorridorRunnerComponent', () => {
       vi.useFakeTimers();
       setup();
 
-      component.onCodeChange('[{"path": "engineering", "component": "EngineeringBay"}]');
-      component.onLockRoutes();
+      component.onConfigChanged([{ path: 'engineering', component: 'EngineeringBay' }]);
+      component.onConfigSubmitted();
       component.onRunTest();
       fixture.detectChanges();
 
@@ -608,6 +591,63 @@ describe('CorridorRunnerComponent', () => {
       expect(mapChild.animationComplete()).toBe(true);
 
       vi.useRealTimers();
+    });
+  });
+
+  // --- 11. Route Editor Child Wiring Tests ---
+
+  describe('Route Editor Child Wiring', () => {
+    it('should render CorridorRunnerRouteEditorComponent child in config phase', () => {
+      setup();
+      const editorEl = fixture.nativeElement.querySelector('app-corridor-runner-route-editor');
+      expect(editorEl).toBeTruthy();
+    });
+
+    it('should bind availableComponents input from map layout nodes', () => {
+      setup();
+      fixture.detectChanges();
+
+      const editorDebug = fixture.debugElement.query(By.directive(CorridorRunnerRouteEditorComponent));
+      const editorChild = editorDebug.componentInstance as CorridorRunnerRouteEditorComponent;
+
+      // Map has 3 nodes: Airlock (entry), Corridor, EngineeringBay. Entry node excluded.
+      expect(editorChild.availableComponents()).toEqual(['Corridor', 'EngineeringBay']);
+    });
+
+    it('should forward configChanged output to engine set-route-config action', () => {
+      setup();
+      const submitSpy = vi.spyOn(engine, 'submitAction');
+
+      const routes = [{ path: 'engineering', component: 'EngineeringBay' }];
+      component.onConfigChanged(routes);
+
+      expect(submitSpy).toHaveBeenCalledWith({ type: 'set-route-config', routes });
+    });
+
+    it('should transition to run phase on configSubmitted output', () => {
+      setup();
+      expect(component.phase()).toBe('config');
+
+      component.onConfigSubmitted();
+
+      expect(component.phase()).toBe('run');
+    });
+
+    it('should not render route editor in run phase', () => {
+      setup();
+      component.onConfigSubmitted();
+      fixture.detectChanges();
+
+      const editorEl = fixture.nativeElement.querySelector('app-corridor-runner-route-editor');
+      expect(editorEl).toBeFalsy();
+    });
+
+    it('should hide route editor controls from parent controls bar in config phase', () => {
+      setup();
+      fixture.detectChanges();
+
+      const lockBtn = fixture.nativeElement.querySelector('.corridor-runner__lock-btn');
+      expect(lockBtn).toBeFalsy();
     });
   });
 });

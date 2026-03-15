@@ -8,19 +8,13 @@
 
   <!-- Main content area -->
   <div class="corridor-runner__content">
-    <!-- Config phase: code editor -->
+    <!-- Config phase: route editor child -->
     @if (phase() === 'config') {
-      <div class="corridor-runner__editor-panel">
-        <nx-code-editor
-          [code]="routeConfigText()"
-          language="json"
-          (codeChange)="onCodeChange($event)" />
-        @if (parseError()) {
-          <div class="corridor-runner__parse-error" role="alert">
-            {{ parseError() }}
-          </div>
-        }
-      </div>
+      <app-corridor-runner-route-editor
+        [initialConfig]="emptyConfig"
+        [availableComponents]="availableComponents()"
+        (configChanged)="onConfigChanged($event)"
+        (configSubmitted)="onConfigSubmitted()" />
     }
 
     <!-- Station Map (shown in both phases, full width in run phase) -->
@@ -36,15 +30,9 @@
       (moduleClicked)="onModuleClicked($event)" />
   </div>
 
-  <!-- Controls bar -->
-  <div class="corridor-runner__controls">
-    @if (phase() === 'config') {
-      <button class="corridor-runner__lock-btn"
-              [disabled]="!!parseError()"
-              (click)="onLockRoutes()">
-        Lock Routes
-      </button>
-    } @else {
+  <!-- Controls bar (run phase only -- config phase controls are in the route editor child) -->
+  @if (phase() !== 'config') {
+    <div class="corridor-runner__controls">
       <button class="corridor-runner__run-btn"
               [disabled]="isAnimating()"
               (click)="onRunTest()">
@@ -54,6 +42,6 @@
               (click)="onReset()">
         Reset
       </button>
-    }
-  </div>
+    </div>
+  }
 </div>
