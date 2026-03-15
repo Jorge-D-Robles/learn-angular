@@ -65,15 +65,17 @@ function isHullBreachAction(action: unknown): action is HullBreachAction {
 }
 
 // ---------------------------------------------------------------------------
-// Simulation service interface (T-2026-426 will implement)
+// Simulation service interface
 // ---------------------------------------------------------------------------
 
-/** Placeholder interface for future simulation service. */
+/** Interface for the simulation service used by the engine. */
 export interface CorridorRunnerSimulationService {
   resolveUrl(
     url: string,
     routes: readonly RouteEntry[],
   ): { component: string | null; params: Record<string, string> };
+  reset?(): void;
+  loadRouteConfig?(routes: readonly RouteEntry[]): void;
 }
 
 // ---------------------------------------------------------------------------
@@ -123,6 +125,9 @@ export class CorridorRunnerEngine extends MinigameEngine<CorridorRunnerLevelData
   // --- Lifecycle hooks ---
 
   protected onLevelLoad(data: CorridorRunnerLevelData): void {
+    this._simulationService?.reset?.();
+    this._simulationService?.loadRouteConfig?.(data.routeConfig);
+
     this._solutionRouteCount = data.routeConfig.length;
     this._mapLayout.set(data.mapLayout);
     this._testNavigations.set(data.testNavigations);

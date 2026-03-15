@@ -851,6 +851,63 @@ describe('CorridorRunnerEngine', () => {
       const result = engine.runNavigation('/x');
       expect(result!.resolvedComponent).toBe('X');
     });
+
+    it('onLevelLoad calls simulationService.reset() and loadRouteConfig()', () => {
+      const mockService: CorridorRunnerSimulationService = {
+        resolveUrl: vi.fn().mockReturnValue({ component: 'MockComponent', params: {} }),
+        reset: vi.fn(),
+        loadRouteConfig: vi.fn(),
+      };
+      const engine = new CorridorRunnerEngine(undefined, mockService);
+      const routes = [makeRoute('engineering', 'EngineeringBay')];
+      engine.initialize(makeLevel({ routeConfig: routes }));
+      expect(mockService.reset).toHaveBeenCalledTimes(1);
+      expect(mockService.loadRouteConfig).toHaveBeenCalledTimes(1);
+      expect(mockService.loadRouteConfig).toHaveBeenCalledWith(routes);
+    });
+
+    it('reset() propagates to simulationService via re-initialize', () => {
+      const mockService: CorridorRunnerSimulationService = {
+        resolveUrl: vi.fn().mockReturnValue({ component: 'MockComponent', params: {} }),
+        reset: vi.fn(),
+        loadRouteConfig: vi.fn(),
+      };
+      const engine = new CorridorRunnerEngine(undefined, mockService);
+      initAndStart(engine);
+      engine.reset();
+      // reset() re-calls initialize -> onLevelLoad, so 2 total calls
+      expect(mockService.reset).toHaveBeenCalledTimes(2);
+      expect(mockService.loadRouteConfig).toHaveBeenCalledTimes(2);
+    });
+
+    it('runAllNavigations delegates through service when provided', () => {
+      const mockService: CorridorRunnerSimulationService = {
+        resolveUrl: vi.fn().mockReturnValue({ component: 'A', params: {} }),
+        reset: vi.fn(),
+        loadRouteConfig: vi.fn(),
+      };
+      const engine = new CorridorRunnerEngine(undefined, mockService);
+      initAndStart(engine, {
+        testNavigations: [makeTestNav('/a', 'A'), makeTestNav('/b', 'A')],
+      });
+      engine.submitAction({ type: 'set-route-config', routes: [makeRoute('a', 'A')] });
+      engine.runAllNavigations();
+      // resolveUrl called once per test navigation
+      expect(mockService.resolveUrl).toHaveBeenCalledTimes(2);
+    });
+
+    it('onLevelLoad does not error when no service provided', () => {
+      const engine = createEngine();
+      // Should not throw — optional chaining handles missing service
+      expect(() => engine.initialize(makeLevel())).not.toThrow();
+      engine.start();
+      engine.submitAction({
+        type: 'set-route-config',
+        routes: [makeRoute('engineering', 'EngineeringBay')],
+      });
+      const result = engine.runNavigation('/engineering');
+      expect(result!.resolvedComponent).toBe('EngineeringBay');
+    });
   });
 
   // =========================================================================

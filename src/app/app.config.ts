@@ -26,7 +26,7 @@ import { ModuleAssemblyComponent, ModuleAssemblyEngine } from './features/miniga
 import { WireProtocolComponent, WireProtocolEngine } from './features/minigames/wire-protocol';
 import { FlowCommanderComponent, FlowCommanderEngine, FlowCommanderSimulationService } from './features/minigames/flow-commander';
 import { SignalCorpsComponent, SignalCorpsEngine, SignalCorpsWaveService } from './features/minigames/signal-corps';
-import { CorridorRunnerComponent, CorridorRunnerEngine } from './features/minigames/corridor-runner';
+import { CorridorRunnerComponent, CorridorRunnerEngine, CorridorRunnerSimulationService } from './features/minigames/corridor-runner';
 
 // Shared wave service instance: passed to the engine AND available for DI injection
 // in the component. engine.reset() + waveService.loadWaves() fully resets state for replays.
@@ -62,6 +62,6 @@ export const appConfig: ApplicationConfig = {
     { provide: SignalCorpsWaveService, useValue: signalCorpsWaveService },
     provideMinigame('signal-corps', SignalCorpsComponent, () => new SignalCorpsEngine(undefined, signalCorpsWaveService)),
     provideMinigame('module-assembly', ModuleAssemblyComponent, () => new ModuleAssemblyEngine()),
-    provideMinigame('corridor-runner', CorridorRunnerComponent, () => new CorridorRunnerEngine()),
+    provideMinigame('corridor-runner', CorridorRunnerComponent, () => new CorridorRunnerEngine(undefined, new CorridorRunnerSimulationService())),
   ],
 };
