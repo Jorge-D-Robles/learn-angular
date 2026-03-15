@@ -2308,31 +2308,6 @@ Acceptance criteria:
 
 ## P4 -- Forms Bundle
 
-### T-2026-088
-- Title: Create Terminal Hack minigame UI component
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P4
-- Depends: T-2026-087, T-2026-018, T-2026-031
-- Blocked-by: —
-- Tags: minigame, terminal-hack, component, ui
-- Refs: docs/minigames/06-terminal-hack.md, docs/ux/visual-style.md
-
-Build the UI: target form preview, form code editor, live preview, test runner output, and retro terminal aesthetic.
-
-Acceptance criteria:
-- [ ] `TerminalHackComponent` at `src/app/features/minigames/terminal-hack/terminal-hack.component.ts`
-- [ ] Left panel: target form preview (read-only)
-- [ ] Right panel: code editor (CodeEditorComponent) for form code
-- [ ] Live preview updates as player types
-- [ ] Bottom panel: test runner with pass/fail indicators
-- [ ] Retro terminal aesthetic: green-on-black, scanlines
-- [ ] Timer displayed as depleting power gauge
-- [ ] Hint button with point cost warning
-- [ ] Unit tests for: panel rendering, live preview updates, test result display
-
 ### T-2026-089
 - Title: Register Terminal Hack in MinigameRegistry and wire routes
 - Status: todo
