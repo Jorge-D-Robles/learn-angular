@@ -2345,8 +2345,8 @@ Acceptance criteria:
 
 ### T-2026-516
 - Title: Create integration test for TerminalHackFormEvaluationService + TerminalHackEngine coordinated lifecycle
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: medium
 - Size: S
 - Milestone: P4
@@ -2366,6 +2366,7 @@ Acceptance criteria:
 - [ ] Test: 3 failed test runs triggers engine failure
 - [ ] Test: engine.reset() resets evaluation service state
 - [ ] Uses real TerminalHackEngine and TerminalHackFormEvaluationService with level 1 data
+- Started: 2026-03-15
 
 ### T-2026-517
 - Title: Create Terminal Hack visual state integration test for UI-to-engine signal binding
