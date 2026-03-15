@@ -2331,26 +2331,6 @@ Acceptance criteria:
 
 ## P5 -- Architecture Bundle
 
-### T-2026-091
-- Title: Define Power Grid level data for 18 levels
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: M
-- Milestone: P5
-- Depends: T-2026-019, T-2026-038
-- Blocked-by: —
-- Tags: minigame, power-grid, level-data, content
-- Refs: docs/minigames/07-power-grid.md
-
-Define the static level data for all 18 Power Grid levels covering Services and DI.
-
-Acceptance criteria:
-- [ ] Level data file at `src/app/data/levels/power-grid.data.ts`
-- [ ] `PowerGridLevelData` interface: services[], components[], validConnections[], scopeRules[]
-- [ ] 6 Basic, 6 Intermediate, 5 Advanced levels, 1 Boss level matching spec
-- [ ] Unit tests verify: 18 total levels, valid connection definitions
-- Started: 2026-03-15
 
 ### T-2026-092
 - Title: Create Power Grid minigame engine

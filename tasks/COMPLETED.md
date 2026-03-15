@@ -272,3 +272,4 @@
 [2026-03-15] T-2026-517: Create Terminal Hack visual state integration test — retired as redundant, coverage already provided by component+child specs, added gauge width assertion (claude)
 [2026-03-15] T-2026-269: Create P4 end-to-end smoke test for Terminal Hack game loop — created 3 Playwright E2E smoke tests for Terminal Hack game rendering (claude)
 [2026-03-15] T-2026-518: Update architecture.md with P4 Terminal Hack patterns and conventions — documented Terminal Hack patterns: form evaluation pipeline, live preview, test runner, simulation services, retro terminal aesthetic (claude)
+[2026-03-15] T-2026-091: Define Power Grid level data for 18 levels — defined 18 Power Grid levels with types, 47 tests, registration spec, T-2026-270 backlog coordination (claude)
