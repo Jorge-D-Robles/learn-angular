@@ -55,8 +55,8 @@ $glow: 0 0 8px rgba(0, 255, 65, 0.4);
   z-index: 1;
 }
 
-.terminal-hack__left-panel {
-  flex: 0 0 280px;
+.terminal-hack__sidebar {
+  flex: 0 0 200px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -64,42 +64,6 @@ $glow: 0 0 8px rgba(0, 255, 65, 0.4);
   border-radius: 4px;
   padding: 12px;
   overflow-y: auto;
-  h3 { margin: 0; font-size: 1rem; text-shadow: $glow; }
-}
-
-.terminal-hack__form-type {
-  display: inline-block;
-  padding: 2px 8px;
-  border: 1px solid $tg;
-  border-radius: 3px;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-}
-
-.terminal-hack__spec-list { display: flex; flex-direction: column; gap: 4px; }
-
-.terminal-hack__spec-item {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  padding: 6px 8px;
-  border: 1px solid $tb;
-  border-radius: 3px;
-  cursor: pointer;
-  &:hover { border-color: $tg; }
-  &--selected { border-color: $tg; box-shadow: $glow; }
-  &--filled { border-color: rgba(0, 255, 65, 0.6); background: rgba(0, 255, 65, 0.05); }
-}
-
-.terminal-hack__spec-label { font-weight: 600; }
-.terminal-hack__spec-type { opacity: 0.6; font-size: 0.75rem; }
-
-.terminal-hack__spec-validation {
-  font-size: 0.7rem;
-  padding: 1px 4px;
-  border: 1px solid rgba(0, 255, 65, 0.2);
-  border-radius: 2px;
-  opacity: 0.7;
 }
 
 .terminal-hack__completion { font-size: 0.8rem; opacity: 0.8; }
@@ -135,22 +99,6 @@ $glow: 0 0 8px rgba(0, 255, 65, 0.4);
   border-left: 2px solid $orange;
   color: $orange;
   font-size: 0.75rem;
-}
-
-.terminal-hack__right-panel { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
-.terminal-hack__palette { display: flex; flex-wrap: wrap; gap: 4px; }
-
-.terminal-hack__tool-btn {
-  padding: 4px 10px;
-  border: 1px solid $tb;
-  border-radius: 3px;
-  background: transparent;
-  color: $tg;
-  font-family: inherit;
-  font-size: 0.75rem;
-  cursor: pointer;
-  &:hover:not(:disabled) { border-color: $tg; box-shadow: $glow; }
-  &:disabled { opacity: 0.35; cursor: not-allowed; }
 }
 
 .terminal-hack__bottom-panel {
@@ -198,5 +146,5 @@ $glow: 0 0 8px rgba(0, 255, 65, 0.4);
 
 @media (max-width: 767px) {
   .terminal-hack__content { flex-direction: column; }
-  .terminal-hack__left-panel { flex: 0 0 auto; }
+  .terminal-hack__sidebar { flex: 0 0 auto; }
 }

@@ -1,5 +1,7 @@
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { TerminalHackComponent } from './terminal-hack.component';
+import { TerminalHackCodePanelComponent } from './code-panel/code-panel';
 import { TerminalHackEngine } from './terminal-hack.engine';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
@@ -100,6 +102,11 @@ describe('TerminalHackComponent', () => {
     fixture.detectChanges();
   }
 
+  async function asyncSetup(levelData?: Partial<TerminalHackLevelData>) {
+    setup(levelData);
+    await fixture.whenStable();
+  }
+
   afterEach(() => {
     vi.useRealTimers();
     fixture?.destroy();
@@ -122,84 +129,67 @@ describe('TerminalHackComponent', () => {
       expect(inertFixture.componentInstance).toBeTruthy();
       inertFixture.destroy();
     });
-
-    it('should render target form spec panel with element labels', () => {
-      setup();
-      const specItems = fixture.nativeElement.querySelectorAll('.terminal-hack__spec-item');
-      expect(specItems.length).toBe(1);
-      expect(specItems[0].textContent).toContain('Username');
-    });
-
-    it('should render element palette with available elements from engine', () => {
-      setup();
-      const toolBtns = fixture.nativeElement.querySelectorAll('.terminal-hack__tool-btn');
-      expect(toolBtns.length).toBe(2);
-      expect(toolBtns[0].textContent).toContain('FormControl');
-      expect(toolBtns[1].textContent).toContain('Validators.required');
-    });
   });
 
-  // --- 2. Target Form Preview Tests ---
+  // --- 2. Code Panel Wiring Tests ---
 
-  describe('Target Form Preview', () => {
-    it('should display target form name from engine targetFormSpec', () => {
-      setup();
-      const heading = fixture.nativeElement.querySelector('.terminal-hack__left-panel h3');
-      expect(heading.textContent).toContain('TestForm');
+  describe('Code Panel Wiring', () => {
+    it('should render code panel child component when engine has targetFormSpec', async () => {
+      await asyncSetup();
+      const codePanel = fixture.nativeElement.querySelector('app-terminal-hack-code-panel');
+      expect(codePanel).toBeTruthy();
     });
 
-    it('should list all target elements with label, type, and validation summary', () => {
-      setup({
-        targetFormSpec: makeTargetFormSpec({
-          elements: [
-            { id: 'el-1', elementType: 'text', label: 'Username', name: 'username', validations: [{ type: 'required', errorMessage: 'Required' }] },
-            { id: 'el-2', elementType: 'email', label: 'Email', name: 'email', validations: [{ type: 'email', errorMessage: 'Invalid email' }] },
-          ],
-        }),
+    it('should not render code panel when targetFormSpec is null (inert mode)', () => {
+      TestBed.configureTestingModule({
+        imports: [TerminalHackComponent],
       });
-      const specItems = fixture.nativeElement.querySelectorAll('.terminal-hack__spec-item');
-      expect(specItems.length).toBe(2);
-      expect(specItems[0].textContent).toContain('Username');
-      expect(specItems[0].textContent).toContain('text');
-      expect(specItems[1].textContent).toContain('Email');
-      expect(specItems[1].textContent).toContain('email');
+      const inertFixture = TestBed.createComponent(TerminalHackComponent);
+      inertFixture.detectChanges();
+
+      const codePanel = inertFixture.nativeElement.querySelector('app-terminal-hack-code-panel');
+      expect(codePanel).toBeFalsy();
+      inertFixture.destroy();
     });
 
-    it('should show form type badge (template-driven or reactive)', () => {
-      setup();
-      const badge = fixture.nativeElement.querySelector('.terminal-hack__form-type');
-      expect(badge.textContent).toContain('reactive');
+    it('should bind targetSpec input to engine targetFormSpec', async () => {
+      await asyncSetup();
+      const codePanelDe = fixture.debugElement.query(By.directive(TerminalHackCodePanelComponent));
+      const codePanelInstance = codePanelDe.componentInstance as TerminalHackCodePanelComponent;
+      expect(codePanelInstance.targetSpec()).toEqual(engine.targetFormSpec());
+    });
+
+    it('should bind availableTools input to engine availableElements', async () => {
+      await asyncSetup();
+      const codePanelDe = fixture.debugElement.query(By.directive(TerminalHackCodePanelComponent));
+      const codePanelInstance = codePanelDe.componentInstance as TerminalHackCodePanelComponent;
+      expect(codePanelInstance.availableTools()).toEqual(engine.availableElements());
+    });
+
+    it('should forward codeChange output to playerCode signal', async () => {
+      await asyncSetup();
+      const textarea = fixture.nativeElement.querySelector('nx-code-editor textarea') as HTMLTextAreaElement;
+      expect(textarea).toBeTruthy();
+
+      textarea.value = 'const form = new FormGroup({});';
+      textarea.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+
+      expect(component.playerCode()).toBe('const form = new FormGroup({});');
+    });
+
+    it('should start with empty initialCode in code editor', async () => {
+      await asyncSetup();
+      const textarea = fixture.nativeElement.querySelector('nx-code-editor textarea') as HTMLTextAreaElement;
+      expect(textarea).toBeTruthy();
+      expect(textarea.value).toBe('');
     });
   });
 
-  // --- 3. Element Placement Tests ---
+  // --- 3. Element Placement Tests (method-level) ---
 
   describe('Element Placement', () => {
-    it('should call engine.submitAction with place-element on palette button click', () => {
-      setup();
-      const submitSpy = vi.spyOn(engine, 'submitAction');
-
-      // First select a slot
-      const specSlot = fixture.nativeElement.querySelector('.terminal-hack__spec-item');
-      specSlot.click();
-      fixture.detectChanges();
-
-      // Then click a palette tool
-      const toolBtn = fixture.nativeElement.querySelector('.terminal-hack__tool-btn');
-      toolBtn.click();
-      fixture.detectChanges();
-
-      expect(submitSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'place-element',
-          elementId: 'el-1',
-          elementType: 'text',
-          toolType: 'FormControl',
-        }),
-      );
-    });
-
-    it('should remove element via engine.submitAction with remove-element on click', () => {
+    it('should remove element via engine.submitAction with remove-element', () => {
       setup();
       const submitSpy = vi.spyOn(engine, 'submitAction');
 
@@ -207,7 +197,7 @@ describe('TerminalHackComponent', () => {
       component.onPlaceElement('el-1', 'text', 'FormControl');
       fixture.detectChanges();
 
-      // Click remove on the placed element
+      // Remove the placed element
       component.onRemoveElement('el-1');
       fixture.detectChanges();
 
@@ -217,32 +207,6 @@ describe('TerminalHackComponent', () => {
           elementId: 'el-1',
         }),
       );
-    });
-
-    it('should show placed elements in the code preview panel', () => {
-      setup();
-      component.onPlaceElement('el-1', 'text', 'FormControl');
-      fixture.detectChanges();
-
-      const codeEditor = fixture.nativeElement.querySelector('nx-code-editor');
-      expect(codeEditor).toBeTruthy();
-    });
-
-    it('should disable palette button for already-placed element slots', () => {
-      setup();
-
-      // Select the slot
-      const specSlot = fixture.nativeElement.querySelector('.terminal-hack__spec-item');
-      specSlot.click();
-      fixture.detectChanges();
-
-      // Place the element via method
-      component.onPlaceElement('el-1', 'text', 'FormControl');
-      fixture.detectChanges();
-
-      // The slot should now show as filled
-      const filledSlot = fixture.nativeElement.querySelector('.terminal-hack__spec-item--filled');
-      expect(filledSlot).toBeTruthy();
     });
   });
 
@@ -456,8 +420,8 @@ describe('TerminalHackComponent', () => {
       const inertFixture = TestBed.createComponent(TerminalHackComponent);
       inertFixture.detectChanges();
 
-      const specItems = inertFixture.nativeElement.querySelectorAll('.terminal-hack__spec-item');
-      expect(specItems.length).toBe(0);
+      const codePanel = inertFixture.nativeElement.querySelector('app-terminal-hack-code-panel');
+      expect(codePanel).toBeFalsy();
       inertFixture.destroy();
     });
 

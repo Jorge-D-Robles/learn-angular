@@ -12,29 +12,15 @@
   }
 
   <div class="terminal-hack__content">
-    <!-- Left panel: Target form spec -->
-    <div class="terminal-hack__left-panel">
-      <h3>Target: {{ formName() }}</h3>
-      <span class="terminal-hack__form-type">{{ formType() }}</span>
+    @if (targetFormSpec(); as spec) {
+      <app-terminal-hack-code-panel
+        [targetSpec]="spec"
+        [initialCode]="''"
+        [availableTools]="availableElements()"
+        (codeChange)="onCodeChange($event)" />
+    }
 
-      <div class="terminal-hack__spec-list">
-        @for (element of targetElements(); track element.id) {
-          <div class="terminal-hack__spec-item"
-               [class.terminal-hack__spec-item--selected]="selectedSlotId() === element.id"
-               [class.terminal-hack__spec-item--filled]="placedElementIds().has(element.id)"
-               tabindex="0"
-               role="button"
-               (click)="onSelectSlot(element.id)"
-               (keydown.enter)="onSelectSlot(element.id)">
-            <span class="terminal-hack__spec-label">{{ element.label }}</span>
-            <span class="terminal-hack__spec-type">{{ element.elementType }}</span>
-            @for (v of element.validations; track v.type) {
-              <span class="terminal-hack__spec-validation">{{ v.type }}</span>
-            }
-          </div>
-        }
-      </div>
-
+    <div class="terminal-hack__sidebar">
       <!-- Completion indicator -->
       <div class="terminal-hack__completion">
         {{ completionPercent() }}%
@@ -54,19 +40,6 @@
           <div class="terminal-hack__hint-text">{{ hint.text }}</div>
         }
       </div>
-    </div>
-
-    <!-- Right panel: Palette + Code preview -->
-    <div class="terminal-hack__right-panel">
-      <div class="terminal-hack__palette">
-        @for (tool of availableElements(); track tool) {
-          <button class="terminal-hack__tool-btn"
-                  (click)="onToolSelected(tool)">
-            {{ tool }}
-          </button>
-        }
-      </div>
-      <nx-code-editor [code]="synthesizedCode()" [readOnly]="true" />
     </div>
   </div>
 

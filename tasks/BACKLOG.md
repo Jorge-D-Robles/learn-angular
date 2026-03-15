@@ -2400,8 +2400,8 @@ Acceptance criteria:
 
 ### T-2026-511
 - Title: Wire TerminalHackCodePanelComponent into TerminalHackComponent UI
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P4
@@ -2420,6 +2420,7 @@ Acceptance criteria:
 - [ ] `codeChanged` output updates the engine's player code state
 - [ ] Inline target spec and code editor rendering removed from parent component
 - [ ] Unit tests for: child component rendering, input bindings, code change forwarding
+- Started: 2026-03-15
 
 ### T-2026-512
 - Title: Wire TerminalHackLivePreviewComponent into TerminalHackComponent UI

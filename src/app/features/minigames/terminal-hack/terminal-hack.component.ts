@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
-import { CodeEditorComponent } from '../../../shared/components/code-editor/code-editor';
+import { TerminalHackCodePanelComponent } from './code-panel/code-panel';
 import {
   TerminalHackEngine,
   HINT_SCORE_PENALTY,
@@ -17,7 +17,6 @@ import {
 import type {
   FormElementType,
   FormToolType,
-  TargetFormSpec,
 } from './terminal-hack.types';
 
 // ---------------------------------------------------------------------------
@@ -26,7 +25,7 @@ import type {
 
 @Component({
   selector: 'app-terminal-hack',
-  imports: [CodeEditorComponent],
+  imports: [TerminalHackCodePanelComponent],
   templateUrl: './terminal-hack.component.html',
   styleUrl: './terminal-hack.component.scss',
 })
@@ -37,6 +36,7 @@ export class TerminalHackComponent implements OnDestroy {
   // --- Local UI state ---
   readonly selectedSlotId = signal<string | null>(null);
   readonly revealedHintCount = signal(0);
+  readonly playerCode = signal('');
 
   // --- Engine-delegated signals (null-safe) ---
   readonly targetFormSpec = computed(() => this.engine?.targetFormSpec() ?? null);
@@ -45,7 +45,7 @@ export class TerminalHackComponent implements OnDestroy {
     this.engine?.formPreview() ?? { elements: [], formType: 'reactive', isComplete: false, completionRatio: 0 },
   );
   readonly testRunResult = computed(() => this.engine?.testRunResult() ?? null);
-  readonly availableElements = computed(() => this.engine?.availableElements() ?? []);
+  readonly availableElements = computed<FormToolType[]>(() => [...(this.engine?.availableElements() ?? [])]);
   readonly localTimeRemaining = computed(() => this.engine?.localTimeRemaining() ?? 0);
   readonly timeLimit = computed(() => this.engine?.timeLimit() ?? 0);
   readonly levelHints = computed(() => this.engine?.levelHints() ?? []);
@@ -64,13 +64,6 @@ export class TerminalHackComponent implements OnDestroy {
     return '#ef4444';
   });
 
-  readonly synthesizedCode = computed(() => {
-    const spec = this.targetFormSpec();
-    const placed = this.placedElements();
-    if (!spec || placed.size === 0) return '// Place form elements to see code...';
-    return this.buildFormCode(spec, placed);
-  });
-
   readonly placedElementIds = computed(() => new Set(this.placedElements().keys()));
 
   readonly testResults = computed(() => this.testRunResult()?.testCaseResults ?? []);
@@ -81,10 +74,6 @@ export class TerminalHackComponent implements OnDestroy {
   readonly passRatePercent = computed(() => Math.round(this.passRate() * 100));
 
   readonly completionPercent = computed(() => Math.round(this.formPreview().completionRatio * 100));
-
-  readonly targetElements = computed(() => this.targetFormSpec()?.elements ?? []);
-  readonly formName = computed(() => this.targetFormSpec()?.formName ?? '');
-  readonly formType = computed(() => this.targetFormSpec()?.formType ?? 'reactive');
 
   readonly revealedHints = computed(() => {
     const count = this.revealedHintCount();
@@ -103,6 +92,10 @@ export class TerminalHackComponent implements OnDestroy {
   }
 
   // --- Public methods ---
+
+  onCodeChange(code: string): void {
+    this.playerCode.set(code);
+  }
 
   onSelectSlot(elementId: string): void {
     this.selectedSlotId.set(elementId);
@@ -151,24 +144,4 @@ export class TerminalHackComponent implements OnDestroy {
     this.shortcuts.unregister('escape');
   }
 
-  // --- Private helpers ---
-
-  private buildFormCode(spec: TargetFormSpec, placed: ReadonlyMap<string, PlayerFormElement>): string {
-    const lines: string[] = [];
-    for (const [, el] of placed) {
-      const specEl = spec.elements.find(e => e.id === el.elementId);
-      const name = specEl?.name ?? el.elementId;
-      const elType = el.elementType;
-      const tool = el.toolType;
-
-      if (tool === 'ngModel') {
-        lines.push(`<input type="${elType}" [(ngModel)]="${name}">`);
-      } else if (tool === 'FormControl') {
-        lines.push(`<input type="${elType}" formControlName="${name}">`);
-      } else {
-        lines.push(`<input type="${elType}" [${tool}]="${name}">`);
-      }
-    }
-    return lines.join('\n');
-  }
 }
