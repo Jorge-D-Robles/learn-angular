@@ -19,3 +19,4 @@ export {
   type ResolvedNavigation,
 } from './corridor-runner-simulation.service';
 export { CorridorRunnerComponent } from './corridor-runner.component';
+export { CorridorRunnerMapComponent } from './map/map';
