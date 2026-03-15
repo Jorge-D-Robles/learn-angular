@@ -7,6 +7,7 @@ import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { StoryMissionContentService } from '../../core/curriculum';
 import { PHASE_1_MISSIONS } from './phase-1';
+import { PHASE_2_MISSIONS } from './phase-2';
 import { provideMissionContent } from './provide-mission-content';
 
 describe('provideMissionContent', () => {
@@ -77,6 +78,66 @@ describe('provideMissionContent', () => {
     for (let ch = 1; ch <= 10; ch++) {
       const content = service.getMissionContent(ch);
       expect(content!.steps.length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('provideMissionContent — Phase 2', () => {
+  let service: StoryMissionContentService;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [provideMissionContent(PHASE_2_MISSIONS)],
+    });
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    service = TestBed.inject(StoryMissionContentService);
+  });
+
+  it('should register all 3 Phase 2 mission content entries at initialization', () => {
+    for (let ch = 11; ch <= 13; ch++) {
+      expect(service.getMissionContent(ch)).toBeDefined();
+    }
+  });
+
+  it('should return valid content for each chapter (11-13)', () => {
+    for (let ch = 11; ch <= 13; ch++) {
+      const content = service.getMissionContent(ch);
+      expect(content).toBeDefined();
+      expect(content!.chapterId).toBe(ch);
+      expect(content!.steps.length).toBeGreaterThan(0);
+      expect(content!.completionCriteria).toBeDefined();
+    }
+  });
+
+  it('should return correct chapterId for getMissionContent(11)', () => {
+    const content = service.getMissionContent(11);
+    expect(content).toBeDefined();
+    expect(content!.chapterId).toBe(11);
+  });
+
+  it('should return correct chapterId for getMissionContent(13)', () => {
+    const content = service.getMissionContent(13);
+    expect(content).toBeDefined();
+    expect(content!.chapterId).toBe(13);
+  });
+
+  it('should register both Phase 1 and Phase 2 content when both are provided', async () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideMissionContent(PHASE_1_MISSIONS),
+        provideMissionContent(PHASE_2_MISSIONS),
+      ],
+    });
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    const svc = TestBed.inject(StoryMissionContentService);
+
+    for (let ch = 1; ch <= 10; ch++) {
+      expect(svc.getMissionContent(ch)).toBeDefined();
+    }
+    for (let ch = 11; ch <= 13; ch++) {
+      expect(svc.getMissionContent(ch)).toBeDefined();
     }
   });
 });
