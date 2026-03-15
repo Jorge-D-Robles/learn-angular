@@ -2397,33 +2397,6 @@ Acceptance criteria:
 
 
 
-### T-2026-510
-- Title: Create TerminalHackTestRunnerComponent for test case execution panel
-- Status: in-progress
-- Assigned: claude
-- Priority: high
-- Size: S
-- Milestone: P4
-- Depends: T-2026-086, T-2026-007
-- Blocked-by: —
-- Tags: ui, component, minigame, terminal-hack, test-runner
-- Refs: docs/minigames/06-terminal-hack.md, docs/ux/visual-style.md
-
-Terminal Hack spec describes: "Test inputs are provided -- the form must handle them correctly" and "Test button -- run predefined test inputs against the form." The test runner panel displays test cases, their execution status, and pass/fail indicators. Extracting this into a sub-component follows the established pattern.
-
-Acceptance criteria:
-- [ ] `TerminalHackTestRunnerComponent` at `src/app/features/minigames/terminal-hack/test-runner/test-runner.ts`
-- [ ] Input: `testCases` (FormTestCase[]) -- the level's predefined test cases
-- [ ] Input: `testResults` (TestCaseResult[] | null) -- results after running tests (null before first run)
-- [ ] Input: `isRunning` (boolean) -- whether tests are currently executing
-- [ ] Displays each test case with description and expected outcome
-- [ ] After run: pass/fail icons per test (green checkmark / red X)
-- [ ] Pass rate counter: "5/7 tests passed"
-- [ ] Test input animation: when running, inputs animate into form fields (per spec)
-- [ ] Output: `runTestsRequested` event
-- [ ] Exported from terminal-hack barrel
-- [ ] Unit tests for: test case listing, pass/fail rendering, pass rate display, running state, run request event
-- Started: 2026-03-15
 
 ### T-2026-511
 - Title: Wire TerminalHackCodePanelComponent into TerminalHackComponent UI
