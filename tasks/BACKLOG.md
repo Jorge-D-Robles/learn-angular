@@ -2396,8 +2396,8 @@ Acceptance criteria:
 
 ### T-2026-431
 - Title: Create TerminalHackCodePanelComponent for target form and code editor split view
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: S
 - Milestone: P4
@@ -2418,6 +2418,7 @@ Acceptance criteria:
 - [ ] Tool availability hints: disabled tools shown as dimmed in the available tools palette
 - [ ] Exported from terminal-hack barrel
 - [ ] Unit tests for: target spec rendering, code editor rendering, code change emission, retro theme applied, tool hints
+- Started: 2026-03-15
 
 ### T-2026-508
 - Title: Wire TerminalHackFormEvaluationService into TerminalHackEngine lifecycle
