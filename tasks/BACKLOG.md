@@ -2480,29 +2480,6 @@ Acceptance criteria:
 - [ ] `getMissionContent(14)` through `getMissionContent(17)` return valid content
 - [ ] Unit tests for: content loading for each chapter
 
-### T-2026-268
-- Title: Create Terminal Hack form specification and test case data model
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P4
-- Depends: T-2026-019
-- Blocked-by: —
-- Tags: minigame, terminal-hack, data-model, forms
-- Refs: docs/minigames/06-terminal-hack.md
-
-Terminal Hack's tech notes say "Levels define: target form spec, test cases, available form elements, time limit." P2 minigames have data model tickets but Terminal Hack does not. The engine (T-2026-087) and level data (T-2026-086) need these types before they can be built.
-
-Acceptance criteria:
-- [ ] `TargetFormSpec` interface at `src/app/features/minigames/terminal-hack/terminal-hack.types.ts`
-- [ ] `FormElement`: id, elementType (text | select | checkbox | radio | textarea), label, validations[]
-- [ ] `FormValidationRule`: type (required | pattern | email | min | max | minLength | maxLength | custom), params
-- [ ] `TestCase`: id, inputValues (Record<string, any>), expectedOutput, description
-- [ ] `AvailableFormTool`: toolType (ngModel | FormControl | FormGroup | FormArray | FormBuilder | Validator), available (boolean)
-- [ ] `TerminalHackScoring`: speed, testPassRate, hintsUsed, isPerfect
-- [ ] Exported from terminal-hack barrel
-- [ ] Unit tests for: form element type validation, test case structure validation
 
 ### T-2026-269
 - Title: Create P4 end-to-end smoke test for Terminal Hack game loop
@@ -2532,7 +2509,7 @@ Acceptance criteria:
 - Priority: high
 - Size: M
 - Milestone: P4
-- Depends: T-2026-268
+- Depends: T-2026-086
 - Blocked-by: —
 - Tags: minigame, terminal-hack, service, evaluation, forms
 - Refs: docs/minigames/06-terminal-hack.md
@@ -2580,7 +2557,7 @@ Acceptance criteria:
 - Priority: high
 - Size: S
 - Milestone: P4
-- Depends: T-2026-268, T-2026-031, T-2026-007
+- Depends: T-2026-086, T-2026-031, T-2026-007
 - Blocked-by: —
 - Tags: ui, component, minigame, terminal-hack, code-panel
 - Refs: docs/minigames/06-terminal-hack.md, docs/ux/visual-style.md
