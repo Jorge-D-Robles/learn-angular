@@ -2333,8 +2333,8 @@ Acceptance criteria:
 
 ### T-2026-091
 - Title: Define Power Grid level data for 18 levels
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
 - Priority: high
 - Size: M
 - Milestone: P5
@@ -2350,6 +2350,7 @@ Acceptance criteria:
 - [ ] `PowerGridLevelData` interface: services[], components[], validConnections[], scopeRules[]
 - [ ] 6 Basic, 6 Intermediate, 5 Advanced levels, 1 Boss level matching spec
 - [ ] Unit tests verify: 18 total levels, valid connection definitions
+- Started: 2026-03-15
 
 ### T-2026-092
 - Title: Create Power Grid minigame engine
@@ -2640,13 +2641,15 @@ Acceptance criteria:
 
 Power Grid's tech notes say "Grid is a directed acyclic graph (services -> components, services -> services)" and level data includes "services[], components[], validConnections[], scopeRules[]." P2 minigames have data model tickets but Power Grid does not. The engine (T-2026-092) and level data (T-2026-091) need these types.
 
+Note: `power-grid.types.ts` pre-created by T-2026-091 with `InjectionScope` (string union: 'root' | 'component' | 'hierarchical'), `ProviderType` ('class' | 'factory' | 'value' | 'existing'), `ServiceNode`, `ComponentNode`, `ValidConnection`, `ScopeRule`, `PowerGridLevelData`. Extend these types, do not recreate or conflict.
+
 Acceptance criteria:
-- [ ] `ServiceNode` interface at `src/app/features/minigames/power-grid/power-grid.types.ts`
+- [ ] `ServiceNode` interface at `src/app/features/minigames/power-grid/power-grid.types.ts` (already pre-created by T-2026-091 — extend, do not recreate)
 - [ ] `ServiceNode`: id, name, type (string), providedIn ('root' | 'component' | 'module'), methods[], state
 - [ ] `ComponentNode`: id, name, requiredInjections[], providers[] (optional component-level providers)
-- [ ] `InjectionScope` enum: root, component, hierarchical, factory
-- [ ] `PowerConnection`: serviceId, componentId, scope, isCorrect
-- [ ] `ScopeRule`: serviceId, allowedScopes[], defaultScope
+- [ ] `InjectionScope` string union already exists ('root' | 'component' | 'hierarchical') — add enum if needed by engine/UI
+- [ ] `PowerConnection`: serviceId, componentId, scope, isCorrect (runtime type; `ValidConnection` is the static answer-key counterpart already in types)
+- [ ] `ScopeRule`: serviceId, allowedScopes[], defaultScope (already pre-created by T-2026-091)
 - [ ] `ShortCircuit`: description, involvedNodes[]
 - [ ] Exported from power-grid barrel
 - [ ] Unit tests for: connection validation, scope rule checking

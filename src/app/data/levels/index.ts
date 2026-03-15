@@ -4,4 +4,5 @@ export { MODULE_ASSEMBLY_LEVELS, MODULE_ASSEMBLY_LEVEL_PACK } from './module-ass
 export * from './signal-corps.data';
 export * from './wire-protocol.data';
 export * from './terminal-hack.data';
+export * from './power-grid.data';
 export * from './provide-level-data';
