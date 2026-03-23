@@ -2334,28 +2334,6 @@ Acceptance criteria:
 
 
 
-### T-2026-093
-- Title: Create Power Grid minigame UI component
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P5
-- Depends: T-2026-092, T-2026-018
-- Blocked-by: —
-- Tags: minigame, power-grid, component, ui
-- Refs: docs/minigames/07-power-grid.md, docs/ux/visual-style.md
-
-Build the circuit board UI for Power Grid with service generators, component consumers, and power line drawing.
-
-Acceptance criteria:
-- [ ] `PowerGridComponent` at `src/app/features/minigames/power-grid/power-grid.component.ts`
-- [ ] Grid board with services (left) and components (right)
-- [ ] Power line drawing between services and components
-- [ ] Scope selector per service (root/component)
-- [ ] Color-coded connections (blue=root, green=component, orange=factory)
-- [ ] Unit tests for: grid rendering, connection drawing, scope selection
-
 ### T-2026-094
 - Title: Define Data Relay level data for 18 levels
 - Status: todo
