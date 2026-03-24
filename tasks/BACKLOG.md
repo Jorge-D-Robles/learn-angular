@@ -2334,28 +2334,6 @@ Acceptance criteria:
 
 
 
-### T-2026-272
-- Title: Create P5 end-to-end smoke test for Power Grid and Data Relay
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P5
-- Depends: T-2026-115, T-2026-116
-- Blocked-by: —
-- Tags: testing, e2e, power-grid, data-relay, game-loop
-- Refs: docs/minigames/07-power-grid.md, docs/minigames/08-data-relay.md, playwright.config.ts
-
-P2 has an end-to-end smoke test (T-2026-142) but P5 does not. This E2E test validates both P5 minigames render and are playable via browser navigation.
-
-Acceptance criteria:
-- [ ] Playwright test at `e2e/power-grid.spec.ts`
-- [ ] Test: navigate to `/minigames/power-grid/level/1`, verify game renders with grid board and service/component nodes
-- [ ] Playwright test at `e2e/data-relay.spec.ts`
-- [ ] Test: navigate to `/minigames/data-relay/level/1`, verify game renders with data streams and pipe toolbox
-- [ ] Tests verify MinigameShell HUD is present
-- [ ] Tests run in CI (GitHub Actions)
-
 ### T-2026-524
 - Title: Create P5 minigame visual state integration tests for Power Grid and Data Relay
 - Status: todo
