@@ -10,6 +10,7 @@ import { SignalCorpsComponent, SignalCorpsEngine } from '../../features/minigame
 import { CorridorRunnerComponent, CorridorRunnerEngine } from '../../features/minigames/corridor-runner';
 import { TerminalHackComponent, TerminalHackEngine } from '../../features/minigames/terminal-hack';
 import { PowerGridComponent, PowerGridEngine } from '../../features/minigames/power-grid';
+import { DataRelayComponent, DataRelayEngine } from '../../features/minigames/data-relay';
 import type { MinigameId } from '../../core/minigame/minigame.types';
 import { getMinigameTutorial } from '../tutorials/minigame-tutorials.data';
 import { provideMinigame } from './provide-minigame';
@@ -314,6 +315,43 @@ describe('provideMinigame — power-grid', () => {
     const config = registry.getConfig('power-grid');
     expect(config).toBeDefined();
     expect(config!.name).toBe('Power Grid');
+    expect(config!.totalLevels).toBe(18);
+  });
+});
+
+describe('provideMinigame — data-relay', () => {
+  let registry: MinigameRegistryService;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideMinigame(
+          'data-relay',
+          DataRelayComponent,
+          () => new DataRelayEngine(),
+        ),
+      ],
+    });
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    registry = TestBed.inject(MinigameRegistryService);
+  });
+
+  it('should register the component type for data-relay', () => {
+    expect(registry.getComponent('data-relay')).toBe(DataRelayComponent);
+  });
+
+  it('should register an engine factory that produces a DataRelayEngine', () => {
+    const factory = registry.getEngineFactory('data-relay');
+    expect(factory).toBeTruthy();
+    const engine = factory!();
+    expect(engine).toBeInstanceOf(DataRelayEngine);
+  });
+
+  it('should preserve the existing config for data-relay', () => {
+    const config = registry.getConfig('data-relay');
+    expect(config).toBeDefined();
+    expect(config!.name).toBe('Data Relay');
     expect(config!.totalLevels).toBe(18);
   });
 });
