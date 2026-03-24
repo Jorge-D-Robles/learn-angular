@@ -2407,26 +2407,6 @@ Acceptance criteria:
 
 ## P7 -- Advanced Bundle
 
-### T-2026-102
-- Title: Define Deep Space Radio level data for 18 levels
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P7
-- Depends: T-2026-019, T-2026-038
-- Blocked-by: —
-- Tags: minigame, deep-space-radio, level-data, content
-- Refs: docs/minigames/10-deep-space-radio.md
-
-Define the static level data for all 18 Deep Space Radio levels covering HTTP Client and Interceptors.
-
-Acceptance criteria:
-- [ ] Level data file at `src/app/data/levels/deep-space-radio.data.ts`
-- [ ] `DeepSpaceRadioLevelData` interface: endpoints[], interceptors[], testScenarios[], expectedResults[]
-- [ ] 6 Basic, 6 Intermediate, 5 Advanced levels, 1 Boss level matching spec
-- [ ] Unit tests verify: 18 total levels, valid endpoint/interceptor definitions
-
 ### T-2026-103
 - Title: Create Deep Space Radio minigame engine
 - Status: todo

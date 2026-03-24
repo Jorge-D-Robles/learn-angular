@@ -11,20 +11,12 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Create Blast Doors lifecycle and directive data model
-- Priority: high | Size: S | Milestone: P7
+- Title: Define Deep Space Radio level data for 18 levels
+- Priority: high | Size: M | Milestone: P7
 
 ---
 
 ## Queue
-
-### T-2026-277
-- Title: Create Blast Doors lifecycle and directive data model
-- Priority: high | Size: S | Milestone: P7
-
-### T-2026-102
-- Title: Define Deep Space Radio level data for 18 levels
-- Priority: high | Size: M | Milestone: P7
 
 ### T-2026-104
 - Title: Define System Certification level data for 18 levels
@@ -43,3 +35,5 @@ Started: 2026-03-24
 ## Done This Sprint
 
 - T-2026-275: Create Deep Space Radio endpoint and interceptor data model
+- T-2026-276: Create System Certification source code and test data model
+- T-2026-277: Create Blast Doors lifecycle and directive data model
