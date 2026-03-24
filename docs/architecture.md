@@ -1,6 +1,6 @@
 # Technical Architecture
 
-This document describes the Learn Angular codebase as built. Every claim is traceable to actual source files. Last updated after P5 (Power Grid, Data Relay).
+This document describes the Learn Angular codebase as built. Every claim is traceable to actual source files. Last updated after P6 (Reactor Core).
 
 See `overview.md` for project vision and `curriculum.md` for content scope.
 
@@ -590,6 +590,7 @@ Every implemented minigame uses a component-scoped `@Injectable()` service for d
 | `TerminalHackFormEvaluationService` | `features/minigames/terminal-hack/terminal-hack-evaluation.service.ts` | Terminal Hack | Form evaluation and test case execution |
 | `PowerGridInjectionServiceImpl` | `features/minigames/power-grid/power-grid-injection.service.ts` | Power Grid | DI scope validation and connection checking |
 | `DataRelayTransformServiceImpl` | `features/minigames/data-relay/data-relay-transform.service.ts` | Data Relay | Pipe application, chaining, and stream evaluation |
+| `ReactorCoreGraphServiceImpl` | `features/minigames/reactor-core/reactor-core-graph.service.ts` | Reactor Core | DAG editing, cycle detection, change propagation, scenario execution |
 
 Pattern: all are `@Injectable()` without `providedIn: 'root'`, scoped to their component tree for automatic cleanup.
 
@@ -794,3 +795,152 @@ Pipes are organized by `PipeCategory` (`'text' | 'number' | 'date' | 'custom'`) 
 - Placement feedback: brief flash (400ms) on the stream lane -- green for valid placement, red for invalid
 
 **Particle gap indices**: `getParticleGaps(stream)` generates visual data flow markers between pipe blocks, one per gap between input/pipes/output (count = `placedPipes.length + 1`).
+
+### Reactor Core: Signal Graph Editing Pattern
+
+Reactor Core models Angular's signal system as a directed acyclic graph (DAG). Players place signal, computed, and effect nodes on a canvas, wire them together, then run simulation scenarios that propagate value changes through the graph. The engine stores `RuntimeReactorNode[]` with `GraphEdge[]` and delegates graph operations to `ReactorCoreGraphServiceImpl`. Defined across `reactor-core.types.ts`, `reactor-core.engine.ts`, `reactor-core-graph.service.ts`, and `reactor-core.component.ts` in `src/app/features/minigames/reactor-core/`.
+
+**Node type system** (all in `reactor-core.types.ts`):
+
+7 node types mirror Angular's signal API, each with a level-data (readonly) interface and a runtime (mutable) counterpart:
+
+| Type | Level-data interface | Angular concept | Key fields |
+|------|---------------------|-----------------|------------|
+| `'signal'` | `SignalNode` | `signal()` | `initialValue` |
+| `'computed'` | `ComputedNode` | `computed()` | `computationExpr`, `dependencyIds` |
+| `'effect'` | `EffectNode` | `effect()` | `actionDescription`, `dependencyIds`, `requiresCleanup?` |
+| `'linked-signal'` | `LinkedSignalNode` | `linkedSignal()` | `initialValue`, `linkedToId` |
+| `'to-signal'` | `ToSignalNode` | `toSignal()` | `sourceDescription`, `dependencyIds` |
+| `'to-observable'` | `ToObservableNode` | `toObservable()` | `dependencyIds` |
+| `'resource'` | `ResourceNode` | `resource()` | `requestDescription`, `dependencyIds` |
+
+Runtime types extend the level-data interfaces with `position: NodePosition` (mutable `{x, y}` for drag) and `currentValue` (mutable, except `RuntimeEffectNode` which has `cleanupFn` instead, and `RuntimeToObservableNode` which has no value). `RuntimeResourceNode` also adds `resourceState: 'loading' | 'error' | 'value'`.
+
+The union `ReactorNode` covers all 7 level-data types; `RuntimeReactorNode` covers all 7 runtime types.
+
+**Graph structure types**:
+
+| Type | Shape | Purpose |
+|------|-------|---------|
+| `GraphEdge` | `{ sourceId, targetId }` | Directed edge between two nodes |
+| `ValidGraph` | `{ nodes, edges }` | Answer key: a correct graph configuration |
+| `SimulationScenario` | `{ id, description, signalChanges, expectedOutputs }` | Test scenario with input changes and expected results |
+| `GraphConstraint` | `{ maxNodes, requiredNodeTypes, forbiddenPatterns? }` | Limits on the player's graph |
+| `ReactorCoreLevelData` | `{ requiredNodes, scenarios, validGraphs, constraints }` | Complete level configuration |
+
+**Validation and result types**:
+
+| Type | Purpose |
+|------|---------|
+| `GraphValidationResult` | `{ valid, cycles, orphanedNodes, missingDependencies }` |
+| `PropagationResult` | `{ updatedNodes, triggeredEffects }` |
+| `ScenarioResult` | `{ passed, results[] }` with per-node expected/actual/match |
+
+### Reactor Core: Cycle Detection
+
+Two pure utility functions exported from `reactor-core.types.ts`:
+
+- `hasCycle(edges, nodeIds)` -- DFS with 3-color marking (WHITE=unvisited, GRAY=in-progress, BLACK=done). Returns `true` if any cycle exists in the directed graph.
+- `wouldCreateCycle(existingEdges, newEdge, nodeIds)` -- Tests whether adding a new edge would introduce a cycle. Spreads the new edge into existing edges (no mutation) and delegates to `hasCycle()`.
+
+Both the engine's `handleConnectEdge()` and the graph service's `addEdge()` call `wouldCreateCycle()` before accepting a new edge, preventing circular dependencies at the graph editing level.
+
+### Reactor Core: Change Propagation Model
+
+Propagation follows a 4-step pipeline implemented in both `ReactorCoreGraphServiceImpl.propagateChanges()` and the engine's inline fallback `inlineRunScenario()`:
+
+1. **Apply signal changes** -- Set new values on the changed signal nodes.
+2. **Handle linked-signal nodes** -- If a linked-signal's source was changed, copy the source value to the linked node.
+3. **Topological sort** -- Kahn's algorithm on the reachable subgraph from changed signal IDs. First performs BFS to discover all reachable nodes, then runs Kahn's algorithm on the reachable subgraph to produce a dependency-ordered processing sequence.
+4. **Process nodes in topological order** -- For each reachable node (skipping the initially changed signals):
+   - `computed`: Build a scope `Record<string, value>` from inbound edges (keyed by source node `label`), evaluate `computationExpr` via `new Function()` constructor.
+   - `effect`: Record the node ID in `triggeredEffects[]` (no value computation).
+   - `linked-signal`: Copy value from linked source.
+   - `to-signal`: Pass-through from first inbound edge's value.
+   - `resource`: Pass-through from first inbound edge's value, update `resourceState` to `'value'`.
+   - `to-observable`: Skipped (no `currentValue`).
+
+**Expression evaluation**: `evaluateExpression(expr, scope)` uses the `Function` constructor to evaluate `computationExpr` strings with named variables from the dependency scope. Returns `string | number | boolean`, falling back to `0` on error.
+
+**Approximate equality**: `approximatelyEqual(actual, expected)` uses tolerance `0.01` for number comparisons, strict equality for strings and booleans.
+
+### Reactor Core: Scenario Execution and Validation
+
+**Graph validation** (`validateGraph()`): Checks 3 conditions:
+
+1. **Cycles** -- `hasCycle()` on the full edge set
+2. **Orphaned nodes** -- Non-signal nodes with neither inbound nor outbound edges
+3. **Missing dependencies** -- For computed, effect, to-signal, to-observable, and resource nodes: checks that every declared `dependencyId` has a corresponding inbound edge
+
+Returns `GraphValidationResult` with `valid` = true only when all three checks pass.
+
+**Scenario execution** (`runScenario()`): Applies the propagation pipeline above, then compares expected outputs against computed values. Each `ExpectedOutput` specifies `nodeId`, `expectedValue`, and optional `expectedState` (for resource nodes). Returns `ScenarioResult` with per-node match results and an aggregate `passed` boolean.
+
+**Simulation run** (`runSimulation()` on the engine): Runs all scenarios from the level data. Tracks `simulationCount` and `simulationsRemaining` (default `DEFAULT_MAX_SIMULATIONS = 3`). Auto-completes on all pass; auto-fails when simulations exhausted.
+
+**Scoring**: Same tiered multiplier pattern as Power Grid and Data Relay. 1st simulation = `maxScore * 1.0`, 2nd = `maxScore * 0.4`, 3rd = `maxScore * 0.2`.
+
+**Engine action types** (6 actions via `submitAction()`):
+
+| Action | Type guard | Effect |
+|--------|-----------|--------|
+| `AddNodeAction` | `isAddNodeAction` | Places a required node from the level's `requiredNodes` pool |
+| `RemoveNodeAction` | `isRemoveNodeAction` | Removes a node and all its connected edges |
+| `ConnectEdgeAction` | `isConnectEdgeAction` | Adds an edge (rejects duplicates and cycles) |
+| `DisconnectEdgeAction` | `isDisconnectEdgeAction` | Removes an edge |
+| `SetSignalValueAction` | `isSetSignalValueAction` | Updates value on signal or linked-signal nodes |
+| `SetNodePositionAction` | `isSetNodePositionAction` | Updates `{x, y}` position for canvas drag |
+
+Each action has a dedicated type guard function and returns `ActionResult` with `valid`, `scoreChange`, and `livesChange` fields. Graph-editing actions return `scoreChange: 0, livesChange: 0` -- scoring occurs only during simulation.
+
+### Reactor Core: Graph Canvas SVG Pattern
+
+`ReactorCoreGraphCanvasComponent` (`app-reactor-core-graph-canvas`): SVG-based graph editor defined in `src/app/features/minigames/reactor-core/graph-canvas/graph-canvas.ts`. Uses a `0 0 1200 800` viewBox.
+
+**Pan and zoom**: Internal `panX`, `panY`, and `zoomLevel` signals compose into a `canvasTransform` computed string (`translate(panX, panY) scale(zoomLevel)`). Zoom via mouse wheel (delta `+/-0.1`, clamped to `[0.3, 3]`).
+
+**Node rendering**: Nodes are rectangles (`NODE_WIDTH = 160`, `NODE_HEIGHT = 80`) positioned by `RuntimeReactorNode.position`. Each node has a source port (right edge, `x + NODE_WIDTH`) and a target port (left edge, `x`), both at vertical center (`y + 40`). Port components use `SvgPortComponent` from the shared library.
+
+**Node drag**: Pointer-based drag via `onNodePointerDown` / `onPointerUp`. Captures pointer on the SVG element (`setPointerCapture`). Computes delta from drag start and emits `nodeMoved` with the new position.
+
+**Wire rendering**: `wireDescriptors` computed signal maps edges to `GraphWireDescriptor[]`. Each wire is a Bezier curve: `M startX startY C cp1x cp1y, cp2x cp2y, endX endY` with control point offset `dx = |endX - startX| * 0.4`. Wire color is determined by the source node's type via `EXTENDED_NODE_COLORS`.
+
+**Wire drawing**: Integrates with the shared `WireDrawService`. A `previewPath` computed signal renders a live Bezier preview during drawing. The wire validator calls `wouldCreateCycle()` to reject edges that would create cycles. Port IDs follow the format `"{nodeId}-source"` / `"{nodeId}-target"` and are parsed to extract node IDs for edge creation.
+
+**Node color scheme** (`EXTENDED_NODE_COLORS` in `graph-canvas.ts`, `NODE_TYPE_COLORS` in `node-config.ts`):
+
+| Node type | Color | Theme name |
+|-----------|-------|------------|
+| `signal` | `#3B82F6` | Reactor Blue |
+| `computed` | `#22C55E` | Sensor Green |
+| `effect` | `#F97316` | Alert Orange |
+| `linked-signal` | `#A855F7` | Comm Purple |
+| `to-signal` | `#3B82F6` | Reactor Blue |
+| `to-observable` | `#A855F7` | Comm Purple |
+| `resource` | `#EAB308` | Caution Yellow |
+
+**Canvas drop**: `DropZoneDirective` integration for dropping nodes from the toolbox. Emits `nodeAdded` with the dropped `ReactorNodeType` and a default position.
+
+**Wire removal**: Right-click on a wire emits `edgeRemoved` with source and target IDs.
+
+**Keyboard shortcuts**: `s` = Simulate, `Escape` = cancel/close, `1` = signal toolbox, `2` = computed toolbox, `3` = effect toolbox.
+
+### Reactor Core: Node Configuration Panel
+
+`ReactorCoreNodeConfigComponent` (`app-node-config`): Type-specific node editor defined in `src/app/features/minigames/reactor-core/node-config/node-config.ts`.
+
+Integrates with the shared `ExpressionBuilderComponent` (`nx-expression-builder`) for computed node formula editing in raw mode.
+
+| Node type | Editor |
+|-----------|--------|
+| `signal` | Value type selector (string/number/boolean) + type-appropriate input (text, number, or checkbox) |
+| `computed` | Expression builder (raw mode) + dependency checkbox list |
+| `effect` | Action description textarea + cleanup toggle checkbox + dependency checkbox list |
+
+Uses an `effect()` with `allowSignalWrites: true` to sync 6 internal editing signals from the input node. On "Apply", emits the edited node via `nodeConfigured` output. On "Cancel", emits `cancelled`.
+
+### Reactor Core: Visual Style
+
+- **Color scheme**: Dark grid background with glowing colored nodes (blue for signals, green for computed, orange for effects)
+- **Bezier wires**: Smooth curves color-coded by source node type, matching the node colors above
+- **Simulation animation**: 2-second animation period (`SIMULATION_ANIMATION_MS = 2000`) during which the `simulating` signal is true, enabling visual propagation effects in the template

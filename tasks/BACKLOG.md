@@ -2380,35 +2380,11 @@ Acceptance criteria:
 - [ ] Test: verify signal/computed/effect node types are present in the toolbox
 - [ ] Test runs in CI (GitHub Actions)
 
-### T-2026-528
-- Title: Create integration test for ReactorCoreGraphService + ReactorCoreEngine coordinated lifecycle
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P6
-- Depends: T-2026-438, T-2026-099
-- Blocked-by: —
-- Tags: testing, integration, reactor-core, graph, engine
-- Refs: docs/minigames/09-reactor-core.md, src/app/features/minigames/reactor-core/
-
-After the engine is wired with ReactorCoreGraphService, this integration test verifies the coordinated lifecycle: loading required nodes, placing nodes and edges, running simulations, and evaluating scenario results through the engine's action pipeline. Follows the established pattern (P2: T-2026-476/477/478, P3: T-2026-502, P4: T-2026-516).
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/features/minigames/reactor-core/graph-engine.integration.spec.ts`
-- [ ] Test: engine.initialize() loads required nodes and scenarios into graph service
-- [ ] Test: add-node action delegates to graph service and updates engine state
-- [ ] Test: add-edge action validates no cycles via graph service before accepting
-- [ ] Test: simulate action runs scenarios through graph service and evaluates correctness
-- [ ] Test: all scenarios passing triggers engine completion with scoring
-- [ ] Test: circular dependency rejection deducts lives
-- [ ] Test: engine.reset() resets graph service state
-- [ ] Uses real ReactorCoreEngine and ReactorCoreGraphService with level 1 data
-
 ### T-2026-530
 - Title: Update architecture.md with P6 Reactor Core signal graph patterns and conventions
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
+- Started: 2026-03-24
 - Priority: low
 - Size: S
 - Milestone: P6
