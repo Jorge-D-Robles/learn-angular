@@ -1,8 +1,8 @@
 # Current Sprint
 
-Sprint: S21-p5-final
-Milestone: P5
-Goal: Complete remaining P5 tickets: E2E smoke tests, tutorial wiring, visual state tests, and architecture docs
+Sprint: S22-p6-reactor-core
+Milestone: P6
+Goal: Build Reactor Core level data, engine, and UI for Signals Bundle
 Started: 2026-03-24
 
 <!-- Velocity: (recorded at sprint close) -->
@@ -11,20 +11,26 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Update architecture.md with P5 Power Grid and Data Relay patterns and conventions
-- Priority: low | Size: S | Milestone: P5
+*(none — pick from Queue)*
 
 ---
 
 ## Queue
 
-*(empty)*
+### T-2026-098
+- Title: Define Reactor Core level data for 21 levels
+- Priority: high | Size: M | Milestone: P6
+
+### T-2026-273
+- Title: Create Reactor Core signal graph node and edge data model
+- Priority: high | Size: S | Milestone: P6
+
+### T-2026-101
+- Title: Create story mission content for Chapters 23-26 (Phase 6 Signals)
+- Priority: high | Size: S | Milestone: P6
 
 ---
 
 ## Done This Sprint
 
-- T-2026-519: Wire Power Grid and Data Relay tutorial data into MinigameRegistryService config
-- T-2026-196: Create P5 minigame engine integration tests (already satisfied)
-- T-2026-272: Create P5 end-to-end smoke test (already satisfied)
-- T-2026-524: Create P5 visual state integration tests (already satisfied)
+*(none yet)*
