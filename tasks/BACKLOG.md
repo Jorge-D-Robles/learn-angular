@@ -2378,28 +2378,6 @@ Acceptance criteria:
 - [ ] Tests verify MinigameShell HUD is present
 - [ ] Tests run in CI (GitHub Actions)
 
-### T-2026-519
-- Title: Wire Power Grid and Data Relay tutorial data into MinigameRegistryService config
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P5
-- Depends: T-2026-195, T-2026-115, T-2026-116
-- Blocked-by: —
-- Tags: integration, tutorial, minigame, power-grid, data-relay, registry
-- Refs: docs/minigames/07-power-grid.md, docs/minigames/08-data-relay.md, src/app/data/tutorials/minigame-tutorials.data.ts
-
-T-2026-195 creates tutorial step data for both Power Grid and Data Relay. T-2026-115 and T-2026-116 register them in the MinigameRegistryService. Following the P2 pattern of T-2026-382 (which wired tutorial data for all 4 P2 games), the P3 pattern of T-2026-500 (Corridor Runner), and the P4 pattern of T-2026-514 (Terminal Hack), this ticket wires the tutorial data into the registry config for both P5 minigames. Without this, the MinigameTutorialOverlayComponent cannot display first-play instructions for Power Grid or Data Relay.
-
-Acceptance criteria:
-- [ ] Power Grid `provideMinigame()` call updated to include tutorial steps from MinigameInstructionsData
-- [ ] Data Relay `provideMinigame()` call updated to include tutorial steps from MinigameInstructionsData
-- [ ] Tutorial steps accessible via `MinigameRegistryService.getConfig('power-grid').tutorialSteps`
-- [ ] Tutorial steps accessible via `MinigameRegistryService.getConfig('data-relay').tutorialSteps`
-- [ ] Tutorial overlay displays game-specific steps on first play for both games
-- [ ] Unit tests for: tutorial data present in registry config for both games, correct step counts
-
 ### T-2026-524
 - Title: Create P5 minigame visual state integration tests for Power Grid and Data Relay
 - Status: todo

@@ -299,3 +299,4 @@
 [2026-03-24] T-2026-521: Create integration test for Data Relay level data compatibility with engine — 92 integration tests verifying all 18 Data Relay levels load and transform correctly (claude)
 [2026-03-24] T-2026-522: Create integration test for PowerGridInjectionService + PowerGridEngine coordinated lifecycle — 7 integration tests for PowerGridInjectionService + PowerGridEngine coordinated lifecycle (claude)
 [2026-03-24] T-2026-523: Create integration test for DataRelayTransformService + DataRelayEngine coordinated lifecycle — 7 integration tests for DataRelayTransformService + DataRelayEngine coordinated lifecycle (claude)
+[2026-03-24] T-2026-519: Wire Power Grid and Data Relay tutorial data into MinigameRegistryService config — added tutorialSteps test assertions for Power Grid and Data Relay in registry spec (claude)

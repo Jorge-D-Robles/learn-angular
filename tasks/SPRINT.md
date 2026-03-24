@@ -11,7 +11,8 @@ Started: 2026-03-24
 
 ## Active
 
-*(none — pick from Queue)*
+- Title: Wire Power Grid and Data Relay tutorial data into MinigameRegistryService config
+- Priority: medium | Size: S | Milestone: P5
 
 ---
 
