@@ -20,7 +20,6 @@ Started: 2026-03-23
 - Title: Register story mission content for P5 missions (Ch 18-22)
 - Priority: high | Size: S | Milestone: P5
 
-### T-2026-432
 - Title: Create PowerGridScopeConfigComponent
 - Priority: high | Size: S | Milestone: P5
 
