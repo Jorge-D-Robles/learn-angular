@@ -1,6 +1,6 @@
 # Technical Architecture
 
-This document describes the Learn Angular codebase as built. Every claim is traceable to actual source files. Last updated after P4 (Terminal Hack).
+This document describes the Learn Angular codebase as built. Every claim is traceable to actual source files. Last updated after P5 (Power Grid, Data Relay).
 
 See `overview.md` for project vision and `curriculum.md` for content scope.
 
@@ -588,6 +588,8 @@ Every implemented minigame uses a component-scoped `@Injectable()` service for d
 | `SignalCorpsWaveService` | `features/minigames/signal-corps/signal-corps-wave.service.ts` | Signal Corps | Wave/signal state management |
 | `CorridorRunnerSimulationService` | `features/minigames/corridor-runner/corridor-runner-simulation.service.ts` | Corridor Runner | Route segment simulation |
 | `TerminalHackFormEvaluationService` | `features/minigames/terminal-hack/terminal-hack-evaluation.service.ts` | Terminal Hack | Form evaluation and test case execution |
+| `PowerGridInjectionServiceImpl` | `features/minigames/power-grid/power-grid-injection.service.ts` | Power Grid | DI scope validation and connection checking |
+| `DataRelayTransformServiceImpl` | `features/minigames/data-relay/data-relay-transform.service.ts` | Data Relay | Pipe application, chaining, and stream evaluation |
 
 Pattern: all are `@Injectable()` without `providedIn: 'root'`, scoped to their component tree for automatic cleanup.
 
@@ -652,3 +654,143 @@ Terminal Hack introduces the first game-specific visual pattern: a retro termina
 - **Font**: Monospace via `var(--nx-font-mono, 'JetBrains Mono', monospace)`
 - **Power gauge timer**: Horizontal bar depleting over time, replacing the shell's built-in timer. Color transitions from green (`#00ff41`) at >50% to orange (`#f97316`) at >25% to red (`#ef4444`) at <=25%
 - **`prefers-reduced-motion` support**: Disables the scanline animation (sets opacity to a static 0.3) and removes power gauge fill transitions
+
+### Power Grid: DI Scope Validation Pattern
+
+Power Grid's core gameplay models Angular's dependency injection system as a circuit board. Services are power sources on the left; components are consumer modules on the right; connections are DI injection wires. The player wires services to components at the correct DI scopes to "power up" the grid. Defined across `power-grid.types.ts`, `power-grid.engine.ts`, and `power-grid-injection.service.ts` in `src/app/features/minigames/power-grid/`.
+
+**Domain types** (all in `power-grid.types.ts`):
+
+| Type | Shape | Purpose |
+|------|-------|---------|
+| `InjectionScope` | `'root' \| 'component' \| 'hierarchical'` | Angular DI scope for a service |
+| `ProviderType` | `'class' \| 'factory' \| 'value' \| 'existing'` | Maps to `useClass`, `useFactory`, `useValue`, `useExisting` |
+| `ServiceNode` | `{ id, name, type, providedIn, providerType?, kind?, dependsOn?, methods?, stateful? }` | A service (power source) on the grid board. `kind` distinguishes class-based services (`'class'`) from `InjectionToken`s (`'token'`). `dependsOn` models service-to-service DI |
+| `ComponentNode` | `{ id, name, requiredInjections, providers? }` | A component (consumer module). `requiredInjections` lists service IDs it needs injected. Optional `providers` for component-level scoping |
+| `ValidConnection` | `{ serviceId, componentId, scope }` | Static answer key: the correct service-component-scope triples |
+| `ScopeRule` | `{ serviceId, allowedScopes, defaultScope }` | Constrains which scopes are valid for a given service |
+
+**Utility functions** (exported from `power-grid.types.ts`):
+
+- `isScopeAllowed(serviceId, scope, scopeRules)` -- checks whether a scope is in the allowed list for a service. Returns `true` (lenient) if no scope rule exists for that service.
+- `isConnectionValid(connection, validConnections, scopeRules)` -- checks whether a connection matches the answer key at the specified scope AND passes `isScopeAllowed`. Both conditions must hold.
+
+**Validation flow**: `PowerGridInjectionServiceImpl.validateAll()` iterates all player connections, delegating to `isConnectionValid()` for each. Failures are classified as `'wrong-pair'` (service-component mismatch -- no matching `ValidConnection` with that serviceId + componentId) or `'wrong-scope'` (correct pair, wrong scope). Returns a `GridValidationResult` with:
+
+- `correctConnections` -- connections that match the answer key
+- `shortCircuits` -- connections that failed validation, each with a `reason` field
+- `missingConnections` -- answer key entries with no corresponding player connection
+- `allCorrect` -- `true` only when `shortCircuits` is empty AND `missingConnections` is empty
+
+**Inline validation fallback**: The engine has a built-in `inlineValidate()` method used when no injection service is provided (testing convenience). It performs the same logic without requiring Angular DI.
+
+**Scoring**: Verification-based with tiered multipliers. The player clicks "Verify" to check all connections at once. `DEFAULT_MAX_VERIFICATIONS = 3`. Score = `maxScore * multiplier`, where multiplier is 1.0 (1st attempt), 0.4 (2nd), or 0.2 (3rd). All verifications used without success = fail.
+
+### Power Grid: Circuit Board UI
+
+`PowerGridBoardComponent` (`app-power-grid-board`): SVG-based board defined in `src/app/features/minigames/power-grid/board/board.ts`. Uses a `0 0 1000 600` viewBox. Services positioned at `x=150` (`SERVICE_X`), components at `x=850` (`COMPONENT_X`), both evenly distributed vertically via `((i + 1) / (count + 1)) * VIEWBOX_HEIGHT`.
+
+**Wire rendering**: Bezier curves between service and component ports, color-coded by scope:
+
+| Scope | Color | Theme name |
+|-------|-------|------------|
+| `root` | `#3B82F6` | Reactor Blue |
+| `component` | `#22C55E` | Sensor Green |
+| `hierarchical` | `#F97316` | Alert Orange |
+
+Colors defined in `SCOPE_COLORS` constant in `power-grid.component.ts`.
+
+**Wire drawing integration**: The parent `PowerGridComponent` (`app-power-grid`) integrates with the shared `WireDrawService` for interactive wire drawing. A preview wire renders during drag, colored by the currently selected scope. The `WireDrawService` validator checks that the target component's `requiredInjections` includes the source service's ID.
+
+`PowerGridScopeConfigComponent` (`app-scope-config`): Scope selection panel for a service. Defined in `src/app/features/minigames/power-grid/scope-config/scope-config.ts`. Shows the three scope options as buttons, highlights the active scope, and shows a "Short circuit" warning when the selected scope is not in the service's `allowedScopes` (via `isScopeAllowed()`). Lists valid connection targets filtered by the selected scope.
+
+**Keyboard shortcuts**: `1` = root scope, `2` = component scope, `3` = hierarchical scope, `Escape` = cancel wire.
+
+**Verification feedback**: After the player clicks "Verify", each wire gets a feedback class (`correct`, `wrong-pair`, `wrong-scope`). Incorrect wires display in red (`#EF4444`). A 400ms rejection flash signals invalid placement attempts.
+
+### Data Relay: Pipe Transformation Chain
+
+Data Relay's core gameplay models Angular's pipe system as data streams flowing left-to-right. Players place pipe blocks to transform raw input into expected output. The engine stores `RuntimeStream[]` with `PipeBlock[]` per stream and delegates transform evaluation to `DataRelayTransformServiceImpl`. Defined across `data-relay.types.ts`, `data-relay.engine.ts`, `data-relay-transform.service.ts`, and `pipe-transforms.ts` in `src/app/features/minigames/data-relay/`.
+
+**Domain types** (all in `data-relay.types.ts`):
+
+| Type | Shape | Purpose |
+|------|-------|---------|
+| `DataStream` | `{ id, name, rawInput, isAsync? }` | A data stream on the board. `isAsync` marks resolved async values |
+| `PipeDefinition` | `{ id, pipeName, displayName, category, params?, isCustom? }` | A pipe available in the toolbox |
+| `RuntimeStream` | `{ streamId, rawInput, requiredOutput, placedPipes }` | Runtime stream with placed pipe chain |
+| `PipeBlock` | `{ id, pipeType, params, position }` | A pipe placed by the player. `position` is the sort order in the chain |
+| `CustomPipeSpec` | `{ name, transformFn, pureness }` | Specification for a custom pipe with transform function string and `'pure' \| 'impure'` flag |
+
+**Transform service**: `DataRelayTransformServiceImpl` (in `data-relay-transform.service.ts`) implements the `DataRelayTransformService` interface:
+
+- `applyPipe(input, pipeType, params)` -- applies a single pipe transform via `applyPipeTransform()`
+- `applyChain(input, pipes)` -- sorts pipes by `position`, applies each sequentially (left-to-right)
+- `evaluateStreams(streams)` -- evaluates all streams at once, returning `StreamResult[]`
+- `compareOutput(actual, expected)` -- strict string equality comparison
+
+**`pipe-transforms.ts` module**: Pure function `applyPipeTransform()` implements Angular's built-in pipes via JavaScript equivalents:
+
+| Category | Pipe | Implementation |
+|----------|------|----------------|
+| Text | `uppercase` | `String.toUpperCase()` |
+| Text | `lowercase` | `String.toLowerCase()` |
+| Text | `titlecase` | Capitalize first letter of each word |
+| Number | `decimal` | `Number.toLocaleString()` with Angular digit info parsing (`{min}.{minFrac}-{maxFrac}`) |
+| Number | `currency` | `Intl.NumberFormat` with currency style |
+| Number | `percent` | Multiply by 100, format with digit info |
+| Date | `date` | `Intl.DateTimeFormat` with named presets: `short`, `shortDate`, `mediumDate`, `longDate`, `fullDate` |
+| Utility | `slice` | `String.slice(start, end)` |
+| Utility | `async` | Passthrough (resolved value) |
+| Utility | `json` | `JSON.stringify(input, null, 2)` |
+| Custom | `distance` | Converts km to light-years (`km / 9460730472580.8`) |
+| Custom | `status` | Threshold-based mapping: value <= low = `'critical'`, <= high = `'warning'`, else `'nominal'` |
+| Custom | `timeAgo` | Relative time string (e.g., "3 days ago") |
+
+Custom pipes are registered via `CustomPipeSpec` with a `name`, `transformFn` string, and `pureness` flag. The `applyCustomPipe()` dispatcher routes to known custom pipe implementations by name.
+
+**RunTransform flow** in the engine: `DataRelayEngine.runTransform()` evaluates all streams plus test data items. Auto-completes on all correct (`allCorrect = true`). Auto-fails when `failedTestCount > 2`. Returns `TransformRunResult` with `streamResults`, `testResults`, `allCorrect`, and `failedTestCount`.
+
+**Scoring formula**: Same tiered multiplier as Power Grid. 1st run = `maxScore * 1.0`, 2nd = `maxScore * 0.4`, 3rd+ = `maxScore * 0.2`.
+
+### Data Relay: Pipe Toolbox Pattern
+
+Pipes are organized by `PipeCategory` (`'text' | 'number' | 'date' | 'custom'`) with color-coded display via the `PIPE_CATEGORY_COLORS` constant in `data-relay.types.ts`:
+
+| Category | Color | Theme name |
+|----------|-------|------------|
+| `text` | `#3B82F6` | Reactor Blue |
+| `number` | `#22C55E` | Sensor Green |
+| `date` | `#F97316` | Alert Orange |
+| `custom` | `#A855F7` | Comm Purple |
+
+**Toolbox UI** (in `DataRelayComponent`, `app-data-relay`): Category filter tabs with an "all" option plus per-category buttons. Keyboard shortcuts: `1` = all, `2` = text, `3` = number, `4` = date. The `filteredPipes` computed signal filters `availablePipes` by the selected category.
+
+`DataRelayPipeConfigComponent` (`app-pipe-config`): Type-specific parameter editors defined in `src/app/features/minigames/data-relay/pipe-config/pipe-config.ts`:
+
+| Category | Editor |
+|----------|--------|
+| `date` | Format selector dropdown (`short`, `shortDate`, `mediumDate`, `longDate`, `fullDate`) |
+| `number` | Fraction digits numeric input |
+| `text` | "No parameters" message |
+| `custom` | Code editor (`nx-code-editor`) for transform function |
+
+**Live preview**: Shows sample input transformed to output in real time using `applyPipeTransform()`. Sample inputs are category-specific constants (e.g., text = `'hello world'`, number = `'1234.5678'`, date = `'2026-03-15T12:00:00Z'`).
+
+**Reusable pattern note**: This category-grouped toolbox pattern (category tabs + filtered tool grid + type-specific parameter editors + live preview) is reusable for future minigames that need categorized tool palettes. For example, P6 Reactor Core could use it for signal operation categories.
+
+### Data Relay: Stream Visualizer
+
+`DataRelayStreamVisualizerComponent` (`app-data-relay-stream-visualizer`): Renders runtime streams as horizontal lanes. Defined in `src/app/features/minigames/data-relay/stream-visualizer/stream-visualizer.ts`.
+
+**Stream lane layout**: Each stream lane shows raw input on the left, pipe block slots in the middle (color-coded by category via `PIPE_CATEGORY_COLORS` lookup), and expected/actual output on the right. Output comparison shows actual vs expected after transform runs via the `streamResultMap` input.
+
+**Drag-and-drop**: Pipe blocks are drop zones via the shared `DropZoneDirective` (from `src/app/shared/directives/drop-zone.directive.ts`). Players drag pipes from the toolbox onto stream lanes. The parent `DataRelayComponent` handles the `pipeDragTarget` output event and dispatches `PlacePipeAction` through the engine.
+
+**Interaction model**:
+
+- Left-click on a placed pipe block opens the `DataRelayPipeConfigComponent` for parameter editing
+- Right-click on a pipe block removes it from the stream (dispatches `RemovePipeAction`)
+- Placement feedback: brief flash (400ms) on the stream lane -- green for valid placement, red for invalid
+
+**Particle gap indices**: `getParticleGaps(stream)` generates visual data flow markers between pipe blocks, one per gap between input/pipes/output (count = `placedPipes.length + 1`).
