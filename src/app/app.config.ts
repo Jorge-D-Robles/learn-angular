@@ -30,6 +30,7 @@ import { CorridorRunnerComponent, CorridorRunnerEngine, CorridorRunnerSimulation
 import { TERMINAL_HACK_LEVEL_PACK } from './data/levels/terminal-hack.data';
 import { POWER_GRID_LEVEL_PACK } from './data/levels/power-grid.data';
 import { DATA_RELAY_LEVEL_PACK } from './data/levels/data-relay.data';
+import { REACTOR_CORE_LEVEL_PACK } from './data/levels/reactor-core.data';
 import { TerminalHackComponent, TerminalHackEngine } from './features/minigames/terminal-hack';
 import { PowerGridComponent, PowerGridEngine } from './features/minigames/power-grid';
 import { DataRelayComponent, DataRelayEngine } from './features/minigames/data-relay';
@@ -64,6 +65,7 @@ export const appConfig: ApplicationConfig = {
     provideLevelData(TERMINAL_HACK_LEVEL_PACK),
     provideLevelData(POWER_GRID_LEVEL_PACK),
     provideLevelData(DATA_RELAY_LEVEL_PACK),
+    provideLevelData(REACTOR_CORE_LEVEL_PACK),
     provideMissionContent(PHASE_1_MISSIONS),
     provideMissionContent(PHASE_2_MISSIONS),
     provideMissionContent(PHASE_3_MISSIONS),
