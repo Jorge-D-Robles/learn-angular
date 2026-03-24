@@ -1,0 +1,69 @@
+<div class="deep-space-radio">
+  <!-- Interceptor Toolbox Sidebar -->
+  <aside class="deep-space-radio__toolbox">
+    <div class="deep-space-radio__toolbox-tabs">
+      @for (item of INTERCEPTOR_TYPES; track item.type) {
+        <button class="deep-space-radio__toolbox-tab"
+                [class.deep-space-radio__toolbox-tab--active]="selectedInterceptorType() === item.type"
+                (click)="selectInterceptorType(item.type)">
+          {{ item.label }} ({{ item.key }})
+        </button>
+      }
+    </div>
+    <div class="deep-space-radio__toolbox-items">
+      @for (interceptor of toolboxInterceptors(); track interceptor.id) {
+        <div class="deep-space-radio__toolbox-item"
+             [nxDraggable]="interceptor.id"
+             [nxDraggableData]="interceptor">
+          {{ interceptor.type }} — {{ interceptor.id }}
+        </div>
+      }
+      @empty {
+        <div class="deep-space-radio__toolbox-empty">All interceptors placed</div>
+      }
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="deep-space-radio__main">
+    <!-- Request Builder -->
+    <app-request-builder
+      [availableEndpoints]="[]"
+      [currentRequest]="currentRequest()"
+      (requestChanged)="onRequestChanged($event)"
+      (transmitRequested)="onTransmit()"
+    />
+
+    <!-- Interceptor Pipeline -->
+    <app-interceptor-pipeline
+      [chain]="activeChain()"
+      [isTransmitting]="false"
+      [toolboxItems]="toolboxInterceptors()"
+      (interceptorClicked)="onInterceptorClicked($event)"
+      (interceptorPlaced)="onInterceptorPlace($event.interceptor.id, $event.position)"
+      (interceptorRemoved)="onInterceptorRemove(activeChain()[$event.position]?.id ?? '')"
+    />
+
+    <!-- Transmission Results -->
+    @if (transmitResult(); as result) {
+      <div class="deep-space-radio__results"
+           [class.deep-space-radio__results--passed]="result.allPassed"
+           [class.deep-space-radio__results--failed]="!result.allPassed">
+        @if (result.allPassed) {
+          <span>All scenarios passed!</span>
+        } @else {
+          <span>{{ result.failedCount }} scenario(s) failed</span>
+        }
+      </div>
+    }
+
+    <!-- Controls Bar -->
+    <div class="deep-space-radio__controls">
+      <button class="deep-space-radio__transmit-btn"
+              [disabled]="transmissionsRemaining() <= 0"
+              (click)="onTransmit()">
+        Transmit ({{ transmissionsRemaining() }} left)
+      </button>
+    </div>
+  </main>
+</div>

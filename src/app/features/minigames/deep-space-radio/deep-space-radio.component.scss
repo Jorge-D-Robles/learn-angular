@@ -1,0 +1,167 @@
+// Deep Space Radio — orchestrator layout
+
+.deep-space-radio {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background: #0f1219;
+}
+
+// --- Toolbox sidebar (left) ---
+
+.deep-space-radio__toolbox {
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  min-width: 220px;
+  background: #1a1f2e;
+  border-right: 1px solid #252b3d;
+  overflow-y: auto;
+}
+
+.deep-space-radio__toolbox-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border-bottom: 1px solid #252b3d;
+}
+
+.deep-space-radio__toolbox-tab {
+  padding: 6px 12px;
+  border: 2px solid #252b3d;
+  border-radius: 6px;
+  background: transparent;
+  color: #e2e8f0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+
+  &--active {
+    background: rgba(255, 255, 255, 0.1);
+    font-weight: 700;
+  }
+}
+
+.deep-space-radio__toolbox-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+}
+
+.deep-space-radio__toolbox-item {
+  padding: 8px 10px;
+  border-left: 4px solid #3b82f6;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #e2e8f0;
+  font-size: 0.78rem;
+  cursor: grab;
+  user-select: none;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &.nx-dragging {
+    opacity: 0.5;
+  }
+}
+
+.deep-space-radio__toolbox-empty {
+  padding: 12px 10px;
+  color: #64748b;
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+// --- Main area (right) ---
+
+.deep-space-radio__main {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// --- Transmission results banner ---
+
+.deep-space-radio__results {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  &--passed {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+  }
+
+  &--failed {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+  }
+}
+
+// --- Controls bar ---
+
+.deep-space-radio__controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 16px;
+  background: #0f1219;
+  border-top: 1px solid #252b3d;
+  gap: 12px;
+}
+
+.deep-space-radio__transmit-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// --- Responsive ---
+
+@media (max-width: 767px) {
+  .deep-space-radio {
+    flex-direction: column;
+  }
+
+  .deep-space-radio__toolbox {
+    width: 100%;
+    min-width: unset;
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid #252b3d;
+  }
+
+  .deep-space-radio__toolbox-tabs {
+    flex-direction: row;
+  }
+}
