@@ -313,3 +313,4 @@
 [2026-03-24] T-2026-197: Create Reactor Core minigame tutorial data — 4 Reactor Core tutorial steps with 3 per-game tests (claude)
 [2026-03-24] T-2026-438: Create ReactorCoreGraphService for signal graph editing, validation, and change propagation — graph service with 11 methods: add/remove nodes+edges, validation, propagation, scenarios, 34 tests (claude)
 [2026-03-24] T-2026-439: Create ReactorCoreNodeConfigComponent for signal/computed/effect node configuration — node config component for signal/computed/effect with expression builder, dependency selection, 18 tests (claude)
+[2026-03-24] T-2026-455: Create ReactorCoreGraphCanvasComponent for node drag-and-drop and wire drawing — SVG graph canvas with node drag, wire drawing, pan/zoom, arrow markers, energy animation, 20 tests (claude)

@@ -11,16 +11,14 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Create ReactorCoreNodeConfigComponent for signal/computed/effect node configuration
+- Title: Create ReactorCoreGraphCanvasComponent for node drag-and-drop and wire drawing
 - Priority: high | Size: M | Milestone: P6
 
 ---
 
 ## Queue
 
-### T-2026-455
-- Title: Create ReactorCoreGraphCanvasComponent for node drag-and-drop and wire drawing
-- Priority: high | Size: M | Milestone: P6
+*(empty)*
 
 ---
 
@@ -31,3 +29,4 @@ Started: 2026-03-24
 - T-2026-264: Register story mission content for P6 missions (Ch 23-26)
 - T-2026-197: Create Reactor Core minigame tutorial data
 - T-2026-438: Create ReactorCoreGraphService
+- T-2026-439: Create ReactorCoreNodeConfigComponent
