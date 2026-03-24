@@ -32,7 +32,6 @@ Started: 2026-03-24
 - Title: Create DeepSpaceRadioInterceptorPipelineComponent
 - Priority: high | Size: S | Milestone: P7
 
-### T-2026-445
 - Title: Create BlastDoorsTimelineComponent
 - Priority: high | Size: S | Milestone: P7
 
