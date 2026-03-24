@@ -101,6 +101,12 @@ export interface GridValidationResult {
   readonly allCorrect: boolean;
 }
 
+/** Result of validating a single connection. */
+export interface ConnectionResult {
+  readonly valid: boolean;
+  readonly reason?: 'wrong-pair' | 'wrong-scope';
+}
+
 /** Validation service interface for Power Grid (T-2026-433 will implement). */
 export interface PowerGridInjectionService {
   validateAll(

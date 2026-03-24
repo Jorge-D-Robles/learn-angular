@@ -282,3 +282,4 @@
 [2026-03-23] T-2026-095: Create Data Relay minigame engine — Data Relay engine with pipe placement, chaining, inline transforms, custom pipes, scoring, 44 tests (claude)
 [2026-03-23] T-2026-115: Register Power Grid in MinigameRegistry and wire routes — registered Power Grid in MinigameRegistry with provideMinigame, 3 unit tests, E2E smoke test (claude)
 [2026-03-23] T-2026-147: Register Data Relay level data with LevelLoaderService — registered Data Relay level pack with LevelLoaderService in app.config.ts, 6 registration tests (claude)
+[2026-03-23] T-2026-433: Create PowerGridInjectionService for DI scope validation and connection checking — PowerGridInjectionServiceImpl with validateConnection, checkScope, detectShortCircuit, validateAll, getValidConnections, 24 tests (claude)
