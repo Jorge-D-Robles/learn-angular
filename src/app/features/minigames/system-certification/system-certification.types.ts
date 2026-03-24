@@ -104,6 +104,16 @@ export interface TestRunSummary {
 }
 
 // ---------------------------------------------------------------------------
+// Service interface
+// ---------------------------------------------------------------------------
+
+/** Test runner service interface for System Certification (T-2026-443 will implement). */
+export interface SystemCertificationTestRunnerService {
+  runTests(testCode: string, sourceCode: SourceCodeBlock): readonly TestResult[];
+  reset?(): void;
+}
+
+// ---------------------------------------------------------------------------
 // Utility functions
 // ---------------------------------------------------------------------------
 
