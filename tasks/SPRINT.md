@@ -11,7 +11,8 @@ Started: 2026-03-24
 
 ## Active
 
-*(none — pick from Queue)*
+- Title: Create Reactor Core minigame UI component
+- Priority: high | Size: L | Milestone: P6
 
 ---
 

@@ -2338,29 +2338,6 @@ Acceptance criteria:
 
 ## P6 -- Signals Bundle
 
-### T-2026-100
-- Title: Create Reactor Core minigame UI component
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P6
-- Depends: T-2026-099, T-2026-018
-- Blocked-by: —
-- Tags: minigame, reactor-core, component, ui
-- Refs: docs/minigames/09-reactor-core.md, docs/ux/visual-style.md
-
-Build the reactive circuit design UI: node toolbox, graph editor, wire drawing, value displays, and simulation visualization.
-
-Acceptance criteria:
-- [ ] `ReactorCoreComponent` at `src/app/features/minigames/reactor-core/reactor-core.component.ts`
-- [ ] Node toolbox: signal (blue), computed (green), effect (orange)
-- [ ] Graph editor: drag nodes, draw dependency wires
-- [ ] Value display on each node (current value/formula)
-- [ ] Simulation visualization: energy flowing along wires on change
-- [ ] Expression builder for computed node formulas
-- [ ] Unit tests for: node placement, wire drawing, simulation animation states
-
 ### T-2026-117
 - Title: Register Reactor Core in MinigameRegistry and wire routes
 - Status: todo
