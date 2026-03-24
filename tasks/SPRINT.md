@@ -17,15 +17,12 @@ Started: 2026-03-24
 
 ## Queue
 
-### T-2026-149
 - Title: Register Deep Space Radio level data with LevelLoaderService
 - Priority: high | Size: S | Milestone: P7
 
-### T-2026-150
 - Title: Register System Certification level data with LevelLoaderService
 - Priority: high | Size: S | Milestone: P7
 
-### T-2026-151
 - Title: Register Blast Doors level data with LevelLoaderService
 - Priority: high | Size: S | Milestone: P7
 

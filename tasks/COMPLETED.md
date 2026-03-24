@@ -332,3 +332,6 @@
 [2026-03-24] T-2026-104: Define System Certification level data for 18 levels — 18 System Certification levels with source code, coverage thresholds, test utilities, 43 tests (claude)
 [2026-03-24] T-2026-106: Define Blast Doors level data for 18 levels — 18 Blast Doors levels with doors, hooks, directives, scenarios, 47 tests (claude)
 [2026-03-24] T-2026-108: Create story mission content for Chapters 27-34 (Phase 6 Advanced) — 8 Advanced missions (Ch 27-34) covering content projection through performance, 18 tests (claude)
+[2026-03-24] T-2026-149: Register Deep Space Radio level data with LevelLoaderService — registered 18 Deep Space Radio levels with LevelLoaderService, 6 tests (claude)
+[2026-03-24] T-2026-150: Register System Certification level data with LevelLoaderService — registered 18 System Certification levels with LevelLoaderService, 6 tests (claude)
+[2026-03-24] T-2026-151: Register Blast Doors level data with LevelLoaderService — registered 18 Blast Doors levels with LevelLoaderService, 6 tests (unassigned)
