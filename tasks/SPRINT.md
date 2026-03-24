@@ -11,7 +11,7 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Define Deep Space Radio level data for 18 levels
+- Title: Define System Certification level data for 18 levels
 - Priority: high | Size: M | Milestone: P7
 
 ---

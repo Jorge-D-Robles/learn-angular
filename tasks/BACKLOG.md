@@ -2430,26 +2430,6 @@ Acceptance criteria:
 - [ ] Response validation against expected results
 - [ ] Unit tests for: request building, interceptor chain, mock backend, response validation
 
-### T-2026-104
-- Title: Define System Certification level data for 18 levels
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P7
-- Depends: T-2026-019, T-2026-038
-- Blocked-by: —
-- Tags: minigame, system-certification, level-data, content
-- Refs: docs/minigames/11-system-certification.md
-
-Define the static level data for all 18 System Certification levels covering Testing.
-
-Acceptance criteria:
-- [ ] Level data file at `src/app/data/levels/system-certification.data.ts`
-- [ ] `SystemCertificationLevelData` interface: sourceCode, coverageThreshold, timeLimit, availableTestUtilities[]
-- [ ] 6 Basic, 6 Intermediate, 5 Advanced levels, 1 Boss level matching spec
-- [ ] Unit tests verify: 18 total levels, valid source code and test utilities
-
 ### T-2026-105
 - Title: Create System Certification minigame engine
 - Status: todo
