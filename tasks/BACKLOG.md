@@ -2334,29 +2334,6 @@ Acceptance criteria:
 
 
 
-### T-2026-524
-- Title: Create P5 minigame visual state integration tests for Power Grid and Data Relay
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P5
-- Depends: T-2026-093, T-2026-096, T-2026-461, T-2026-462
-- Blocked-by: —
-- Tags: testing, integration, power-grid, data-relay, visual-state, ui
-- Refs: docs/minigames/07-power-grid.md, docs/minigames/08-data-relay.md
-
-T-2026-492 covers P2 minigame UI-to-simulation visual state tests and T-2026-504/517 cover P3/P4. No equivalent exists for P5. This test verifies the UI components correctly reflect engine state for both Power Grid and Data Relay.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/features/minigames/p5-visual-state.integration.spec.ts`
-- [ ] Test: Power Grid -- draw-connection action updates board with colored power line (blue for root, green for component)
-- [ ] Test: Power Grid -- short circuit detected produces spark/flash visual state on board
-- [ ] Test: Data Relay -- place-pipe action updates stream visualizer with pipe block at correct position
-- [ ] Test: Data Relay -- run-transform action animates data particles through pipe chain, output comparison shows green/red
-- [ ] Each test: uses real engine + component fixture
-- [ ] Each test: verifies DOM state reflects engine signal values after action
-
 ### T-2026-525
 - Title: Update architecture.md with P5 Power Grid and Data Relay patterns and conventions
 - Status: todo
