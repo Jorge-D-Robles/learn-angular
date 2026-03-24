@@ -2357,27 +2357,6 @@ Acceptance criteria:
 - [ ] Output comparison: actual vs expected
 - [ ] Unit tests for: stream rendering, pipe placement, parameter editing
 
-### T-2026-097
-- Title: Create story mission content for Chapters 18-22 (Phases 4-5)
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P5
-- Depends: T-2026-038, T-2026-031
-- Blocked-by: —
-- Tags: story-missions, content, curriculum, phase-4, phase-5
-- Refs: docs/curriculum.md
-
-Create narrative content for the 5 story missions covering Shared Systems and Data Processing.
-
-Acceptance criteria:
-- [ ] Mission data at `src/app/data/missions/phase-4/` and `src/app/data/missions/phase-5/`
-- [ ] Ch 18-19 (Services & DI): Core Services and Wire the Grid narratives
-- [ ] Ch 20-22 (Pipes): Format Sensor Data, Advanced Formatting, Custom Sensors narratives
-- [ ] Each mission has 3-5 steps
-- [ ] Unit tests verify: all 5 missions have valid content
-
 ### T-2026-116
 - Title: Register Data Relay in MinigameRegistry and wire routes
 - Status: todo

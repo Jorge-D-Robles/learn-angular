@@ -11,16 +11,14 @@ Started: 2026-03-23
 
 ## Active
 
-- Title: Create DataRelayTransformService for pipe application and output comparison
+- Title: Create story mission content for Chapters 18-22 (Phases 4-5)
 - Priority: high | Size: M | Milestone: P5
 
 ---
 
 ## Queue
 
-### T-2026-097
-- Title: Create story mission content for Chapters 18-22 (Phases 4-5)
-- Priority: high | Size: M | Milestone: P5
+*(empty — sprint complete after this ticket)*
 
 ---
 
@@ -30,3 +28,4 @@ Started: 2026-03-23
 - T-2026-115: Register Power Grid in MinigameRegistry and wire routes
 - T-2026-147: Register Data Relay level data with LevelLoaderService
 - T-2026-433: Create PowerGridInjectionService for DI scope validation
+- T-2026-435: Create DataRelayTransformService for pipe application
