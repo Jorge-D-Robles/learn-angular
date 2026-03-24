@@ -11,16 +11,12 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Create Deep Space Radio endpoint and interceptor data model
+- Title: Create System Certification source code and test data model
 - Priority: high | Size: S | Milestone: P7
 
 ---
 
 ## Queue
-
-### T-2026-276
-- Title: Create System Certification source code and test data model
-- Priority: high | Size: S | Milestone: P7
 
 ### T-2026-277
 - Title: Create Blast Doors lifecycle and directive data model
@@ -46,4 +42,4 @@ Started: 2026-03-24
 
 ## Done This Sprint
 
-*(none yet)*
+- T-2026-275: Create Deep Space Radio endpoint and interceptor data model
