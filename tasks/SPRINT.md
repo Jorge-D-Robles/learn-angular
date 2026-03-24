@@ -20,7 +20,6 @@ Started: 2026-03-24
 - Title: Create DeepSpaceRadioInterceptorService
 - Priority: high | Size: M | Milestone: P7
 
-### T-2026-443
 - Title: Create SystemCertificationTestRunnerService
 - Priority: high | Size: M | Milestone: P7
 
