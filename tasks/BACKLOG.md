@@ -2378,29 +2378,6 @@ Acceptance criteria:
 - [ ] Tests verify MinigameShell HUD is present
 - [ ] Tests run in CI (GitHub Actions)
 
-### T-2026-436
-- Title: Create integration test for PowerGridInjectionService DI scope validation
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P5
-- Depends: T-2026-433
-- Blocked-by: —
-- Tags: testing, integration, power-grid, validation
-- Refs: docs/minigames/07-power-grid.md
-
-After T-2026-433 creates the injection service, this integration test verifies the full DI validation pipeline using sample level data.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/features/minigames/power-grid/injection-validation.integration.spec.ts`
-- [ ] Test: root-scoped service connects to any component successfully
-- [ ] Test: component-scoped service only connects to its providing component
-- [ ] Test: hierarchical scope validates parent-child injection chains
-- [ ] Test: circular injection pattern detected as short circuit
-- [ ] Test: validateAll returns correct pass/fail for mixed connections
-- [ ] Uses real PowerGridInjectionService with sample service/component data
-
 ### T-2026-437
 - Title: Create integration test for DataRelayTransformService pipe chain evaluation
 - Status: todo
