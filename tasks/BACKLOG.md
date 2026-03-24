@@ -2334,26 +2334,6 @@ Acceptance criteria:
 
 
 
-### T-2026-094
-- Title: Define Data Relay level data for 18 levels
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P5
-- Depends: T-2026-019, T-2026-038
-- Blocked-by: —
-- Tags: minigame, data-relay, level-data, content
-- Refs: docs/minigames/08-data-relay.md
-
-Define the static level data for all 18 Data Relay levels covering Pipes.
-
-Acceptance criteria:
-- [ ] Level data file at `src/app/data/levels/data-relay.data.ts`
-- [ ] `DataRelayLevelData` interface: streams[], availablePipes[], targetOutputs[], testData[]
-- [ ] 6 Basic, 6 Intermediate, 5 Advanced levels, 1 Boss level matching spec
-- [ ] Unit tests verify: 18 total levels, valid stream/pipe definitions
-
 ### T-2026-095
 - Title: Create Data Relay minigame engine
 - Status: todo

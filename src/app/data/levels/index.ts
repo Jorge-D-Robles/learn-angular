@@ -5,4 +5,5 @@ export * from './signal-corps.data';
 export * from './wire-protocol.data';
 export * from './terminal-hack.data';
 export * from './power-grid.data';
+export * from './data-relay.data';
 export * from './provide-level-data';

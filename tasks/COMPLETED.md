@@ -275,3 +275,4 @@
 [2026-03-15] T-2026-091: Define Power Grid level data for 18 levels — defined 18 Power Grid levels with types, 47 tests, registration spec, T-2026-270 backlog coordination (claude)
 [2026-03-15] T-2026-092: Create Power Grid minigame engine — created PowerGridEngine with connect/disconnect/verify, inline validation, scope checking, 40 tests (claude)
 [2026-03-23] T-2026-093: Create Power Grid minigame UI component — Power Grid circuit board UI with SVG wire drawing, scope selection, color-coded connections, 30 tests (claude)
+[2026-03-23] T-2026-094: Define Data Relay level data for 18 levels — 18 levels with types, streams, pipes, builder helpers, 35 data integrity tests (claude)

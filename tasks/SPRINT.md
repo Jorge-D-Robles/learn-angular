@@ -11,16 +11,12 @@ Started: 2026-03-23
 
 ## Active
 
-- Title: Create Power Grid minigame UI component
-- Priority: high | Size: L | Milestone: P5
+- Title: Define Data Relay level data for 18 levels
+- Priority: high | Size: M | Milestone: P5
 
 ---
 
 ## Queue
-
-### T-2026-093
-- Title: Create Power Grid minigame UI component
-- Priority: high | Size: L | Milestone: P5
 
 ### T-2026-094
 - Title: Define Data Relay level data for 18 levels
@@ -42,4 +38,4 @@ Started: 2026-03-23
 
 ## Done This Sprint
 
-*(none yet)*
+- T-2026-093: Create Power Grid minigame UI component
