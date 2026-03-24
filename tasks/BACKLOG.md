@@ -2398,25 +2398,6 @@ Acceptance criteria:
 - [ ] Each test: verifies LevelCompletionService is called with correct result
 - [ ] Both P5 games covered: Power Grid, Data Relay
 
-### T-2026-263
-- Title: Register story mission content for P5 missions (Ch 18-22) with StoryMissionContentService
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P5
-- Depends: T-2026-097, T-2026-166
-- Blocked-by: —
-- Tags: integration, story-missions, content-loading, phase-4, phase-5
-- Refs: docs/curriculum.md
-
-T-2026-097 creates Phase 4-5 mission content (Ch 18-22) and T-2026-166 creates StoryMissionContentService. This ticket registers the content.
-
-Acceptance criteria:
-- [ ] Phase 4-5 mission content (Ch 18-22) registered with StoryMissionContentService
-- [ ] `getMissionContent(18)` through `getMissionContent(22)` return valid content
-- [ ] Unit tests for: content loading for each chapter
-
 ### T-2026-272
 - Title: Create P5 end-to-end smoke test for Power Grid and Data Relay
 - Status: todo
