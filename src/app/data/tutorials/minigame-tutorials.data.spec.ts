@@ -11,6 +11,8 @@ const GAME_IDS_WITH_TUTORIALS: MinigameId[] = [
   'flow-commander',
   'signal-corps',
   'terminal-hack',
+  'power-grid',
+  'data-relay',
 ];
 
 describe('MINIGAME_TUTORIALS', () => {
@@ -91,6 +93,48 @@ describe('Terminal Hack tutorial', () => {
 
   it('should have non-empty title and description for every step', () => {
     const result = getMinigameTutorial('terminal-hack');
+    for (const step of result!.steps) {
+      expect(step.title.length).toBeGreaterThan(0);
+      expect(step.description.length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('Power Grid tutorial', () => {
+  it('should have tutorial data for power-grid', () => {
+    const result = getMinigameTutorial('power-grid');
+    expect(result).toBeDefined();
+    expect(result!.gameId).toBe('power-grid');
+  });
+
+  it('should have 4 steps', () => {
+    const result = getMinigameTutorial('power-grid');
+    expect(result!.steps.length).toBe(4);
+  });
+
+  it('should have non-empty title and description for every step', () => {
+    const result = getMinigameTutorial('power-grid');
+    for (const step of result!.steps) {
+      expect(step.title.length).toBeGreaterThan(0);
+      expect(step.description.length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('Data Relay tutorial', () => {
+  it('should have tutorial data for data-relay', () => {
+    const result = getMinigameTutorial('data-relay');
+    expect(result).toBeDefined();
+    expect(result!.gameId).toBe('data-relay');
+  });
+
+  it('should have 4 steps', () => {
+    const result = getMinigameTutorial('data-relay');
+    expect(result!.steps.length).toBe(4);
+  });
+
+  it('should have non-empty title and description for every step', () => {
+    const result = getMinigameTutorial('data-relay');
     for (const step of result!.steps) {
       expect(step.title.length).toBeGreaterThan(0);
       expect(step.description.length).toBeGreaterThan(0);

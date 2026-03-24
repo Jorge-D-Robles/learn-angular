@@ -138,6 +138,60 @@ const TERMINAL_HACK_STEPS: readonly TutorialStep[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Power Grid (4 steps)
+// ---------------------------------------------------------------------------
+
+const POWER_GRID_STEPS: readonly TutorialStep[] = [
+  {
+    title: 'Draw Power Lines',
+    description:
+      'Click a service (power source) on the left, then click a component (consumer) on the right to draw a power line connecting them.',
+  },
+  {
+    title: 'Set Injection Scope',
+    description:
+      'Right-click a service to change its providedIn scope. Drag a service into a component\'s providers array to make it component-scoped instead of root-scoped.',
+  },
+  {
+    title: 'Activate the Grid',
+    description:
+      'Press Activate to power up the grid and verify all connections. Correct connections glow; incorrect ones cause short circuits.',
+  },
+  {
+    title: 'Avoid Short Circuits',
+    description:
+      'Wrong service-to-component wiring or incorrect scoping causes short circuits that damage the grid. Fix wiring before activating.',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Data Relay (4 steps)
+// ---------------------------------------------------------------------------
+
+const DATA_RELAY_STEPS: readonly TutorialStep[] = [
+  {
+    title: 'Drag Pipes into Streams',
+    description:
+      'Data streams flow left-to-right. Drag pipe blocks from the toolbox into a stream to transform the raw data as it flows through.',
+  },
+  {
+    title: 'Configure Pipe Parameters',
+    description:
+      'Click a placed pipe to set its parameters — for example, a date format string for DatePipe or digit info for DecimalPipe.',
+  },
+  {
+    title: 'Chain Multiple Pipes',
+    description:
+      'Place multiple pipes in sequence to build multi-step transformations. Data transforms at each pipe it passes through.',
+  },
+  {
+    title: 'Run and Compare',
+    description:
+      'Press Run to send test data through your pipeline. Compare actual output against the target format shown on the right.',
+  },
+];
+
+// ---------------------------------------------------------------------------
 // Exports
 // ---------------------------------------------------------------------------
 
@@ -148,6 +202,8 @@ export const MINIGAME_TUTORIALS: readonly MinigameTutorialData[] = [
   { gameId: 'flow-commander', steps: FLOW_COMMANDER_STEPS },
   { gameId: 'signal-corps', steps: SIGNAL_CORPS_STEPS },
   { gameId: 'terminal-hack', steps: TERMINAL_HACK_STEPS },
+  { gameId: 'power-grid', steps: POWER_GRID_STEPS },
+  { gameId: 'data-relay', steps: DATA_RELAY_STEPS },
 ];
 
 /** Look up tutorial data for a specific minigame. */
