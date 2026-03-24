@@ -11,20 +11,12 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Define Reactor Core level data for 21 levels
-- Priority: high | Size: M | Milestone: P6
+- Title: Create Reactor Core signal graph node and edge data model
+- Priority: high | Size: S | Milestone: P6
 
 ---
 
 ## Queue
-
-### T-2026-098
-- Title: Define Reactor Core level data for 21 levels
-- Priority: high | Size: M | Milestone: P6
-
-### T-2026-273
-- Title: Create Reactor Core signal graph node and edge data model
-- Priority: high | Size: S | Milestone: P6
 
 ### T-2026-101
 - Title: Create story mission content for Chapters 23-26 (Phase 6 Signals)
@@ -34,4 +26,4 @@ Started: 2026-03-24
 
 ## Done This Sprint
 
-*(none yet)*
+- T-2026-098: Define Reactor Core level data for 21 levels
