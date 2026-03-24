@@ -219,6 +219,87 @@ const REACTOR_CORE_STEPS: readonly TutorialStep[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Deep Space Radio (4 steps)
+// ---------------------------------------------------------------------------
+
+const DEEP_SPACE_RADIO_STEPS: readonly TutorialStep[] = [
+  {
+    title: 'Build Request',
+    description:
+      'Use the request editor to configure an HTTP request — select a method (GET, POST, PUT, DELETE), enter the URL, and add any headers or body data required by Mission Control.',
+  },
+  {
+    title: 'Add Interceptors',
+    description:
+      'Drag interceptor blocks from the toolbox into the pipeline. Each interceptor processes the request before transmission — auth adds a token, logging records the call, retry handles failures.',
+  },
+  {
+    title: 'Transmit Data',
+    description:
+      'Press Transmit to send the request through your interceptor chain. Watch the radio wave pass through each interceptor station and travel to the endpoint.',
+  },
+  {
+    title: 'Read Response',
+    description:
+      'After transmission, inspect the response in the response viewer. Verify the data matches expectations, handle errors, and apply the correct response type.',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// System Certification (4 steps)
+// ---------------------------------------------------------------------------
+
+const SYSTEM_CERTIFICATION_STEPS: readonly TutorialStep[] = [
+  {
+    title: 'Read Source Code',
+    description:
+      'The left panel shows the component or service source code under test. Study its properties, methods, and behavior before writing any tests.',
+  },
+  {
+    title: 'Write Tests',
+    description:
+      'Use the test editor on the right to write unit tests using describe, it, and expect. Each test should verify a specific behavior of the source code.',
+  },
+  {
+    title: 'Check Coverage',
+    description:
+      'Press Run to execute your tests and view the coverage meter. Toggle the coverage overlay to see which source lines are covered (green) and uncovered (red).',
+  },
+  {
+    title: 'Use Hints',
+    description:
+      'Stuck on an uncovered code path? Press Hint to highlight it. Hints cost points — avoid them for a perfect score.',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Blast Doors (4 steps)
+// ---------------------------------------------------------------------------
+
+const BLAST_DOORS_STEPS: readonly TutorialStep[] = [
+  {
+    title: 'Read Timeline',
+    description:
+      'Each blast door has a lifecycle timeline showing hook slots — ngOnInit, ngOnChanges, ngOnDestroy, and more. Study the timeline to understand when each hook fires.',
+  },
+  {
+    title: 'Place Hook Behaviors',
+    description:
+      'Drag behavior blocks from the toolbox into the correct lifecycle hook slots on the timeline. Each behavior must run at the right moment in the component lifecycle.',
+  },
+  {
+    title: 'Apply Directives',
+    description:
+      'For directive challenges, write custom directive logic in the directive editor. Directives add behavior to doors — access control, auto-seal, or emergency override.',
+  },
+  {
+    title: 'Run Simulation',
+    description:
+      'Press Simulate to run a scenario and watch your doors respond. Correctly programmed doors open and close as expected; misconfigured doors cause security breaches or trap crew.',
+  },
+];
+
+// ---------------------------------------------------------------------------
 // Exports
 // ---------------------------------------------------------------------------
 
@@ -232,6 +313,9 @@ export const MINIGAME_TUTORIALS: readonly MinigameTutorialData[] = [
   { gameId: 'power-grid', steps: POWER_GRID_STEPS },
   { gameId: 'data-relay', steps: DATA_RELAY_STEPS },
   { gameId: 'reactor-core', steps: REACTOR_CORE_STEPS },
+  { gameId: 'deep-space-radio', steps: DEEP_SPACE_RADIO_STEPS },
+  { gameId: 'system-certification', steps: SYSTEM_CERTIFICATION_STEPS },
+  { gameId: 'blast-doors', steps: BLAST_DOORS_STEPS },
 ];
 
 /** Look up tutorial data for a specific minigame. */

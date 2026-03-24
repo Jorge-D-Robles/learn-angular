@@ -14,6 +14,9 @@ const GAME_IDS_WITH_TUTORIALS: MinigameId[] = [
   'power-grid',
   'data-relay',
   'reactor-core',
+  'deep-space-radio',
+  'system-certification',
+  'blast-doors',
 ];
 
 describe('MINIGAME_TUTORIALS', () => {
@@ -157,6 +160,69 @@ describe('Reactor Core tutorial', () => {
 
   it('should have non-empty title and description for every step', () => {
     const result = getMinigameTutorial('reactor-core');
+    for (const step of result!.steps) {
+      expect(step.title.length).toBeGreaterThan(0);
+      expect(step.description.length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('Deep Space Radio tutorial', () => {
+  it('should have tutorial data for deep-space-radio', () => {
+    const result = getMinigameTutorial('deep-space-radio');
+    expect(result).toBeDefined();
+    expect(result!.gameId).toBe('deep-space-radio');
+  });
+
+  it('should have 4 steps', () => {
+    const result = getMinigameTutorial('deep-space-radio');
+    expect(result!.steps.length).toBe(4);
+  });
+
+  it('should have non-empty title and description for every step', () => {
+    const result = getMinigameTutorial('deep-space-radio');
+    for (const step of result!.steps) {
+      expect(step.title.length).toBeGreaterThan(0);
+      expect(step.description.length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('System Certification tutorial', () => {
+  it('should have tutorial data for system-certification', () => {
+    const result = getMinigameTutorial('system-certification');
+    expect(result).toBeDefined();
+    expect(result!.gameId).toBe('system-certification');
+  });
+
+  it('should have 4 steps', () => {
+    const result = getMinigameTutorial('system-certification');
+    expect(result!.steps.length).toBe(4);
+  });
+
+  it('should have non-empty title and description for every step', () => {
+    const result = getMinigameTutorial('system-certification');
+    for (const step of result!.steps) {
+      expect(step.title.length).toBeGreaterThan(0);
+      expect(step.description.length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('Blast Doors tutorial', () => {
+  it('should have tutorial data for blast-doors', () => {
+    const result = getMinigameTutorial('blast-doors');
+    expect(result).toBeDefined();
+    expect(result!.gameId).toBe('blast-doors');
+  });
+
+  it('should have 4 steps', () => {
+    const result = getMinigameTutorial('blast-doors');
+    expect(result!.steps.length).toBe(4);
+  });
+
+  it('should have non-empty title and description for every step', () => {
+    const result = getMinigameTutorial('blast-doors');
     for (const step of result!.steps) {
       expect(step.title.length).toBeGreaterThan(0);
       expect(step.description.length).toBeGreaterThan(0);
