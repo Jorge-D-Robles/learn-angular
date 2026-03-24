@@ -11,19 +11,12 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Register story mission content for P6 missions (Ch 23-26)
-- Priority: high | Size: S | Milestone: P6
+- Title: Create ReactorCoreGraphService for signal graph editing, validation, and change propagation
+- Priority: high | Size: M | Milestone: P6
 
 ---
 
 ## Queue
-
-- Title: Create Reactor Core minigame tutorial data
-- Priority: medium | Size: S | Milestone: P6
-
-### T-2026-438
-- Title: Create ReactorCoreGraphService for signal graph editing, validation, and change propagation
-- Priority: high | Size: M | Milestone: P6
 
 ### T-2026-439
 - Title: Create ReactorCoreNodeConfigComponent for signal/computed/effect node configuration
@@ -39,3 +32,5 @@ Started: 2026-03-24
 
 - T-2026-099: Create Reactor Core minigame engine
 - T-2026-148: Register Reactor Core level data with LevelLoaderService
+- T-2026-264: Register story mission content for P6 missions (Ch 23-26)
+- T-2026-197: Create Reactor Core minigame tutorial data

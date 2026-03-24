@@ -311,3 +311,4 @@
 [2026-03-24] T-2026-148: Register Reactor Core level data with LevelLoaderService — registered 21 Reactor Core levels with LevelLoaderService, 6 registration tests (claude)
 [2026-03-24] T-2026-264: Register story mission content for P6 missions (Ch 23-26) with StoryMissionContentService — registered P6 mission content (Ch 23-26) with provideMissionContent, 5 tests (claude)
 [2026-03-24] T-2026-197: Create Reactor Core minigame tutorial data — 4 Reactor Core tutorial steps with 3 per-game tests (claude)
+[2026-03-24] T-2026-438: Create ReactorCoreGraphService for signal graph editing, validation, and change propagation — graph service with 11 methods: add/remove nodes+edges, validation, propagation, scenarios, 34 tests (claude)
