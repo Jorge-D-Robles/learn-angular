@@ -21,7 +21,6 @@ Started: 2026-03-24
 - Title: Create System Certification minigame engine
 - Priority: high | Size: L | Milestone: P7
 
-### T-2026-107
 - Title: Create Blast Doors minigame engine
 - Priority: high | Size: L | Milestone: P7
 

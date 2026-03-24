@@ -2407,29 +2407,6 @@ Acceptance criteria:
 
 ## P7 -- Advanced Bundle
 
-### T-2026-107
-- Title: Create Blast Doors minigame engine
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P7
-- Depends: T-2026-017, T-2026-106
-- Blocked-by: —
-- Tags: minigame, blast-doors, engine
-- Refs: docs/minigames/12-blast-doors.md
-
-Implement the Blast Doors engine: lifecycle hook ordering, directive behavior application, and scenario simulation.
-
-Acceptance criteria:
-- [ ] `BlastDoorsEngine` at `src/app/features/minigames/blast-doors/blast-doors.engine.ts`
-- [ ] Extends `MinigameEngine<BlastDoorsLevelData>`
-- [ ] Lifecycle simulation: fires hooks in Angular's actual lifecycle order
-- [ ] Hook slot validation: correct behavior in correct hook
-- [ ] Directive behavior application on door components
-- [ ] Scenario simulation: trigger events, validate door states
-- [ ] Unit tests for: hook ordering, directive application, scenario validation
-
 ### T-2026-118
 - Title: Create Deep Space Radio minigame UI component
 - Status: todo
