@@ -1,0 +1,93 @@
+<div class="blast-doors">
+  <!-- Toolbox Sidebar -->
+  <aside class="blast-doors__sidebar">
+    <!-- Behavior Toolbox -->
+    <div class="blast-doors__behavior-toolbox">
+      <h3 class="blast-doors__panel-heading">Behaviors</h3>
+      <div class="blast-doors__behavior-items">
+        @for (behavior of availableBehaviors(); track behavior.id) {
+          <div class="blast-doors__behavior-item">
+            {{ behavior.description }}
+          </div>
+        }
+        @empty {
+          <div class="blast-doors__toolbox-empty">No behaviors available</div>
+        }
+      </div>
+    </div>
+
+    <!-- Directive Toolbox -->
+    <div class="blast-doors__directive-toolbox">
+      <h3 class="blast-doors__panel-heading">Directives</h3>
+      <div class="blast-doors__directive-items">
+        @for (directive of availableDirectives(); track directive.name) {
+          <div class="blast-doors__directive-item">
+            {{ directive.name }} ({{ directive.type }})
+          </div>
+        }
+        @empty {
+          <div class="blast-doors__toolbox-empty">No directives available</div>
+        }
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="blast-doors__main">
+    <!-- Door Grid -->
+    <div class="blast-doors__door-grid">
+      @for (door of runtimeDoors(); track door.id) {
+        <div class="blast-doors__door"
+             [class.blast-doors__door--open]="door.currentState === 'open'"
+             [class.blast-doors__door--closed]="door.currentState === 'closed'"
+             [class.blast-doors__door--locked]="door.currentState === 'locked'">
+          <div class="blast-doors__door-header">
+            <span class="blast-doors__door-label">{{ door.position }}</span>
+            <span class="blast-doors__door-state">{{ door.currentState }}</span>
+          </div>
+
+          <!-- Timeline for this door -->
+          <app-blast-doors-timeline
+            [door]="door"
+            [availableBehaviors]="availableBehaviors()"
+            (behaviorPlaced)="onBehaviorPlaced($event)"
+            (behaviorRemoved)="onBehaviorRemoved($event)"
+          />
+
+          <!-- Applied directives -->
+          @if (door.appliedDirectives.length > 0) {
+            <div class="blast-doors__applied-directives">
+              @for (directive of door.appliedDirectives; track directive.name) {
+                <span class="blast-doors__directive-badge">
+                  {{ directive.name }}
+                </span>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Simulation Results -->
+    @if (simulationResult(); as result) {
+      <div class="blast-doors__results"
+           [class.blast-doors__results--passed]="result.allPassed"
+           [class.blast-doors__results--failed]="!result.allPassed">
+        @if (result.allPassed) {
+          <span>All scenarios passed!</span>
+        } @else {
+          <span>{{ result.failedCount }} scenario(s) failed</span>
+        }
+      </div>
+    }
+
+    <!-- Controls -->
+    <div class="blast-doors__controls">
+      <button class="blast-doors__simulate-btn"
+              [disabled]="simulationsRemaining() <= 0"
+              (click)="onSimulate()">
+        Simulate ({{ simulationsRemaining() }} left)
+      </button>
+    </div>
+  </main>
+</div>
