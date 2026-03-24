@@ -1,0 +1,145 @@
+:host {
+  display: block;
+}
+
+.node-config__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.node-config__type-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.node-config__label {
+  font-weight: 600;
+  font-family: monospace;
+  color: #e2e8f0;
+}
+
+.node-config__type-badge {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #1e293b;
+  color: #94a3b8;
+  font-family: monospace;
+}
+
+.node-config__body {
+  margin-bottom: 0.75rem;
+}
+
+.node-config__field-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.8125rem;
+  color: #94a3b8;
+}
+
+.node-config__value-input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #252b3d;
+  border-radius: 4px;
+  background: #0f1219;
+  color: #e2e8f0;
+  font-family: monospace;
+  font-size: 0.875rem;
+}
+
+.node-config__type-selector {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.node-config__type-btn {
+  padding: 4px 10px;
+  border: 1px solid #252b3d;
+  border-radius: 4px;
+  background: #0f1219;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.75rem;
+
+  &--active {
+    background: #3b82f6;
+    color: #fff;
+    border-color: #3b82f6;
+  }
+}
+
+.node-config__action-textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 6px 10px;
+  border: 1px solid #252b3d;
+  border-radius: 4px;
+  background: #0f1219;
+  color: #e2e8f0;
+  font-family: monospace;
+  font-size: 0.875rem;
+  resize: vertical;
+}
+
+.node-config__cleanup-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.node-config__dependencies {
+  margin-top: 0.5rem;
+}
+
+.node-config__dep-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: #e2e8f0;
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.node-config__no-config {
+  opacity: 0.5;
+  font-size: 0.8125rem;
+  font-style: italic;
+  color: #94a3b8;
+}
+
+.node-config__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.node-config__apply-btn {
+  padding: 4px 14px;
+  border: none;
+  border-radius: 4px;
+  background: #3b82f6;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.8125rem;
+}
+
+.node-config__cancel-btn {
+  padding: 4px 14px;
+  border: none;
+  border-radius: 4px;
+  background: #64748b;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.8125rem;
+}
