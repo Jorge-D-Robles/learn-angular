@@ -2407,33 +2407,6 @@ Acceptance criteria:
 
 ## P7 -- Advanced Bundle
 
-### T-2026-120
-- Title: Create System Certification minigame UI component
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P7
-- Depends: T-2026-105, T-2026-018, T-2026-031
-- Blocked-by: —
-- Tags: minigame, system-certification, component, ui
-- Refs: docs/minigames/11-system-certification.md, docs/ux/visual-style.md
-
-Build the visual UI for System Certification: source code viewer (left), test editor (right), test runner output (bottom), and coverage meter. Professional testing lab aesthetic per the spec.
-
-Acceptance criteria:
-- [ ] `SystemCertificationComponent` at `src/app/features/minigames/system-certification/system-certification.component.ts`
-- [ ] Left panel: source code (read-only, using CodeEditorComponent)
-- [ ] Right panel: test editor (CodeEditorComponent, editable) for writing describe/it/expect blocks
-- [ ] Bottom panel: test runner output with pass/fail indicators per test
-- [ ] Coverage meter gauge (prominent, visual) with percentage display
-- [ ] Coverage overlay mode: toggle to see covered (green), uncovered (red), partial (yellow) lines on source
-- [ ] Hint button that highlights uncovered code path (integrates with HintService)
-- [ ] Passing tests: green checkmarks with animation
-- [ ] Failing tests: red X with error message highlight
-- [ ] Full certification: "CERTIFIED" stamp animation
-- [ ] Unit tests for: panel rendering, test result display, coverage meter updates
-
 ### T-2026-121
 - Title: Register System Certification in MinigameRegistry and wire routes
 - Status: todo

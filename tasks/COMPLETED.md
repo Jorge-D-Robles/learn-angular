@@ -349,3 +349,4 @@
 [2026-03-24] T-2026-464: Create SystemCertificationCoverageOverlayComponent for source code coverage visualization — coverage overlay with line coloring, percentage gauge, hint pulse, 16 tests (claude)
 [2026-03-24] T-2026-118: Create Deep Space Radio minigame UI component — orchestrator UI with request builder, interceptor pipeline, transmit controls, 31 tests (claude)
 [2026-03-24] T-2026-119: Register Deep Space Radio in MinigameRegistry and wire routes — registered Deep Space Radio in MinigameRegistry, 4 unit tests, E2E smoke test (claude)
+[2026-03-24] T-2026-120: Create System Certification minigame UI component — orchestrator UI with source viewer, test editor, coverage overlay, hints, 34 tests (claude)
