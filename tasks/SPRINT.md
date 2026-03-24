@@ -11,23 +11,15 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Wire Power Grid and Data Relay tutorial data into MinigameRegistryService config
-- Priority: medium | Size: S | Milestone: P5
+- Title: Create P5 minigame engine integration tests for Power Grid and Data Relay
+- Priority: medium | Size: M | Milestone: P5
 
 ---
 
 ## Queue
 
-### T-2026-196
-- Title: Create P5 minigame engine integration tests for Power Grid and Data Relay
-- Priority: medium | Size: M | Milestone: P5
-
 ### T-2026-272
 - Title: Create P5 end-to-end smoke test for Power Grid and Data Relay
-- Priority: medium | Size: S | Milestone: P5
-
-### T-2026-519
-- Title: Wire Power Grid and Data Relay tutorial data into MinigameRegistryService config
 - Priority: medium | Size: S | Milestone: P5
 
 ### T-2026-524
@@ -42,4 +34,4 @@ Started: 2026-03-24
 
 ## Done This Sprint
 
-*(none yet)*
+- T-2026-519: Wire Power Grid and Data Relay tutorial data into MinigameRegistryService config

@@ -2334,28 +2334,6 @@ Acceptance criteria:
 
 
 
-### T-2026-196
-- Title: Create P5 minigame engine integration tests for Power Grid and Data Relay
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: M
-- Milestone: P5
-- Depends: T-2026-115, T-2026-116
-- Blocked-by: —
-- Tags: testing, integration, minigame, power-grid, data-relay
-- Refs: docs/minigames/07-power-grid.md, docs/minigames/08-data-relay.md
-
-P2 has integration tests (T-2026-178) but P5 does not. This ticket creates integration tests for both P5 minigames verifying the engine-shell-level-data pipeline.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/features/minigames/power-grid/power-grid.integration.spec.ts`
-- [ ] Integration test at `src/app/features/minigames/data-relay/data-relay.integration.spec.ts`
-- [ ] Each test: creates engine with real level data (level 1), performs correct actions, verifies completion
-- [ ] Each test: verifies MinigameShell state transitions
-- [ ] Each test: verifies LevelCompletionService is called with correct result
-- [ ] Both P5 games covered: Power Grid, Data Relay
-
 ### T-2026-272
 - Title: Create P5 end-to-end smoke test for Power Grid and Data Relay
 - Status: todo
