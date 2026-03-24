@@ -34,6 +34,7 @@ import { REACTOR_CORE_LEVEL_PACK } from './data/levels/reactor-core.data';
 import { TerminalHackComponent, TerminalHackEngine } from './features/minigames/terminal-hack';
 import { PowerGridComponent, PowerGridEngine } from './features/minigames/power-grid';
 import { DataRelayComponent, DataRelayEngine } from './features/minigames/data-relay';
+import { ReactorCoreComponent, ReactorCoreEngine } from './features/minigames/reactor-core';
 
 // Shared wave service instance: passed to the engine AND available for DI injection
 // in the component. engine.reset() + waveService.loadWaves() fully resets state for replays.
@@ -81,5 +82,6 @@ export const appConfig: ApplicationConfig = {
     provideMinigame('terminal-hack', TerminalHackComponent, () => new TerminalHackEngine()),
     provideMinigame('power-grid', PowerGridComponent, () => new PowerGridEngine()),
     provideMinigame('data-relay', DataRelayComponent, () => new DataRelayEngine()),
+    provideMinigame('reactor-core', ReactorCoreComponent, () => new ReactorCoreEngine()),
   ],
 };

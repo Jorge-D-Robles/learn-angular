@@ -36,8 +36,15 @@ test.describe('MinigamePlayPage', () => {
     await expect(page.locator('app-data-relay')).toBeVisible();
   });
 
+  test('should render Reactor Core game for a valid level', async ({ page }) => {
+    await page.goto('/minigames/reactor-core/level/rc-basic-01');
+
+    await expect(page.locator('app-minigame-shell')).toBeVisible();
+    await expect(page.locator('app-reactor-core')).toBeVisible();
+  });
+
   test('should navigate back to Minigame Hub from coming-soon state', async ({ page }) => {
-    await page.goto('/minigames/reactor-core/level/1');
+    await page.goto('/minigames/deep-space-radio/level/1');
 
     await page.getByRole('link', { name: /Minigame Hub/ }).click();
 
