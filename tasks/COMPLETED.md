@@ -351,3 +351,5 @@
 [2026-03-24] T-2026-119: Register Deep Space Radio in MinigameRegistry and wire routes — registered Deep Space Radio in MinigameRegistry, 4 unit tests, E2E smoke test (claude)
 [2026-03-24] T-2026-120: Create System Certification minigame UI component — orchestrator UI with source viewer, test editor, coverage overlay, hints, 34 tests (claude)
 [2026-03-24] T-2026-122: Create Blast Doors minigame UI component — orchestrator UI with door grid, timelines, behavior/directive toolboxes, simulation, 35 tests (claude)
+[2026-03-24] T-2026-121: Register System Certification in MinigameRegistry and wire routes — registered System Certification in MinigameRegistry, 4 unit tests, E2E smoke test (claude)
+[2026-03-24] T-2026-123: Register Blast Doors in MinigameRegistry and wire routes — registered Blast Doors in MinigameRegistry, 4 unit tests, E2E smoke test (claude)

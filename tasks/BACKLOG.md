@@ -2409,8 +2409,9 @@ Acceptance criteria:
 
 ### T-2026-121
 - Title: Register System Certification in MinigameRegistry and wire routes
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
+- Started: 2026-03-24
 - Priority: high
 - Size: S
 - Milestone: P7
@@ -2430,8 +2431,9 @@ Acceptance criteria:
 
 ### T-2026-123
 - Title: Register Blast Doors in MinigameRegistry and wire routes
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
+- Started: 2026-03-24
 - Priority: high
 - Size: S
 - Milestone: P7
