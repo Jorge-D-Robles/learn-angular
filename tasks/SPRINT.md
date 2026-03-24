@@ -38,7 +38,6 @@ Started: 2026-03-24
 - Title: Create SystemCertificationCoverageOverlayComponent
 - Priority: high | Size: S | Milestone: P7
 
-### T-2026-118
 - Title: Create Deep Space Radio minigame UI component
 - Priority: high | Size: L | Milestone: P7
 

@@ -2407,32 +2407,6 @@ Acceptance criteria:
 
 ## P7 -- Advanced Bundle
 
-### T-2026-118
-- Title: Create Deep Space Radio minigame UI component
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P7
-- Depends: T-2026-103, T-2026-018
-- Blocked-by: —
-- Tags: minigame, deep-space-radio, component, ui
-- Refs: docs/minigames/10-deep-space-radio.md, docs/ux/visual-style.md
-
-Build the visual UI for Deep Space Radio: request builder (method, URL, headers, body), interceptor chain pipeline, transmission simulation visualization, and response viewer.
-
-Acceptance criteria:
-- [ ] `DeepSpaceRadioComponent` at `src/app/features/minigames/deep-space-radio/deep-space-radio.component.ts`
-- [ ] Request editor: method selector (GET/POST/PUT/DELETE), URL input, headers editor, body editor
-- [ ] Interceptor toolbox with draggable interceptor blocks (auth, logging, retry, error, caching)
-- [ ] Interceptor pipeline visualization: ordered chain of processing blocks
-- [ ] Click interceptor to configure behavior (e.g., auth token value, retry count)
-- [ ] Transmit button: animates request as radio wave through interceptor chain
-- [ ] Response viewer: displays response data with status code and type
-- [ ] Radio wave visualization with interceptor modification indicators (key icon for auth, scroll for logging)
-- [ ] Failed transmission: static interference, error codes displayed
-- [ ] Unit tests for: request builder rendering, interceptor placement, pipeline ordering, response display
-
 ### T-2026-119
 - Title: Register Deep Space Radio in MinigameRegistry and wire routes
 - Status: todo
