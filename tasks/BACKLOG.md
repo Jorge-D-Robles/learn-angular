@@ -2422,25 +2422,6 @@ Acceptance criteria:
 - [ ] Test: verifies LevelCompletionService is called with correct result
 - [ ] Test: verifies scoring for known graph configurations
 
-### T-2026-264
-- Title: Register story mission content for P6 missions (Ch 23-26) with StoryMissionContentService
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P6
-- Depends: T-2026-101, T-2026-166
-- Blocked-by: —
-- Tags: integration, story-missions, content-loading, phase-6
-- Refs: docs/curriculum.md
-
-T-2026-101 creates Phase 6 Signals mission content (Ch 23-26) and T-2026-166 creates StoryMissionContentService. This ticket registers the content.
-
-Acceptance criteria:
-- [ ] Phase 6 mission content (Ch 23-26) registered with StoryMissionContentService
-- [ ] `getMissionContent(23)` through `getMissionContent(26)` return valid content
-- [ ] Unit tests for: content loading for each chapter
-
 ### T-2026-274
 - Title: Create P6 end-to-end smoke test for Reactor Core game loop
 - Status: todo
