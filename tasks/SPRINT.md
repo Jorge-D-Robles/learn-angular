@@ -29,7 +29,6 @@ Started: 2026-03-24
 - Title: Create DeepSpaceRadioRequestBuilderComponent
 - Priority: high | Size: S | Milestone: P7
 
-### T-2026-463
 - Title: Create DeepSpaceRadioInterceptorPipelineComponent
 - Priority: high | Size: S | Milestone: P7
 
