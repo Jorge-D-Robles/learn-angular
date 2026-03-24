@@ -18,7 +18,6 @@ Started: 2026-03-24
 
 ## Queue
 
-### T-2026-105
 - Title: Create System Certification minigame engine
 - Priority: high | Size: L | Milestone: P7
 

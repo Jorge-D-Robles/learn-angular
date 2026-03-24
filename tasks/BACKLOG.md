@@ -2407,29 +2407,6 @@ Acceptance criteria:
 
 ## P7 -- Advanced Bundle
 
-### T-2026-105
-- Title: Create System Certification minigame engine
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P7
-- Depends: T-2026-017, T-2026-104
-- Blocked-by: —
-- Tags: minigame, system-certification, engine
-- Refs: docs/minigames/11-system-certification.md
-
-Implement the System Certification engine: test execution, coverage calculation, and test quality scoring.
-
-Acceptance criteria:
-- [ ] `SystemCertificationEngine` at `src/app/features/minigames/system-certification/system-certification.engine.ts`
-- [ ] Extends `MinigameEngine<SystemCertificationLevelData>`
-- [ ] Test code evaluation in sandboxed environment
-- [ ] Coverage calculation: track which source lines are exercised
-- [ ] Test quality scoring: penalize redundant tests
-- [ ] Coverage threshold validation per level
-- [ ] Unit tests for: test execution, coverage tracking, quality scoring
-
 ### T-2026-107
 - Title: Create Blast Doors minigame engine
 - Status: todo
