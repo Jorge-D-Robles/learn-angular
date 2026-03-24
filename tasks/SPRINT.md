@@ -11,20 +11,12 @@ Started: 2026-03-23
 
 ## Active
 
-- Title: Create Data Relay minigame engine
-- Priority: high | Size: L | Milestone: P5
+- Title: Register Power Grid in MinigameRegistry and wire routes
+- Priority: high | Size: S | Milestone: P5
 
 ---
 
 ## Queue
-
-### T-2026-095
-- Title: Create Data Relay minigame engine
-- Priority: high | Size: L | Milestone: P5
-
-### T-2026-115
-- Title: Register Power Grid in MinigameRegistry and wire routes
-- Priority: high | Size: S | Milestone: P5
 
 ### T-2026-147
 - Title: Register Data Relay level data with LevelLoaderService
@@ -46,4 +38,4 @@ Started: 2026-03-23
 
 ## Done This Sprint
 
-*(none yet)*
+- T-2026-095: Create Data Relay minigame engine

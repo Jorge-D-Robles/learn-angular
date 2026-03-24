@@ -30,6 +30,7 @@ import { CorridorRunnerComponent, CorridorRunnerEngine, CorridorRunnerSimulation
 import { TERMINAL_HACK_LEVEL_PACK } from './data/levels/terminal-hack.data';
 import { POWER_GRID_LEVEL_PACK } from './data/levels/power-grid.data';
 import { TerminalHackComponent, TerminalHackEngine } from './features/minigames/terminal-hack';
+import { PowerGridComponent, PowerGridEngine } from './features/minigames/power-grid';
 
 // Shared wave service instance: passed to the engine AND available for DI injection
 // in the component. engine.reset() + waveService.loadWaves() fully resets state for replays.
@@ -70,5 +71,6 @@ export const appConfig: ApplicationConfig = {
     provideMinigame('module-assembly', ModuleAssemblyComponent, () => new ModuleAssemblyEngine()),
     provideMinigame('corridor-runner', CorridorRunnerComponent, () => new CorridorRunnerEngine(undefined, new CorridorRunnerSimulationService())),
     provideMinigame('terminal-hack', TerminalHackComponent, () => new TerminalHackEngine()),
+    provideMinigame('power-grid', PowerGridComponent, () => new PowerGridEngine()),
   ],
 };

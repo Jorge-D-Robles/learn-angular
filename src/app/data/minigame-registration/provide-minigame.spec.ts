@@ -9,6 +9,7 @@ import { FlowCommanderComponent, FlowCommanderEngine } from '../../features/mini
 import { SignalCorpsComponent, SignalCorpsEngine } from '../../features/minigames/signal-corps';
 import { CorridorRunnerComponent, CorridorRunnerEngine } from '../../features/minigames/corridor-runner';
 import { TerminalHackComponent, TerminalHackEngine } from '../../features/minigames/terminal-hack';
+import { PowerGridComponent, PowerGridEngine } from '../../features/minigames/power-grid';
 import type { MinigameId } from '../../core/minigame/minigame.types';
 import { getMinigameTutorial } from '../tutorials/minigame-tutorials.data';
 import { provideMinigame } from './provide-minigame';
@@ -277,6 +278,43 @@ describe('provideMinigame — terminal-hack', () => {
     expect(tutorial).toBeDefined();
     expect(config!.tutorialSteps!.length).toBe(tutorial!.steps.length);
     expect(config!.tutorialSteps![0].title).toBe(tutorial!.steps[0].title);
+  });
+});
+
+describe('provideMinigame — power-grid', () => {
+  let registry: MinigameRegistryService;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideMinigame(
+          'power-grid',
+          PowerGridComponent,
+          () => new PowerGridEngine(),
+        ),
+      ],
+    });
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    registry = TestBed.inject(MinigameRegistryService);
+  });
+
+  it('should register the component type for power-grid', () => {
+    expect(registry.getComponent('power-grid')).toBe(PowerGridComponent);
+  });
+
+  it('should register an engine factory that produces a PowerGridEngine', () => {
+    const factory = registry.getEngineFactory('power-grid');
+    expect(factory).toBeTruthy();
+    const engine = factory!();
+    expect(engine).toBeInstanceOf(PowerGridEngine);
+  });
+
+  it('should preserve the existing config for power-grid', () => {
+    const config = registry.getConfig('power-grid');
+    expect(config).toBeDefined();
+    expect(config!.name).toBe('Power Grid');
+    expect(config!.totalLevels).toBe(18);
   });
 });
 

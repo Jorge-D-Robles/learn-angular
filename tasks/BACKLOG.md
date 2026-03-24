@@ -2378,27 +2378,6 @@ Acceptance criteria:
 - [ ] Each mission has 3-5 steps
 - [ ] Unit tests verify: all 5 missions have valid content
 
-### T-2026-115
-- Title: Register Power Grid in MinigameRegistry and wire routes
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P5
-- Depends: T-2026-093, T-2026-029, T-2026-042
-- Blocked-by: —
-- Tags: minigame, power-grid, registration, routing
-- Refs: docs/minigames/07-power-grid.md
-
-Register Power Grid with MinigameRegistryService and ensure end-to-end playability.
-
-Acceptance criteria:
-- [ ] Power Grid registered with gameId, config, and component type
-- [ ] Navigating to `/minigames/power-grid/level/1` loads and renders the game
-- [ ] Level data loads correctly for all 18 levels
-- [ ] MinigameShell integration works (score, timer, lives)
-- [ ] E2e smoke test: navigate to level 1, verify game renders
-
 ### T-2026-116
 - Title: Register Data Relay in MinigameRegistry and wire routes
 - Status: todo

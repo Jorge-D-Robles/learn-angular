@@ -22,8 +22,15 @@ test.describe('MinigamePlayPage', () => {
     await expect(page.locator('app-terminal-hack')).toBeVisible();
   });
 
+  test('should render Power Grid game for a valid level', async ({ page }) => {
+    await page.goto('/minigames/power-grid/level/pg-basic-01');
+
+    await expect(page.locator('app-minigame-shell')).toBeVisible();
+    await expect(page.locator('app-power-grid')).toBeVisible();
+  });
+
   test('should navigate back to Minigame Hub from coming-soon state', async ({ page }) => {
-    await page.goto('/minigames/power-grid/level/1');
+    await page.goto('/minigames/data-relay/level/1');
 
     await page.getByRole('link', { name: /Minigame Hub/ }).click();
 

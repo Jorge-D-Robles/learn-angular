@@ -280,3 +280,4 @@
 [2026-03-23] T-2026-270: Create Power Grid service and injection scope data model — moved runtime types to canonical types file, added isConnectionValid/isScopeAllowed utilities, 18 tests (unassigned)
 [2026-03-23] T-2026-271: Create Data Relay pipe and stream data model — added runtime types (PipeBlock, RuntimeStream, CustomPipeSpec, StreamResult, TestDataPair) and validation utilities, 21 tests (claude)
 [2026-03-23] T-2026-095: Create Data Relay minigame engine — Data Relay engine with pipe placement, chaining, inline transforms, custom pipes, scoring, 44 tests (claude)
+[2026-03-23] T-2026-115: Register Power Grid in MinigameRegistry and wire routes — registered Power Grid in MinigameRegistry with provideMinigame, 3 unit tests, E2E smoke test (claude)
