@@ -2443,26 +2443,6 @@ Acceptance criteria:
 - [ ] MinigameShell integration works (score, timer, lives)
 - [ ] E2e smoke test: navigate to level 1, verify game renders
 
-### T-2026-146
-- Title: Register Power Grid level data with LevelLoaderService
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P5
-- Depends: T-2026-091, T-2026-030
-- Blocked-by: —
-- Tags: minigame, power-grid, level-data, integration
-- Refs: docs/minigames/07-power-grid.md, src/app/core/levels/level-loader.service.ts
-
-Register Power Grid level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
-
-Acceptance criteria:
-- [ ] Power Grid level pack registered with LevelLoaderService
-- [ ] `LevelLoaderService.loadLevel('power-grid', levelId)` returns correct level data
-- [ ] `LevelLoaderService.getLevelPack('power-grid')` returns all 18 levels grouped by tier
-- [ ] Unit tests for: level loading by ID, level pack retrieval
-
 ### T-2026-147
 - Title: Register Data Relay level data with LevelLoaderService
 - Status: todo

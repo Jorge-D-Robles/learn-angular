@@ -28,6 +28,7 @@ import { FlowCommanderComponent, FlowCommanderEngine, FlowCommanderSimulationSer
 import { SignalCorpsComponent, SignalCorpsEngine, SignalCorpsWaveService } from './features/minigames/signal-corps';
 import { CorridorRunnerComponent, CorridorRunnerEngine, CorridorRunnerSimulationService } from './features/minigames/corridor-runner';
 import { TERMINAL_HACK_LEVEL_PACK } from './data/levels/terminal-hack.data';
+import { POWER_GRID_LEVEL_PACK } from './data/levels/power-grid.data';
 import { TerminalHackComponent, TerminalHackEngine } from './features/minigames/terminal-hack';
 
 // Shared wave service instance: passed to the engine AND available for DI injection
@@ -58,6 +59,7 @@ export const appConfig: ApplicationConfig = {
     provideLevelData(SIGNAL_CORPS_LEVEL_PACK),
     provideLevelData(CORRIDOR_RUNNER_LEVEL_PACK),
     provideLevelData(TERMINAL_HACK_LEVEL_PACK),
+    provideLevelData(POWER_GRID_LEVEL_PACK),
     provideMissionContent(PHASE_1_MISSIONS),
     provideMissionContent(PHASE_2_MISSIONS),
     provideMissionContent(PHASE_3_MISSIONS),

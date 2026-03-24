@@ -11,20 +11,12 @@ Started: 2026-03-23
 
 ## Active
 
-- Title: Define Data Relay level data for 18 levels
-- Priority: high | Size: M | Milestone: P5
+- Title: Register Power Grid level data with LevelLoaderService
+- Priority: high | Size: S | Milestone: P5
 
 ---
 
 ## Queue
-
-### T-2026-094
-- Title: Define Data Relay level data for 18 levels
-- Priority: high | Size: M | Milestone: P5
-
-### T-2026-146
-- Title: Register Power Grid level data with LevelLoaderService
-- Priority: high | Size: S | Milestone: P5
 
 ### T-2026-270
 - Title: Create Power Grid service and injection scope data model
@@ -39,3 +31,4 @@ Started: 2026-03-23
 ## Done This Sprint
 
 - T-2026-093: Create Power Grid minigame UI component
+- T-2026-094: Define Data Relay level data for 18 levels
