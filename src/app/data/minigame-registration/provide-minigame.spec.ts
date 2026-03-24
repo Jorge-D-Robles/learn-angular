@@ -317,6 +317,15 @@ describe('provideMinigame — power-grid', () => {
     expect(config!.name).toBe('Power Grid');
     expect(config!.totalLevels).toBe(18);
   });
+
+  it('should include tutorialSteps for power-grid after registration', () => {
+    const config = registry.getConfig('power-grid');
+    const tutorial = getMinigameTutorial('power-grid');
+    expect(config!.tutorialSteps).toBeDefined();
+    expect(tutorial).toBeDefined();
+    expect(config!.tutorialSteps!.length).toBe(tutorial!.steps.length);
+    expect(config!.tutorialSteps![0].title).toBe(tutorial!.steps[0].title);
+  });
 });
 
 describe('provideMinigame — data-relay', () => {
@@ -353,6 +362,15 @@ describe('provideMinigame — data-relay', () => {
     expect(config).toBeDefined();
     expect(config!.name).toBe('Data Relay');
     expect(config!.totalLevels).toBe(18);
+  });
+
+  it('should include tutorialSteps for data-relay after registration', () => {
+    const config = registry.getConfig('data-relay');
+    const tutorial = getMinigameTutorial('data-relay');
+    expect(config!.tutorialSteps).toBeDefined();
+    expect(tutorial).toBeDefined();
+    expect(config!.tutorialSteps!.length).toBe(tutorial!.steps.length);
+    expect(config!.tutorialSteps![0].title).toBe(tutorial!.steps[0].title);
   });
 });
 
