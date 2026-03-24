@@ -23,7 +23,6 @@ Started: 2026-03-24
 - Title: Create SystemCertificationTestRunnerService
 - Priority: high | Size: M | Milestone: P7
 
-### T-2026-444
 - Title: Create BlastDoorsLifecycleService
 - Priority: high | Size: M | Milestone: P7
 
