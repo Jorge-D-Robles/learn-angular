@@ -11,16 +11,14 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Create P5 minigame visual state integration tests for Power Grid and Data Relay
-- Priority: medium | Size: S | Milestone: P5
+- Title: Update architecture.md with P5 Power Grid and Data Relay patterns and conventions
+- Priority: low | Size: S | Milestone: P5
 
 ---
 
 ## Queue
 
-### T-2026-525
-- Title: Update architecture.md with P5 Power Grid and Data Relay patterns and conventions
-- Priority: low | Size: S | Milestone: P5
+*(empty)*
 
 ---
 
@@ -29,3 +27,4 @@ Started: 2026-03-24
 - T-2026-519: Wire Power Grid and Data Relay tutorial data into MinigameRegistryService config
 - T-2026-196: Create P5 minigame engine integration tests (already satisfied)
 - T-2026-272: Create P5 end-to-end smoke test (already satisfied)
+- T-2026-524: Create P5 visual state integration tests (already satisfied)

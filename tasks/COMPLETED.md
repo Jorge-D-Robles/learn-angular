@@ -303,3 +303,4 @@
 [2026-03-24] T-2026-196: Create P5 minigame engine integration tests for Power Grid and Data Relay — already satisfied by T-2026-520/521/522/523 integration tests covering engine-shell-level pipeline (claude)
 [2026-03-24] T-2026-272: Create P5 end-to-end smoke test for Power Grid and Data Relay — already satisfied by E2E smoke tests in minigame-shell.spec.ts (T-2026-115, T-2026-116) (claude)
 [2026-03-24] T-2026-524: Create P5 minigame visual state integration tests for Power Grid and Data Relay — already satisfied by existing component specs testing full engine-action-to-DOM chain with real engines (claude)
+[2026-03-24] T-2026-525: Update architecture.md with P5 Power Grid and Data Relay patterns and conventions — documented P5 patterns: DI scope validation, circuit board model, pipe transformation chain, simulation services (claude)

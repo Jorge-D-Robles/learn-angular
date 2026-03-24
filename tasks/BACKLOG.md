@@ -2334,28 +2334,6 @@ Acceptance criteria:
 
 
 
-### T-2026-525
-- Title: Update architecture.md with P5 Power Grid and Data Relay patterns and conventions
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P5
-- Depends: T-2026-433, T-2026-435, T-2026-092, T-2026-095
-- Blocked-by: —
-- Tags: documentation, architecture, conventions, power-grid, data-relay
-- Refs: docs/architecture.md, src/app/features/minigames/power-grid/, src/app/features/minigames/data-relay/
-
-Architecture.md documents P1 technical decisions and is updated for each milestone (P3: T-2026-507, P4: T-2026-518). P5 adds Power Grid and Data Relay with new patterns: DI scope validation, circuit board connection model, pipe transformation chain with Angular pipe integration, and stream processing visualization. These patterns should be documented for consistency.
-
-Acceptance criteria:
-- [ ] architecture.md documents Power Grid's DI scope validation pattern (root, component, hierarchical, factory)
-- [ ] Documents the circuit board connection model (services as sources, components as consumers)
-- [ ] Documents Data Relay's pipe transformation chain approach using Angular's actual pipe transforms
-- [ ] Lists PowerGridInjectionService and DataRelayTransformService in the simulation services table
-- [ ] Updates the persistence table if any new localStorage keys are added
-- [ ] Documents the pipe toolbox pattern (category-grouped tools) as a reusable pattern
-
 ---
 
 ## P6 -- Signals Bundle
