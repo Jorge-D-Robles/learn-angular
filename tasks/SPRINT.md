@@ -17,7 +17,6 @@ Started: 2026-03-24
 
 ## Queue
 
-### T-2026-441
 - Title: Create DeepSpaceRadioInterceptorService
 - Priority: high | Size: M | Milestone: P7
 
