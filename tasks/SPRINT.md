@@ -1,8 +1,8 @@
 # Current Sprint
 
-Sprint: S23-p6-engine
+Sprint: S24-p6-ui-integration
 Milestone: P6
-Goal: Build Reactor Core engine, register level data, story missions, and graph service
+Goal: Build Reactor Core UI, register in MinigameRegistry, and P6 integration tests
 Started: 2026-03-24
 
 <!-- Velocity: (recorded at sprint close) -->
@@ -11,22 +11,30 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Create ReactorCoreGraphCanvasComponent for node drag-and-drop and wire drawing
-- Priority: high | Size: M | Milestone: P6
+*(none — pick from Queue)*
 
 ---
 
 ## Queue
 
-*(empty)*
+### T-2026-100
+- Title: Create Reactor Core minigame UI component
+- Priority: high | Size: L | Milestone: P6
+
+### T-2026-440
+- Title: Create integration test for ReactorCoreGraphService change propagation and scenario execution
+- Priority: medium | Size: S | Milestone: P6
+
+### T-2026-526
+- Title: Wire Reactor Core tutorial data into MinigameRegistryService config
+- Priority: medium | Size: S | Milestone: P6
+
+### T-2026-527
+- Title: Create integration test for Reactor Core level data compatibility with engine
+- Priority: medium | Size: S | Milestone: P6
 
 ---
 
 ## Done This Sprint
 
-- T-2026-099: Create Reactor Core minigame engine
-- T-2026-148: Register Reactor Core level data with LevelLoaderService
-- T-2026-264: Register story mission content for P6 missions (Ch 23-26)
-- T-2026-197: Create Reactor Core minigame tutorial data
-- T-2026-438: Create ReactorCoreGraphService
-- T-2026-439: Create ReactorCoreNodeConfigComponent
+*(none yet)*
