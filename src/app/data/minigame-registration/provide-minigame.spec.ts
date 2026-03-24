@@ -12,6 +12,7 @@ import { TerminalHackComponent, TerminalHackEngine } from '../../features/miniga
 import { PowerGridComponent, PowerGridEngine } from '../../features/minigames/power-grid';
 import { DataRelayComponent, DataRelayEngine } from '../../features/minigames/data-relay';
 import { ReactorCoreComponent, ReactorCoreEngine } from '../../features/minigames/reactor-core';
+import { DeepSpaceRadioComponent, DeepSpaceRadioEngine } from '../../features/minigames/deep-space-radio';
 import type { MinigameId } from '../../core/minigame/minigame.types';
 import { getMinigameTutorial } from '../tutorials/minigame-tutorials.data';
 import { provideMinigame } from './provide-minigame';
@@ -414,6 +415,52 @@ describe('provideMinigame — reactor-core', () => {
   it('should include tutorialSteps for reactor-core after registration', () => {
     const config = registry.getConfig('reactor-core');
     const tutorial = getMinigameTutorial('reactor-core');
+    expect(config!.tutorialSteps).toBeDefined();
+    expect(tutorial).toBeDefined();
+    expect(config!.tutorialSteps!.length).toBe(tutorial!.steps.length);
+    expect(config!.tutorialSteps![0].title).toBe(tutorial!.steps[0].title);
+  });
+});
+
+describe('provideMinigame — deep-space-radio', () => {
+  let registry: MinigameRegistryService;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideMinigame(
+          'deep-space-radio',
+          DeepSpaceRadioComponent,
+          () => new DeepSpaceRadioEngine(),
+        ),
+      ],
+    });
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    registry = TestBed.inject(MinigameRegistryService);
+  });
+
+  it('should register the component type for deep-space-radio', () => {
+    expect(registry.getComponent('deep-space-radio')).toBe(DeepSpaceRadioComponent);
+  });
+
+  it('should register an engine factory that produces a DeepSpaceRadioEngine', () => {
+    const factory = registry.getEngineFactory('deep-space-radio');
+    expect(factory).toBeTruthy();
+    const engine = factory!();
+    expect(engine).toBeInstanceOf(DeepSpaceRadioEngine);
+  });
+
+  it('should preserve the existing config for deep-space-radio', () => {
+    const config = registry.getConfig('deep-space-radio');
+    expect(config).toBeDefined();
+    expect(config!.name).toBe('Deep Space Radio');
+    expect(config!.totalLevels).toBe(18);
+  });
+
+  it('should include tutorialSteps for deep-space-radio after registration', () => {
+    const config = registry.getConfig('deep-space-radio');
+    const tutorial = getMinigameTutorial('deep-space-radio');
     expect(config!.tutorialSteps).toBeDefined();
     expect(tutorial).toBeDefined();
     expect(config!.tutorialSteps!.length).toBe(tutorial!.steps.length);

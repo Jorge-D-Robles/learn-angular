@@ -43,8 +43,15 @@ test.describe('MinigamePlayPage', () => {
     await expect(page.locator('app-reactor-core')).toBeVisible();
   });
 
+  test('should render Deep Space Radio game for a valid level', async ({ page }) => {
+    await page.goto('/minigames/deep-space-radio/level/dsr-basic-01');
+
+    await expect(page.locator('app-minigame-shell')).toBeVisible();
+    await expect(page.locator('app-deep-space-radio')).toBeVisible();
+  });
+
   test('should navigate back to Minigame Hub from coming-soon state', async ({ page }) => {
-    await page.goto('/minigames/deep-space-radio/level/1');
+    await page.goto('/minigames/system-certification/level/1');
 
     await page.getByRole('link', { name: /Minigame Hub/ }).click();
 
