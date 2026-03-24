@@ -1,0 +1,128 @@
+:host {
+  display: block;
+}
+
+.request-builder__methods {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.request-builder__method-btn {
+  padding: 0.25rem 0.75rem;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: #e2e8f0;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-family: monospace;
+
+  &--active {
+    font-weight: 700;
+    background: rgba(255 255 255 / 10%);
+    border-color: #3b82f6;
+  }
+}
+
+.request-builder__url {
+  margin-bottom: 0.75rem;
+}
+
+.request-builder__url-input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #252b3d;
+  border-radius: 4px;
+  background: #0f1219;
+  color: #e2e8f0;
+  font-family: monospace;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+}
+
+.request-builder__headers {
+  margin-bottom: 0.75rem;
+}
+
+.request-builder__headers-label,
+.request-builder__body-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.8125rem;
+  color: #94a3b8;
+}
+
+.request-builder__header-row {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.25rem;
+  align-items: center;
+}
+
+.request-builder__header-key,
+.request-builder__header-value {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #252b3d;
+  border-radius: 4px;
+  background: #0f1219;
+  color: #e2e8f0;
+  font-family: monospace;
+  font-size: 0.8125rem;
+}
+
+.request-builder__remove-header-btn {
+  padding: 2px 8px;
+  border: none;
+  border-radius: 4px;
+  background: #ef4444;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.request-builder__add-header-btn {
+  padding: 4px 10px;
+  border: 1px dashed #252b3d;
+  border-radius: 4px;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  margin-top: 0.25rem;
+}
+
+.request-builder__body {
+  margin-bottom: 0.75rem;
+}
+
+.request-builder__body-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 6px 10px;
+  border: 1px solid #252b3d;
+  border-radius: 4px;
+  background: #0f1219;
+  color: #e2e8f0;
+  font-family: monospace;
+  font-size: 0.8125rem;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.request-builder__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.request-builder__transmit-btn {
+  padding: 6px 18px;
+  border: none;
+  border-radius: 4px;
+  background: #22c55e;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
