@@ -1,18 +1,16 @@
 import {
   Component,
-  type ElementRef,
   OnDestroy,
   computed,
   effect,
   inject,
   signal,
   untracked,
-  viewChild,
 } from '@angular/core';
-import { SvgPortComponent } from '../../../shared/components/svg-port/svg-port';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { WireDrawService } from '../../../core/minigame/wire-draw.service';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
+import { PowerGridBoardComponent, type BoardWireDescriptor } from './board/board';
 import type { PowerGridEngine } from './power-grid.engine';
 import type { InjectionScope } from './power-grid.types';
 
@@ -20,7 +18,6 @@ import type { InjectionScope } from './power-grid.types';
 // Constants
 // ---------------------------------------------------------------------------
 
-const VIEWBOX_WIDTH = 1000;
 const VIEWBOX_HEIGHT = 600;
 const SERVICE_X = 150;
 const COMPONENT_X = 850;
@@ -34,7 +31,7 @@ export const SCOPE_COLORS: Record<InjectionScope, string> = {
 
 @Component({
   selector: 'app-power-grid',
-  imports: [SvgPortComponent],
+  imports: [PowerGridBoardComponent],
   templateUrl: './power-grid.component.html',
   styleUrl: './power-grid.component.scss',
 })
@@ -43,19 +40,13 @@ export class PowerGridComponent implements OnDestroy {
   private readonly wireDrawService = inject(WireDrawService);
   private readonly shortcuts = inject(KeyboardShortcutService);
 
-  readonly wireSvgRef = viewChild<ElementRef<SVGSVGElement>>('gridSvg');
-
   // Local state
   readonly selectedScope = signal<InjectionScope>('root');
   readonly verificationFeedback = signal<Map<string, 'correct' | 'wrong-pair' | 'wrong-scope'>>(new Map());
   readonly rejectionFlash = signal(false);
   private rejectionTimer: ReturnType<typeof setTimeout> | null = null;
 
-  // Template-accessible constants
-  readonly viewBox = `0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`;
-
   // Scope selector options (used by template)
-  // TODO(T-2026-432): Extract into ScopeConfig sub-component
   readonly scopeOptions = [
     { key: '1', value: 'root' as InjectionScope, label: 'Root', color: SCOPE_COLORS.root },
     { key: '2', value: 'component' as InjectionScope, label: 'Component', color: SCOPE_COLORS.component },
@@ -68,30 +59,26 @@ export class PowerGridComponent implements OnDestroy {
   readonly connections = computed(() => this.engine?.connections() ?? []);
   readonly verificationsRemaining = computed(() => this.engine?.verificationsRemaining() ?? 0);
 
-  // SVG positions: services on left, components on right
-  readonly servicePositions = computed(() => {
+  // Port position map (needed for wire descriptor computation)
+  private readonly servicePositions = computed(() => {
     const svcs = this.services();
     return svcs.map((svc, i) => ({
       id: svc.id,
-      name: svc.name,
       x: SERVICE_X,
-      y: (i + 1) / (svcs.length + 1) * VIEWBOX_HEIGHT,
+      y: ((i + 1) / (svcs.length + 1)) * VIEWBOX_HEIGHT,
     }));
   });
 
-  readonly componentPositions = computed(() => {
+  private readonly componentPositions = computed(() => {
     const cmps = this.components();
     return cmps.map((cmp, i) => ({
       id: cmp.id,
-      name: cmp.name,
-      requiredInjections: cmp.requiredInjections,
       x: COMPONENT_X,
-      y: (i + 1) / (cmps.length + 1) * VIEWBOX_HEIGHT,
+      y: ((i + 1) / (cmps.length + 1)) * VIEWBOX_HEIGHT,
     }));
   });
 
-  // Lookup map for port positions
-  readonly portPositionMap = computed(() => {
+  private readonly portPositionMap = computed(() => {
     const map = new Map<string, { x: number; y: number }>();
     for (const svc of this.servicePositions()) map.set(svc.id, { x: svc.x, y: svc.y });
     for (const cmp of this.componentPositions()) map.set(cmp.id, { x: cmp.x, y: cmp.y });
@@ -99,7 +86,7 @@ export class PowerGridComponent implements OnDestroy {
   });
 
   // Wire descriptors with scope-based colors and feedback status
-  readonly wireDescriptors = computed(() => {
+  readonly wireDescriptors = computed<readonly BoardWireDescriptor[]>(() => {
     const positions = this.portPositionMap();
     const feedback = this.verificationFeedback();
     return this.connections().map(conn => {
@@ -113,21 +100,10 @@ export class PowerGridComponent implements OnDestroy {
         color: feedbackStatus === 'correct' ? SCOPE_COLORS[conn.scope]
              : feedbackStatus ? '#EF4444'
              : SCOPE_COLORS[conn.scope],
-        cssClass: feedbackStatus ? `power-grid__wire--${feedbackStatus}` : 'power-grid__wire',
+        cssClass: feedbackStatus ? `power-grid-board__wire--${feedbackStatus}` : 'power-grid-board__wire',
         animated: feedbackStatus === 'correct' || !feedbackStatus,
       };
     });
-  });
-
-  // Preview wire during drawing
-  readonly previewPath = computed(() => {
-    if (this.wireDrawService.phase() !== 'drawing') return null;
-    const sourcePort = this.wireDrawService.activeSourcePort();
-    const pointer = this.wireDrawService.pointerPosition();
-    if (!sourcePort || !pointer) return null;
-    const startPos = this.portPositionMap().get(sourcePort.id);
-    if (!startPos) return null;
-    return this.buildBezierPath(startPos.x, startPos.y, pointer.x, pointer.y);
   });
 
   // Selected scope color for preview wire
@@ -200,27 +176,12 @@ export class PowerGridComponent implements OnDestroy {
     this.verificationFeedback.set(feedback);
   }
 
-  onMouseMove(event: MouseEvent): void {
-    if (this.wireDrawService.phase() !== 'drawing') return;
-    const svgCoords = this.mouseToSvg(event);
-    this.wireDrawService.updatePointer(svgCoords);
+  onBoardMouseMoved(coords: { x: number; y: number }): void {
+    this.wireDrawService.updatePointer(coords);
   }
 
-  onConnectionRightClick(event: MouseEvent, connectionId: string): void {
-    event.preventDefault();
+  onBoardConnectionRightClicked(connectionId: string): void {
     this.engine?.submitAction({ type: 'disconnect-service', connectionId });
-  }
-
-  isPortActive(portId: string): boolean {
-    return this.wireDrawService.activeSourcePort()?.id === portId;
-  }
-
-  isServiceConnected(serviceId: string): boolean {
-    return this.connections().some(c => c.serviceId === serviceId);
-  }
-
-  isComponentConnected(componentId: string): boolean {
-    return this.connections().some(c => c.componentId === componentId);
   }
 
   ngOnDestroy(): void {
@@ -241,17 +202,5 @@ export class PowerGridComponent implements OnDestroy {
     const cp2x = endX - dx;
     const cp2y = endY;
     return `M ${startX} ${startY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${endX} ${endY}`;
-  }
-
-  private mouseToSvg(event: MouseEvent): { x: number; y: number } {
-    const svgEl = this.wireSvgRef()?.nativeElement;
-    if (!svgEl) return { x: 0, y: 0 };
-    const ctm = svgEl.getScreenCTM();
-    if (!ctm) return { x: 0, y: 0 };
-    const point = svgEl.createSVGPoint();
-    point.x = event.clientX;
-    point.y = event.clientY;
-    const svgPoint = point.matrixTransform(ctm.inverse());
-    return { x: svgPoint.x, y: svgPoint.y };
   }
 }

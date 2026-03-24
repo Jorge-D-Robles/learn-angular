@@ -26,7 +26,6 @@ Started: 2026-03-23
 - Title: Create DataRelayPipeConfigComponent
 - Priority: high | Size: S | Milestone: P5
 
-### T-2026-461
 - Title: Create PowerGridBoardComponent for circuit board grid
 - Priority: high | Size: M | Milestone: P5
 

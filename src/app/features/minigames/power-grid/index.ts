@@ -2,4 +2,5 @@ export * from './power-grid.types';
 export * from './power-grid.engine';
 export * from './power-grid-injection.service';
 export * from './power-grid.component';
+export * from './board/board';
 export * from './scope-config/scope-config';

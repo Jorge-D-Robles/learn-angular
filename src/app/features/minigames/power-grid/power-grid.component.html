@@ -1,79 +1,14 @@
-<div class="power-grid" [class.power-grid--rejection]="rejectionFlash()">
-  <svg #gridSvg
-       class="power-grid__svg"
-       [attr.viewBox]="viewBox"
-       preserveAspectRatio="xMidYMid meet"
-       (mousemove)="onMouseMove($event)"
-       (contextmenu)="$event.preventDefault()">
-
-    <!-- Panel backgrounds -->
-    <rect class="power-grid__panel-bg power-grid__panel-bg--services"
-          x="0" y="0" width="300" height="600" rx="8" />
-    <rect class="power-grid__panel-bg power-grid__panel-bg--components"
-          x="700" y="0" width="300" height="600" rx="8" />
-
-    <!-- Panel labels -->
-    <text class="power-grid__panel-label" x="150" y="30" text-anchor="middle">Services</text>
-    <text class="power-grid__panel-label" x="850" y="30" text-anchor="middle">Components</text>
-
-    <!-- Service ports (left side) -->
-    @for (svc of servicePositions(); track svc.id) {
-      <g nx-svg-port
-         [portId]="svc.id"
-         [x]="svc.x"
-         [y]="svc.y"
-         [color]="selectedScopeColor()"
-         [label]="svc.name"
-         type="source"
-         [isActive]="isPortActive(svc.id)"
-         [isConnected]="isServiceConnected(svc.id)" />
-    }
-
-    <!-- Component ports (right side) -->
-    @for (cmp of componentPositions(); track cmp.id) {
-      <g nx-svg-port
-         [portId]="cmp.id"
-         [x]="cmp.x"
-         [y]="cmp.y"
-         [color]="'#E2E8F0'"
-         [label]="cmp.name"
-         type="target"
-         [isActive]="false"
-         [isConnected]="isComponentConnected(cmp.id)" />
-    }
-
-    <!-- Power lines (committed connections) -->
-    @for (wire of wireDescriptors(); track wire.id) {
-      <path [attr.d]="wire.path"
-            [attr.stroke]="wire.color"
-            [class]="wire.cssClass"
-            fill="none"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            pointer-events="stroke"
-            (contextmenu)="onConnectionRightClick($event, wire.connectionId)" />
-      @if (wire.animated) {
-        <path [attr.d]="wire.path"
-              class="power-grid__flow"
-              stroke="rgba(255, 255, 255, 0.8)"
-              fill="none"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-dasharray="8 12" />
-      }
-    }
-
-    <!-- Preview wire (during drawing) -->
-    @if (previewPath()) {
-      <path [attr.d]="previewPath()"
-            class="power-grid__preview"
-            [attr.stroke]="selectedScopeColor()"
-            fill="none"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-dasharray="8 4" />
-    }
-  </svg>
+<div class="power-grid">
+  <app-power-grid-board
+    [services]="services()"
+    [components]="components()"
+    [connections]="connections()"
+    [wireDescriptors]="wireDescriptors()"
+    [previewColor]="selectedScopeColor()"
+    [rejectionFlash]="rejectionFlash()"
+    (connectionRightClicked)="onBoardConnectionRightClicked($event)"
+    (mouseMoved)="onBoardMouseMoved($event)"
+  />
 
   <!-- Controls (HTML below SVG) -->
   <div class="power-grid__controls">

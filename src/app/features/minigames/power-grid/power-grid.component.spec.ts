@@ -122,13 +122,19 @@ describe('PowerGridComponent', () => {
       inertFixture.destroy();
     });
 
-    it('should render service ports matching engine services count', () => {
+    it('should render the board sub-component', () => {
+      setup();
+      const board = fixture.nativeElement.querySelector('app-power-grid-board');
+      expect(board).toBeTruthy();
+    });
+
+    it('should render service ports via board component', () => {
       setup();
       const sourcePorts = fixture.nativeElement.querySelectorAll('[nx-svg-port][data-port-type="source"]');
       expect(sourcePorts.length).toBe(2);
     });
 
-    it('should render component ports matching engine components count', () => {
+    it('should render component ports via board component', () => {
       setup();
       const targetPorts = fixture.nativeElement.querySelectorAll('[nx-svg-port][data-port-type="target"]');
       expect(targetPorts.length).toBe(2);
@@ -251,7 +257,7 @@ describe('PowerGridComponent', () => {
       wireDrawService.updatePointer({ x: 500, y: 300 });
       fixture.detectChanges();
 
-      const preview = fixture.nativeElement.querySelector('.power-grid__preview');
+      const preview = fixture.nativeElement.querySelector('.power-grid-board__preview');
       expect(preview).toBeTruthy();
     });
 
@@ -291,7 +297,7 @@ describe('PowerGridComponent', () => {
   // --- 4. Connection Removal Tests ---
 
   describe('Connection Removal', () => {
-    it('should submit disconnect-service action on right-click of power line', () => {
+    it('should submit disconnect-service action on board connectionRightClicked event', () => {
       setup();
       const submitSpy = vi.spyOn(engine, 'submitAction');
 

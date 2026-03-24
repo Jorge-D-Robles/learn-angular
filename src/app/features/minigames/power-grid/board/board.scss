@@ -1,0 +1,154 @@
+// Power Grid Board — Circuit board SVG canvas
+// Extracted from power-grid.component.scss
+
+.power-grid-board {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+
+  &--rejection {
+    animation: rejection-flash 0.4s ease-out;
+  }
+}
+
+// --- SVG Game Area ---
+
+.power-grid-board__svg {
+  flex: 1;
+  width: 100%;
+  display: block;
+}
+
+.power-grid-board__panel-bg {
+  &--services {
+    fill: #1a1f2e;
+    stroke: #252b3d;
+    stroke-width: 1;
+  }
+
+  &--components {
+    fill: #1a1f2e;
+    stroke: #252b3d;
+    stroke-width: 1;
+  }
+}
+
+.power-grid-board__panel-label {
+  fill: #94a3b8;
+  font-size: 16px;
+  font-family: sans-serif;
+}
+
+// --- Wire styles ---
+
+.power-grid-board__wire {
+  transition: filter 0.3s ease;
+}
+
+.power-grid-board__wire--correct {
+  filter: drop-shadow(0 0 6px #22c55e);
+  animation: correct-glow 1.5s ease-in-out;
+}
+
+.power-grid-board__wire--wrong-scope {
+  animation: spark-fizzle 1.5s ease-out;
+}
+
+.power-grid-board__wire--wrong-pair {
+  animation: spark-fizzle 1.5s ease-out;
+}
+
+.power-grid-board__flow {
+  pointer-events: none;
+  animation: wire-flow 1s linear infinite;
+}
+
+.power-grid-board__preview {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+// --- Animations ---
+
+@keyframes wire-flow {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+@keyframes correct-glow {
+  0% {
+    filter: drop-shadow(0 0 2px #22c55e);
+  }
+  50% {
+    filter: drop-shadow(0 0 12px #22c55e);
+  }
+  100% {
+    filter: drop-shadow(0 0 6px #22c55e);
+  }
+}
+
+@keyframes spark-fizzle {
+  0% {
+    stroke: #ef4444;
+    stroke-width: 4;
+    filter: drop-shadow(0 0 8px #ef4444);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  50% {
+    transform: translateX(2px);
+    stroke-width: 3;
+  }
+  75% {
+    transform: translateX(-1px);
+    opacity: 0.6;
+  }
+  100% {
+    stroke-width: 2.5;
+    opacity: 0.3;
+    filter: none;
+  }
+}
+
+@keyframes rejection-flash {
+  0% {
+    box-shadow: inset 0 0 30px rgba(239, 68, 68, 0.3);
+  }
+  100% {
+    box-shadow: none;
+  }
+}
+
+// --- Reduced motion ---
+
+@media (prefers-reduced-motion: reduce) {
+  .power-grid-board__wire--correct,
+  .power-grid-board__wire--wrong-scope,
+  .power-grid-board__wire--wrong-pair {
+    animation: none;
+  }
+
+  .power-grid-board__flow {
+    animation: none;
+  }
+
+  .power-grid-board--rejection {
+    animation: none;
+  }
+
+  .power-grid-board__wire--correct {
+    filter: drop-shadow(0 0 6px #22c55e);
+  }
+
+  .power-grid-board__wire--wrong-scope,
+  .power-grid-board__wire--wrong-pair {
+    stroke: #ef4444;
+    opacity: 0.5;
+  }
+}
