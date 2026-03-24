@@ -310,3 +310,4 @@
 [2026-03-24] T-2026-099: Create Reactor Core minigame engine — signal graph engine with 6 actions, topological propagation, scenario execution, 56 tests (claude)
 [2026-03-24] T-2026-148: Register Reactor Core level data with LevelLoaderService — registered 21 Reactor Core levels with LevelLoaderService, 6 registration tests (claude)
 [2026-03-24] T-2026-264: Register story mission content for P6 missions (Ch 23-26) with StoryMissionContentService — registered P6 mission content (Ch 23-26) with provideMissionContent, 5 tests (claude)
+[2026-03-24] T-2026-197: Create Reactor Core minigame tutorial data — 4 Reactor Core tutorial steps with 3 per-game tests (claude)

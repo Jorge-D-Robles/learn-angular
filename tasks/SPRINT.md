@@ -18,7 +18,6 @@ Started: 2026-03-24
 
 ## Queue
 
-### T-2026-197
 - Title: Create Reactor Core minigame tutorial data
 - Priority: medium | Size: S | Milestone: P6
 

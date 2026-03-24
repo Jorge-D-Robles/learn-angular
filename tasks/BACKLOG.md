@@ -2382,25 +2382,6 @@ Acceptance criteria:
 - [ ] MinigameShell integration works (score, timer, lives)
 - [ ] E2e smoke test: navigate to level 1, verify game renders
 
-### T-2026-197
-- Title: Create Reactor Core minigame tutorial data
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P6
-- Depends: T-2026-163, T-2026-098
-- Blocked-by: —
-- Tags: content, tutorial, minigame, reactor-core
-- Refs: docs/minigames/09-reactor-core.md
-
-T-2026-168 covers P2 minigame tutorials but not Reactor Core (P6). This ticket creates the tutorial step data for Reactor Core.
-
-Acceptance criteria:
-- [ ] Reactor Core tutorial data added to `src/app/data/tutorials/minigame-tutorials.data.ts`
-- [ ] 3-4 tutorial steps covering: node toolbox usage, signal/computed/effect placement, wire drawing, simulation controls
-- [ ] Unit tests for: tutorial data exists, has 3-4 steps, required fields populated
-
 ### T-2026-198
 - Title: Create P6 minigame engine integration test for Reactor Core
 - Status: todo
