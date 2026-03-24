@@ -1,0 +1,104 @@
+<div class="data-relay">
+  <!-- Toolbox Sidebar -->
+  <aside class="data-relay__toolbox">
+    <div class="data-relay__category-tabs">
+      <button class="data-relay__category-tab"
+              [class.data-relay__category-tab--active]="selectedCategory() === 'all'"
+              (click)="selectCategory('all')">
+        All (1)
+      </button>
+      @for (cat of categories(); track cat) {
+        <button class="data-relay__category-tab"
+                [class.data-relay__category-tab--active]="selectedCategory() === cat"
+                [style.borderColor]="getCategoryColor(cat)"
+                (click)="selectCategory(cat)">
+          {{ cat }}
+        </button>
+      }
+    </div>
+    <div class="data-relay__pipe-list">
+      @for (pipe of filteredPipes(); track pipe.id) {
+        <div class="data-relay__pipe-item"
+             [nxDraggable]="pipe.id"
+             [nxDraggableData]="pipe"
+             [style.borderLeftColor]="getCategoryColor(pipe.category)">
+          {{ pipe.displayName }}
+        </div>
+      }
+    </div>
+  </aside>
+
+  <!-- Main Stream Area -->
+  <main class="data-relay__main">
+    <div class="data-relay__streams">
+      @for (stream of streams(); track stream.streamId) {
+        <div class="data-relay__stream"
+             [class.data-relay__stream--feedback-success]="placementFeedback()?.streamId === stream.streamId && placementFeedback()?.type === 'success'"
+             [class.data-relay__stream--feedback-error]="placementFeedback()?.streamId === stream.streamId && placementFeedback()?.type === 'error'">
+          <!-- Raw Input -->
+          <div class="data-relay__input">
+            <span class="data-relay__input-label">{{ stream.rawInput }}</span>
+          </div>
+
+          <!-- Pipe Slot (Drop Zone) -->
+          <div class="data-relay__pipe-slot"
+               [nxDropZone]="'stream-' + stream.streamId"
+               (nxDropZoneDrop)="onPipePlaced($event, stream.streamId)">
+            @for (block of stream.placedPipes; track block.id) {
+              <div class="data-relay__pipe-block"
+                   tabindex="0"
+                   role="button"
+                   (contextmenu)="onPipeRemoved($event, stream.streamId, block.id)"
+                   (click)="onPipeClicked(stream.streamId, block)"
+                   (keydown.enter)="onPipeClicked(stream.streamId, block)">
+                {{ block.pipeType }}
+              </div>
+            }
+            <!-- Data particles -->
+            <span class="data-relay__particle"></span>
+          </div>
+
+          <!-- Output Comparison -->
+          <div class="data-relay__output">
+            @if (getStreamResult(stream.streamId); as result) {
+              <span class="data-relay__output-actual"
+                    [class.data-relay__output--correct]="result.isCorrect"
+                    [class.data-relay__output--incorrect]="!result.isCorrect">
+                {{ result.actualOutput }}
+              </span>
+            }
+            <span class="data-relay__output-expected">{{ stream.requiredOutput }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Inline Parameter Config Panel -->
+    @if (selectedPipeBlock(); as selected) {
+      <div class="data-relay__config-panel">
+        <h4>Configure: {{ selected.pipeBlock.pipeType }}</h4>
+        @for (param of editingParams(); track $index) {
+          <input class="data-relay__config-input"
+                 type="text"
+                 [value]="param"
+                 (input)="editingParams()[$index] = $any($event.target).value" />
+        }
+        <div class="data-relay__config-actions">
+          <button class="data-relay__config-apply"
+                  (click)="onParamsChanged(editingParams())">Apply</button>
+          <button class="data-relay__config-cancel"
+                  (click)="closeConfig()">Cancel</button>
+        </div>
+      </div>
+    }
+
+    <!-- Controls Bar -->
+    <div class="data-relay__controls">
+      <button class="data-relay__run-btn"
+              [disabled]="engineStatus() !== 'playing'"
+              (click)="onRun()">
+        Run ({{ runCount() }})
+      </button>
+    </div>
+  </main>
+</div>

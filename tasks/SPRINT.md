@@ -1,8 +1,8 @@
 # Current Sprint
 
-Sprint: S18-p5-data-relay
+Sprint: S19-p5-data-relay-ui
 Milestone: P5
-Goal: Build Data Relay engine, UI, and remaining P5 integration work
+Goal: Build Data Relay UI, register in MinigameRegistry, and P5 integration tests
 Started: 2026-03-23
 
 <!-- Velocity: (recorded at sprint close) -->
@@ -11,21 +11,39 @@ Started: 2026-03-23
 
 ## Active
 
-- Title: Create story mission content for Chapters 18-22 (Phases 4-5)
-- Priority: high | Size: M | Milestone: P5
+- Title: Create Data Relay minigame UI component
+- Priority: high | Size: L | Milestone: P5
 
 ---
 
 ## Queue
 
-*(empty — sprint complete after this ticket)*
+### T-2026-096
+- Title: Create Data Relay minigame UI component
+- Priority: high | Size: L | Milestone: P5
+
+### T-2026-263
+- Title: Register story mission content for P5 missions (Ch 18-22)
+- Priority: high | Size: S | Milestone: P5
+
+### T-2026-432
+- Title: Create PowerGridScopeConfigComponent
+- Priority: high | Size: S | Milestone: P5
+
+### T-2026-434
+- Title: Create DataRelayPipeConfigComponent
+- Priority: high | Size: S | Milestone: P5
+
+### T-2026-461
+- Title: Create PowerGridBoardComponent for circuit board grid
+- Priority: high | Size: M | Milestone: P5
+
+### T-2026-462
+- Title: Create DataRelayStreamVisualizerComponent
+- Priority: high | Size: M | Milestone: P5
 
 ---
 
 ## Done This Sprint
 
-- T-2026-095: Create Data Relay minigame engine
-- T-2026-115: Register Power Grid in MinigameRegistry and wire routes
-- T-2026-147: Register Data Relay level data with LevelLoaderService
-- T-2026-433: Create PowerGridInjectionService for DI scope validation
-- T-2026-435: Create DataRelayTransformService for pipe application
+*(none yet)*

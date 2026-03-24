@@ -2334,29 +2334,6 @@ Acceptance criteria:
 
 
 
-### T-2026-096
-- Title: Create Data Relay minigame UI component
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P5
-- Depends: T-2026-095, T-2026-018, T-2026-054
-- Blocked-by: —
-- Tags: minigame, data-relay, component, ui
-- Refs: docs/minigames/08-data-relay.md, docs/ux/visual-style.md
-
-Build the stream transformer UI: data streams, pipe toolbox, parameter configuration, and output comparison.
-
-Acceptance criteria:
-- [ ] `DataRelayComponent` at `src/app/features/minigames/data-relay/data-relay.component.ts`
-- [ ] Left-to-right data stream visualization
-- [ ] Pipe toolbox organized by category
-- [ ] Pipe parameter configuration on click
-- [ ] Data particles showing visual transformation through pipes
-- [ ] Output comparison: actual vs expected
-- [ ] Unit tests for: stream rendering, pipe placement, parameter editing
-
 ### T-2026-116
 - Title: Register Data Relay in MinigameRegistry and wire routes
 - Status: todo
