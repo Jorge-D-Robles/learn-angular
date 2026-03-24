@@ -4,4 +4,5 @@ export * from './phase-3';
 export * from './phase-4';
 export * from './phase-5';
 export * from './phase-6';
+export * from './phase-7';
 export * from './provide-mission-content';
