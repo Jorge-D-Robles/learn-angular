@@ -7,4 +7,5 @@ export * from './terminal-hack.data';
 export * from './power-grid.data';
 export * from './data-relay.data';
 export * from './reactor-core.data';
+export * from './deep-space-radio.data';
 export * from './provide-level-data';
