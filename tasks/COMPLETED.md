@@ -325,3 +325,4 @@
 [2026-03-24] T-2026-529: Create Reactor Core visual state integration test for UI-to-engine signal binding — already satisfied by component spec (28 tests) testing engine-action-to-DOM chain with real engine (unassigned)
 [2026-03-24] T-2026-529: Create Reactor Core visual state integration test for UI-to-engine signal binding — already satisfied by component spec testing engine-action-to-DOM chain (unassigned)
 [2026-03-24] T-2026-530: Update architecture.md with P6 Reactor Core signal graph patterns and conventions — documented P6 patterns: signal graph DAG, cycle detection, propagation, scenario execution, canvas SVG (claude)
+[2026-03-24] T-2026-275: Create Deep Space Radio endpoint and interceptor data model — endpoint/interceptor types, utility functions, 22 tests (claude)

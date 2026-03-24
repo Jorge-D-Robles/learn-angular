@@ -11,11 +11,20 @@ Started: 2026-03-24
 
 ## Active
 
-*(none — pick from Queue)*
+- Title: Create Deep Space Radio endpoint and interceptor data model
+- Priority: high | Size: S | Milestone: P7
 
 ---
 
 ## Queue
+
+### T-2026-276
+- Title: Create System Certification source code and test data model
+- Priority: high | Size: S | Milestone: P7
+
+### T-2026-277
+- Title: Create Blast Doors lifecycle and directive data model
+- Priority: high | Size: S | Milestone: P7
 
 ### T-2026-102
 - Title: Define Deep Space Radio level data for 18 levels
@@ -32,18 +41,6 @@ Started: 2026-03-24
 ### T-2026-108
 - Title: Create story mission content for Chapters 27-34 (Phase 6 Advanced)
 - Priority: high | Size: M | Milestone: P7
-
-### T-2026-275
-- Title: Create Deep Space Radio endpoint and interceptor data model
-- Priority: high | Size: S | Milestone: P7
-
-### T-2026-276
-- Title: Create System Certification source code and test data model
-- Priority: high | Size: S | Milestone: P7
-
-### T-2026-277
-- Title: Create Blast Doors lifecycle and directive data model
-- Priority: high | Size: S | Milestone: P7
 
 ---
 
