@@ -1,0 +1,77 @@
+<div class="reactor-core">
+  <!-- Toolbox Sidebar -->
+  <aside class="reactor-core__toolbox">
+    <div class="reactor-core__toolbox-tabs">
+      @for (item of TOOLBOX_TYPES; track item.type) {
+        <button class="reactor-core__toolbox-tab"
+                [class.reactor-core__toolbox-tab--active]="selectedToolboxType() === item.type"
+                [style.borderColor]="item.color"
+                (click)="selectToolboxType(item.type)">
+          {{ item.label }} ({{ item.key }})
+        </button>
+      }
+    </div>
+    <div class="reactor-core__toolbox-items">
+      @for (node of toolboxNodes(); track node.id) {
+        <div class="reactor-core__toolbox-item"
+             [nxDraggable]="node.id"
+             [nxDraggableData]="node.type"
+             [style.borderLeftColor]="getNodeColor(node.type)">
+          {{ node.label }} ({{ node.type }})
+        </div>
+      }
+      @empty {
+        <div class="reactor-core__toolbox-empty">All nodes placed</div>
+      }
+    </div>
+  </aside>
+
+  <!-- Main Graph Area -->
+  <main class="reactor-core__main">
+    <app-reactor-core-graph-canvas
+      [nodes]="nodeMap()"
+      [edges]="edges()"
+      [simulating]="simulating()"
+      [selectedNodeId]="selectedNodeId()"
+      (nodeAdded)="onNodeAddedFromCanvas($event)"
+      (nodeMoved)="onNodeMoved($event)"
+      (edgeAdded)="onEdgeAdded($event)"
+      (edgeRemoved)="onEdgeRemoved($event)"
+      (nodeSelected)="onNodeSelected($event)"
+    />
+
+    <!-- Config Panel (shown when a signal/computed/effect node is selected) -->
+    @if (selectedNode(); as node) {
+      <div class="reactor-core__config-panel">
+        <app-node-config
+          [node]="node"
+          [availableDependencies]="availableDependencies()"
+          (nodeConfigured)="onNodeConfigured($event)"
+          (cancelled)="onConfigCancelled()"
+        />
+      </div>
+    }
+
+    <!-- Simulation Results -->
+    @if (simulationResult(); as result) {
+      <div class="reactor-core__sim-results"
+           [class.reactor-core__sim-results--passed]="result.allPassed"
+           [class.reactor-core__sim-results--failed]="!result.allPassed">
+        @if (result.allPassed) {
+          <span>All scenarios passed!</span>
+        } @else {
+          <span>{{ result.failedCount }} scenario(s) failed</span>
+        }
+      </div>
+    }
+
+    <!-- Controls Bar -->
+    <div class="reactor-core__controls">
+      <button class="reactor-core__simulate-btn"
+              [disabled]="simulationsRemaining() <= 0"
+              (click)="onSimulate()">
+        Simulate ({{ simulationsRemaining() }} left)
+      </button>
+    </div>
+  </main>
+</div>

@@ -306,7 +306,7 @@ export class ReactorCoreEngine extends MinigameEngine<ReactorCoreLevelData> {
   private readonly _simulationsRemaining = signal(DEFAULT_MAX_SIMULATIONS);
 
   // --- Private state ---
-  private _requiredNodes: readonly ReactorNode[] = [];
+  private readonly _requiredNodes = signal<readonly ReactorNode[]>([]);
   private _scenarios: readonly SimulationScenario[] = [];
   private _validGraphs: readonly ValidGraph[] = [];
   private _constraints: GraphConstraint = { maxNodes: 0, requiredNodeTypes: [] };
@@ -320,6 +320,7 @@ export class ReactorCoreEngine extends MinigameEngine<ReactorCoreLevelData> {
   readonly simulationResult: Signal<SimulationRunResult | null> = this._simulationResult.asReadonly();
   readonly simulationCount: Signal<number> = this._simulationCount.asReadonly();
   readonly simulationsRemaining: Signal<number> = this._simulationsRemaining.asReadonly();
+  readonly requiredNodes: Signal<readonly ReactorNode[]> = this._requiredNodes.asReadonly();
 
   constructor(config?: Partial<MinigameEngineConfig>, simulationService?: ReactorCoreSimulationService) {
     super(config);
@@ -329,7 +330,7 @@ export class ReactorCoreEngine extends MinigameEngine<ReactorCoreLevelData> {
   // --- Lifecycle hooks ---
 
   protected onLevelLoad(data: ReactorCoreLevelData): void {
-    this._requiredNodes = data.requiredNodes;
+    this._requiredNodes.set(data.requiredNodes);
     this._scenarios = data.scenarios;
     this._validGraphs = data.validGraphs;
     this._constraints = data.constraints;
@@ -455,7 +456,7 @@ export class ReactorCoreEngine extends MinigameEngine<ReactorCoreLevelData> {
   // --- Private action handlers ---
 
   private handleAddNode(action: AddNodeAction): ActionResult {
-    const template = this._requiredNodes.find(n => n.id === action.nodeId);
+    const template = this._requiredNodes().find(n => n.id === action.nodeId);
     if (!template) return INVALID_NO_CHANGE;
 
     const alreadyPlaced = this._nodes().some(n => n.id === action.nodeId);
