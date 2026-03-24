@@ -294,3 +294,4 @@
 [2026-03-24] T-2026-116: Register Data Relay in MinigameRegistry and wire routes — registered Data Relay in MinigameRegistry, 3 unit tests, E2E smoke test (claude)
 [2026-03-24] T-2026-195: Create Power Grid and Data Relay minigame tutorial data — added 4 tutorial steps each for Power Grid and Data Relay (claude)
 [2026-03-24] T-2026-436: Create integration test for PowerGridInjectionService DI scope validation — 8 integration tests using real level data for DI scope validation (claude)
+[2026-03-24] T-2026-437: Create integration test for DataRelayTransformService pipe chain evaluation — 8 integration tests using real level data for pipe chain evaluation (claude)

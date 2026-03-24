@@ -11,16 +11,12 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Create integration test for PowerGridInjectionService DI scope validation
+- Title: Create integration test for DataRelayTransformService pipe chain evaluation
 - Priority: medium | Size: S | Milestone: P5
 
 ---
 
 ## Queue
-
-### T-2026-437
-- Title: Create integration test for DataRelayTransformService pipe chain evaluation
-- Priority: medium | Size: S | Milestone: P5
 
 ### T-2026-520
 - Title: Create integration test for Power Grid level data compatibility with engine
@@ -44,3 +40,4 @@ Started: 2026-03-24
 
 - T-2026-116: Register Data Relay in MinigameRegistry and wire routes
 - T-2026-195: Create Power Grid and Data Relay minigame tutorial data
+- T-2026-436: Create integration test for PowerGridInjectionService DI scope validation
