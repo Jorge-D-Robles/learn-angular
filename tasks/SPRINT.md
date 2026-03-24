@@ -11,20 +11,12 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Register Data Relay in MinigameRegistry and wire routes
-- Priority: high | Size: S | Milestone: P5
+- Title: Create Power Grid and Data Relay minigame tutorial data
+- Priority: medium | Size: S | Milestone: P5
 
 ---
 
 ## Queue
-
-### T-2026-116
-- Title: Register Data Relay in MinigameRegistry and wire routes
-- Priority: high | Size: S | Milestone: P5
-
-### T-2026-195
-- Title: Create Power Grid and Data Relay minigame tutorial data
-- Priority: medium | Size: S | Milestone: P5
 
 ### T-2026-436
 - Title: Create integration test for PowerGridInjectionService DI scope validation
@@ -54,4 +46,4 @@ Started: 2026-03-24
 
 ## Done This Sprint
 
-*(none yet)*
+- T-2026-116: Register Data Relay in MinigameRegistry and wire routes

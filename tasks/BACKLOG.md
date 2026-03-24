@@ -2334,27 +2334,6 @@ Acceptance criteria:
 
 
 
-### T-2026-195
-- Title: Create Power Grid and Data Relay minigame tutorial data
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P5
-- Depends: T-2026-163, T-2026-091, T-2026-094
-- Blocked-by: —
-- Tags: content, tutorial, minigame, power-grid, data-relay
-- Refs: docs/minigames/07-power-grid.md, docs/minigames/08-data-relay.md
-
-T-2026-168 covers P2 minigame tutorials but not Power Grid or Data Relay (P5). This ticket creates tutorial step data for both P5 minigames.
-
-Acceptance criteria:
-- [ ] Power Grid tutorial data added to `src/app/data/tutorials/minigame-tutorials.data.ts`
-- [ ] Power Grid: 3-4 steps covering service-component wiring, scope selection, connection drawing, short circuit avoidance
-- [ ] Data Relay tutorial data added
-- [ ] Data Relay: 3-4 steps covering pipe toolbox, pipe placement, parameter configuration, output comparison
-- [ ] Unit tests for: both games have tutorial data, each has 3-4 steps, required fields populated
-
 ### T-2026-196
 - Title: Create P5 minigame engine integration tests for Power Grid and Data Relay
 - Status: todo
