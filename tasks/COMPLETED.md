@@ -291,3 +291,4 @@
 [2026-03-23] T-2026-434: Create DataRelayPipeConfigComponent for pipe parameter configuration panel — DataRelayPipeConfigComponent with type-specific param inputs, live preview, 14 tests (claude)
 [2026-03-24] T-2026-461: Create PowerGridBoardComponent for circuit board grid with service-component nodes and power lines — PowerGridBoardComponent with SVG grid, wire rendering, scope colors, port nodes, 20 tests (claude)
 [2026-03-24] T-2026-462: Create DataRelayStreamVisualizerComponent for left-to-right data stream and pipe slot rendering — extracted stream visualizer component with pipe slots, data particles, and output comparison (claude)
+[2026-03-24] T-2026-116: Register Data Relay in MinigameRegistry and wire routes — registered Data Relay in MinigameRegistry, 3 unit tests, E2E smoke test (claude)

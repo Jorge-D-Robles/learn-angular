@@ -11,7 +11,8 @@ Started: 2026-03-24
 
 ## Active
 
-*(none — pick from Queue)*
+- Title: Register Data Relay in MinigameRegistry and wire routes
+- Priority: high | Size: S | Milestone: P5
 
 ---
 
