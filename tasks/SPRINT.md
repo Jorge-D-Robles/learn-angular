@@ -1,8 +1,8 @@
 # Current Sprint
 
-Sprint: S24-p6-ui-integration
-Milestone: P6
-Goal: Build Reactor Core UI, register in MinigameRegistry, and P6 integration tests
+Sprint: S25-p7-deep-space-radio
+Milestone: P7
+Goal: Build Deep Space Radio level data and engine for Advanced Bundle
 Started: 2026-03-24
 
 <!-- Velocity: (recorded at sprint close) -->
@@ -11,24 +11,42 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Register Reactor Core in MinigameRegistry and wire routes
-- Priority: high | Size: S | Milestone: P6
+*(none — pick from Queue)*
 
 ---
 
 ## Queue
 
-- Title: Create integration test for ReactorCoreGraphService change propagation and scenario execution
-- Priority: medium | Size: S | Milestone: P6
+### T-2026-102
+- Title: Define Deep Space Radio level data for 18 levels
+- Priority: high | Size: M | Milestone: P7
 
-- Title: Wire Reactor Core tutorial data into MinigameRegistryService config
-- Priority: medium | Size: S | Milestone: P6
+### T-2026-104
+- Title: Define System Certification level data for 18 levels
+- Priority: high | Size: M | Milestone: P7
 
-- Title: Create integration test for Reactor Core level data compatibility with engine
-- Priority: medium | Size: S | Milestone: P6
+### T-2026-106
+- Title: Define Blast Doors level data for 18 levels
+- Priority: high | Size: M | Milestone: P7
+
+### T-2026-108
+- Title: Create story mission content for Chapters 27-34 (Phase 6 Advanced)
+- Priority: high | Size: M | Milestone: P7
+
+### T-2026-275
+- Title: Create Deep Space Radio endpoint and interceptor data model
+- Priority: high | Size: S | Milestone: P7
+
+### T-2026-276
+- Title: Create System Certification source code and test data model
+- Priority: high | Size: S | Milestone: P7
+
+### T-2026-277
+- Title: Create Blast Doors lifecycle and directive data model
+- Priority: high | Size: S | Milestone: P7
 
 ---
 
 ## Done This Sprint
 
-- T-2026-100: Create Reactor Core minigame UI component
+*(none yet)*
