@@ -18,7 +18,6 @@ Started: 2026-03-24
 
 ## Queue
 
-### T-2026-440
 - Title: Create integration test for ReactorCoreGraphService change propagation and scenario execution
 - Priority: medium | Size: S | Milestone: P6
 

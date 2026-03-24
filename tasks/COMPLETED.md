@@ -318,3 +318,4 @@
 [2026-03-24] T-2026-117: Register Reactor Core in MinigameRegistry and wire routes — registered Reactor Core in MinigameRegistry, 4 unit tests, E2E smoke test, bundle budget bump (claude)
 [2026-03-24] T-2026-526: Wire Reactor Core tutorial data into MinigameRegistryService config — already satisfied by T-2026-117 which registered reactor-core with auto-merged tutorial data and test (claude)
 [2026-03-24] T-2026-527: Create integration test for Reactor Core level data compatibility with engine — 107 integration tests verifying all 21 Reactor Core levels load and validate correctly (claude)
+[2026-03-24] T-2026-440: Create integration test for ReactorCoreGraphService change propagation and scenario execution — 8 integration tests for graph service propagation, scenario execution, and lifecycle (claude)
