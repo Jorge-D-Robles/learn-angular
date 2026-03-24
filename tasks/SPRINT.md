@@ -11,30 +11,21 @@ Started: 2026-03-23
 
 ## Active
 
-*(none — pick from Queue)*
+- Title: Create DataRelayStreamVisualizerComponent
+- Priority: high | Size: M | Milestone: P5
 
 ---
 
 ## Queue
 
-- Title: Register story mission content for P5 missions (Ch 18-22)
-- Priority: high | Size: S | Milestone: P5
-
-- Title: Create PowerGridScopeConfigComponent
-- Priority: high | Size: S | Milestone: P5
-
-- Title: Create DataRelayPipeConfigComponent
-- Priority: high | Size: S | Milestone: P5
-
-- Title: Create PowerGridBoardComponent for circuit board grid
-- Priority: high | Size: M | Milestone: P5
-
-### T-2026-462
-- Title: Create DataRelayStreamVisualizerComponent
-- Priority: high | Size: M | Milestone: P5
+*(empty)*
 
 ---
 
 ## Done This Sprint
 
 - T-2026-096: Create Data Relay minigame UI component
+- T-2026-097: Register story mission content for P5 missions (Ch 18-22)
+- T-2026-432: Create PowerGridScopeConfigComponent
+- T-2026-434: Create DataRelayPipeConfigComponent
+- T-2026-461: Create PowerGridBoardComponent for circuit board grid
