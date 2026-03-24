@@ -11,30 +11,12 @@ Started: 2026-03-24
 
 ## Active
 
-*(none — pick from Queue)*
+- Title: Create Deep Space Radio minigame engine
+- Priority: high | Size: L | Milestone: P7
 
 ---
 
 ## Queue
-
-- Title: Register Deep Space Radio level data with LevelLoaderService
-- Priority: high | Size: S | Milestone: P7
-
-- Title: Register System Certification level data with LevelLoaderService
-- Priority: high | Size: S | Milestone: P7
-
-- Title: Register Blast Doors level data with LevelLoaderService
-- Priority: high | Size: S | Milestone: P7
-
-- Title: Create Deep Space Radio, System Certification, and Blast Doors minigame tutorial data
-- Priority: medium | Size: S | Milestone: P7
-
-- Title: Register story mission content for P7 missions (Ch 27-34)
-- Priority: high | Size: S | Milestone: P7
-
-### T-2026-103
-- Title: Create Deep Space Radio minigame engine
-- Priority: high | Size: L | Milestone: P7
 
 ### T-2026-105
 - Title: Create System Certification minigame engine
@@ -48,4 +30,8 @@ Started: 2026-03-24
 
 ## Done This Sprint
 
-*(none yet)*
+- T-2026-149: Register Deep Space Radio level data
+- T-2026-150: Register System Certification level data
+- T-2026-151: Register Blast Doors level data
+- T-2026-199: Create P7 minigame tutorial data
+- T-2026-265: Register P7 story mission content

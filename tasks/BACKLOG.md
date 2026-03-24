@@ -2407,29 +2407,6 @@ Acceptance criteria:
 
 ## P7 -- Advanced Bundle
 
-### T-2026-103
-- Title: Create Deep Space Radio minigame engine
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P7
-- Depends: T-2026-017, T-2026-102
-- Blocked-by: —
-- Tags: minigame, deep-space-radio, engine
-- Refs: docs/minigames/10-deep-space-radio.md
-
-Implement the Deep Space Radio engine: HTTP request building, interceptor chain simulation, mock backend, and response handling.
-
-Acceptance criteria:
-- [ ] `DeepSpaceRadioEngine` at `src/app/features/minigames/deep-space-radio/deep-space-radio.engine.ts`
-- [ ] Extends `MinigameEngine<DeepSpaceRadioLevelData>`
-- [ ] Request builder: method, URL, headers, body configuration
-- [ ] Interceptor chain: ordered pipeline processing requests/responses
-- [ ] Mock backend: simulated endpoints with expected formats and responses
-- [ ] Response validation against expected results
-- [ ] Unit tests for: request building, interceptor chain, mock backend, response validation
-
 ### T-2026-105
 - Title: Create System Certification minigame engine
 - Status: todo
