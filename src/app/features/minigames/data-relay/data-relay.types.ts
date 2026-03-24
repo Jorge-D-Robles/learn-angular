@@ -65,3 +65,70 @@ export interface DataRelayLevelData {
   readonly targetOutputs: readonly TargetOutput[];
   readonly testData: readonly TestDataItem[];
 }
+
+// ---------------------------------------------------------------------------
+// Runtime types (engine-facing, complementary to level data above)
+// ---------------------------------------------------------------------------
+
+/** Valid built-in pipe type names for PipeBlock placement.
+ *  Matches the ticket-specified set. Custom pipe names pass through
+ *  the open PipeName union without needing isValidPipeType validation. */
+export const VALID_PIPE_TYPES = [
+  'uppercase', 'lowercase', 'date', 'decimal',
+  'currency', 'percent', 'slice', 'custom',
+] as const;
+
+/** A pipe block placed by the player into a data stream. */
+export interface PipeBlock {
+  readonly id: string;
+  readonly pipeType: PipeName;
+  readonly params: readonly string[];
+  readonly position: number;
+}
+
+/** A runtime data stream with placed pipes and evaluation state. */
+export interface RuntimeStream {
+  readonly streamId: string;
+  readonly rawInput: unknown;
+  readonly requiredOutput: string;
+  readonly placedPipes: readonly PipeBlock[];
+}
+
+/** A test data pair for runtime pipeline verification. */
+export interface TestDataPair {
+  readonly input: unknown;
+  readonly expectedOutput: string;
+}
+
+/** Pureness of a custom pipe (pure recalculates only on input change, impure on every CD cycle). */
+export type PipePureness = 'pure' | 'impure';
+
+/** Specification for a custom pipe in advanced levels. */
+export interface CustomPipeSpec {
+  readonly name: string;
+  readonly transformFn: string;
+  readonly pureness: PipePureness;
+}
+
+/** Result of evaluating a single data stream's pipeline. */
+export interface StreamResult {
+  readonly streamId: string;
+  readonly actualOutput: string;
+  readonly isCorrect: boolean;
+}
+
+// ---------------------------------------------------------------------------
+// Utility functions
+// ---------------------------------------------------------------------------
+
+/** Type guard: returns true when the given string is a recognized built-in pipe type. */
+export function isValidPipeType(value: string): value is typeof VALID_PIPE_TYPES[number] {
+  return (VALID_PIPE_TYPES as readonly string[]).includes(value);
+}
+
+/** Type guard: returns true when the value is a valid TestDataPair shape. */
+export function isValidTestDataPair(value: unknown): value is TestDataPair {
+  if (value === null || typeof value !== 'object') return false;
+  const obj = value as Record<string, unknown>;
+  return 'input' in obj && 'expectedOutput' in obj && typeof obj['expectedOutput'] === 'string';
+}
