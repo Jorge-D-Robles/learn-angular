@@ -1,8 +1,8 @@
 # Current Sprint
 
-Sprint: S25-p7-deep-space-radio
+Sprint: S26-p7-engines
 Milestone: P7
-Goal: Build Deep Space Radio level data and engine for Advanced Bundle
+Goal: Build P7 minigame engines: Deep Space Radio, System Certification, Blast Doors
 Started: 2026-03-24
 
 <!-- Velocity: (recorded at sprint close) -->
@@ -11,27 +11,46 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Define System Certification level data for 18 levels
-- Priority: high | Size: M | Milestone: P7
+*(none — pick from Queue)*
 
 ---
 
 ## Queue
 
-### T-2026-104
-- Title: Define System Certification level data for 18 levels
-- Priority: high | Size: M | Milestone: P7
+### T-2026-149
+- Title: Register Deep Space Radio level data with LevelLoaderService
+- Priority: high | Size: S | Milestone: P7
 
-- Title: Define Blast Doors level data for 18 levels
-- Priority: high | Size: M | Milestone: P7
+### T-2026-150
+- Title: Register System Certification level data with LevelLoaderService
+- Priority: high | Size: S | Milestone: P7
 
-- Title: Create story mission content for Chapters 27-34 (Phase 6 Advanced)
-- Priority: high | Size: M | Milestone: P7
+### T-2026-151
+- Title: Register Blast Doors level data with LevelLoaderService
+- Priority: high | Size: S | Milestone: P7
+
+### T-2026-199
+- Title: Create Deep Space Radio, System Certification, and Blast Doors minigame tutorial data
+- Priority: medium | Size: S | Milestone: P7
+
+### T-2026-265
+- Title: Register story mission content for P7 missions (Ch 27-34)
+- Priority: high | Size: S | Milestone: P7
+
+### T-2026-103
+- Title: Create Deep Space Radio minigame engine
+- Priority: high | Size: L | Milestone: P7
+
+### T-2026-105
+- Title: Create System Certification minigame engine
+- Priority: high | Size: L | Milestone: P7
+
+### T-2026-107
+- Title: Create Blast Doors minigame engine
+- Priority: high | Size: L | Milestone: P7
 
 ---
 
 ## Done This Sprint
 
-- T-2026-275: Create Deep Space Radio endpoint and interceptor data model
-- T-2026-276: Create System Certification source code and test data model
-- T-2026-277: Create Blast Doors lifecycle and directive data model
+*(none yet)*
