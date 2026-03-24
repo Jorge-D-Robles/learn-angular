@@ -32,6 +32,8 @@ import { POWER_GRID_LEVEL_PACK } from './data/levels/power-grid.data';
 import { DATA_RELAY_LEVEL_PACK } from './data/levels/data-relay.data';
 import { REACTOR_CORE_LEVEL_PACK } from './data/levels/reactor-core.data';
 import { DEEP_SPACE_RADIO_LEVEL_PACK } from './data/levels/deep-space-radio.data';
+import { SYSTEM_CERTIFICATION_LEVEL_PACK } from './data/levels/system-certification.data';
+import { BLAST_DOORS_LEVEL_PACK } from './data/levels/blast-doors.data';
 import { TerminalHackComponent, TerminalHackEngine } from './features/minigames/terminal-hack';
 import { PowerGridComponent, PowerGridEngine } from './features/minigames/power-grid';
 import { DataRelayComponent, DataRelayEngine } from './features/minigames/data-relay';
@@ -69,6 +71,8 @@ export const appConfig: ApplicationConfig = {
     provideLevelData(DATA_RELAY_LEVEL_PACK),
     provideLevelData(REACTOR_CORE_LEVEL_PACK),
     provideLevelData(DEEP_SPACE_RADIO_LEVEL_PACK),
+    provideLevelData(SYSTEM_CERTIFICATION_LEVEL_PACK),
+    provideLevelData(BLAST_DOORS_LEVEL_PACK),
     provideMissionContent(PHASE_1_MISSIONS),
     provideMissionContent(PHASE_2_MISSIONS),
     provideMissionContent(PHASE_3_MISSIONS),
