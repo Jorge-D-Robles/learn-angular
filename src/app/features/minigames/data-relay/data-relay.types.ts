@@ -5,6 +5,14 @@
 /** Category for organizing pipes in the toolbox. */
 export type PipeCategory = 'text' | 'number' | 'date' | 'custom';
 
+/** Color mapping for each pipe category, used by toolbox and stream visualizer. */
+export const PIPE_CATEGORY_COLORS: Record<PipeCategory, string> = {
+  text: '#3B82F6',     // Reactor Blue
+  number: '#22C55E',   // Sensor Green
+  date: '#F97316',     // Alert Orange
+  custom: '#A855F7',   // Comm Purple
+};
+
 /** Built-in Angular pipe names used across Data Relay levels. */
 export type BuiltInPipeName =
   | 'uppercase'

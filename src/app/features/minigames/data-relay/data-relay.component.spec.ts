@@ -101,7 +101,7 @@ describe('DataRelayComponent', () => {
 
     it('should render one stream row per engine stream', () => {
       setup();
-      const rows = fixture.nativeElement.querySelectorAll('.data-relay__stream');
+      const rows = fixture.nativeElement.querySelectorAll('.stream-visualizer__stream');
       expect(rows.length).toBe(2);
     });
 
@@ -209,7 +209,7 @@ describe('DataRelayComponent', () => {
       vi.advanceTimersByTime(400);
       fixture.detectChanges();
 
-      const blocks = fixture.nativeElement.querySelectorAll('.data-relay__pipe-block');
+      const blocks = fixture.nativeElement.querySelectorAll('.stream-visualizer__pipe-block');
       expect(blocks.length).toBeGreaterThan(0);
       expect(blocks[0].textContent).toContain('uppercase');
 
@@ -267,7 +267,7 @@ describe('DataRelayComponent', () => {
       fixture.detectChanges();
 
       // Click the placed pipe
-      const block = fixture.nativeElement.querySelector('.data-relay__pipe-block') as HTMLElement;
+      const block = fixture.nativeElement.querySelector('.stream-visualizer__pipe-block') as HTMLElement;
       block.click();
       fixture.detectChanges();
 
@@ -360,7 +360,7 @@ describe('DataRelayComponent', () => {
       engine.runTransform();
       fixture.detectChanges();
 
-      const results = fixture.nativeElement.querySelectorAll('.data-relay__output-actual');
+      const results = fixture.nativeElement.querySelectorAll('.stream-visualizer__output-actual');
       expect(results.length).toBeGreaterThan(0);
     });
 
@@ -379,8 +379,8 @@ describe('DataRelayComponent', () => {
       engine.runTransform();
       fixture.detectChanges();
 
-      const correctOutput = fixture.nativeElement.querySelector('.data-relay__output--correct');
-      const incorrectOutput = fixture.nativeElement.querySelector('.data-relay__output--incorrect');
+      const correctOutput = fixture.nativeElement.querySelector('.stream-visualizer__output--correct');
+      const incorrectOutput = fixture.nativeElement.querySelector('.stream-visualizer__output--incorrect');
       expect(correctOutput).toBeTruthy();
       expect(incorrectOutput).toBeTruthy();
     });
@@ -429,7 +429,7 @@ describe('DataRelayComponent', () => {
 
       submitSpy.mockClear();
 
-      const block = fixture.nativeElement.querySelector('.data-relay__pipe-block') as HTMLElement;
+      const block = fixture.nativeElement.querySelector('.stream-visualizer__pipe-block') as HTMLElement;
       const contextMenuEvent = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
       block.dispatchEvent(contextMenuEvent);
 
@@ -454,7 +454,7 @@ describe('DataRelayComponent', () => {
       } as PlacePipeAction);
       fixture.detectChanges();
 
-      const block = fixture.nativeElement.querySelector('.data-relay__pipe-block') as HTMLElement;
+      const block = fixture.nativeElement.querySelector('.stream-visualizer__pipe-block') as HTMLElement;
       const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
       const preventSpy = vi.spyOn(event, 'preventDefault');
       block.dispatchEvent(event);
@@ -528,7 +528,7 @@ describe('DataRelayComponent', () => {
       }));
       fixture.detectChanges();
 
-      const rows = fixture.nativeElement.querySelectorAll('.data-relay__stream');
+      const rows = fixture.nativeElement.querySelectorAll('.stream-visualizer__stream');
       expect(rows.length).toBe(0);
     });
 
@@ -558,7 +558,7 @@ describe('DataRelayComponent', () => {
       setup(data);
       fixture.detectChanges();
 
-      const rows = fixture.nativeElement.querySelectorAll('.data-relay__stream');
+      const rows = fixture.nativeElement.querySelectorAll('.stream-visualizer__stream');
       expect(rows.length).toBe(3);
     });
   });

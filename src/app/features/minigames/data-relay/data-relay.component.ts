@@ -6,16 +6,17 @@ import {
   signal,
 } from '@angular/core';
 import { DraggableDirective } from '../../../shared/directives/draggable.directive';
-import { DropZoneDirective } from '../../../shared/directives/drop-zone.directive';
+import { DataRelayStreamVisualizerComponent } from './stream-visualizer/stream-visualizer';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
 import { KeyboardShortcutService } from '../../../core/minigame/keyboard-shortcut.service';
 import { DataRelayTransformServiceImpl } from './data-relay-transform.service';
 import type { DataRelayEngine } from './data-relay.engine';
-import type {
-  PipeBlock,
-  PipeCategory,
-  PipeDefinition,
-  StreamResult,
+import {
+  PIPE_CATEGORY_COLORS,
+  type PipeBlock,
+  type PipeCategory,
+  type PipeDefinition,
+  type StreamResult,
 } from './data-relay.types';
 import type { DropResult } from '../../../core/minigame/drag-drop.service';
 
@@ -25,16 +26,12 @@ import type { DropResult } from '../../../core/minigame/drag-drop.service';
 
 const FEEDBACK_DURATION_MS = 400;
 
-export const PIPE_CATEGORY_COLORS: Record<PipeCategory, string> = {
-  text: '#3B82F6',     // Reactor Blue
-  number: '#22C55E',   // Sensor Green
-  date: '#F97316',     // Alert Orange
-  custom: '#A855F7',   // Comm Purple
-};
+// Re-export for backward compatibility (consumed by pipe-config and barrel)
+export { PIPE_CATEGORY_COLORS } from './data-relay.types';
 
 @Component({
   selector: 'app-data-relay',
-  imports: [DraggableDirective, DropZoneDirective],
+  imports: [DraggableDirective, DataRelayStreamVisualizerComponent],
   providers: [DataRelayTransformServiceImpl],
   templateUrl: './data-relay.component.html',
   styleUrl: './data-relay.component.scss',
@@ -153,8 +150,7 @@ export class DataRelayComponent implements OnDestroy {
     this.editingParams.set([]);
   }
 
-  onPipeRemoved(event: MouseEvent, streamId: string, pipeBlockId: string): void {
-    event.preventDefault();
+  onPipeRemoved(streamId: string, pipeBlockId: string): void {
     if (!this.engine) return;
     this.engine.submitAction({
       type: 'remove-pipe',
@@ -166,10 +162,6 @@ export class DataRelayComponent implements OnDestroy {
   onRun(): void {
     if (!this.engine) return;
     this.engine.runTransform();
-  }
-
-  getStreamResult(streamId: string): StreamResult | undefined {
-    return this.streamResultMap().get(streamId);
   }
 
   getCategoryColor(category: PipeCategory): string {

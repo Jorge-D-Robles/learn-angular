@@ -30,48 +30,15 @@
 
   <!-- Main Stream Area -->
   <main class="data-relay__main">
-    <div class="data-relay__streams">
-      @for (stream of streams(); track stream.streamId) {
-        <div class="data-relay__stream"
-             [class.data-relay__stream--feedback-success]="placementFeedback()?.streamId === stream.streamId && placementFeedback()?.type === 'success'"
-             [class.data-relay__stream--feedback-error]="placementFeedback()?.streamId === stream.streamId && placementFeedback()?.type === 'error'">
-          <!-- Raw Input -->
-          <div class="data-relay__input">
-            <span class="data-relay__input-label">{{ stream.rawInput }}</span>
-          </div>
-
-          <!-- Pipe Slot (Drop Zone) -->
-          <div class="data-relay__pipe-slot"
-               [nxDropZone]="'stream-' + stream.streamId"
-               (nxDropZoneDrop)="onPipePlaced($event, stream.streamId)">
-            @for (block of stream.placedPipes; track block.id) {
-              <div class="data-relay__pipe-block"
-                   tabindex="0"
-                   role="button"
-                   (contextmenu)="onPipeRemoved($event, stream.streamId, block.id)"
-                   (click)="onPipeClicked(stream.streamId, block)"
-                   (keydown.enter)="onPipeClicked(stream.streamId, block)">
-                {{ block.pipeType }}
-              </div>
-            }
-            <!-- Data particles -->
-            <span class="data-relay__particle"></span>
-          </div>
-
-          <!-- Output Comparison -->
-          <div class="data-relay__output">
-            @if (getStreamResult(stream.streamId); as result) {
-              <span class="data-relay__output-actual"
-                    [class.data-relay__output--correct]="result.isCorrect"
-                    [class.data-relay__output--incorrect]="!result.isCorrect">
-                {{ result.actualOutput }}
-              </span>
-            }
-            <span class="data-relay__output-expected">{{ stream.requiredOutput }}</span>
-          </div>
-        </div>
-      }
-    </div>
+    <app-data-relay-stream-visualizer
+      [streams]="streams()"
+      [streamResultMap]="streamResultMap()"
+      [placementFeedback]="placementFeedback()"
+      [availablePipes]="availablePipes()"
+      (pipeSlotClicked)="onPipeClicked($event.streamId, $event.pipeBlock)"
+      (pipeSlotRightClicked)="onPipeRemoved($event.streamId, $event.pipeBlockId)"
+      (pipeDragTarget)="onPipePlaced($event.dropResult, $event.streamId)"
+    />
 
     <!-- Inline Parameter Config Panel -->
     @if (selectedPipeBlock(); as selected) {

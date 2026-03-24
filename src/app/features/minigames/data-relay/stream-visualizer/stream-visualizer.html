@@ -1,0 +1,50 @@
+<div class="stream-visualizer">
+  @for (stream of streams(); track stream.streamId) {
+    <div class="stream-visualizer__stream"
+         [class.stream-visualizer__stream--feedback-success]="placementFeedback()?.streamId === stream.streamId && placementFeedback()?.type === 'success'"
+         [class.stream-visualizer__stream--feedback-error]="placementFeedback()?.streamId === stream.streamId && placementFeedback()?.type === 'error'">
+      <!-- Raw Input -->
+      <div class="stream-visualizer__input">
+        <span class="stream-visualizer__input-label">{{ stream.rawInput }}</span>
+      </div>
+
+      <!-- Pipe Slot (Drop Zone) -->
+      <div class="stream-visualizer__pipe-slot"
+           [nxDropZone]="'stream-' + stream.streamId"
+           (nxDropZoneDrop)="onDrop($event, stream.streamId)">
+        @for (block of stream.placedPipes; track block.id) {
+          <div class="stream-visualizer__pipe-block"
+               tabindex="0"
+               role="button"
+               [style.borderColor]="getPipeBlockColor(block)"
+               (contextmenu)="onPipeRightClicked($event, stream.streamId, block.id)"
+               (click)="onPipeClicked(stream.streamId, block)"
+               (keydown.enter)="onPipeClicked(stream.streamId, block)">
+            <span class="stream-visualizer__pipe-name">{{ block.pipeType }}</span>
+            @if (block.params.length > 0) {
+              <span class="stream-visualizer__pipe-params">{{ formatParams(block.params) }}</span>
+            }
+          </div>
+        }
+        <!-- Data particles: one per gap between input, pipes, and output -->
+        @for (gap of getParticleGaps(stream); track gap) {
+          <span class="stream-visualizer__particle"
+                [class.stream-visualizer__particle--transformed]="gap > 0"
+                [style.animation-delay.ms]="gap * 300"></span>
+        }
+      </div>
+
+      <!-- Output Comparison -->
+      <div class="stream-visualizer__output">
+        @if (getStreamResult(stream.streamId); as result) {
+          <span class="stream-visualizer__output-actual"
+                [class.stream-visualizer__output--correct]="result.isCorrect"
+                [class.stream-visualizer__output--incorrect]="!result.isCorrect">
+            {{ result.actualOutput }}
+          </span>
+        }
+        <span class="stream-visualizer__output-expected">{{ stream.requiredOutput }}</span>
+      </div>
+    </div>
+  }
+</div>

@@ -50,41 +50,6 @@
 }
 
 .data-relay__main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
-.data-relay__streams { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 16px; }
-
-.data-relay__stream {
-  display: flex; align-items: center; gap: 12px; padding: 12px;
-  background: #1a1f2e; border: 1px solid #252b3d; border-radius: 8px;
-  &--feedback-success { box-shadow: inset 0 0 12px rgba(34,197,94,0.3); }
-  &--feedback-error { box-shadow: inset 0 0 12px rgba(239,68,68,0.3); }
-}
-
-.data-relay__input {
-  min-width: 120px; padding: 6px 10px; background: #252b3d;
-  border-radius: 4px; color: #94a3b8; font-family: monospace; font-size: 0.8rem;
-}
-
-.data-relay__pipe-slot {
-  flex: 1; display: flex; align-items: center; gap: 8px;
-  min-height: 48px; padding: 6px; border: 2px dashed #252b3d; border-radius: 6px;
-  &.nx-drop-zone--active { border-color: #3b82f6; }
-  &.nx-drop-zone--hover { border-color: #22c55e; background: rgba(34,197,94,0.05); }
-}
-
-.data-relay__pipe-block {
-  padding: 6px 12px; border: 1px solid #3b82f6; border-radius: 4px;
-  background: rgba(59,130,246,0.15); color: #e2e8f0;
-  font-size: 0.8rem; font-family: monospace; cursor: pointer;
-}
-
-.data-relay__output {
-  min-width: 120px; display: flex; flex-direction: column; gap: 2px;
-  padding: 6px 10px; font-size: 0.8rem; font-family: monospace;
-}
-
-.data-relay__output--correct { color: #22c55e; }
-.data-relay__output--incorrect { color: #ef4444; }
-.data-relay__output-expected { color: #94a3b8; font-style: italic; }
 
 .data-relay__config-panel {
   margin: 0 16px; padding: 12px 16px;
@@ -111,21 +76,6 @@
   padding: 8px 24px; border: none; border-radius: 6px;
   background: #3b82f6; color: #fff; font-weight: 600; cursor: pointer;
   &:disabled { opacity: 0.4; cursor: not-allowed; }
-}
-
-.data-relay__particle {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: #3b82f6; opacity: 0.6; pointer-events: none;
-  animation: particle-flow 2s linear infinite;
-}
-
-@keyframes particle-flow {
-  0% { transform: translateX(-10px); opacity: 0; }
-  100% { transform: translateX(40px); opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .data-relay__particle { animation: none; }
 }
 
 @media (max-width: 767px) {
