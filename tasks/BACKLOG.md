@@ -2453,26 +2453,6 @@ Acceptance criteria:
 - [ ] Coverage threshold validation per level
 - [ ] Unit tests for: test execution, coverage tracking, quality scoring
 
-### T-2026-106
-- Title: Define Blast Doors level data for 18 levels
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P7
-- Depends: T-2026-019, T-2026-038
-- Blocked-by: —
-- Tags: minigame, blast-doors, level-data, content
-- Refs: docs/minigames/12-blast-doors.md
-
-Define the static level data for all 18 Blast Doors levels covering Lifecycle Hooks and Custom Directives.
-
-Acceptance criteria:
-- [ ] Level data file at `src/app/data/levels/blast-doors.data.ts`
-- [ ] `BlastDoorsLevelData` interface: doors[], hooks[], directives[], scenarios[], expectedBehavior[]
-- [ ] 6 Basic, 6 Intermediate, 5 Advanced levels, 1 Boss level matching spec
-- [ ] Unit tests verify: 18 total levels, valid door/hook/directive definitions
-
 ### T-2026-107
 - Title: Create Blast Doors minigame engine
 - Status: todo

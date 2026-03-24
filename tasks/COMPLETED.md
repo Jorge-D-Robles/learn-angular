@@ -330,3 +330,4 @@
 [2026-03-24] T-2026-277: Create Blast Doors lifecycle and directive data model — lifecycle/directive types, hook ordering validation, scenario validation, 23 tests (claude)
 [2026-03-24] T-2026-102: Define Deep Space Radio level data for 18 levels — 18 Deep Space Radio levels with endpoints, interceptors, scenarios, 40 tests (claude)
 [2026-03-24] T-2026-104: Define System Certification level data for 18 levels — 18 System Certification levels with source code, coverage thresholds, test utilities, 43 tests (claude)
+[2026-03-24] T-2026-106: Define Blast Doors level data for 18 levels — 18 Blast Doors levels with doors, hooks, directives, scenarios, 47 tests (claude)

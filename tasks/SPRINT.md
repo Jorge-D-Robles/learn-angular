@@ -22,7 +22,6 @@ Started: 2026-03-24
 - Title: Define System Certification level data for 18 levels
 - Priority: high | Size: M | Milestone: P7
 
-### T-2026-106
 - Title: Define Blast Doors level data for 18 levels
 - Priority: high | Size: M | Milestone: P7
 
