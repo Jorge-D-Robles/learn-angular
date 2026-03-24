@@ -117,6 +117,14 @@ export interface StreamResult {
   readonly isCorrect: boolean;
 }
 
+/** Aggregate result of running all streams through their pipe chains. */
+export interface TransformRunResult {
+  readonly streamResults: readonly StreamResult[];
+  readonly testResults: readonly { streamId: string; input: unknown; expected: string; actual: string; correct: boolean }[];
+  readonly allCorrect: boolean;
+  readonly failedTestCount: number;
+}
+
 // ---------------------------------------------------------------------------
 // Utility functions
 // ---------------------------------------------------------------------------

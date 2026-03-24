@@ -1,8 +1,8 @@
 # Current Sprint
 
-Sprint: S17-p5-power-grid
+Sprint: S18-p5-data-relay
 Milestone: P5
-Goal: Build Power Grid and Data Relay minigames — story missions Ch 18-22
+Goal: Build Data Relay engine, UI, and remaining P5 integration work
 Started: 2026-03-23
 
 <!-- Velocity: (recorded at sprint close) -->
@@ -11,20 +11,39 @@ Started: 2026-03-23
 
 ## Active
 
-- Title: Create Data Relay pipe and stream data model
-- Priority: high | Size: S | Milestone: P5
+- Title: Create Data Relay minigame engine
+- Priority: high | Size: L | Milestone: P5
 
 ---
 
 ## Queue
 
-*(empty — sprint complete after this ticket)*
+### T-2026-095
+- Title: Create Data Relay minigame engine
+- Priority: high | Size: L | Milestone: P5
+
+### T-2026-115
+- Title: Register Power Grid in MinigameRegistry and wire routes
+- Priority: high | Size: S | Milestone: P5
+
+### T-2026-147
+- Title: Register Data Relay level data with LevelLoaderService
+- Priority: high | Size: S | Milestone: P5
+
+### T-2026-433
+- Title: Create PowerGridInjectionService for DI scope validation and connection checking
+- Priority: high | Size: M | Milestone: P5
+
+### T-2026-435
+- Title: Create DataRelayTransformService for pipe application and output comparison
+- Priority: high | Size: M | Milestone: P5
+
+### T-2026-097
+- Title: Create story mission content for Chapters 18-22 (Phases 4-5)
+- Priority: high | Size: M | Milestone: P5
 
 ---
 
 ## Done This Sprint
 
-- T-2026-093: Create Power Grid minigame UI component
-- T-2026-094: Define Data Relay level data for 18 levels
-- T-2026-146: Register Power Grid level data with LevelLoaderService
-- T-2026-270: Create Power Grid service and injection scope data model
+*(none yet)*

@@ -2334,29 +2334,6 @@ Acceptance criteria:
 
 
 
-### T-2026-095
-- Title: Create Data Relay minigame engine
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P5
-- Depends: T-2026-017, T-2026-094
-- Blocked-by: —
-- Tags: minigame, data-relay, engine
-- Refs: docs/minigames/08-data-relay.md
-
-Implement the Data Relay engine: pipe placement, parameter configuration, data transformation, and output comparison.
-
-Acceptance criteria:
-- [ ] `DataRelayEngine` at `src/app/features/minigames/data-relay/data-relay.engine.ts`
-- [ ] Extends `MinigameEngine<DataRelayLevelData>`
-- [ ] Applies pipe transformations using Angular's actual pipe logic
-- [ ] Pipe chaining support (multiple pipes in sequence)
-- [ ] Output comparison against target format
-- [ ] Custom pipe editor for advanced levels
-- [ ] Unit tests for: pipe application, chaining, output comparison, custom pipes
-
 ### T-2026-096
 - Title: Create Data Relay minigame UI component
 - Status: todo
