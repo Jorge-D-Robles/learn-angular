@@ -9,4 +9,5 @@ export * from './data-relay.data';
 export * from './reactor-core.data';
 export * from './deep-space-radio.data';
 export * from './system-certification.data';
+export * from './blast-doors.data';
 export * from './provide-level-data';
