@@ -35,7 +35,6 @@ Started: 2026-03-24
 - Title: Create BlastDoorsTimelineComponent
 - Priority: high | Size: S | Milestone: P7
 
-### T-2026-464
 - Title: Create SystemCertificationCoverageOverlayComponent
 - Priority: high | Size: S | Milestone: P7
 
