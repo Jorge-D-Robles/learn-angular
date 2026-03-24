@@ -2476,26 +2476,6 @@ Acceptance criteria:
 - [ ] Scenario simulation: trigger events, validate door states
 - [ ] Unit tests for: hook ordering, directive application, scenario validation
 
-### T-2026-108
-- Title: Create story mission content for Chapters 27-34 (Phase 6 Advanced)
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P7
-- Depends: T-2026-038, T-2026-031
-- Blocked-by: —
-- Tags: story-missions, content, curriculum, phase-6
-- Refs: docs/curriculum.md
-
-Create narrative content for the 8 Advanced phase story missions.
-
-Acceptance criteria:
-- [ ] Mission data at `src/app/data/missions/phase-6/` (continued)
-- [ ] Ch 27 (Content Projection), Ch 28 (Lifecycle), Ch 29 (Directives), Ch 30 (HTTP), Ch 31 (Interceptors), Ch 32 (Testing), Ch 33 (Animations), Ch 34 (Performance)
-- [ ] Each mission has 3-5 steps
-- [ ] Unit tests verify: all 8 missions have valid content
-
 ### T-2026-118
 - Title: Create Deep Space Radio minigame UI component
 - Status: todo

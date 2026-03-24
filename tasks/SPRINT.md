@@ -25,7 +25,6 @@ Started: 2026-03-24
 - Title: Define Blast Doors level data for 18 levels
 - Priority: high | Size: M | Milestone: P7
 
-### T-2026-108
 - Title: Create story mission content for Chapters 27-34 (Phase 6 Advanced)
 - Priority: high | Size: M | Milestone: P7
 
