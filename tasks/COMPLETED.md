@@ -307,3 +307,4 @@
 [2026-03-24] T-2026-098: Define Reactor Core level data for 21 levels — 21 levels with 7-type discriminated union, builder helpers, 51 tests including acyclicity check (claude)
 [2026-03-24] T-2026-273: Create Reactor Core signal graph node and edge data model — 7 runtime node interfaces, result types, hasCycle/wouldCreateCycle utilities, 21 tests (claude)
 [2026-03-24] T-2026-101: Create story mission content for Chapters 23-26 (Phase 6 Signals) — 4 Signals story missions (Ch 23-26) with Angular 21 Signals API, 18 tests (claude)
+[2026-03-24] T-2026-099: Create Reactor Core minigame engine — signal graph engine with 6 actions, topological propagation, scenario execution, 56 tests (claude)

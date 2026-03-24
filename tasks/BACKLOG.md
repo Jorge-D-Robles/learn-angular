@@ -2338,29 +2338,6 @@ Acceptance criteria:
 
 ## P6 -- Signals Bundle
 
-### T-2026-099
-- Title: Create Reactor Core minigame engine
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: L
-- Milestone: P6
-- Depends: T-2026-017, T-2026-098
-- Blocked-by: —
-- Tags: minigame, reactor-core, engine
-- Refs: docs/minigames/09-reactor-core.md
-
-Implement the Reactor Core engine: node-based signal graph editing, simulation, and change propagation using Angular signal semantics.
-
-Acceptance criteria:
-- [ ] `ReactorCoreEngine` at `src/app/features/minigames/reactor-core/reactor-core.engine.ts`
-- [ ] Extends `MinigameEngine<ReactorCoreLevelData>`
-- [ ] Signal, computed, and effect node types
-- [ ] Graph validation: no circular signal dependencies
-- [ ] Simulation: change propagation through graph
-- [ ] Scenario execution against expected outputs
-- [ ] Unit tests for: graph building, validation, propagation, scenario execution
-
 ### T-2026-100
 - Title: Create Reactor Core minigame UI component
 - Status: todo
