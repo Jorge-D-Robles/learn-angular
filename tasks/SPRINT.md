@@ -11,16 +11,14 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Create integration test for PowerGridInjectionService + PowerGridEngine coordinated lifecycle
+- Title: Create integration test for DataRelayTransformService + DataRelayEngine coordinated lifecycle
 - Priority: medium | Size: S | Milestone: P5
 
 ---
 
 ## Queue
 
-### T-2026-523
-- Title: Create integration test for DataRelayTransformService + DataRelayEngine coordinated lifecycle
-- Priority: medium | Size: S | Milestone: P5
+*(empty)*
 
 ---
 
@@ -32,3 +30,4 @@ Started: 2026-03-24
 - T-2026-437: Create integration test for DataRelayTransformService pipe chain evaluation
 - T-2026-520: Create integration test for Power Grid level data compatibility with engine
 - T-2026-521: Create integration test for Data Relay level data compatibility with engine
+- T-2026-522: Create integration test for PowerGridInjectionService + PowerGridEngine coordinated lifecycle
