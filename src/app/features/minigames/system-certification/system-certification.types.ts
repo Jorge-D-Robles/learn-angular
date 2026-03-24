@@ -103,6 +103,13 @@ export interface TestRunSummary {
   readonly redundantTestCount: number;
 }
 
+/** Quality assessment of a test suite, factoring in redundancy. */
+export interface QualityScore {
+  readonly qualityMultiplier: number;
+  readonly redundantCount: number;
+  readonly totalTests: number;
+}
+
 // ---------------------------------------------------------------------------
 // Service interface
 // ---------------------------------------------------------------------------
