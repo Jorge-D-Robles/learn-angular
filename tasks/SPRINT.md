@@ -11,7 +11,7 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Create System Certification source code and test data model
+- Title: Create Blast Doors lifecycle and directive data model
 - Priority: high | Size: S | Milestone: P7
 
 ---

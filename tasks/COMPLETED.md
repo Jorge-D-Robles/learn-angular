@@ -327,3 +327,4 @@
 [2026-03-24] T-2026-530: Update architecture.md with P6 Reactor Core signal graph patterns and conventions — documented P6 patterns: signal graph DAG, cycle detection, propagation, scenario execution, canvas SVG (claude)
 [2026-03-24] T-2026-275: Create Deep Space Radio endpoint and interceptor data model — endpoint/interceptor types, utility functions, 22 tests (claude)
 [2026-03-24] T-2026-276: Create System Certification source code and test data model — source code/test types, calculateCoverage, aggregateTestResults utilities, 26 tests (claude)
+[2026-03-24] T-2026-277: Create Blast Doors lifecycle and directive data model — lifecycle/directive types, hook ordering validation, scenario validation, 23 tests (claude)
