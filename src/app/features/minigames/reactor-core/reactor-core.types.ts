@@ -1,8 +1,9 @@
 // ---------------------------------------------------------------------------
-// Canonical domain model types for Reactor Core minigame (level-data subset)
+// Canonical domain model types for Reactor Core minigame
 //
-// T-2026-273 will extend these interfaces with runtime fields
-// (currentValue, position, cleanupFn, etc.) for use by the engine and UI.
+// Level-data types (readonly, immutable) define the answer key / level config.
+// Runtime types (mutable) extend them with position, currentValue, cleanupFn
+// for use by the engine and UI during gameplay.
 // ---------------------------------------------------------------------------
 
 /**
@@ -135,4 +136,137 @@ export interface ReactorCoreLevelData {
   readonly scenarios: readonly SimulationScenario[];
   readonly validGraphs: readonly ValidGraph[];
   readonly constraints: GraphConstraint;
+}
+
+// ---------------------------------------------------------------------------
+// Runtime types — mutable state during gameplay
+// ---------------------------------------------------------------------------
+
+/** Position of a node on the graph canvas (mutable for drag). */
+export interface NodePosition {
+  x: number;
+  y: number;
+}
+
+/** Runtime signal() node with mutable position and current value. */
+export interface RuntimeSignalNode extends SignalNode {
+  currentValue: string | number | boolean;
+  position: NodePosition;
+}
+
+/** Runtime computed() node with mutable position and current value. */
+export interface RuntimeComputedNode extends ComputedNode {
+  currentValue: string | number | boolean;
+  position: NodePosition;
+}
+
+/** Runtime effect() node with mutable position and optional cleanup. */
+export interface RuntimeEffectNode extends EffectNode {
+  position: NodePosition;
+  cleanupFn: (() => void) | null;
+}
+
+/** Runtime linkedSignal() node with mutable position and current value. */
+export interface RuntimeLinkedSignalNode extends LinkedSignalNode {
+  currentValue: string | number | boolean;
+  position: NodePosition;
+}
+
+/** Runtime toSignal() adapter with mutable position and current value. */
+export interface RuntimeToSignalNode extends ToSignalNode {
+  currentValue: string | number | boolean;
+  position: NodePosition;
+}
+
+/** Runtime toObservable() adapter with mutable position. */
+export interface RuntimeToObservableNode extends ToObservableNode {
+  position: NodePosition;
+}
+
+/** Runtime resource() node with mutable position, current value, and resource state. */
+export interface RuntimeResourceNode extends ResourceNode {
+  currentValue: string | number | boolean;
+  position: NodePosition;
+  resourceState: 'loading' | 'error' | 'value';
+}
+
+/** Union of all runtime reactor node types. */
+export type RuntimeReactorNode =
+  | RuntimeSignalNode
+  | RuntimeComputedNode
+  | RuntimeEffectNode
+  | RuntimeLinkedSignalNode
+  | RuntimeToSignalNode
+  | RuntimeToObservableNode
+  | RuntimeResourceNode;
+
+// ---------------------------------------------------------------------------
+// Validation & simulation result types
+// ---------------------------------------------------------------------------
+
+/** Result of validating a player's graph structure. */
+export interface GraphValidationResult {
+  valid: boolean;
+  cycles: string[][];
+  orphanedNodes: string[];
+  missingDependencies: { nodeId: string; missingDepId: string }[];
+}
+
+/** Result of propagating a signal change through the graph. */
+export interface PropagationResult {
+  updatedNodes: { nodeId: string; oldValue: string | number | boolean; newValue: string | number | boolean }[];
+  triggeredEffects: string[];
+}
+
+/** Result of running a simulation scenario against the player's graph. */
+export interface ScenarioResult {
+  passed: boolean;
+  results: { nodeId: string; expected: string | number | boolean; actual: string | number | boolean; match: boolean }[];
+}
+
+// ---------------------------------------------------------------------------
+// Graph utility functions
+// ---------------------------------------------------------------------------
+
+/**
+ * Detects whether a directed graph contains a cycle using DFS with 3-color
+ * marking (WHITE=unvisited, GRAY=in-progress, BLACK=done).
+ */
+export function hasCycle(edges: readonly GraphEdge[], nodeIds: readonly string[]): boolean {
+  const adj = new Map<string, string[]>();
+  for (const id of nodeIds) adj.set(id, []);
+  for (const e of edges) {
+    adj.get(e.sourceId)?.push(e.targetId);
+  }
+
+  const WHITE = 0, GRAY = 1, BLACK = 2;
+  const color = new Map<string, number>();
+  for (const id of nodeIds) color.set(id, WHITE);
+
+  function dfs(u: string): boolean {
+    color.set(u, GRAY);
+    for (const v of adj.get(u) ?? []) {
+      if (color.get(v) === GRAY) return true;
+      if (color.get(v) === WHITE && dfs(v)) return true;
+    }
+    color.set(u, BLACK);
+    return false;
+  }
+
+  for (const id of nodeIds) {
+    if (color.get(id) === WHITE && dfs(id)) return true;
+  }
+  return false;
+}
+
+/**
+ * Returns whether adding `newEdge` to `existingEdges` would create a cycle.
+ * Uses spread (not push) to avoid mutating the input array.
+ */
+export function wouldCreateCycle(
+  existingEdges: readonly GraphEdge[],
+  newEdge: GraphEdge,
+  nodeIds: readonly string[],
+): boolean {
+  return hasCycle([...existingEdges, newEdge], nodeIds);
 }
