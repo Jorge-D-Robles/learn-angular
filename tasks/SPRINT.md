@@ -22,11 +22,9 @@ Started: 2026-03-24
 - Title: Create integration test for ReactorCoreGraphService change propagation and scenario execution
 - Priority: medium | Size: S | Milestone: P6
 
-### T-2026-526
 - Title: Wire Reactor Core tutorial data into MinigameRegistryService config
 - Priority: medium | Size: S | Milestone: P6
 
-### T-2026-527
 - Title: Create integration test for Reactor Core level data compatibility with engine
 - Priority: medium | Size: S | Milestone: P6
 
