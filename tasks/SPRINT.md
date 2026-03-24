@@ -11,20 +11,12 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Create Reactor Core minigame engine
-- Priority: high | Size: L | Milestone: P6
+- Title: Register Reactor Core level data with LevelLoaderService
+- Priority: high | Size: S | Milestone: P6
 
 ---
 
 ## Queue
-
-### T-2026-099
-- Title: Create Reactor Core minigame engine
-- Priority: high | Size: L | Milestone: P6
-
-### T-2026-148
-- Title: Register Reactor Core level data with LevelLoaderService
-- Priority: high | Size: S | Milestone: P6
 
 ### T-2026-264
 - Title: Register story mission content for P6 missions (Ch 23-26)
@@ -50,4 +42,4 @@ Started: 2026-03-24
 
 ## Done This Sprint
 
-*(none yet)*
+- T-2026-099: Create Reactor Core minigame engine

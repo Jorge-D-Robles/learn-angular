@@ -2382,26 +2382,6 @@ Acceptance criteria:
 - [ ] MinigameShell integration works (score, timer, lives)
 - [ ] E2e smoke test: navigate to level 1, verify game renders
 
-### T-2026-148
-- Title: Register Reactor Core level data with LevelLoaderService
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P6
-- Depends: T-2026-098, T-2026-030
-- Blocked-by: —
-- Tags: minigame, reactor-core, level-data, integration
-- Refs: docs/minigames/09-reactor-core.md, src/app/core/levels/level-loader.service.ts
-
-Register Reactor Core level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
-
-Acceptance criteria:
-- [ ] Reactor Core level pack registered with LevelLoaderService
-- [ ] `LevelLoaderService.loadLevel('reactor-core', levelId)` returns correct level data
-- [ ] `LevelLoaderService.getLevelPack('reactor-core')` returns all 21 levels grouped by tier
-- [ ] Unit tests for: level loading by ID, level pack retrieval
-
 ### T-2026-197
 - Title: Create Reactor Core minigame tutorial data
 - Status: todo
