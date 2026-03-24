@@ -6,8 +6,6 @@ import {
   DEFAULT_MAX_VERIFICATIONS,
   type ConnectServiceAction,
   type DisconnectServiceAction,
-  type GridValidationResult,
-  type PowerGridInjectionService,
 } from './power-grid.engine';
 import type {
   ServiceNode,
@@ -15,6 +13,8 @@ import type {
   ValidConnection,
   ScopeRule,
   PowerGridLevelData,
+  GridValidationResult,
+  PowerGridInjectionService,
 } from './power-grid.types';
 import {
   MinigameStatus,

@@ -9,35 +9,11 @@ import type {
   ScopeRule,
   InjectionScope,
   PowerGridLevelData,
+  PowerConnection,
+  ShortCircuit,
+  GridValidationResult,
+  PowerGridInjectionService,
 } from './power-grid.types';
-
-// ---------------------------------------------------------------------------
-// Local types (engine-specific, will be reconciled by T-2026-270)
-// ---------------------------------------------------------------------------
-
-/** A player-drawn connection between a service and component. */
-export interface PowerConnection {
-  readonly id: string;
-  readonly serviceId: string;
-  readonly componentId: string;
-  readonly scope: InjectionScope;
-}
-
-/** A short circuit detected during validation. */
-export interface ShortCircuitInfo {
-  readonly connectionId: string;
-  readonly serviceId: string;
-  readonly componentId: string;
-  readonly reason: 'wrong-pair' | 'wrong-scope';
-}
-
-/** Result of validating all connections. */
-export interface GridValidationResult {
-  readonly correctConnections: readonly PowerConnection[];
-  readonly shortCircuits: readonly ShortCircuitInfo[];
-  readonly missingConnections: readonly ValidConnection[];
-  readonly allCorrect: boolean;
-}
 
 // ---------------------------------------------------------------------------
 // Action types
@@ -56,21 +32,6 @@ export interface DisconnectServiceAction {
 }
 
 export type PowerGridAction = ConnectServiceAction | DisconnectServiceAction;
-
-// ---------------------------------------------------------------------------
-// Validation service interface (T-2026-433 will implement)
-// ---------------------------------------------------------------------------
-
-export interface PowerGridInjectionService {
-  validateAll(
-    connections: readonly PowerConnection[],
-    services: readonly ServiceNode[],
-    components: readonly ComponentNode[],
-    validConnections: readonly ValidConnection[],
-    scopeRules: readonly ScopeRule[],
-  ): GridValidationResult;
-  reset?(): void;
-}
 
 // ---------------------------------------------------------------------------
 // Type guards
@@ -264,7 +225,7 @@ export class PowerGridEngine extends MinigameEngine<PowerGridLevelData> {
   private inlineValidate(): GridValidationResult {
     const connections = this._connections();
     const correctConnections: PowerConnection[] = [];
-    const shortCircuits: ShortCircuitInfo[] = [];
+    const shortCircuits: ShortCircuit[] = [];
 
     for (const conn of connections) {
       // Find a matching valid connection with same serviceId + componentId

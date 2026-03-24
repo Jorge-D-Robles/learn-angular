@@ -277,3 +277,4 @@
 [2026-03-23] T-2026-093: Create Power Grid minigame UI component — Power Grid circuit board UI with SVG wire drawing, scope selection, color-coded connections, 30 tests (claude)
 [2026-03-23] T-2026-094: Define Data Relay level data for 18 levels — 18 levels with types, streams, pipes, builder helpers, 35 data integrity tests (claude)
 [2026-03-23] T-2026-146: Register Power Grid level data with LevelLoaderService — registered Power Grid level pack with LevelLoaderService in app.config.ts (claude)
+[2026-03-23] T-2026-270: Create Power Grid service and injection scope data model — moved runtime types to canonical types file, added isConnectionValid/isScopeAllowed utilities, 18 tests (unassigned)

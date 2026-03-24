@@ -18,7 +18,6 @@ Started: 2026-03-23
 
 ## Queue
 
-### T-2026-270
 - Title: Create Power Grid service and injection scope data model
 - Priority: high | Size: S | Milestone: P5
 
