@@ -2384,26 +2384,6 @@ Acceptance criteria:
 - [ ] Expression builder for computed node formulas
 - [ ] Unit tests for: node placement, wire drawing, simulation animation states
 
-### T-2026-101
-- Title: Create story mission content for Chapters 23-26 (Phase 6 Signals)
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P6
-- Depends: T-2026-038, T-2026-031
-- Blocked-by: —
-- Tags: story-missions, content, curriculum, phase-6
-- Refs: docs/curriculum.md
-
-Create narrative content for the 4 Signals story missions.
-
-Acceptance criteria:
-- [ ] Mission data at `src/app/data/missions/phase-6/`
-- [ ] Ch 23-26 (Signals): Sensor Network, Computed Readings, Linked Sensors, Automated Responses
-- [ ] Each mission has 3-5 steps
-- [ ] Unit tests verify: all 4 missions have valid content
-
 ### T-2026-117
 - Title: Register Reactor Core in MinigameRegistry and wire routes
 - Status: todo

@@ -11,19 +11,18 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Create Reactor Core signal graph node and edge data model
+- Title: Create story mission content for Chapters 23-26 (Phase 6 Signals)
 - Priority: high | Size: S | Milestone: P6
 
 ---
 
 ## Queue
 
-### T-2026-101
-- Title: Create story mission content for Chapters 23-26 (Phase 6 Signals)
-- Priority: high | Size: S | Milestone: P6
+*(empty)*
 
 ---
 
 ## Done This Sprint
 
 - T-2026-098: Define Reactor Core level data for 21 levels
+- T-2026-273: Create Reactor Core signal graph node and edge data model
