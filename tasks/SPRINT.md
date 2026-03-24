@@ -23,7 +23,6 @@ Started: 2026-03-23
 - Title: Create PowerGridScopeConfigComponent
 - Priority: high | Size: S | Milestone: P5
 
-### T-2026-434
 - Title: Create DataRelayPipeConfigComponent
 - Priority: high | Size: S | Milestone: P5
 
