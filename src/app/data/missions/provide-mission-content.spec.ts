@@ -11,6 +11,7 @@ import { PHASE_2_MISSIONS } from './phase-2';
 import { PHASE_3_MISSIONS } from './phase-3';
 import { PHASE_4_MISSIONS } from './phase-4';
 import { PHASE_5_MISSIONS } from './phase-5';
+import { PHASE_6_MISSIONS } from './phase-6';
 import { provideMissionContent } from './provide-mission-content';
 
 describe('provideMissionContent', () => {
@@ -344,6 +345,82 @@ describe('provideMissionContent — Phase 5', () => {
       expect(svc.getMissionContent(ch)).toBeDefined();
     }
     for (let ch = 20; ch <= 22; ch++) {
+      expect(svc.getMissionContent(ch)).toBeDefined();
+    }
+  });
+});
+
+describe('provideMissionContent — Phase 6', () => {
+  let service: StoryMissionContentService;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [provideMissionContent(PHASE_6_MISSIONS)],
+    });
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    service = TestBed.inject(StoryMissionContentService);
+  });
+
+  it('should register all 4 Phase 6 mission content entries at initialization', () => {
+    for (let ch = 23; ch <= 26; ch++) {
+      expect(service.getMissionContent(ch)).toBeDefined();
+    }
+  });
+
+  it('should return valid content for each chapter (23-26)', () => {
+    for (let ch = 23; ch <= 26; ch++) {
+      const content = service.getMissionContent(ch);
+      expect(content).toBeDefined();
+      expect(content!.chapterId).toBe(ch);
+      expect(content!.steps.length).toBeGreaterThan(0);
+      expect(content!.completionCriteria).toBeDefined();
+    }
+  });
+
+  it('should return correct chapterId for getMissionContent(23)', () => {
+    const content = service.getMissionContent(23);
+    expect(content).toBeDefined();
+    expect(content!.chapterId).toBe(23);
+  });
+
+  it('should return correct chapterId for getMissionContent(26)', () => {
+    const content = service.getMissionContent(26);
+    expect(content).toBeDefined();
+    expect(content!.chapterId).toBe(26);
+  });
+
+  it('should register Phase 1 through Phase 6 content when all are provided', async () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideMissionContent(PHASE_1_MISSIONS),
+        provideMissionContent(PHASE_2_MISSIONS),
+        provideMissionContent(PHASE_3_MISSIONS),
+        provideMissionContent(PHASE_4_MISSIONS),
+        provideMissionContent(PHASE_5_MISSIONS),
+        provideMissionContent(PHASE_6_MISSIONS),
+      ],
+    });
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    const svc = TestBed.inject(StoryMissionContentService);
+
+    for (let ch = 1; ch <= 10; ch++) {
+      expect(svc.getMissionContent(ch)).toBeDefined();
+    }
+    for (let ch = 11; ch <= 13; ch++) {
+      expect(svc.getMissionContent(ch)).toBeDefined();
+    }
+    for (let ch = 14; ch <= 17; ch++) {
+      expect(svc.getMissionContent(ch)).toBeDefined();
+    }
+    for (let ch = 18; ch <= 19; ch++) {
+      expect(svc.getMissionContent(ch)).toBeDefined();
+    }
+    for (let ch = 20; ch <= 22; ch++) {
+      expect(svc.getMissionContent(ch)).toBeDefined();
+    }
+    for (let ch = 23; ch <= 26; ch++) {
       expect(svc.getMissionContent(ch)).toBeDefined();
     }
   });

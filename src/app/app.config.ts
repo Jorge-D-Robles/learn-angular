@@ -21,7 +21,7 @@ import { SIGNAL_CORPS_LEVEL_PACK } from './data/levels/signal-corps.data';
 import { CORRIDOR_RUNNER_LEVEL_PACK } from './data/levels/corridor-runner.data';
 import { provideLevelData } from './data/levels/provide-level-data';
 import { provideMinigame } from './data/minigame-registration';
-import { PHASE_1_MISSIONS, PHASE_2_MISSIONS, PHASE_3_MISSIONS, PHASE_4_MISSIONS, PHASE_5_MISSIONS, provideMissionContent } from './data/missions';
+import { PHASE_1_MISSIONS, PHASE_2_MISSIONS, PHASE_3_MISSIONS, PHASE_4_MISSIONS, PHASE_5_MISSIONS, PHASE_6_MISSIONS, provideMissionContent } from './data/missions';
 import { ModuleAssemblyComponent, ModuleAssemblyEngine } from './features/minigames/module-assembly';
 import { WireProtocolComponent, WireProtocolEngine } from './features/minigames/wire-protocol';
 import { FlowCommanderComponent, FlowCommanderEngine, FlowCommanderSimulationService } from './features/minigames/flow-commander';
@@ -71,6 +71,7 @@ export const appConfig: ApplicationConfig = {
     provideMissionContent(PHASE_3_MISSIONS),
     provideMissionContent(PHASE_4_MISSIONS),
     provideMissionContent(PHASE_5_MISSIONS),
+    provideMissionContent(PHASE_6_MISSIONS),
     provideMinigame('wire-protocol', WireProtocolComponent, () => new WireProtocolEngine()),
     provideMinigame('flow-commander', FlowCommanderComponent, () => new FlowCommanderEngine(undefined, new FlowCommanderSimulationService())),
     { provide: SignalCorpsWaveService, useValue: signalCorpsWaveService },
