@@ -2399,26 +2399,6 @@ Acceptance criteria:
 - [ ] MinigameShell integration works (score, timer, lives)
 - [ ] E2e smoke test: navigate to level 1, verify game renders
 
-### T-2026-147
-- Title: Register Data Relay level data with LevelLoaderService
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P5
-- Depends: T-2026-094, T-2026-030
-- Blocked-by: —
-- Tags: minigame, data-relay, level-data, integration
-- Refs: docs/minigames/08-data-relay.md, src/app/core/levels/level-loader.service.ts
-
-Register Data Relay level data with LevelLoaderService so levels can be loaded by the minigame engine and level select page.
-
-Acceptance criteria:
-- [ ] Data Relay level pack registered with LevelLoaderService
-- [ ] `LevelLoaderService.loadLevel('data-relay', levelId)` returns correct level data
-- [ ] `LevelLoaderService.getLevelPack('data-relay')` returns all 18 levels grouped by tier
-- [ ] Unit tests for: level loading by ID, level pack retrieval
-
 ### T-2026-195
 - Title: Create Power Grid and Data Relay minigame tutorial data
 - Status: todo
