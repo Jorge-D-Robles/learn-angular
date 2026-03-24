@@ -1,0 +1,69 @@
+<div class="system-certification">
+  <!-- Source Code Panel (left) -->
+  <div class="system-certification__source-panel">
+    <h3 class="system-certification__panel-heading">Source Code</h3>
+    <nx-code-editor
+      [code]="sourceCodeContent()"
+      [readOnly]="true"
+      language="typescript"
+    />
+  </div>
+
+  <!-- Test Editor Panel (right) -->
+  <div class="system-certification__test-panel">
+    <h3 class="system-certification__panel-heading">Test Editor</h3>
+    <nx-code-editor
+      [code]="testCode()"
+      [readOnly]="false"
+      language="typescript"
+      (codeChange)="onTestCodeChange($event)"
+    />
+  </div>
+
+  <!-- Bottom Panel: Controls + Results -->
+  <div class="system-certification__bottom-panel">
+    <!-- Controls Bar -->
+    <div class="system-certification__controls">
+      <button class="system-certification__run-btn"
+              [disabled]="testRunsRemaining() <= 0"
+              (click)="onRunTests()">
+        Run Tests ({{ testRunsRemaining() }} left)
+      </button>
+      <button class="system-certification__hint-btn"
+              (click)="onUseHint()">
+        Hint ({{ hintsUsed() }} used)
+      </button>
+    </div>
+
+    <!-- Test Results -->
+    @if (testRunSummary(); as summary) {
+      <div class="system-certification__results"
+           [class.system-certification__results--all-passed]="summary.failedTests === 0"
+           [class.system-certification__results--has-failures]="summary.failedTests > 0">
+        <span>{{ summary.passedTests }} passed, {{ summary.failedTests }} failed ({{ summary.totalTests }} total)</span>
+      </div>
+    }
+
+    <!-- Hints Display -->
+    @if (hintsRevealed().length > 0) {
+      <div class="system-certification__hints">
+        @for (hint of hintsRevealed(); track hint.order) {
+          <div class="system-certification__hint-item">
+            {{ hint.text }}
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Coverage Overlay (toggleable, covers source panel) -->
+  <div class="system-certification__coverage-panel">
+    <app-coverage-overlay
+      [sourceLines]="sourceLines()"
+      [coverageResult]="coverage()"
+      [isVisible]="coverageVisible()"
+      [hintLineNumber]="latestHintLineNumber()"
+      (visibilityToggled)="onToggleCoverage()"
+    />
+  </div>
+</div>

@@ -1,0 +1,160 @@
+// System Certification — orchestrator layout
+
+.system-certification {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr auto auto;
+  width: 100%;
+  height: 100%;
+  background: #0f1219;
+  gap: 1px;
+}
+
+// --- Panel headings ---
+
+.system-certification__panel-heading {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #252b3d;
+}
+
+// --- Source code panel (top-left) ---
+
+.system-certification__source-panel {
+  display: flex;
+  flex-direction: column;
+  background: #1a1f2e;
+  border-right: 1px solid #252b3d;
+  overflow: hidden;
+}
+
+// --- Test editor panel (top-right) ---
+
+.system-certification__test-panel {
+  display: flex;
+  flex-direction: column;
+  background: #1a1f2e;
+  overflow: hidden;
+}
+
+// --- Bottom panel (spans both columns) ---
+
+.system-certification__bottom-panel {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  background: #1a1f2e;
+  border-top: 1px solid #252b3d;
+  padding: 8px 12px;
+  gap: 8px;
+}
+
+// --- Controls bar ---
+
+.system-certification__controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.system-certification__run-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #22c55e;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.system-certification__hint-btn {
+  padding: 8px 16px;
+  border: 1px solid #eab308;
+  border-radius: 6px;
+  background: rgba(234, 179, 8, 0.1);
+  color: #eab308;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover {
+    background: rgba(234, 179, 8, 0.2);
+  }
+}
+
+// --- Test results ---
+
+.system-certification__results {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  &--all-passed {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+  }
+
+  &--has-failures {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+  }
+}
+
+// --- Hints display ---
+
+.system-certification__hints {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.system-certification__hint-item {
+  padding: 6px 10px;
+  border-left: 3px solid #eab308;
+  background: rgba(234, 179, 8, 0.05);
+  color: #e2e8f0;
+  font-size: 0.8rem;
+  border-radius: 0 4px 4px 0;
+}
+
+// --- Coverage overlay panel ---
+
+.system-certification__coverage-panel {
+  grid-column: 1 / -1;
+  padding: 0 12px 12px;
+}
+
+// --- Responsive ---
+
+@media (max-width: 767px) {
+  .system-certification {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+  }
+
+  .system-certification__source-panel {
+    border-right: none;
+    border-bottom: 1px solid #252b3d;
+  }
+}
