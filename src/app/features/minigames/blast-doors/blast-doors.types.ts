@@ -153,6 +153,24 @@ export interface ScenarioResult {
   readonly stepResults: readonly ScenarioStepResult[];
 }
 
+// --- Service interface ---
+
+/**
+ * Lifecycle simulation service interface for Blast Doors.
+ * Placeholder with simplified signature — T-2026-444 will expand this interface
+ * with full loadDoors, assignBehavior, validateHookOrder, getDoorStates, etc.
+ *
+ * Matching the established pattern (PowerGridInjectionService in power-grid.types.ts).
+ */
+export interface BlastDoorsLifecycleService {
+  simulateScenario(
+    doors: readonly RuntimeBlastDoor[],
+    scenario: DoorScenario,
+    expectedBehavior: readonly ExpectedBehavior[],
+  ): ScenarioResult;
+  reset?(): void;
+}
+
 // --- Constants ---
 
 /**
