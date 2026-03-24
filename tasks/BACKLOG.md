@@ -2407,27 +2407,6 @@ Acceptance criteria:
 
 ## P7 -- Advanced Bundle
 
-### T-2026-119
-- Title: Register Deep Space Radio in MinigameRegistry and wire routes
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P7
-- Depends: T-2026-118, T-2026-029, T-2026-042
-- Blocked-by: —
-- Tags: minigame, deep-space-radio, registration, routing
-- Refs: docs/minigames/10-deep-space-radio.md
-
-Register Deep Space Radio with MinigameRegistryService and ensure end-to-end playability.
-
-Acceptance criteria:
-- [ ] Deep Space Radio registered with gameId, config, and component type
-- [ ] Navigating to `/minigames/deep-space-radio/level/1` loads and renders the game
-- [ ] Level data loads correctly for all 18 levels
-- [ ] MinigameShell integration works (score, timer, lives)
-- [ ] E2e smoke test: navigate to level 1, verify game renders
-
 ### T-2026-120
 - Title: Create System Certification minigame UI component
 - Status: todo

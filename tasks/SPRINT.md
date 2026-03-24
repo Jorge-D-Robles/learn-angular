@@ -1,8 +1,8 @@
 # Current Sprint
 
-Sprint: S27-p7-ui-components
+Sprint: S28-p7-remaining-ui
 Milestone: P7
-Goal: Build P7 minigame UI components and integration tests
+Goal: Complete P7 UI components and MinigameRegistry registration
 Started: 2026-03-24
 
 <!-- Velocity: (recorded at sprint close) -->
@@ -11,34 +11,19 @@ Started: 2026-03-24
 
 ## Active
 
-*(none — pick from Queue)*
+- Title: Register Deep Space Radio in MinigameRegistry and wire routes
+- Priority: high | Size: S | Milestone: P7
 
 ---
 
 ## Queue
 
-- Title: Create DeepSpaceRadioInterceptorService
-- Priority: high | Size: M | Milestone: P7
+### T-2026-120
+- Title: Create System Certification minigame UI component
+- Priority: high | Size: L | Milestone: P7
 
-- Title: Create SystemCertificationTestRunnerService
-- Priority: high | Size: M | Milestone: P7
-
-- Title: Create BlastDoorsLifecycleService
-- Priority: high | Size: M | Milestone: P7
-
-- Title: Create DeepSpaceRadioRequestBuilderComponent
-- Priority: high | Size: S | Milestone: P7
-
-- Title: Create DeepSpaceRadioInterceptorPipelineComponent
-- Priority: high | Size: S | Milestone: P7
-
-- Title: Create BlastDoorsTimelineComponent
-- Priority: high | Size: S | Milestone: P7
-
-- Title: Create SystemCertificationCoverageOverlayComponent
-- Priority: high | Size: S | Milestone: P7
-
-- Title: Create Deep Space Radio minigame UI component
+### T-2026-122
+- Title: Create Blast Doors minigame UI component
 - Priority: high | Size: L | Milestone: P7
 
 ---
