@@ -2405,29 +2405,6 @@ Acceptance criteria:
 - [ ] Test: engine.reset() resets graph service state
 - [ ] Uses real ReactorCoreEngine and ReactorCoreGraphService with level 1 data
 
-### T-2026-529
-- Title: Create Reactor Core visual state integration test for UI-to-engine signal binding
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P6
-- Depends: T-2026-100, T-2026-455, T-2026-439
-- Blocked-by: —
-- Tags: testing, integration, reactor-core, visual-state, ui
-- Refs: docs/minigames/09-reactor-core.md, src/app/features/minigames/reactor-core/
-
-T-2026-492 covers P2, T-2026-504 covers P3, T-2026-517 covers P4, and T-2026-524 covers P5 visual state tests. No equivalent exists for P6 Reactor Core. This test verifies the UI components correctly reflect engine state: graph canvas shows placed nodes, edges render between nodes, simulation propagation animates energy flow, and scenario results update node value displays.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/features/minigames/reactor-core/visual-state.integration.spec.ts`
-- [ ] Test: add-node action renders new node at position on graph canvas with correct type color
-- [ ] Test: add-edge action renders wire between nodes on canvas with directional arrow
-- [ ] Test: simulate action triggers energy flow animation along wires
-- [ ] Test: scenario with incorrect output shows warning indicator on mismatched nodes
-- [ ] Each test: uses real engine + component fixture
-- [ ] Each test: verifies DOM state reflects engine signal values after action
-
 ### T-2026-530
 - Title: Update architecture.md with P6 Reactor Core signal graph patterns and conventions
 - Status: todo

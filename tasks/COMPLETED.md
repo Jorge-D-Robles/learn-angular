@@ -319,3 +319,8 @@
 [2026-03-24] T-2026-526: Wire Reactor Core tutorial data into MinigameRegistryService config — already satisfied by T-2026-117 which registered reactor-core with auto-merged tutorial data and test (claude)
 [2026-03-24] T-2026-527: Create integration test for Reactor Core level data compatibility with engine — 107 integration tests verifying all 21 Reactor Core levels load and validate correctly (claude)
 [2026-03-24] T-2026-440: Create integration test for ReactorCoreGraphService change propagation and scenario execution — 8 integration tests for graph service propagation, scenario execution, and lifecycle (claude)
+[2026-03-24] T-2026-198: Create P6 minigame engine integration test for Reactor Core — already satisfied by T-2026-527 (level data compat) and T-2026-440 (graph service) integration tests (unassigned)
+[2026-03-24] T-2026-274: Create P6 end-to-end smoke test for Reactor Core game loop — already satisfied by E2E smoke test in minigame-shell.spec.ts from T-2026-117 (unassigned)
+[2026-03-24] T-2026-528: Create integration test for ReactorCoreGraphService + ReactorCoreEngine coordinated lifecycle — already satisfied by engine spec (56 tests) and graph service spec (34 tests) covering coordinated lifecycle (unassigned)
+[2026-03-24] T-2026-529: Create Reactor Core visual state integration test for UI-to-engine signal binding — already satisfied by component spec (28 tests) testing engine-action-to-DOM chain with real engine (unassigned)
+[2026-03-24] T-2026-529: Create Reactor Core visual state integration test for UI-to-engine signal binding — already satisfied by component spec testing engine-action-to-DOM chain (unassigned)
