@@ -2639,29 +2639,6 @@ Acceptance criteria:
 - [ ] StoryMission type supports the advanced phase chapters
 - [ ] Unit tests verify directory/data consistency with curriculum.md chapter definitions
 
-### T-2026-199
-- Title: Create Deep Space Radio, System Certification, and Blast Doors minigame tutorial data
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P7
-- Depends: T-2026-163, T-2026-102, T-2026-104, T-2026-106
-- Blocked-by: —
-- Tags: content, tutorial, minigame, deep-space-radio, system-certification, blast-doors
-- Refs: docs/minigames/10-deep-space-radio.md, docs/minigames/11-system-certification.md, docs/minigames/12-blast-doors.md
-
-T-2026-168 covers P2 minigame tutorials but not the P7 minigames. This ticket creates tutorial step data for all 3 P7 minigames.
-
-Acceptance criteria:
-- [ ] Deep Space Radio tutorial data added to `src/app/data/tutorials/minigame-tutorials.data.ts`
-- [ ] Deep Space Radio: 3-4 steps covering request builder, interceptor placement, transmission, response reading
-- [ ] System Certification tutorial data added
-- [ ] System Certification: 3-4 steps covering source code reading, test writing, coverage meter, hint usage
-- [ ] Blast Doors tutorial data added
-- [ ] Blast Doors: 3-4 steps covering lifecycle timeline, hook slot placement, directive editing, simulation
-- [ ] Unit tests for: all 3 games have tutorial data, each has 3-4 steps, required fields populated
-
 ### T-2026-200
 - Title: Create P7 minigame engine integration tests for Deep Space Radio, System Certification, and Blast Doors
 - Status: todo
@@ -2683,25 +2660,6 @@ Acceptance criteria:
 - [ ] Each test: creates engine with real level data, performs correct actions, verifies completion
 - [ ] Each test: verifies MinigameShell state transitions and LevelCompletionService integration
 - [ ] All 3 P7 games covered
-
-### T-2026-265
-- Title: Register story mission content for P7 missions (Ch 27-34) with StoryMissionContentService
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P7
-- Depends: T-2026-108, T-2026-166
-- Blocked-by: —
-- Tags: integration, story-missions, content-loading, phase-6-advanced
-- Refs: docs/curriculum.md
-
-T-2026-108 creates Phase 6 Advanced mission content (Ch 27-34) and T-2026-166 creates StoryMissionContentService. This ticket registers the content.
-
-Acceptance criteria:
-- [ ] Phase 6 Advanced mission content (Ch 27-34) registered with StoryMissionContentService
-- [ ] `getMissionContent(27)` through `getMissionContent(34)` return valid content
-- [ ] Unit tests for: content loading for each chapter
 
 ### T-2026-278
 - Title: Create P7 end-to-end smoke test for Advanced Bundle minigames

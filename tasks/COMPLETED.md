@@ -335,3 +335,5 @@
 [2026-03-24] T-2026-149: Register Deep Space Radio level data with LevelLoaderService — registered 18 Deep Space Radio levels with LevelLoaderService, 6 tests (claude)
 [2026-03-24] T-2026-150: Register System Certification level data with LevelLoaderService — registered 18 System Certification levels with LevelLoaderService, 6 tests (claude)
 [2026-03-24] T-2026-151: Register Blast Doors level data with LevelLoaderService — registered 18 Blast Doors levels with LevelLoaderService, 6 tests (unassigned)
+[2026-03-24] T-2026-199: Create Deep Space Radio, System Certification, and Blast Doors minigame tutorial data — 12 tutorial steps for 3 P7 minigames with 9 per-game tests (claude)
+[2026-03-24] T-2026-265: Register story mission content for P7 missions (Ch 27-34) with StoryMissionContentService — registered P7 mission content (Ch 27-34) with provideMissionContent, 5 tests (claude)

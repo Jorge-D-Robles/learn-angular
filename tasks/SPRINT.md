@@ -26,11 +26,9 @@ Started: 2026-03-24
 - Title: Register Blast Doors level data with LevelLoaderService
 - Priority: high | Size: S | Milestone: P7
 
-### T-2026-199
 - Title: Create Deep Space Radio, System Certification, and Blast Doors minigame tutorial data
 - Priority: medium | Size: S | Milestone: P7
 
-### T-2026-265
 - Title: Register story mission content for P7 missions (Ch 27-34)
 - Priority: high | Size: S | Milestone: P7
 
