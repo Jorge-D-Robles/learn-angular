@@ -192,6 +192,33 @@ const DATA_RELAY_STEPS: readonly TutorialStep[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Reactor Core (4 steps)
+// ---------------------------------------------------------------------------
+
+const REACTOR_CORE_STEPS: readonly TutorialStep[] = [
+  {
+    title: 'Place Signal Nodes',
+    description:
+      'Drag signal (blue), computed (green), and effect (orange) nodes from the toolbox onto the reactor board. Each node type plays a different role in the reactive circuit.',
+  },
+  {
+    title: 'Wire Dependencies',
+    description:
+      'Draw edges between nodes to define data flow. Connect signals to computed nodes as inputs, and computed nodes to effects as triggers. Avoid circular dependencies — they cause reactor meltdowns.',
+  },
+  {
+    title: 'Configure Node Logic',
+    description:
+      'Click a node to configure it. Set initial values on signal nodes, define derivation formulas on computed nodes, and choose side-effect actions on effect nodes.',
+  },
+  {
+    title: 'Simulate and Verify',
+    description:
+      'Press Simulate to change signal values and watch changes propagate through the graph in real-time. All simulation scenarios must produce correct outputs to complete the level.',
+  },
+];
+
+// ---------------------------------------------------------------------------
 // Exports
 // ---------------------------------------------------------------------------
 
@@ -204,6 +231,7 @@ export const MINIGAME_TUTORIALS: readonly MinigameTutorialData[] = [
   { gameId: 'terminal-hack', steps: TERMINAL_HACK_STEPS },
   { gameId: 'power-grid', steps: POWER_GRID_STEPS },
   { gameId: 'data-relay', steps: DATA_RELAY_STEPS },
+  { gameId: 'reactor-core', steps: REACTOR_CORE_STEPS },
 ];
 
 /** Look up tutorial data for a specific minigame. */

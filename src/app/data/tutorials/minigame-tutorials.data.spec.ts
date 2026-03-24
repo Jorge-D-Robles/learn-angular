@@ -13,6 +13,7 @@ const GAME_IDS_WITH_TUTORIALS: MinigameId[] = [
   'terminal-hack',
   'power-grid',
   'data-relay',
+  'reactor-core',
 ];
 
 describe('MINIGAME_TUTORIALS', () => {
@@ -135,6 +136,27 @@ describe('Data Relay tutorial', () => {
 
   it('should have non-empty title and description for every step', () => {
     const result = getMinigameTutorial('data-relay');
+    for (const step of result!.steps) {
+      expect(step.title.length).toBeGreaterThan(0);
+      expect(step.description.length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('Reactor Core tutorial', () => {
+  it('should have tutorial data for reactor-core', () => {
+    const result = getMinigameTutorial('reactor-core');
+    expect(result).toBeDefined();
+    expect(result!.gameId).toBe('reactor-core');
+  });
+
+  it('should have 4 steps', () => {
+    const result = getMinigameTutorial('reactor-core');
+    expect(result!.steps.length).toBe(4);
+  });
+
+  it('should have non-empty title and description for every step', () => {
+    const result = getMinigameTutorial('reactor-core');
     for (const step of result!.steps) {
       expect(step.title.length).toBeGreaterThan(0);
       expect(step.description.length).toBeGreaterThan(0);
