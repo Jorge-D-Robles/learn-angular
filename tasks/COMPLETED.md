@@ -315,3 +315,4 @@
 [2026-03-24] T-2026-439: Create ReactorCoreNodeConfigComponent for signal/computed/effect node configuration — node config component for signal/computed/effect with expression builder, dependency selection, 18 tests (claude)
 [2026-03-24] T-2026-455: Create ReactorCoreGraphCanvasComponent for node drag-and-drop and wire drawing — SVG graph canvas with node drag, wire drawing, pan/zoom, arrow markers, energy animation, 20 tests (claude)
 [2026-03-24] T-2026-100: Create Reactor Core minigame UI component — orchestrator UI wiring graph canvas, node config, toolbox, simulation controls, 28 tests (claude)
+[2026-03-24] T-2026-117: Register Reactor Core in MinigameRegistry and wire routes — registered Reactor Core in MinigameRegistry, 4 unit tests, E2E smoke test, bundle budget bump (claude)

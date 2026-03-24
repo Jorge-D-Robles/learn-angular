@@ -2338,27 +2338,6 @@ Acceptance criteria:
 
 ## P6 -- Signals Bundle
 
-### T-2026-117
-- Title: Register Reactor Core in MinigameRegistry and wire routes
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: S
-- Milestone: P6
-- Depends: T-2026-100, T-2026-029, T-2026-042
-- Blocked-by: —
-- Tags: minigame, reactor-core, registration, routing
-- Refs: docs/minigames/09-reactor-core.md
-
-Register Reactor Core with MinigameRegistryService and ensure end-to-end playability.
-
-Acceptance criteria:
-- [ ] Reactor Core registered with gameId, config, and component type
-- [ ] Navigating to `/minigames/reactor-core/level/1` loads and renders the game
-- [ ] Level data loads correctly for all 21 levels
-- [ ] MinigameShell integration works (score, timer, lives)
-- [ ] E2e smoke test: navigate to level 1, verify game renders
-
 ### T-2026-198
 - Title: Create P6 minigame engine integration test for Reactor Core
 - Status: todo

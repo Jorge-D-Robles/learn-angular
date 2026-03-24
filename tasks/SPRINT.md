@@ -11,16 +11,12 @@ Started: 2026-03-24
 
 ## Active
 
-- Title: Create Reactor Core minigame UI component
-- Priority: high | Size: L | Milestone: P6
+- Title: Register Reactor Core in MinigameRegistry and wire routes
+- Priority: high | Size: S | Milestone: P6
 
 ---
 
 ## Queue
-
-### T-2026-100
-- Title: Create Reactor Core minigame UI component
-- Priority: high | Size: L | Milestone: P6
 
 ### T-2026-440
 - Title: Create integration test for ReactorCoreGraphService change propagation and scenario execution
@@ -38,4 +34,4 @@ Started: 2026-03-24
 
 ## Done This Sprint
 
-*(none yet)*
+- T-2026-100: Create Reactor Core minigame UI component
