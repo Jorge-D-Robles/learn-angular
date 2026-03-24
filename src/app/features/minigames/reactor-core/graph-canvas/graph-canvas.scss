@@ -1,0 +1,118 @@
+// Reactor Core Graph Canvas — SVG node graph editor
+
+.graph-canvas {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+  position: relative;
+}
+
+// --- SVG Canvas ---
+
+.graph-canvas__svg {
+  flex: 1;
+  width: 100%;
+  display: block;
+  cursor: crosshair;
+}
+
+.graph-canvas__grid {
+  pointer-events: none;
+}
+
+// --- Node styles ---
+
+.graph-canvas__node {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.graph-canvas__node-bg {
+  transition: filter 0.15s ease;
+}
+
+.graph-canvas__node:hover .graph-canvas__node-bg {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.15));
+}
+
+.graph-canvas__node-label {
+  font-size: 13px;
+  font-family: sans-serif;
+  pointer-events: none;
+  user-select: none;
+}
+
+.graph-canvas__node-value {
+  font-size: 11px;
+  font-family: monospace;
+  pointer-events: none;
+  user-select: none;
+}
+
+// --- Selection ring ---
+
+.graph-canvas__selection-ring {
+  animation: selection-pulse 1.5s ease-in-out infinite;
+}
+
+// --- Wire styles ---
+
+.graph-canvas__wire {
+  transition: filter 0.3s ease;
+}
+
+.graph-canvas__flow {
+  pointer-events: none;
+  animation: wire-flow 1s linear infinite;
+}
+
+.graph-canvas__preview {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+// --- Animations ---
+
+@keyframes wire-flow {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+@keyframes selection-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+// --- Reduced motion ---
+
+@media (prefers-reduced-motion: reduce) {
+  .graph-canvas__flow {
+    animation: none;
+  }
+
+  .graph-canvas__selection-ring {
+    animation: none;
+    opacity: 0.8;
+  }
+
+  .graph-canvas__node-bg {
+    transition: none;
+  }
+
+  .graph-canvas__wire {
+    transition: none;
+  }
+}

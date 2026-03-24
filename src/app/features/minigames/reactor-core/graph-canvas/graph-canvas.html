@@ -1,0 +1,147 @@
+<div class="graph-canvas"
+     [nxDropZone]="'reactor-canvas'"
+     (nxDropZoneDrop)="onCanvasDrop($event)">
+  <svg #canvasSvg
+       class="graph-canvas__svg"
+       [attr.viewBox]="viewBox"
+       preserveAspectRatio="xMidYMid meet"
+       (mousemove)="onSvgMouseMove($event)"
+       (pointermove)="onPointerMove($event)"
+       (pointerup)="onPointerUp($event)"
+       (pointercancel)="onPointerCancel($event)"
+       (wheel)="onWheel($event)"
+       (contextmenu)="$event.preventDefault()">
+
+    <!-- Defs: arrow marker and grid pattern -->
+    <defs>
+      <marker id="arrowhead"
+              markerWidth="10"
+              markerHeight="7"
+              refX="10"
+              refY="3.5"
+              orient="auto"
+              markerUnits="strokeWidth">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#94A3B8" />
+      </marker>
+      <pattern id="grid-dots" width="20" height="20" patternUnits="userSpaceOnUse">
+        <circle cx="10" cy="10" r="1" fill="#334155" />
+      </pattern>
+    </defs>
+
+    <!-- Grid background -->
+    <rect class="graph-canvas__grid" width="1200" height="800" fill="url(#grid-dots)" />
+
+    <!-- Pan/zoom transform group -->
+    <g [attr.transform]="canvasTransform()">
+
+      <!-- Wire paths (committed connections) -->
+      @for (wire of wireDescriptors(); track wire.sourceId + '-' + wire.targetId) {
+        <path [attr.d]="wire.path"
+              [attr.stroke]="wire.color"
+              class="graph-canvas__wire"
+              fill="none"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              marker-end="url(#arrowhead)"
+              pointer-events="stroke"
+              (contextmenu)="onWireRightClick($event, wire.sourceId, wire.targetId)" />
+        @if (simulating()) {
+          <path [attr.d]="wire.path"
+                class="graph-canvas__flow"
+                stroke="rgba(255, 255, 255, 0.8)"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-dasharray="8 12" />
+        }
+      }
+
+      <!-- Preview wire (during drawing) -->
+      @if (previewPath()) {
+        <path [attr.d]="previewPath()"
+              class="graph-canvas__preview"
+              stroke="#94A3B8"
+              fill="none"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-dasharray="8 4" />
+      }
+
+      <!-- Node groups -->
+      @for (node of nodeArray(); track node.id) {
+        <g class="graph-canvas__node"
+           [attr.transform]="'translate(' + node.position.x + ', ' + node.position.y + ')'"
+           (click)="onNodeClick($event, node.id)"
+           (pointerdown)="onNodePointerDown($event, node)">
+
+          <!-- Selection ring -->
+          @if (selectedNodeId() === node.id) {
+            <rect class="graph-canvas__selection-ring"
+                  x="-4" y="-4"
+                  [attr.width]="nodeWidth + 8"
+                  [attr.height]="nodeHeight + 8"
+                  rx="10" ry="10"
+                  fill="none"
+                  stroke="#FBBF24"
+                  stroke-width="2"
+                  stroke-dasharray="6 3" />
+          }
+
+          <!-- Node background -->
+          <rect class="graph-canvas__node-bg"
+                [attr.fill]="getNodeColor(node.type)"
+                fill-opacity="0.15"
+                [attr.stroke]="getNodeColor(node.type)"
+                stroke-width="1.5"
+                [attr.width]="nodeWidth"
+                [attr.height]="nodeHeight"
+                rx="8" ry="8" />
+
+          <!-- Label -->
+          <text class="graph-canvas__node-label"
+                [attr.x]="nodeWidth / 2"
+                y="28"
+                text-anchor="middle"
+                fill="#E2E8F0">
+            {{ node.label }}
+          </text>
+
+          <!-- Value display (signal/computed nodes only) -->
+          @if (hasCurrentValue(node)) {
+            <text class="graph-canvas__node-value"
+                  [attr.x]="nodeWidth / 2"
+                  y="52"
+                  text-anchor="middle"
+                  fill="#94A3B8">
+              {{ getCurrentValue(node) }}
+            </text>
+          }
+
+          <!-- Source port (right side) - uses ABSOLUTE coordinates -->
+          <g nx-svg-port
+             [portId]="node.id + '-source'"
+             [x]="getSourcePortX(node)"
+             [y]="getSourcePortY(node)"
+             [color]="getNodeColor(node.type)"
+             type="source"
+             [isActive]="isPortActive(node.id + '-source')"
+             [isConnected]="isSourceConnected(node.id)"
+             (activated)="onPortActivated($event)" />
+
+          <!-- Target port (left side) - non-signal nodes only -->
+          @if (hasTargetPort(node)) {
+            <g nx-svg-port
+               [portId]="node.id + '-target'"
+               [x]="getTargetPortX(node)"
+               [y]="getTargetPortY(node)"
+               [color]="getNodeColor(node.type)"
+               type="target"
+               [isActive]="false"
+               [isConnected]="isTargetConnected(node.id)"
+               (activated)="onPortActivated($event)" />
+          }
+        </g>
+      }
+    </g>
+  </svg>
+</div>
