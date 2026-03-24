@@ -13,6 +13,8 @@ import { PowerGridComponent, PowerGridEngine } from '../../features/minigames/po
 import { DataRelayComponent, DataRelayEngine } from '../../features/minigames/data-relay';
 import { ReactorCoreComponent, ReactorCoreEngine } from '../../features/minigames/reactor-core';
 import { DeepSpaceRadioComponent, DeepSpaceRadioEngine } from '../../features/minigames/deep-space-radio';
+import { SystemCertificationComponent, SystemCertificationEngine } from '../../features/minigames/system-certification';
+import { BlastDoorsComponent, BlastDoorsEngine } from '../../features/minigames/blast-doors';
 import type { MinigameId } from '../../core/minigame/minigame.types';
 import { getMinigameTutorial } from '../tutorials/minigame-tutorials.data';
 import { provideMinigame } from './provide-minigame';
@@ -461,6 +463,98 @@ describe('provideMinigame — deep-space-radio', () => {
   it('should include tutorialSteps for deep-space-radio after registration', () => {
     const config = registry.getConfig('deep-space-radio');
     const tutorial = getMinigameTutorial('deep-space-radio');
+    expect(config!.tutorialSteps).toBeDefined();
+    expect(tutorial).toBeDefined();
+    expect(config!.tutorialSteps!.length).toBe(tutorial!.steps.length);
+    expect(config!.tutorialSteps![0].title).toBe(tutorial!.steps[0].title);
+  });
+});
+
+describe('provideMinigame — system-certification', () => {
+  let registry: MinigameRegistryService;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideMinigame(
+          'system-certification',
+          SystemCertificationComponent,
+          () => new SystemCertificationEngine(),
+        ),
+      ],
+    });
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    registry = TestBed.inject(MinigameRegistryService);
+  });
+
+  it('should register the component type for system-certification', () => {
+    expect(registry.getComponent('system-certification')).toBe(SystemCertificationComponent);
+  });
+
+  it('should register an engine factory that produces a SystemCertificationEngine', () => {
+    const factory = registry.getEngineFactory('system-certification');
+    expect(factory).toBeTruthy();
+    const engine = factory!();
+    expect(engine).toBeInstanceOf(SystemCertificationEngine);
+  });
+
+  it('should preserve the existing config for system-certification', () => {
+    const config = registry.getConfig('system-certification');
+    expect(config).toBeDefined();
+    expect(config!.name).toBe('System Certification');
+    expect(config!.totalLevels).toBe(18);
+  });
+
+  it('should include tutorialSteps for system-certification after registration', () => {
+    const config = registry.getConfig('system-certification');
+    const tutorial = getMinigameTutorial('system-certification');
+    expect(config!.tutorialSteps).toBeDefined();
+    expect(tutorial).toBeDefined();
+    expect(config!.tutorialSteps!.length).toBe(tutorial!.steps.length);
+    expect(config!.tutorialSteps![0].title).toBe(tutorial!.steps[0].title);
+  });
+});
+
+describe('provideMinigame — blast-doors', () => {
+  let registry: MinigameRegistryService;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideMinigame(
+          'blast-doors',
+          BlastDoorsComponent,
+          () => new BlastDoorsEngine(),
+        ),
+      ],
+    });
+
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+    registry = TestBed.inject(MinigameRegistryService);
+  });
+
+  it('should register the component type for blast-doors', () => {
+    expect(registry.getComponent('blast-doors')).toBe(BlastDoorsComponent);
+  });
+
+  it('should register an engine factory that produces a BlastDoorsEngine', () => {
+    const factory = registry.getEngineFactory('blast-doors');
+    expect(factory).toBeTruthy();
+    const engine = factory!();
+    expect(engine).toBeInstanceOf(BlastDoorsEngine);
+  });
+
+  it('should preserve the existing config for blast-doors', () => {
+    const config = registry.getConfig('blast-doors');
+    expect(config).toBeDefined();
+    expect(config!.name).toBe('Blast Doors');
+    expect(config!.totalLevels).toBe(18);
+  });
+
+  it('should include tutorialSteps for blast-doors after registration', () => {
+    const config = registry.getConfig('blast-doors');
+    const tutorial = getMinigameTutorial('blast-doors');
     expect(config!.tutorialSteps).toBeDefined();
     expect(tutorial).toBeDefined();
     expect(config!.tutorialSteps!.length).toBe(tutorial!.steps.length);

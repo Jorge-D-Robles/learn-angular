@@ -39,6 +39,8 @@ import { PowerGridComponent, PowerGridEngine } from './features/minigames/power-
 import { DataRelayComponent, DataRelayEngine } from './features/minigames/data-relay';
 import { ReactorCoreComponent, ReactorCoreEngine } from './features/minigames/reactor-core';
 import { DeepSpaceRadioComponent, DeepSpaceRadioEngine } from './features/minigames/deep-space-radio';
+import { SystemCertificationComponent, SystemCertificationEngine } from './features/minigames/system-certification';
+import { BlastDoorsComponent, BlastDoorsEngine } from './features/minigames/blast-doors';
 
 // Shared wave service instance: passed to the engine AND available for DI injection
 // in the component. engine.reset() + waveService.loadWaves() fully resets state for replays.
@@ -92,5 +94,7 @@ export const appConfig: ApplicationConfig = {
     provideMinigame('data-relay', DataRelayComponent, () => new DataRelayEngine()),
     provideMinigame('reactor-core', ReactorCoreComponent, () => new ReactorCoreEngine()),
     provideMinigame('deep-space-radio', DeepSpaceRadioComponent, () => new DeepSpaceRadioEngine()),
+    provideMinigame('system-certification', SystemCertificationComponent, () => new SystemCertificationEngine()),
+    provideMinigame('blast-doors', BlastDoorsComponent, () => new BlastDoorsEngine()),
   ],
 };

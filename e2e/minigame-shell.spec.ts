@@ -50,12 +50,18 @@ test.describe('MinigamePlayPage', () => {
     await expect(page.locator('app-deep-space-radio')).toBeVisible();
   });
 
-  test('should navigate back to Minigame Hub from coming-soon state', async ({ page }) => {
-    await page.goto('/minigames/system-certification/level/1');
+  test('should render System Certification game for a valid level', async ({ page }) => {
+    await page.goto('/minigames/system-certification/level/sc-basic-01');
 
-    await page.getByRole('link', { name: /Minigame Hub/ }).click();
+    await expect(page.locator('app-minigame-shell')).toBeVisible();
+    await expect(page.locator('app-system-certification')).toBeVisible();
+  });
 
-    await expect(page).toHaveURL(/\/minigames$/);
+  test('should render Blast Doors game for a valid level', async ({ page }) => {
+    await page.goto('/minigames/blast-doors/level/bd-basic-01');
+
+    await expect(page.locator('app-minigame-shell')).toBeVisible();
+    await expect(page.locator('app-blast-doors')).toBeVisible();
   });
 
   test('should navigate back to Minigame Hub from not-found state', async ({ page }) => {
