@@ -172,6 +172,13 @@ export function applyPipeTransform(
   params: readonly string[],
   customSpecs: readonly CustomPipeSpec[],
 ): string {
+  switch (pipeType) {
+    case 'json':
+      return JSON.stringify(input, null, 2);
+    default:
+      break;
+  }
+
   const str = String(input);
 
   switch (pipeType) {
