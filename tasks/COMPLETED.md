@@ -324,3 +324,4 @@
 [2026-03-24] T-2026-528: Create integration test for ReactorCoreGraphService + ReactorCoreEngine coordinated lifecycle — already satisfied by engine spec (56 tests) and graph service spec (34 tests) covering coordinated lifecycle (unassigned)
 [2026-03-24] T-2026-529: Create Reactor Core visual state integration test for UI-to-engine signal binding — already satisfied by component spec (28 tests) testing engine-action-to-DOM chain with real engine (unassigned)
 [2026-03-24] T-2026-529: Create Reactor Core visual state integration test for UI-to-engine signal binding — already satisfied by component spec testing engine-action-to-DOM chain (unassigned)
+[2026-03-24] T-2026-530: Update architecture.md with P6 Reactor Core signal graph patterns and conventions — documented P6 patterns: signal graph DAG, cycle detection, propagation, scenario execution, canvas SVG (claude)
