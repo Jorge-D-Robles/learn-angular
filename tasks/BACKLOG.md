@@ -2338,26 +2338,6 @@ Acceptance criteria:
 
 ## P6 -- Signals Bundle
 
-### T-2026-098
-- Title: Define Reactor Core level data for 21 levels
-- Status: todo
-- Assigned: unassigned
-- Priority: high
-- Size: M
-- Milestone: P6
-- Depends: T-2026-019, T-2026-038
-- Blocked-by: —
-- Tags: minigame, reactor-core, level-data, content
-- Refs: docs/minigames/09-reactor-core.md
-
-Define the static level data for all 21 Reactor Core levels covering Angular Signals.
-
-Acceptance criteria:
-- [ ] Level data file at `src/app/data/levels/reactor-core.data.ts`
-- [ ] `ReactorCoreLevelData` interface: requiredNodes[], scenarios[], validGraphs[], constraints[]
-- [ ] 7 Basic, 7 Intermediate, 6 Advanced levels, 1 Boss level matching spec
-- [ ] Unit tests verify: 21 total levels, valid graph definitions
-
 ### T-2026-099
 - Title: Create Reactor Core minigame engine
 - Status: todo

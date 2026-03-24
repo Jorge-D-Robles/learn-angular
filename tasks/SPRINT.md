@@ -11,7 +11,8 @@ Started: 2026-03-24
 
 ## Active
 
-*(none — pick from Queue)*
+- Title: Define Reactor Core level data for 21 levels
+- Priority: high | Size: M | Milestone: P6
 
 ---
 
