@@ -33,23 +33,13 @@
 
   <section class="dashboard__challenge">
     <h2 class="dashboard__section-title">Daily Challenge</h2>
-    @if (!todaysChallenge().completed) {
-      <nx-station-card [cardTitle]="challengeGameName()">
-        <p class="dashboard__challenge-topic">{{ challengeGameTopic() }}</p>
-        <p class="dashboard__challenge-bonus">+{{ todaysChallenge().bonusXp }} XP bonus</p>
-        <button type="button" class="dashboard__challenge-accept" (click)="navigateToChallenge()">
-          Accept Challenge
-        </button>
-      </nx-station-card>
-    } @else {
-      <nx-station-card cardTitle="Daily Challenge">
-        <div class="dashboard__challenge-done">
-          <lucide-icon class="dashboard__challenge-checkmark" name="circle-check" [size]="20" aria-hidden="true" />
-          <span>Challenge Complete</span>
-        </div>
-        <p class="dashboard__challenge-countdown">{{ countdownToNextChallenge() }}</p>
-      </nx-station-card>
-    }
+    <nx-daily-challenge-card
+      [challenge]="todaysChallenge()"
+      [isCompleted]="todaysChallenge().completed"
+      [gameName]="challengeGameName()"
+      [gameTopic]="challengeGameTopic()"
+      [streakDays]="activeStreakDays()"
+      (acceptChallenge)="onAcceptChallenge($event)" />
   </section>
 </div>
 

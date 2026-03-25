@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   XpService,
@@ -11,6 +11,7 @@ import {
   getNextRankThreshold,
 } from '../../core/progression';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
+import type { MinigameId } from '../../core/minigame/minigame.types';
 import { ALL_STORY_MISSIONS } from '../../core/curriculum/curriculum.data';
 import type { DegradingTopicItem } from '../../shared/components/degradation-alert/degradation-alert';
 import {
@@ -20,8 +21,8 @@ import {
   MissionCardComponent,
   StreakBadgeComponent,
   DegradationAlertComponent,
+  DailyChallengeCardComponent,
 } from '../../shared/components';
-import { LucideAngularModule } from '../../shared/icons';
 
 @Component({
   selector: 'app-dashboard',
@@ -32,7 +33,7 @@ import { LucideAngularModule } from '../../shared/icons';
     MissionCardComponent,
     StreakBadgeComponent,
     DegradationAlertComponent,
-    LucideAngularModule,
+    DailyChallengeCardComponent,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
@@ -46,7 +47,6 @@ export class DashboardPage {
   private readonly minigameRegistry = inject(MinigameRegistryService);
   private readonly streakService = inject(StreakService);
   private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
 
   readonly currentRank = this.xpService.currentRank;
   readonly currentMission = this.gameProgression.currentMission;
@@ -101,33 +101,9 @@ export class DashboardPage {
     return this.minigameRegistry.getConfig(challenge.gameId)?.angularTopic ?? '';
   });
 
-  private readonly _countdownTick = signal(Date.now());
-
-  readonly countdownToNextChallenge = computed(() => {
-    const now = this._countdownTick();
-    const d = new Date(now);
-    const midnight = new Date(d);
-    midnight.setHours(24, 0, 0, 0);
-    const diffMs = midnight.getTime() - now;
-    const totalMinutes = Math.floor(diffMs / 60_000);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-    if ((hours === 0 && minutes === 0) || totalMinutes >= 1440) {
-      return 'New challenge available';
-    }
-    return `${hours}h ${minutes}m`;
-  });
-
   readonly campaignProgress = computed(
     () => `${this.gameProgression.completedMissionCount()}/${ALL_STORY_MISSIONS.length}`,
   );
-
-  constructor() {
-    const intervalId = setInterval(() => {
-      this._countdownTick.set(Date.now());
-    }, 60_000);
-    this.destroyRef.onDestroy(() => clearInterval(intervalId));
-  }
 
   navigateToMission(): void {
     const mission = this.currentMission();
@@ -144,8 +120,7 @@ export class DashboardPage {
     this.router.navigate(['/refresher', topicId]);
   }
 
-  navigateToChallenge(): void {
-    const challenge = this.todaysChallenge();
-    this.router.navigate(['/minigames', challenge.gameId, 'daily']);
+  onAcceptChallenge(gameId: MinigameId): void {
+    this.router.navigate(['/minigames', gameId, 'daily']);
   }
 }

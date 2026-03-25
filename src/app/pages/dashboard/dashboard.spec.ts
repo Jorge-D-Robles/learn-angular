@@ -169,24 +169,25 @@ describe('DashboardPage', () => {
     expect(element.textContent).toContain('Campaign Complete');
   });
 
-  it('should show daily challenge with Accept Challenge button when not completed', async () => {
+  it('should render nx-daily-challenge-card', async () => {
     const { element } = await setup({ todaysChallenge: TEST_CHALLENGE });
-    expect(element.textContent).toContain('Daily Challenge');
-    const acceptBtn = element.querySelector('.dashboard__challenge-accept');
-    expect(acceptBtn).toBeTruthy();
-    expect(acceptBtn?.textContent?.trim()).toBe('Accept Challenge');
+    const card = element.querySelector('nx-daily-challenge-card');
+    expect(card).toBeTruthy();
   });
 
-  it('should show completed state with checkmark and countdown when daily challenge is done', async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-03-08T20:00:00'));
+  it('should show daily challenge section title', async () => {
+    const { element } = await setup({ todaysChallenge: TEST_CHALLENGE });
+    const section = element.querySelector('.dashboard__challenge');
+    const title = section?.querySelector('.dashboard__section-title');
+    expect(title?.textContent).toContain('Daily Challenge');
+  });
+
+  it('should pass completion state to daily challenge card', async () => {
     const completedChallenge = { ...TEST_CHALLENGE, completed: true };
     const { element } = await setup({ todaysChallenge: completedChallenge });
-    expect(element.textContent).toContain('Challenge Complete');
-    const checkmark = element.querySelector('lucide-icon[name="circle-check"]');
-    expect(checkmark).toBeTruthy();
-    const countdown = element.querySelector('.dashboard__challenge-countdown');
-    expect(countdown).toBeTruthy();
+    const card = element.querySelector('nx-daily-challenge-card');
+    expect(card).toBeTruthy();
+    expect(card?.textContent).toContain('Challenge Complete');
   });
 
   it('should render station visualization component', async () => {
@@ -358,73 +359,43 @@ describe('DashboardPage', () => {
     expect(header?.textContent).toContain('Active Mission');
   });
 
-  it('should display game topic in daily challenge card', async () => {
+  it('should pass game topic to daily challenge card', async () => {
     const { element } = await setup({ todaysChallenge: TEST_CHALLENGE });
-    const topic = element.querySelector('.dashboard__challenge-topic');
-    expect(topic).toBeTruthy();
+    const card = element.querySelector('nx-daily-challenge-card');
+    expect(card).toBeTruthy();
+    const topic = card?.querySelector('.daily-challenge-card__topic');
     expect(topic?.textContent?.trim()).toBe('Topic for module-assembly');
   });
 
-  it('should display "+50 XP" bonus indicator', async () => {
+  it('should pass challenge data with bonus XP to daily challenge card', async () => {
     const { element } = await setup({ todaysChallenge: TEST_CHALLENGE });
-    expect(element.textContent).toContain('+50 XP');
+    const card = element.querySelector('nx-daily-challenge-card');
+    expect(card).toBeTruthy();
+    expect(card?.textContent).toContain('+50 XP');
   });
 
-  it('should navigate to /minigames/:gameId/daily when Accept Challenge clicked', async () => {
+  it('should navigate to /minigames/:gameId/daily when acceptChallenge fires', async () => {
     const { element, fixture, navigateFn } = await setup({ todaysChallenge: TEST_CHALLENGE });
-    const acceptBtn = element.querySelector('.dashboard__challenge-accept') as HTMLButtonElement;
+    const acceptBtn = element.querySelector('.daily-challenge-card__accept-button') as HTMLButtonElement;
     expect(acceptBtn).toBeTruthy();
     acceptBtn.click();
     fixture.detectChanges();
     expect(navigateFn).toHaveBeenCalledWith(['/minigames', 'module-assembly', 'daily']);
   });
 
-  it('should show checkmark icon when challenge completed', async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-03-08T20:00:00'));
-    const completedChallenge = { ...TEST_CHALLENGE, completed: true };
-    const { element } = await setup({ todaysChallenge: completedChallenge });
-    const checkmark = element.querySelector('lucide-icon[name="circle-check"]');
-    expect(checkmark).toBeTruthy();
-  });
-
-  it('should show countdown to next challenge when completed', async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-03-08T20:00:00'));
-    const completedChallenge = { ...TEST_CHALLENGE, completed: true };
-    const { element } = await setup({ todaysChallenge: completedChallenge });
-    const countdown = element.querySelector('.dashboard__challenge-countdown');
-    expect(countdown).toBeTruthy();
-    expect(countdown?.textContent?.trim()).toBe('4h 0m');
-  });
-
-  it('should update countdown every minute', async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-03-08T20:00:00'));
-    const completedChallenge = { ...TEST_CHALLENGE, completed: true };
-    const { element, fixture } = await setup({ todaysChallenge: completedChallenge });
-    const countdown = element.querySelector('.dashboard__challenge-countdown');
-    expect(countdown?.textContent?.trim()).toBe('4h 0m');
-
-    vi.advanceTimersByTime(60_000);
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    expect(countdown?.textContent?.trim()).toBe('3h 59m');
-  });
-
-  it('should show "New challenge available" at midnight', async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-03-09T00:00:00'));
-    const completedChallenge = { ...TEST_CHALLENGE, completed: true };
-    const { element } = await setup({ todaysChallenge: completedChallenge });
-    const countdown = element.querySelector('.dashboard__challenge-countdown');
-    expect(countdown?.textContent?.trim()).toBe('New challenge available');
-  });
-
-  it('should hide countdown when challenge not completed', async () => {
+  it('should pass game name to daily challenge card', async () => {
     const { element } = await setup({ todaysChallenge: TEST_CHALLENGE });
-    const countdown = element.querySelector('.dashboard__challenge-countdown');
-    expect(countdown).toBeFalsy();
+    const card = element.querySelector('nx-daily-challenge-card');
+    expect(card).toBeTruthy();
+    const gameName = card?.querySelector('.daily-challenge-card__game-name');
+    expect(gameName?.textContent).toContain('Module Assembly');
+  });
+
+  it('should pass streak days to daily challenge card', async () => {
+    const { element } = await setup({ todaysChallenge: TEST_CHALLENGE, currentStreak: 5 });
+    const card = element.querySelector('nx-daily-challenge-card');
+    expect(card).toBeTruthy();
+    const streak = card?.querySelector('.daily-challenge-card__streak-count');
+    expect(streak?.textContent?.trim()).toBe('5');
   });
 });
