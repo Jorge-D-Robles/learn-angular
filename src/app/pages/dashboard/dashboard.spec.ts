@@ -14,6 +14,7 @@ import { DailyChallengeService, type DailyChallenge } from '../../core/progressi
 import { SpacedRepetitionService, type DegradingTopic } from '../../core/progression/spaced-repetition.service';
 import { MasteryService } from '../../core/progression/mastery.service';
 import { StreakService } from '../../core/progression/streak.service';
+import { OnboardingService } from '../../core/progression/onboarding.service';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { LevelProgressionService, type LevelProgress } from '../../core/levels/level-progression.service';
 import { DifficultyTier, type MinigameConfig, type MinigameId } from '../../core/minigame/minigame.types';
@@ -92,6 +93,7 @@ interface SetupOptions {
   currentStreak?: number;
   streakMultiplier?: number;
   levelProgress?: Map<MinigameId, readonly LevelProgress[]>;
+  isOnboardingComplete?: boolean;
 }
 
 async function setup(options: SetupOptions = {}) {
@@ -107,6 +109,7 @@ async function setup(options: SetupOptions = {}) {
     currentStreak = 3,
     streakMultiplier = 1.3,
     levelProgress = new Map<MinigameId, readonly LevelProgress[]>(),
+    isOnboardingComplete = true,
   } = options;
 
   // Default: when currentMission is null and completedMissionCount not explicitly set,
@@ -148,6 +151,10 @@ async function setup(options: SetupOptions = {}) {
       }),
       getMockProvider(LevelProgressionService, {
         getLevelProgress: (id: MinigameId) => levelProgress.get(id) ?? [],
+      }),
+      getMockProvider(OnboardingService, {
+        isOnboardingComplete: signal(isOnboardingComplete),
+        completeStep: vi.fn(),
       }),
       getMockProvider(Router, {
         navigate: navigateFn,
@@ -281,6 +288,10 @@ describe('DashboardPage', () => {
         }),
         getMockProvider(LevelProgressionService, {
           getLevelProgress: () => [],
+        }),
+        getMockProvider(OnboardingService, {
+          isOnboardingComplete: signal(true),
+          completeStep: vi.fn(),
         }),
         getMockProvider(Router, {
           navigate: vi.fn(),
@@ -542,5 +553,25 @@ describe('DashboardPage', () => {
     const missionSection = element.querySelector('.dashboard__mission');
     expect(missionSection!.querySelector('nx-active-mission-card')).toBeTruthy();
     expect(missionSection!.querySelector('nx-mission-card')).toBeNull();
+  });
+
+  it('should not render onboarding overlay when onboarding is complete', async () => {
+    const { element } = await setup();
+    const overlay = element.querySelector('nx-onboarding-overlay');
+    expect(overlay).toBeNull();
+  });
+
+  it('should render onboarding overlay when onboarding is not complete', async () => {
+    const { element } = await setup({ isOnboardingComplete: false });
+    const overlay = element.querySelector('nx-onboarding-overlay');
+    expect(overlay).toBeTruthy();
+  });
+
+  it('should hide onboarding overlay after dismissed event', async () => {
+    const { element, component, fixture } = await setup({ isOnboardingComplete: false });
+    expect(element.querySelector('nx-onboarding-overlay')).toBeTruthy();
+    component.onOnboardingDismissed();
+    fixture.detectChanges();
+    expect(element.querySelector('nx-onboarding-overlay')).toBeNull();
   });
 });

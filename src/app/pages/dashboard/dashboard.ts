@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   XpService,
@@ -7,6 +7,7 @@ import {
   SpacedRepetitionService,
   MasteryService,
   StreakService,
+  OnboardingService,
   getCurrentRankThreshold,
   getNextRankThreshold,
 } from '../../core/progression';
@@ -24,6 +25,7 @@ import {
   DegradationAlertComponent,
   DailyChallengeCardComponent,
   MinigameCardComponent,
+  OnboardingOverlayComponent,
 } from '../../shared/components';
 
 interface QuickPlayCardData {
@@ -42,6 +44,7 @@ interface QuickPlayCardData {
     DegradationAlertComponent,
     DailyChallengeCardComponent,
     MinigameCardComponent,
+    OnboardingOverlayComponent,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
@@ -55,8 +58,10 @@ export class DashboardPage {
   private readonly minigameRegistry = inject(MinigameRegistryService);
   private readonly levelProgression = inject(LevelProgressionService);
   private readonly streakService = inject(StreakService);
+  private readonly onboardingService = inject(OnboardingService);
   private readonly router = inject(Router);
 
+  readonly showOnboarding = signal(!this.onboardingService.isOnboardingComplete());
   readonly currentRank = this.xpService.currentRank;
   readonly currentMission = this.gameProgression.currentMission;
   readonly todaysChallenge = this.dailyChallenge.todaysChallenge;
@@ -133,5 +138,9 @@ export class DashboardPage {
 
   onAcceptChallenge(gameId: MinigameId): void {
     this.router.navigate(['/minigames', gameId, 'daily']);
+  }
+
+  onOnboardingDismissed(): void {
+    this.showOnboarding.set(false);
   }
 }
