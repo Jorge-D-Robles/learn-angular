@@ -1,8 +1,12 @@
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, Injector, signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { NgComponentOutlet } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
-import { PlayMode, type MinigameId } from '../../core/minigame/minigame.types';
+import { MinigameEngine } from '../../core/minigame/minigame-engine';
+import { MINIGAME_ENGINE } from '../../core/minigame/minigame-engine.tokens';
+import { MinigameShellComponent } from '../../core/minigame/minigame-shell/minigame-shell';
+import { MinigameStatus, PlayMode, type MinigameId } from '../../core/minigame/minigame.types';
 import { SpeedRunService, SPEED_RUN_CONFIG } from '../../core/minigame/speed-run.service';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { TimeFormatPipe } from '../../shared/pipes/time-format.pipe';
@@ -21,7 +25,7 @@ type ViewState = 'error' | 'pre-run' | 'in-run' | 'post-run';
 
 @Component({
   selector: 'app-speed-run',
-  imports: [TimeFormatPipe],
+  imports: [TimeFormatPipe, NgComponentOutlet, MinigameShellComponent],
   template: `
     @switch (viewState()) {
       @case ('error') {
@@ -55,6 +59,26 @@ type ViewState = 'error' | 'pre-run' | 'in-run' | 'post-run';
           <p class="speed-run__level-progress">
             {{ session()?.levelsCompleted }} / {{ session()?.totalLevels }} levels
           </p>
+          @if (engine() && resolvedComponent()) {
+            <app-minigame-shell
+              [score]="engine()!.score()"
+              [lives]="engine()!.lives()"
+              [timeRemaining]="engine()!.timeRemaining()"
+              [timerDuration]="engine()!.config.timerDuration ?? 0"
+              [status]="engine()!.status()"
+              [gameId]="$any(gameId())"
+              (pauseGame)="onPause()"
+              (resumeGame)="onResume()"
+              (quit)="onEndRun()"
+              (restartGame)="onRestartLevel()"
+              (retry)="onRestartLevel()"
+            >
+              <ng-container *ngComponentOutlet="resolvedComponent()!; injector: engineInjector()!" />
+            </app-minigame-shell>
+          } @else {
+            <p>Game engine not available for "{{ gameId() }}".</p>
+            <button (click)="onBack()">Back</button>
+          }
           @if (splitDeltas().length > 0) {
             <ul class="speed-run__splits">
               @for (split of splitDeltas(); track $index) {
@@ -107,6 +131,7 @@ export class SpeedRunPage {
   private readonly speedRunService = inject(SpeedRunService);
   private readonly registry = inject(MinigameRegistryService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly parentInjector = inject(Injector);
 
   readonly playMode = PlayMode.SpeedRun;
   private rafId = 0;
@@ -123,6 +148,26 @@ export class SpeedRunPage {
 
   /** Stores the result returned by endRun(). */
   readonly endRunResult = signal<EndRunResult | null>(null);
+
+  /** The active minigame engine instance, or null when not in a run. */
+  readonly engine = signal<MinigameEngine<unknown> | null>(null);
+
+  /** Resolved game UI component from the registry for NgComponentOutlet. */
+  readonly resolvedComponent = computed(() => {
+    const id = this.gameId();
+    if (!id) return null;
+    return this.registry.getComponent(id as MinigameId) ?? null;
+  });
+
+  /** Child injector that provides the engine to the game UI component. */
+  readonly engineInjector = computed(() => {
+    const eng = this.engine();
+    if (!eng) return null;
+    return Injector.create({
+      providers: [{ provide: MINIGAME_ENGINE, useValue: eng }],
+      parent: this.parentInjector,
+    });
+  });
 
   /** Whether the gameId maps to a valid minigame in the registry. */
   readonly isValidGame = computed(() => {
@@ -183,7 +228,28 @@ export class SpeedRunPage {
   });
 
   constructor() {
+    // Engine status-watching effect: handles level progression and run termination
+    effect(() => {
+      const eng = this.engine();
+      if (!eng) return;
+      const status = eng.status();
+
+      untracked(() => {
+        if (status === MinigameStatus.Won) {
+          this.onLevelWon();
+        } else if (status === MinigameStatus.Lost) {
+          this.onRunFailed();
+        }
+      });
+    });
+
+    // Cleanup on destroy: destroy engine and end active session
     this.destroyRef.onDestroy(() => {
+      const eng = this.engine();
+      if (eng) {
+        this.engine.set(null);
+        eng.destroy();
+      }
       if (this.session()?.isActive) {
         this.speedRunService.endRun();
       }
@@ -194,21 +260,123 @@ export class SpeedRunPage {
   onStartRun(): void {
     const gid = this.gameId();
     if (!gid) return;
+
+    // Guard: check factory exists BEFORE starting session to avoid orphaned sessions
+    const factory = this.registry.getEngineFactory(gid as MinigameId);
+    if (!factory) return;
+
     this.endRunResult.set(null);
     this.speedRunService.startRun(gid as MinigameId);
+
+    const eng = factory();
+    // Active level index = levelsCompleted + 1 (1-based, starts at 1)
+    const level = this.speedRunService.generateSpeedRunLevel(gid as MinigameId, 1);
+    eng.initialize(level);
+    eng.setPlayMode(PlayMode.SpeedRun);
+    eng.start();
+    this.engine.set(eng);
+
     this.startRafLoop();
   }
 
   onRetry(): void {
-    const gid = this.gameId();
-    if (!gid) return;
-    this.endRunResult.set(null);
-    this.speedRunService.startRun(gid as MinigameId);
-    this.startRafLoop();
+    // Destroy existing engine
+    const eng = this.engine();
+    this.engine.set(null);
+    eng?.destroy();
+
+    this.onStartRun();
   }
 
   onBack(): void {
     this.router.navigate(['/minigames', this.gameId()]);
+  }
+
+  onPause(): void {
+    this.engine()?.pause();
+  }
+
+  onResume(): void {
+    this.engine()?.resume();
+  }
+
+  onRestartLevel(): void {
+    const eng = this.engine();
+    const s = this.session();
+    if (!eng || !s?.isActive) return;
+
+    // Re-initialize current level (do NOT use reset() -- it skips setPlayMode)
+    // Active level index = levelsCompleted + 1 (1-based)
+    const level = this.speedRunService.generateSpeedRunLevel(
+      s.gameId,
+      s.levelsCompleted + 1,
+    );
+    eng.initialize(level);
+    eng.setPlayMode(PlayMode.SpeedRun);
+    eng.start();
+  }
+
+  onEndRun(): void {
+    const eng = this.engine();
+    this.engine.set(null);
+    eng?.destroy();
+
+    const s = this.session();
+    if (s?.isActive) {
+      const result = this.speedRunService.endRun();
+      this.endRunResult.set(result);
+    }
+    this.stopRafLoop();
+  }
+
+  private onLevelWon(): void {
+    const eng = this.engine();
+    const s = this.session();
+    if (!eng || !s?.isActive) return;
+
+    this.speedRunService.completeLevel();
+    const updated = this.speedRunService.session();
+    if (!updated) return;
+
+    if (updated.levelsCompleted >= updated.totalLevels) {
+      // All levels done -- end the run
+      this.onRunComplete();
+      return;
+    }
+
+    // Load next level: active level index = levelsCompleted + 1 (1-based)
+    const nextLevel = this.speedRunService.generateSpeedRunLevel(
+      updated.gameId,
+      updated.levelsCompleted + 1,
+    );
+    eng.initialize(nextLevel);
+    eng.setPlayMode(PlayMode.SpeedRun);
+    eng.start();
+  }
+
+  private onRunComplete(): void {
+    // Null engine FIRST to prevent effect re-triggering
+    const eng = this.engine();
+    this.engine.set(null);
+    eng?.destroy();
+
+    const result = this.speedRunService.endRun();
+    this.endRunResult.set(result);
+    this.stopRafLoop();
+  }
+
+  private onRunFailed(): void {
+    // Null engine FIRST to prevent effect re-triggering
+    const eng = this.engine();
+    this.engine.set(null);
+    eng?.destroy();
+
+    const s = this.session();
+    if (s?.isActive) {
+      const result = this.speedRunService.endRun();
+      this.endRunResult.set(result);
+    }
+    this.stopRafLoop();
   }
 
   private startRafLoop(): void {

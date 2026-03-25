@@ -1,6 +1,12 @@
 import { inject, Injectable, signal, type Signal } from '@angular/core';
 import { StatePersistenceService } from '../persistence/state-persistence.service';
-import type { MinigameId } from './minigame.types';
+import { DifficultyTier, type MinigameId, type MinigameLevel } from './minigame.types';
+
+/** Level data for speed run levels (minimal -- speed runs are time-based). */
+export interface SpeedRunLevelData {
+  readonly levelIndex: number;
+  readonly totalLevels: number;
+}
 
 /** Runtime state of an active speed run session. */
 export interface SpeedRunSession {
@@ -132,6 +138,28 @@ export class SpeedRunService {
   /** Returns the par time (seconds) for the given minigame's speed run. */
   getParTime(gameId: MinigameId): number {
     return SPEED_RUN_CONFIG[gameId].parTime;
+  }
+
+  /** Generates a MinigameLevel for the given speed run level index (1-based). */
+  generateSpeedRunLevel(gameId: MinigameId, levelIndex: number): MinigameLevel<SpeedRunLevelData> {
+    const config = SPEED_RUN_CONFIG[gameId];
+    return {
+      id: `speed-run-${gameId}-L${levelIndex}`,
+      gameId,
+      tier: this._tierForIndex(levelIndex, config.totalLevels),
+      conceptIntroduced: 'Speed Run',
+      description: `Speed run level ${levelIndex} of ${config.totalLevels}`,
+      data: { levelIndex, totalLevels: config.totalLevels },
+    };
+  }
+
+  /** Maps a level index to a tier based on position within the total level count. */
+  private _tierForIndex(index: number, total: number): DifficultyTier {
+    const progress = index / total;
+    if (progress <= 0.25) return DifficultyTier.Basic;
+    if (progress <= 0.5) return DifficultyTier.Intermediate;
+    if (progress <= 0.75) return DifficultyTier.Advanced;
+    return DifficultyTier.Boss;
   }
 
   /** Checks if the time is a new best and persists it if so. */

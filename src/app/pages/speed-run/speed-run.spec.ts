@@ -1,12 +1,62 @@
-import { signal, WritableSignal } from '@angular/core';
-import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
+import { Component, signal, WritableSignal } from '@angular/core';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
+import {
+  LucideIconConfig,
+  LucideIconProvider,
+  LUCIDE_ICONS,
+} from 'lucide-angular';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { createComponent, getMockProvider } from '../../../testing/test-utils';
+import { APP_ICONS } from '../../shared/icons';
 import { SpeedRunPage } from './speed-run';
 import { SpeedRunService, type SpeedRunSession } from '../../core/minigame/speed-run.service';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
+import { AudioService } from '../../core/audio';
+import { KeyboardShortcutService } from '../../core/minigame/keyboard-shortcut.service';
+import { MinigameEngine, type ActionResult } from '../../core/minigame/minigame-engine';
 import { PlayMode } from '../../core/minigame/minigame.types';
+
+// --- Lucide icon providers needed by MinigameShellComponent sub-components ---
+
+const ICON_PROVIDERS = [
+  {
+    provide: LUCIDE_ICONS,
+    multi: true,
+    useValue: new LucideIconProvider(APP_ICONS),
+  },
+  {
+    provide: LucideIconConfig,
+    useValue: Object.assign(new LucideIconConfig(), {
+      size: 24,
+      color: 'currentColor',
+    }),
+  },
+];
+
+// --- Concrete test engine subclass ---
+
+class TestEngine extends MinigameEngine<unknown> {
+  constructor() {
+    super({ initialLives: 3, timerDuration: null });
+  }
+  protected onLevelLoad(): void { /* stub */ }
+  protected onStart(): void { /* stub */ }
+  protected onComplete(): void { /* stub */ }
+  protected validateAction(): ActionResult {
+    return { valid: true, scoreChange: 10, livesChange: 0 };
+  }
+}
+
+// --- Dummy game component for NgComponentOutlet ---
+
+@Component({
+  selector: 'app-test-dummy',
+  template: '<p class="dummy-game">dummy</p>',
+})
+class DummyGameComponent {}
+
+// --- Helpers ---
 
 function mockActivatedRoute(params: Record<string, string> = {}) {
   return {
@@ -37,6 +87,8 @@ interface SetupOptions {
   gameName?: string;
   configExists?: boolean;
   totalLevels?: number;
+  hasEngineFactory?: boolean;
+  hasComponent?: boolean;
 }
 
 async function setup(options: SetupOptions = {}) {
@@ -48,6 +100,8 @@ async function setup(options: SetupOptions = {}) {
     gameName = 'Module Assembly',
     configExists = true,
     totalLevels = 10,
+    hasEngineFactory = true,
+    hasComponent = true,
   } = options;
 
   const sessionSignal: WritableSignal<SpeedRunSession | null> = signal(session);
@@ -57,26 +111,68 @@ async function setup(options: SetupOptions = {}) {
     isNewBestTime: false,
     underPar: true,
   });
+  const completeLevelFn = vi.fn();
+  const generateSpeedRunLevelFn = vi.fn((gid: string, levelIndex: number) => ({
+    id: `speed-run-${gid}-L${levelIndex}`,
+    gameId: gid,
+    tier: 'basic',
+    conceptIntroduced: 'Speed Run',
+    description: `Speed run level ${levelIndex} of ${totalLevels}`,
+    data: { levelIndex, totalLevels },
+  }));
   const navigateFn = vi.fn();
+
+  const mockEngine = new TestEngine();
+
+  const registryMock = {
+    getConfig: vi.fn().mockReturnValue(
+      configExists
+        ? { id: gameId, name: gameName, totalLevels: 18 }
+        : undefined,
+    ),
+    getEngineFactory: vi.fn(() =>
+      hasEngineFactory ? () => mockEngine : null,
+    ),
+    getComponent: vi.fn(() =>
+      hasComponent ? DummyGameComponent : null,
+    ),
+  };
+
+  const audioMock = {
+    play: vi.fn(),
+    volume: signal(0.5),
+    setVolume: vi.fn(),
+    preload: vi.fn(),
+  };
+
+  const keyboardMock = {
+    register: vi.fn(),
+    unregister: vi.fn(),
+    unregisterAll: vi.fn(),
+    getRegistered: vi.fn(() => []),
+    setEnabled: vi.fn(),
+    isEnabled: signal(true),
+    destroy: vi.fn(),
+  };
 
   const result = await createComponent(SpeedRunPage, {
     providers: [
+      provideRouter([]),
       mockActivatedRoute({ gameId }),
       getMockProvider(SpeedRunService, {
         session: sessionSignal.asReadonly(),
         startRun: startRunFn,
         endRun: endRunFn,
+        completeLevel: completeLevelFn,
+        generateSpeedRunLevel: generateSpeedRunLevelFn,
         getBestTime: vi.fn().mockReturnValue(bestTime),
         getParTime: vi.fn().mockReturnValue(parTime),
       }),
-      getMockProvider(MinigameRegistryService, {
-        getConfig: vi.fn().mockReturnValue(
-          configExists
-            ? { id: gameId, name: gameName, totalLevels: 18 }
-            : undefined,
-        ),
-      }),
+      getMockProvider(MinigameRegistryService, registryMock),
       getMockProvider(Router, { navigate: navigateFn }),
+      getMockProvider(AudioService, audioMock),
+      getMockProvider(KeyboardShortcutService, keyboardMock),
+      ...ICON_PROVIDERS,
     ],
   });
 
@@ -85,8 +181,12 @@ async function setup(options: SetupOptions = {}) {
     sessionSignal,
     startRunFn,
     endRunFn,
+    completeLevelFn,
+    generateSpeedRunLevelFn,
     navigateFn,
     totalLevels,
+    mockEngine,
+    registryMock,
   };
 }
 
@@ -343,6 +443,141 @@ describe('SpeedRunPage', () => {
       fixture.destroy();
       // The destroy hook should have called cancelAnimationFrame
       expect(cancelSpy).toHaveBeenCalled();
+    });
+  });
+
+  // --- 9. Engine integration ---
+  describe('Engine integration', () => {
+    it('should create engine from registry factory on start', async () => {
+      const { element, fixture, registryMock, mockEngine, sessionSignal } = await setup();
+      // Click Start button
+      const btn = element.querySelector('.speed-run__start-btn') as HTMLButtonElement;
+      btn.click();
+      // Simulate session becoming active (startRun mock doesn't actually set the signal)
+      sessionSignal.set(makeSession({ levelsCompleted: 0, totalLevels: 10, splitTimes: [] }));
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(registryMock.getEngineFactory).toHaveBeenCalledWith('module-assembly');
+      expect(mockEngine.status()).not.toBe('loading'); // engine was started
+    });
+
+    it('should initialize engine with PlayMode.SpeedRun', async () => {
+      const { element, fixture, mockEngine, sessionSignal } = await setup();
+      const btn = element.querySelector('.speed-run__start-btn') as HTMLButtonElement;
+      btn.click();
+      sessionSignal.set(makeSession({ levelsCompleted: 0, totalLevels: 10, splitTimes: [] }));
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(mockEngine.playMode()).toBe(PlayMode.SpeedRun);
+    });
+
+    it('should NOT start run if no engine factory is available', async () => {
+      const { element, fixture, startRunFn } = await setup({ hasEngineFactory: false });
+      const btn = element.querySelector('.speed-run__start-btn') as HTMLButtonElement;
+      btn.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(startRunFn).not.toHaveBeenCalled();
+    });
+
+    it('should call completeLevel and advance to next level when engine status is Won', async () => {
+      const { element, fixture, mockEngine, sessionSignal, completeLevelFn, generateSpeedRunLevelFn } = await setup();
+      // Start the run
+      const btn = element.querySelector('.speed-run__start-btn') as HTMLButtonElement;
+      btn.click();
+      sessionSignal.set(makeSession({ levelsCompleted: 0, totalLevels: 10, splitTimes: [] }));
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      // Simulate engine win
+      mockEngine.complete();
+      // After completeLevel(), update session to reflect level completion
+      sessionSignal.set(makeSession({ levelsCompleted: 1, totalLevels: 10, splitTimes: [15] }));
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(completeLevelFn).toHaveBeenCalled();
+      // Next level (levelsCompleted + 1 = 2) should be generated
+      expect(generateSpeedRunLevelFn).toHaveBeenCalledWith('module-assembly', 2);
+    });
+
+    it('should end run and transition to post-run when all levels are completed', async () => {
+      const { element, fixture, mockEngine, sessionSignal, endRunFn, completeLevelFn } = await setup();
+      // Start the run
+      const btn = element.querySelector('.speed-run__start-btn') as HTMLButtonElement;
+      btn.click();
+      // Session with 9 of 10 levels completed (last level in progress)
+      sessionSignal.set(makeSession({ levelsCompleted: 9, totalLevels: 10, splitTimes: [10, 20, 30, 40, 50, 60, 70, 80, 90] }));
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      // Make completeLevel() update the session to reflect all levels done
+      completeLevelFn.mockImplementation(() => {
+        sessionSignal.set(makeSession({ levelsCompleted: 10, totalLevels: 10, splitTimes: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100] }));
+      });
+
+      // Simulate engine win on the last level
+      mockEngine.complete();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(completeLevelFn).toHaveBeenCalled();
+      expect(endRunFn).toHaveBeenCalled();
+    });
+
+    it('should end run on engine Lost (run failed)', async () => {
+      const { element, fixture, mockEngine, sessionSignal, endRunFn } = await setup();
+      // Start the run
+      const btn = element.querySelector('.speed-run__start-btn') as HTMLButtonElement;
+      btn.click();
+      sessionSignal.set(makeSession({ levelsCompleted: 2, totalLevels: 10, splitTimes: [15, 35] }));
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      // Simulate engine failure
+      mockEngine.fail();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(endRunFn).toHaveBeenCalled();
+    });
+
+    it('should destroy engine on component destroy', async () => {
+      const { element, fixture, mockEngine, sessionSignal } = await setup();
+      // Start the run
+      const btn = element.querySelector('.speed-run__start-btn') as HTMLButtonElement;
+      btn.click();
+      sessionSignal.set(makeSession({ levelsCompleted: 0, totalLevels: 10, splitTimes: [] }));
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const destroySpy = vi.spyOn(mockEngine, 'destroy');
+      fixture.destroy();
+
+      expect(destroySpy).toHaveBeenCalled();
+    });
+
+    it('should re-initialize with PlayMode.SpeedRun on restart level (not reset)', async () => {
+      const { element, fixture, mockEngine, sessionSignal, component } = await setup();
+      // Start the run
+      const btn = element.querySelector('.speed-run__start-btn') as HTMLButtonElement;
+      btn.click();
+      sessionSignal.set(makeSession({ levelsCompleted: 2, totalLevels: 10, splitTimes: [15, 35] }));
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const initSpy = vi.spyOn(mockEngine, 'initialize');
+      const startSpy = vi.spyOn(mockEngine, 'start');
+      const setPlayModeSpy = vi.spyOn(mockEngine, 'setPlayMode');
+
+      component.onRestartLevel();
+
+      expect(initSpy).toHaveBeenCalled();
+      expect(setPlayModeSpy).toHaveBeenCalledWith(PlayMode.SpeedRun);
+      expect(startSpy).toHaveBeenCalled();
     });
   });
 });

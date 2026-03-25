@@ -4,9 +4,10 @@ import {
   SpeedRunService,
   SPEED_RUN_CONFIG,
   type SpeedRunSession,
+  type SpeedRunLevelData,
 } from './speed-run.service';
 import { StatePersistenceService } from '../persistence/state-persistence.service';
-import type { MinigameId } from './minigame.types';
+import { DifficultyTier, type MinigameId } from './minigame.types';
 
 function createFakeStorage(): Storage {
   const store = new Map<string, string>();
@@ -316,6 +317,42 @@ describe('SpeedRunService', () => {
       for (const [id, parTime] of Object.entries(expected)) {
         expect(service.getParTime(id as MinigameId)).toBe(parTime);
       }
+    });
+  });
+
+  // --- generateSpeedRunLevel ---
+
+  describe('generateSpeedRunLevel', () => {
+    it('should generate a valid MinigameLevel for level 1', () => {
+      const level = service.generateSpeedRunLevel('module-assembly', 1);
+      expect(level.id).toBe('speed-run-module-assembly-L1');
+      expect(level.gameId).toBe('module-assembly');
+      expect(level.conceptIntroduced).toBe('Speed Run');
+      expect(level.description).toBe('Speed run level 1 of 10');
+      expect(level.data.levelIndex).toBe(1);
+      expect(level.data.totalLevels).toBe(10);
+    });
+
+    it('should map tier correctly based on progress through total levels', () => {
+      // module-assembly has 10 levels
+      // progress = index / total
+      // 1/10=0.10 -> Basic, 2/10=0.20 -> Basic
+      expect(service.generateSpeedRunLevel('module-assembly', 1).tier).toBe(DifficultyTier.Basic);
+      expect(service.generateSpeedRunLevel('module-assembly', 2).tier).toBe(DifficultyTier.Basic);
+      // 3/10=0.30 -> Intermediate, 4/10=0.40 -> Intermediate, 5/10=0.50 -> Intermediate
+      expect(service.generateSpeedRunLevel('module-assembly', 3).tier).toBe(DifficultyTier.Intermediate);
+      expect(service.generateSpeedRunLevel('module-assembly', 5).tier).toBe(DifficultyTier.Intermediate);
+      // 6/10=0.60 -> Advanced, 7/10=0.70 -> Advanced
+      expect(service.generateSpeedRunLevel('module-assembly', 6).tier).toBe(DifficultyTier.Advanced);
+      expect(service.generateSpeedRunLevel('module-assembly', 7).tier).toBe(DifficultyTier.Advanced);
+      // 8/10=0.80 -> Boss, 9/10=0.90 -> Boss, 10/10=1.00 -> Boss
+      expect(service.generateSpeedRunLevel('module-assembly', 8).tier).toBe(DifficultyTier.Boss);
+      expect(service.generateSpeedRunLevel('module-assembly', 10).tier).toBe(DifficultyTier.Boss);
+    });
+
+    it('should export SpeedRunLevelData interface (compile-time check)', () => {
+      const data: SpeedRunLevelData = { levelIndex: 1, totalLevels: 10 };
+      expect(data).toBeTruthy();
     });
   });
 
