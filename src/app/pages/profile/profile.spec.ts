@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import {
   LucideIconConfig,
   LucideIconProvider,
@@ -6,10 +6,7 @@ import {
 } from 'lucide-angular';
 import { createComponent, getMockProvider } from '../../../testing/test-utils';
 import { ProfilePage } from './profile';
-import { XpService } from '../../core/progression/xp.service';
-import { StreakService } from '../../core/progression/streak.service';
-import { PlayTimeService } from '../../core/progression/play-time.service';
-import { GameProgressionService, type CampaignProgress } from '../../core/progression/game-progression.service';
+import { LifetimeStatsService, type ProfileStats } from '../../core/progression/lifetime-stats.service';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { SpacedRepetitionService } from '../../core/progression/spaced-repetition.service';
 import { AchievementService, type Achievement } from '../../core/progression/achievement.service';
@@ -131,50 +128,41 @@ const MOCK_GAMES: MinigameConfig[] = [
   },
 ];
 
-function setup(overrides: {
-  currentRank?: string;
-  totalXp?: number;
-  activeStreakDays?: number;
-  streakMultiplier?: number;
-  totalPlayTime?: number;
-  sessionActive?: boolean;
-  getCampaignProgress?: () => CampaignProgress;
+const DEFAULT_PROFILE_STATS: ProfileStats = {
+  totalXp: 0,
+  currentRank: 'Cadet',
+  rankProgress: 0,
+  topicMasteryMap: new Map(),
+  missionsCompleted: 0,
+  totalMissions: 34,
+  totalPlayTime: 0,
+  currentStreak: 0,
+  streakMultiplier: 1.0,
+  levelsCompleted: 0,
+  perfectScores: 0,
+};
+
+async function setup(overrides: {
+  profileStats?: Partial<ProfileStats>;
   getAllGames?: MinigameConfig[];
   getEffectiveMastery?: (id: MinigameId) => number;
 } = {}) {
   const {
-    currentRank = 'Cadet',
-    totalXp = 0,
-    activeStreakDays = 0,
-    streakMultiplier = 1.0,
-    totalPlayTime = 0,
-    sessionActive = false,
-    getCampaignProgress = () => ({
-      completedMissions: 0,
-      totalMissions: 34,
-      currentPhase: null,
-    }),
+    profileStats: statsOverrides = {},
     getAllGames = MOCK_GAMES,
     getEffectiveMastery = () => 0,
   } = overrides;
 
-  return createComponent(ProfilePage, {
+  const mockProfileStats: WritableSignal<ProfileStats> = signal({
+    ...DEFAULT_PROFILE_STATS,
+    ...statsOverrides,
+  });
+
+  const result = await createComponent(ProfilePage, {
     providers: [
       ...ICON_PROVIDERS,
-      getMockProvider(XpService, {
-        currentRank: signal(currentRank),
-        totalXp: signal(totalXp),
-      }),
-      getMockProvider(StreakService, {
-        activeStreakDays: signal(activeStreakDays),
-        streakMultiplier: signal(streakMultiplier),
-      }),
-      getMockProvider(PlayTimeService, {
-        totalPlayTime: signal(totalPlayTime),
-        sessionActive: signal(sessionActive),
-      }),
-      getMockProvider(GameProgressionService, {
-        getCampaignProgress: vi.fn().mockReturnValue(getCampaignProgress()),
+      getMockProvider(LifetimeStatsService, {
+        profileStats: mockProfileStats,
       }),
       getMockProvider(MinigameRegistryService, {
         getAllGames: vi.fn().mockReturnValue(getAllGames),
@@ -188,6 +176,8 @@ function setup(overrides: {
       }),
     ],
   });
+
+  return { ...result, mockProfileStats };
 }
 
 describe('ProfilePage', () => {
@@ -197,23 +187,23 @@ describe('ProfilePage', () => {
     expect(component).toBeTruthy();
   });
 
-  // 2. Display the current rank name
-  it('should display the current rank name', async () => {
-    const { element } = await setup({ currentRank: 'Commander' });
+  // 2. Display the current rank name from LifetimeStatsService
+  it('should display current rank from LifetimeStatsService', async () => {
+    const { element } = await setup({ profileStats: { currentRank: 'Commander' } });
     const rankName = element.querySelector('.profile__rank-name');
     expect(rankName?.textContent).toContain('Commander');
   });
 
-  // 3. Display total XP
-  it('should display total XP', async () => {
-    const { element } = await setup({ totalXp: 3500 });
+  // 3. Display total XP from LifetimeStatsService
+  it('should display total XP from LifetimeStatsService', async () => {
+    const { element } = await setup({ profileStats: { totalXp: 3500 } });
     const totalXp = element.querySelector('.profile__total-xp');
     expect(totalXp?.textContent).toContain('3,500 XP');
   });
 
   // 4. Render XpProgressBarComponent in full variant
   it('should render XpProgressBarComponent in full variant', async () => {
-    const { element } = await setup({ totalXp: 500 });
+    const { element } = await setup({ profileStats: { totalXp: 500 } });
     const progressBar = element.querySelector('nx-xp-progress-bar');
     expect(progressBar).toBeTruthy();
     expect(progressBar!.classList.contains('xp-progress-bar--full')).toBe(true);
@@ -222,23 +212,22 @@ describe('ProfilePage', () => {
   // 5. Display streak counter with active streak
   it('should display streak counter with active streak', async () => {
     const { element } = await setup({
-      activeStreakDays: 3,
-      streakMultiplier: 1.3,
+      profileStats: { currentStreak: 3, streakMultiplier: 1.3 },
     });
     const badge = element.querySelector('nx-streak-badge');
     expect(badge).toBeTruthy();
   });
 
   // 6. Hide streak badge when streak is 0
-  it('should hide streak badge when streak is 0', async () => {
-    const { element } = await setup({ activeStreakDays: 0 });
+  it('should hide streak badge when currentStreak is 0', async () => {
+    const { element } = await setup({ profileStats: { currentStreak: 0 } });
     const badge = element.querySelector('nx-streak-badge');
     expect(badge).toBeNull();
   });
 
   // 7. Display total play time
   it('should display total play time', async () => {
-    const { element } = await setup({ totalPlayTime: 7200 });
+    const { element } = await setup({ profileStats: { totalPlayTime: 7200 } });
     const playTimeCard = element.querySelector('.profile__stat-card--play-time');
     expect(playTimeCard?.textContent).toContain('2h');
   });
@@ -246,11 +235,7 @@ describe('ProfilePage', () => {
   // 8. Display campaign progress
   it('should display campaign progress', async () => {
     const { element } = await setup({
-      getCampaignProgress: () => ({
-        completedMissions: 10,
-        totalMissions: 34,
-        currentPhase: 3,
-      }),
+      profileStats: { missionsCompleted: 10, totalMissions: 34 },
     });
     const campaignCard = element.querySelector('.profile__stat-card--campaign');
     expect(campaignCard?.textContent).toContain('10 / 34');
@@ -278,8 +263,6 @@ describe('ProfilePage', () => {
     const { element } = await setup();
     const rows = element.querySelectorAll('.profile__mastery-table tbody tr');
     const firstRowText = rows[0]?.textContent ?? '';
-    // "Blast Doors" should be first alphabetically by topic (angularTopic)
-    // Topics sorted alpha: Components, Control Flow, Data Binding, Forms, HTTP, IO Props, Lifecycle, Pipes, Routing, Services, Signals, Testing
     expect(firstRowText).toContain('Components');
   });
 
@@ -288,13 +271,11 @@ describe('ProfilePage', () => {
     const { element, fixture } = await setup();
     const topicHeader = element.querySelector('.profile__mastery-table th') as HTMLElement;
 
-    // Click once — should already be ascending, clicking again toggles to descending
     topicHeader.click();
     fixture.detectChanges();
 
     const rows = element.querySelectorAll('.profile__mastery-table tbody tr');
     const firstRowText = rows[0]?.textContent ?? '';
-    // Last alphabetically by topic: Testing
     expect(firstRowText).toContain('Testing');
   });
 
@@ -308,13 +289,12 @@ describe('ProfilePage', () => {
       },
     });
     const headers = element.querySelectorAll('.profile__mastery-table th');
-    const starsHeader = headers[2] as HTMLElement; // Topic, Minigame, Stars
+    const starsHeader = headers[2] as HTMLElement;
     starsHeader.click();
     fixture.detectChanges();
 
     const rows = element.querySelectorAll('.profile__mastery-table tbody tr');
     const firstRowText = rows[0]?.textContent ?? '';
-    // Stars descending: module-assembly (4) should be first
     expect(firstRowText).toContain('Module Assembly');
   });
 
@@ -328,11 +308,7 @@ describe('ProfilePage', () => {
   // 15. Display campaign progress percentage
   it('should display campaign progress percentage', async () => {
     const { element } = await setup({
-      getCampaignProgress: () => ({
-        completedMissions: 10,
-        totalMissions: 34,
-        currentPhase: 3,
-      }),
+      profileStats: { missionsCompleted: 10, totalMissions: 34 },
     });
     const campaignCard = element.querySelector('.profile__stat-card--campaign');
     expect(campaignCard?.textContent).toContain('29%');
@@ -351,5 +327,49 @@ describe('ProfilePage', () => {
     const { element } = await setup();
     const heading = element.querySelector('.profile__achievements-section h2');
     expect(heading?.textContent).toContain('Achievements');
+  });
+
+  // --- New tests for T-2026-312 ---
+
+  // 18. Display games played from LifetimeStatsService
+  it('should display games played from LifetimeStatsService', async () => {
+    const { element } = await setup({ profileStats: { levelsCompleted: 42 } });
+    const gamesPlayedCard = element.querySelector('.profile__stat-card--games-played');
+    expect(gamesPlayedCard).toBeTruthy();
+    expect(gamesPlayedCard?.textContent).toContain('42');
+  });
+
+  // 19. Campaign progress section includes ProgressBarComponent
+  it('should display campaign progress with percentage bar', async () => {
+    const { element } = await setup({
+      profileStats: { missionsCompleted: 10, totalMissions: 34 },
+    });
+    const campaignCard = element.querySelector('.profile__stat-card--campaign');
+    expect(campaignCard?.textContent).toContain('10 / 34');
+    const progressBar = campaignCard?.querySelector('nx-progress-bar');
+    expect(progressBar).toBeTruthy();
+  });
+
+  // 20. Reactive update when profileStats changes
+  it('should reactively update when profileStats changes', async () => {
+    const { element, fixture, mockProfileStats } = await setup({
+      profileStats: { totalXp: 0 },
+    });
+    const totalXpEl = element.querySelector('.profile__total-xp');
+    expect(totalXpEl?.textContent).toContain('0 XP');
+
+    mockProfileStats.set({ ...DEFAULT_PROFILE_STATS, totalXp: 500 });
+    fixture.detectChanges();
+
+    expect(totalXpEl?.textContent).toContain('500 XP');
+  });
+
+  // 21. Zero missions edge case -- campaignPercent shows 0%
+  it('should show 0% when totalMissions is 0', async () => {
+    const { element } = await setup({
+      profileStats: { missionsCompleted: 0, totalMissions: 0 },
+    });
+    const campaignCard = element.querySelector('.profile__stat-card--campaign');
+    expect(campaignCard?.textContent).toContain('0%');
   });
 });
