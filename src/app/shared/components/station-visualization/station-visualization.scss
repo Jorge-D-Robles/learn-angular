@@ -1,0 +1,73 @@
+:host {
+  display: block;
+}
+
+.station-viz__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--nx-space-4);
+}
+
+.station-viz__node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--nx-space-2);
+  padding: var(--nx-space-4);
+  background: var(--nx-color-hull);
+  border: 1px solid var(--module-glow, var(--nx-color-bulkhead));
+  border-radius: var(--nx-radius-card);
+  color: var(--nx-color-display);
+  cursor: pointer;
+  transition:
+    transform var(--nx-duration-fast) var(--nx-ease-out),
+    box-shadow var(--nx-duration-normal) var(--nx-ease-out);
+  box-shadow: 0 0 8px var(--module-glow, transparent);
+  font-family: var(--nx-font-sans);
+
+  &:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 14px var(--module-glow, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--nx-color-reactor-blue);
+    outline-offset: 2px;
+  }
+}
+
+.station-viz__node--dark {
+  opacity: 0.5;
+  border-color: var(--nx-color-bulkhead);
+  box-shadow: none;
+
+  &:hover {
+    box-shadow: none;
+  }
+}
+
+.station-viz__node--pulse {
+  animation: station-viz-pulse 2s ease-in-out infinite;
+}
+
+@keyframes station-viz-pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .station-viz__node--pulse {
+    animation: none;
+  }
+}
+
+.station-viz__node-name {
+  font-size: var(--nx-text-caption-size);
+  font-weight: var(--nx-text-card-title-weight);
+  text-align: center;
+}
+
+.station-viz__node-mastery {
+  font-size: var(--nx-text-caption-size);
+  color: var(--nx-color-corridor);
+}
