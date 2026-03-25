@@ -30,28 +30,12 @@ Acceptance criteria:
 
 ---
 
-### T-2026-213
-- Title: Add OnboardingService to progression barrel export
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P2
-- Depends: T-2026-173
-- Blocked-by: —
-- Tags: infrastructure, barrel-export, conventions
-- Refs: src/app/core/progression/index.ts
-
-OnboardingService (T-2026-173) will create `onboarding.service.ts` in the progression directory. The ticket says "Exported from progression barrel" but there is no explicit barrel update ticket. Per conventions, ensure it is exported.
-
-Acceptance criteria:
-- [ ] `src/app/core/progression/index.ts` updated to export `OnboardingService` and `OnboardingStep`
-- [ ] Build passes with updated barrel
 
 ### T-2026-214
 - Title: Create OnboardingOverlayComponent for first-time user guidance
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
+- Started: 2026-03-25
 - Priority: low
 - Size: M
 - Milestone: P2
@@ -95,8 +79,9 @@ Acceptance criteria:
 - [ ] Unit tests for: overlay shown on first visit, hidden after completion
 ### T-2026-468
 - Title: Redesign multi-blueprint Module Assembly levels to support plural blueprint display
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
+- Started: 2026-03-25
 - Priority: medium
 - Size: M
 - Milestone: P2
@@ -116,8 +101,9 @@ Acceptance criteria:
 
 ### T-2026-142
 - Title: Create P2 end-to-end smoke test for full game loop
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
+- Started: 2026-03-25
 - Priority: medium
 - Size: M
 - Milestone: P2
@@ -160,169 +146,18 @@ Acceptance criteria:
 
 
 
-### T-2026-332
-- Title: Create P2 cross-cutting integration test for story mission to minigame unlock flow
-- Status: in-progress
-- Assigned: claude
-- Started: 2026-03-25
-- Priority: medium
-- Size: M
-- Milestone: P2
-- Depends: T-2026-059, T-2026-088
-- Blocked-by: —
-- Tags: test, integration, story, minigame, unlock
-- Refs: docs/overview.md, docs/curriculum.md
-
-Overview.md defines the core game loop: "Complete Story Mission -> Unlock Minigame -> Master Minigame -> Earn XP -> Level Up." No integration test verifies this cross-cutting flow. After P2 delivers the first minigame engines and story missions, this test ensures the full unlock pipeline works.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/features/integration/story-to-minigame.integration.spec.ts`
-- [ ] Test: completing story mission 1 unlocks Module Assembly minigame
-- [ ] Test: completing story mission unlocks the correct minigame per curriculum mapping
-- [ ] Test: locked minigame cannot be played before its prerequisite story mission
-- [ ] Test: XP is awarded for both story mission completion and minigame completion
-- [ ] Uses real CurriculumService, ProgressionService, and level data
-
-### T-2026-342
-- Title: Wire PhaseHeaderComponent and MissionCardComponent into CampaignPage
-- Status: todo
-- Assigned: unassigned
-- Priority: medium
-- Size: S
-- Milestone: P2
-- Depends: T-2026-190, T-2026-216, T-2026-141
-- Blocked-by: —
-- Tags: integration, ui, campaign, phase-header, mission-card
-- Refs: docs/ux/navigation.md, docs/curriculum.md, src/app/pages/campaign/
-
-CampaignPage (T-2026-141) displays all 34 missions grouped by curriculum phase. PhaseHeaderComponent (T-2026-190) creates the phase grouping header with progress bar. MissionCardComponent (T-2026-216, completed) creates the mission entry card. No ticket wires these components into CampaignPage.
-
-Acceptance criteria:
-- [ ] CampaignPage renders PhaseHeaderComponent for each of the 6 curriculum phases
-- [ ] Phase headers populated from CURRICULUM constant with completion counts from GameProgressionService
-- [ ] MissionCardComponent rendered for each mission within its phase group
-- [ ] MissionCard inputs: chapter number, title, Angular topic, completion status, locked state
-- [ ] Click on unlocked mission navigates to `/mission/:chapterId`
-- [ ] Unit tests for: phase grouping, card rendering per mission, click navigation
 
 
-### T-2026-346
-- Title: Create E2E smoke tests for P2 page components (Dashboard, Profile, Settings, Campaign)
-- Status: in-progress
-- Assigned: claude
-- Started: 2026-03-25
-- Priority: medium
-- Size: M
-- Milestone: P2
-- Depends: T-2026-078, T-2026-079, T-2026-080, T-2026-141
-- Blocked-by: —
-- Tags: testing, e2e, pages, smoke-test
-- Refs: docs/ux/navigation.md, playwright.config.ts
-
-E2E tests exist for dashboard routing (T-2026-005) and minigame shell (T-2026-248), but no E2E tests verify the P2 page components render correctly when populated with real data. T-2026-142 tests the full game loop but not individual page rendering.
-
-Acceptance criteria:
-- [ ] Playwright test at `e2e/pages.spec.ts`
-- [ ] Test: `/` renders DashboardPage with rank badge, XP bar, and mission prompt sections
-- [ ] Test: `/profile` renders ProfilePage with rank, mastery table, streak, and play time sections
-- [ ] Test: `/settings` renders SettingsPage with sound toggle, animation speed, theme selector, reset button
-- [ ] Test: `/campaign` renders CampaignPage with phase groupings and mission cards
-- [ ] Test: `/minigames` renders MinigameHubPage with minigame grid
-- [ ] All tests verify responsive layout at mobile breakpoint (768px) and desktop (1280px)
-- [ ] Tests run in CI (GitHub Actions)
-
-### T-2026-353
-- Title: Create SettingsPage E2E test for theme switching and reset progress
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P2
-- Depends: T-2026-080, T-2026-143
-- Blocked-by: —
-- Tags: testing, e2e, settings, theme
-- Refs: docs/ux/navigation.md, playwright.config.ts
-
-SettingsPage has user-facing interactions (theme switching, reset progress) that should be verified end-to-end. No E2E test specifically validates that theme switching applies body class changes or that reset progress triggers the confirmation dialog.
-
-Acceptance criteria:
-- [ ] Playwright test at `e2e/settings.spec.ts`
-- [ ] Test: navigate to `/settings`, verify all setting controls render
-- [ ] Test: toggle sound off, verify setting persists after page reload
-- [ ] Test: change theme, verify body class changes (e.g., `theme-station` -> `theme-light`)
-- [ ] Test: click "Reset All Progress", verify ConfirmDialogComponent appears with danger variant
-- [ ] Tests run in CI
-### T-2026-357
-- Title: Create LevelProgressSummaryComponent for minigame level completion counts
-- Status: in-progress
-- Assigned: claude
-- Started: 2026-03-25
-- Priority: low
-- Size: S
-- Milestone: P2
-- Depends: T-2026-020, T-2026-007
-- Blocked-by: —
-- Tags: ui, component, level-progress, shared
-- Refs: docs/ux/navigation.md, docs/progression.md
-
-Navigation.md specifies the Minigame Level Select page shows "Best score / best time" per level and the Minigame Hub shows "Quick stats (levels completed, best scores)." Multiple pages need a compact display of level completion counts (e.g., "12/18 levels completed, 36 stars earned"). No reusable component exists for this.
-
-Acceptance criteria:
-- [ ] `LevelProgressSummaryComponent` at `src/app/shared/components/level-progress-summary/`
-- [ ] Selector: `nx-level-progress-summary`
-- [ ] Inputs: `completedLevels` (number), `totalLevels` (number), `totalStars` (number), `maxStars` (number)
-- [ ] Displays: completion fraction (e.g., "12/18"), star total, progress bar
-- [ ] Compact variant for card use, full variant for page headers
-- [ ] Exported from shared components barrel
-- [ ] Unit tests for: fraction display, star count, progress bar value
-
-### T-2026-358
-- Title: Create integration test for SettingsService reset triggering StatePersistenceService clearAll
-- Status: in-progress
-- Assigned: claude
-- Started: 2026-03-25
-- Priority: low
-- Size: S
-- Milestone: P2
-- Depends: T-2026-039, T-2026-024
-- Blocked-by: —
-- Tags: testing, integration, settings, persistence, reset
-- Refs: docs/architecture.md
-
-Architecture.md documents that "SettingsService.resetProgress() calls StatePersistenceService.clearAll() followed by a full page reload." No integration test verifies this critical destructive flow works correctly end-to-end.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/core/integration/settings-reset.integration.spec.ts`
-- [ ] Test: add game state (XP, mastery, streaks), call resetProgress(), verify all localStorage cleared
-- [ ] Test: verify resetProgress() triggers page reload (document.location.reload)
-- [ ] Test: verify all services would initialize with defaults after clear (fresh state)
-- [ ] Uses real StatePersistenceService with fake localStorage
 
 
-### T-2026-366
-- Title: Wire EmptyStateComponent into LevelSelectPage for no-level-data state
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P2
-- Depends: T-2026-129, T-2026-077
-- Blocked-by: —
-- Tags: ui, integration, empty-state, level-select
-- Refs: docs/ux/navigation.md, src/app/pages/level-select/level-select.ts
 
-LevelSelectPage (T-2026-077) displays levels grouped by tier, but no ticket handles the state when level data has not been registered for a game. EmptyStateComponent (T-2026-129) provides the visual pattern. Without this, a player navigating to an unbuilt game's level select sees blank content.
 
-Acceptance criteria:
-- [ ] LevelSelectPage shows EmptyStateComponent when the game has no registered level data
-- [ ] Empty state message: "Levels coming soon for [game name]"
-- [ ] "Back to Minigames" button navigates to `/minigames`
-- [ ] Unit tests for: empty state when no level data, hidden when levels exist
 
 ### T-2026-367
 - Title: Apply TooltipDirective to shared components for contextual help
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
+- Started: 2026-03-25
 - Priority: low
 - Size: S
 - Milestone: P2
@@ -384,50 +219,13 @@ Acceptance criteria:
 - [ ] Test: current mission link resolves correctly (dynamic via GameProgressionService)
 - [ ] Tests run in CI (GitHub Actions)
 
-### T-2026-370
-- Title: Add MinigamePlayGuard to guards barrel export
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P2
-- Depends: T-2026-363, T-2026-347
-- Blocked-by: —
-- Tags: infrastructure, barrel-export, conventions
-- Refs: src/app/core/guards/index.ts
 
-T-2026-363 creates MinigamePlayGuard and T-2026-347 creates the guards barrel. This ticket ensures MinigamePlayGuard is included in the barrel alongside MissionGuard and MinigameLevelGuard.
-
-Acceptance criteria:
-- [ ] `src/app/core/guards/index.ts` updated to export `MinigamePlayGuard`
-- [ ] Build passes with updated barrel
-
-### T-2026-371
-- Title: Create integration test for SettingsService theme preference applying body class
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P2
-- Depends: T-2026-143, T-2026-039
-- Blocked-by: —
-- Tags: testing, integration, settings, theme
-- Refs: docs/ux/visual-style.md, src/app/core/settings/settings.service.ts
-
-T-2026-143 wires SettingsPage theme preference to a document body class but no integration test verifies the chain: change theme via SettingsService -> body class updates -> CSS custom properties switch. This is a user-facing visual change that should be verified.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/core/integration/theme-switching.integration.spec.ts`
-- [ ] Test: default theme -> body has `theme-dark` class
-- [ ] Test: change to station theme -> body has `theme-station` class, `theme-dark` removed
-- [ ] Test: change to light theme -> body has `theme-light` class, `theme-station` removed
-- [ ] Test: theme persists after simulated reload (SettingsService loads from persistence)
-- [ ] Uses real SettingsService with document body access
 
 ### T-2026-372
 - Title: Add route title resolution to replay mode routes for consistent browser tab titles
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
+- Started: 2026-03-25
 - Priority: low
 - Size: S
 - Milestone: P2
@@ -446,31 +244,12 @@ Acceptance criteria:
 - [ ] Game name sourced from MinigameRegistryService via route params
 - [ ] Unit tests for: title resolver returns correct game name, fallback for unknown gameId
 
-### T-2026-373
-- Title: Create integration test for DailyChallengeService topic rotation prioritizing degrading topics
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P2
-- Depends: T-2026-041, T-2026-023
-- Blocked-by: —
-- Tags: testing, integration, daily-challenge, spaced-repetition
-- Refs: docs/progression.md, docs/research/gamification-patterns.md
-
-Progression.md specifies "Daily challenge mode: Automatically rotates through degrading topics." DailyChallengeService (T-2026-041) uses a "degrading topic priority" algorithm that checks SpacedRepetitionService for topics needing review. No integration test verifies that degrading topics are actually prioritized in the daily challenge rotation.
-
-Acceptance criteria:
-- [ ] Integration test at `src/app/core/integration/daily-challenge-rotation.integration.spec.ts`
-- [ ] Test: with no degraded topics, daily challenge selects from general pool
-- [ ] Test: with degraded topics, daily challenge preferentially selects degraded topic's minigame
-- [ ] Test: verify rotation doesn't repeat the same game on consecutive days (when alternatives exist)
-- [ ] Uses real DailyChallengeService and SpacedRepetitionService
 
 ### T-2026-374
 - Title: Wire LoadingSpinnerComponent into LevelSelectPage during level data loading
-- Status: todo
-- Assigned: unassigned
+- Status: in-progress
+- Assigned: claude
+- Started: 2026-03-25
 - Priority: low
 - Size: S
 - Milestone: P2
@@ -487,27 +266,6 @@ Acceptance criteria:
 - [ ] ErrorStateComponent shown if level data fails to load
 - [ ] Unit tests for: loading state shown, spinner replaced on data load, error state on failure
 
-### T-2026-425
-- Title: Define cosmetic items content data for station skins, themes, and badges
-- Status: todo
-- Assigned: unassigned
-- Priority: low
-- Size: S
-- Milestone: P2
-- Depends: —
-- Blocked-by: —
-- Tags: content, data, cosmetics, gamification
-- Refs: docs/progression.md
-
-Progression.md specifies "Cosmetic Unlocks (Future): Station module skins, UI themes, Achievement badges. Unlocked at rank milestones and mastery milestones." T-2026-111 (CosmeticService, P8) builds the service but no ticket defines what cosmetic items actually exist. Defining the content data now provides a catalog for planning.
-
-Acceptance criteria:
-- [ ] Cosmetic data file at `src/app/data/cosmetics.data.ts`
-- [ ] `CosmeticDefinition` interface: id, name, type (skin|theme|badge), description, unlockCondition (rank milestone | mastery milestone | achievement), previewImagePath (optional)
-- [ ] At least 4 station module skins (one per rank milestone: Ensign, Commander, Captain, Admiral)
-- [ ] At least 3 UI themes (dark, station, light already exist; add 2+ unlockable variants)
-- [ ] At least 4 achievement-tied badges
-- [ ] Unit tests for: all 3 types represented, valid unlock conditions, minimum counts
 
 ### T-2026-476
 - Title: Create integration test for FlowCommanderSimulationService + FlowCommanderEngine coordinated lifecycle
