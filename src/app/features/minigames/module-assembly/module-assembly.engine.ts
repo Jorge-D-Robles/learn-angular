@@ -2,7 +2,7 @@ import { signal, computed, type Signal, type WritableSignal } from '@angular/cor
 import { MinigameEngine, type ActionResult } from '../../../core/minigame/minigame-engine';
 import type { MinigameEngineConfig } from '../../../core/minigame/minigame-engine';
 import { MinigameStatus } from '../../../core/minigame/minigame.types';
-import { isDecoyPart, type ComponentPart, type ComponentBlueprint, type ModuleAssemblyLevelData } from './module-assembly.types';
+import { isDecoyPart, type BlueprintGroup, type ComponentPart, type ComponentBlueprint, type ModuleAssemblyLevelData } from './module-assembly.types';
 import type { ConveyorBeltService } from './conveyor-belt.service';
 
 // ---------------------------------------------------------------------------
@@ -64,12 +64,14 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
   private readonly _beltSpeed = signal(0);
   private readonly _filledSlots = signal<ReadonlyMap<string, ComponentPart>>(new Map());
   private readonly _blueprint: WritableSignal<ComponentBlueprint> = signal<ComponentBlueprint>({ name: '', slots: [], expectedParts: [] });
+  private readonly _blueprintGroups = signal<readonly BlueprintGroup[]>([]);
 
   // --- Public read-only signals ---
   readonly beltParts: Signal<readonly ComponentPart[]> = this._beltParts.asReadonly();
   readonly beltSpeed: Signal<number> = this._beltSpeed.asReadonly();
   readonly filledSlots: Signal<ReadonlyMap<string, ComponentPart>> = this._filledSlots.asReadonly();
   readonly blueprint: Signal<ComponentBlueprint> = this._blueprint.asReadonly();
+  readonly blueprintGroups: Signal<readonly BlueprintGroup[]> = this._blueprintGroups.asReadonly();
 
   readonly strikes = computed(() => this.config.initialLives - this.lives());
   readonly maxStrikes = computed(() => this.config.initialLives);
@@ -85,6 +87,7 @@ export class ModuleAssemblyEngine extends MinigameEngine<ModuleAssemblyLevelData
 
   protected onLevelLoad(data: ModuleAssemblyLevelData): void {
     this._blueprint.set(data.blueprint);
+    this._blueprintGroups.set(data.blueprints ?? []);
     this._beltParts.set([...data.parts]);
     this._beltSpeed.set(data.beltSpeed);
     this._filledSlots.set(new Map());

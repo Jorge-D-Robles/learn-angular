@@ -42,9 +42,17 @@ export interface DecoyInfo {
   readonly mutation: string;
 }
 
+/** Annotation mapping slot IDs to named sub-blueprints for multi-component levels. */
+export interface BlueprintGroup {
+  readonly name: string;
+  readonly slotIds: readonly string[];
+}
+
 /** Game-specific level data for Module Assembly. */
 export interface ModuleAssemblyLevelData {
   readonly blueprint: ComponentBlueprint;
+  /** Optional sub-blueprint groupings for multi-component levels. */
+  readonly blueprints?: readonly BlueprintGroup[];
   readonly parts: readonly ComponentPart[];
   readonly decoys: readonly DecoyInfo[];
   readonly beltSpeed: number;
@@ -76,4 +84,9 @@ export function canPartFitSlot(part: ComponentPart, slot: BlueprintSlot): boolea
 /** Returns true when a part is a decoy. */
 export function isDecoyPart(part: ComponentPart): boolean {
   return part.isDecoy;
+}
+
+/** Returns true when level data has multiple blueprint groups. */
+export function isMultiBlueprintLevel(data: ModuleAssemblyLevelData): boolean {
+  return (data.blueprints?.length ?? 0) > 1;
 }
