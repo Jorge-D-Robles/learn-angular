@@ -111,6 +111,33 @@ const SIGNAL_CORPS_STEPS: readonly TutorialStep[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Corridor Runner (4 steps)
+// ---------------------------------------------------------------------------
+
+const CORRIDOR_RUNNER_STEPS: readonly TutorialStep[] = [
+  {
+    title: 'Edit Route Config',
+    description:
+      'Open the route editor and define paths through the station corridors. Add route objects with path and component mappings, redirects, wildcards, and guards.',
+  },
+  {
+    title: 'Run Navigation Test',
+    description:
+      'Press Run to simulate crew navigation through the corridor map. A crew member walks the routes based on your config — correct routes lead to station modules.',
+  },
+  {
+    title: 'Avoid Hull Breaches',
+    description:
+      'Unresolved routes cause 404 hull breaches — dead-ends where corridors decompress. Two hull breaches and the mission fails. Fix your route config before running again.',
+  },
+  {
+    title: 'Read the URL Bar',
+    description:
+      'The URL bar at the top shows the current route as crew navigate. Type paths directly into the bar to test routes, and watch how the routing system resolves each path.',
+  },
+];
+
+// ---------------------------------------------------------------------------
 // Terminal Hack (4 steps)
 // ---------------------------------------------------------------------------
 
@@ -309,6 +336,7 @@ export const MINIGAME_TUTORIALS: readonly MinigameTutorialData[] = [
   { gameId: 'wire-protocol', steps: WIRE_PROTOCOL_STEPS },
   { gameId: 'flow-commander', steps: FLOW_COMMANDER_STEPS },
   { gameId: 'signal-corps', steps: SIGNAL_CORPS_STEPS },
+  { gameId: 'corridor-runner', steps: CORRIDOR_RUNNER_STEPS },
   { gameId: 'terminal-hack', steps: TERMINAL_HACK_STEPS },
   { gameId: 'power-grid', steps: POWER_GRID_STEPS },
   { gameId: 'data-relay', steps: DATA_RELAY_STEPS },

@@ -10,6 +10,7 @@ const GAME_IDS_WITH_TUTORIALS: MinigameId[] = [
   'wire-protocol',
   'flow-commander',
   'signal-corps',
+  'corridor-runner',
   'terminal-hack',
   'power-grid',
   'data-relay',
@@ -78,8 +79,29 @@ describe('getMinigameTutorial', () => {
   });
 
   it('should return undefined for an unknown gameId', () => {
-    const result = getMinigameTutorial('corridor-runner');
+    const result = getMinigameTutorial('nonexistent-game' as MinigameId);
     expect(result).toBeUndefined();
+  });
+});
+
+describe('Corridor Runner tutorial', () => {
+  it('should have tutorial data for corridor-runner', () => {
+    const result = getMinigameTutorial('corridor-runner');
+    expect(result).toBeDefined();
+    expect(result!.gameId).toBe('corridor-runner');
+  });
+
+  it('should have 4 steps', () => {
+    const result = getMinigameTutorial('corridor-runner');
+    expect(result!.steps.length).toBe(4);
+  });
+
+  it('should have non-empty title and description for every step', () => {
+    const result = getMinigameTutorial('corridor-runner');
+    for (const step of result!.steps) {
+      expect(step.title.length).toBeGreaterThan(0);
+      expect(step.description.length).toBeGreaterThan(0);
+    }
   });
 });
 

@@ -562,7 +562,7 @@ describe('provideMinigame — blast-doors', () => {
   });
 });
 
-describe('provideMinigame — game without tutorial data', () => {
+describe('provideMinigame — corridor-runner tutorial data', () => {
   let registry: MinigameRegistryService;
 
   @Component({ selector: 'app-stub', template: '' })
@@ -583,9 +583,13 @@ describe('provideMinigame — game without tutorial data', () => {
     registry = TestBed.inject(MinigameRegistryService);
   });
 
-  it('should NOT include tutorialSteps for games without tutorial data', () => {
+  it('should include tutorialSteps for corridor-runner after registration', () => {
     const config = registry.getConfig('corridor-runner');
+    const tutorial = getMinigameTutorial('corridor-runner');
     expect(config).toBeDefined();
-    expect(config!.tutorialSteps).toBeUndefined();
+    expect(tutorial).toBeDefined();
+    expect(config!.tutorialSteps).toBeDefined();
+    expect(config!.tutorialSteps!.length).toBe(tutorial!.steps.length);
+    expect(config!.tutorialSteps![0].title).toBe(tutorial!.steps[0].title);
   });
 });
