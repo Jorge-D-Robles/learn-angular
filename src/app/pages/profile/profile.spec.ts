@@ -12,6 +12,7 @@ import { MasteryService } from '../../core/progression/mastery.service';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { SpacedRepetitionService, type DegradingTopic } from '../../core/progression/spaced-repetition.service';
 import { AchievementService, type Achievement } from '../../core/progression/achievement.service';
+import { CosmeticService } from '../../core/progression/cosmetic.service';
 import { APP_ICONS } from '../../shared/icons';
 import type { MinigameConfig, MinigameId } from '../../core/minigame/minigame.types';
 import { DifficultyTier } from '../../core/minigame/minigame.types';
@@ -197,6 +198,12 @@ async function setup(overrides: {
       getMockProvider(AchievementService, {
         achievements: signal<readonly Achievement[]>([]),
         earnedCount: signal(0),
+      }),
+      getMockProvider(CosmeticService, {
+        getAllCosmetics: vi.fn().mockReturnValue([]),
+        getEquipped: vi.fn().mockReturnValue(null),
+        equipCosmetic: vi.fn().mockReturnValue(true),
+        getUnlockedCosmetics: vi.fn().mockReturnValue([]),
       }),
       getMockProvider(Router, {
         navigate: navigateFn,
@@ -456,5 +463,22 @@ describe('ProfilePage', () => {
     practiceBtn.click();
     fixture.detectChanges();
     expect(navigateFn).toHaveBeenCalledWith(['/refresher', 'module-assembly']);
+  });
+
+  // --- New tests for T-2026-542 ---
+
+  // 26. Display "Station Customization" heading in cosmetics section
+  it('should display "Station Customization" heading in the cosmetics section', async () => {
+    const { element } = await setup();
+    const heading = element.querySelector('.profile__cosmetics-section h2');
+    expect(heading).toBeTruthy();
+    expect(heading?.textContent).toContain('Station Customization');
+  });
+
+  // 27. Render CosmeticGalleryComponent in cosmetics section
+  it('should render nx-cosmetic-gallery in the cosmetics section', async () => {
+    const { element } = await setup();
+    const gallery = element.querySelector('.profile__cosmetics-section nx-cosmetic-gallery');
+    expect(gallery).toBeTruthy();
   });
 });

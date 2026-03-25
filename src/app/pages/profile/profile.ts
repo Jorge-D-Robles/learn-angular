@@ -15,6 +15,7 @@ import { StreakBadgeComponent } from '../../shared/components/streak-badge/strea
 import { ProgressBarComponent } from '../../shared/components/progress-bar/progress-bar';
 import { TimeFormatPipe } from '../../shared/pipes/time-format.pipe';
 import { AchievementGridComponent } from '../../shared/components/achievement-grid/achievement-grid';
+import { CosmeticGalleryComponent } from '../../shared/components/cosmetic-gallery/cosmetic-gallery';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import type { DegradingTopicItem } from '../../shared/components/degradation-alert/degradation-alert';
 import { DegradationAlertComponent } from '../../shared/components';
@@ -30,6 +31,7 @@ import { DegradationAlertComponent } from '../../shared/components';
     ProgressBarComponent,
     TimeFormatPipe,
     AchievementGridComponent,
+    CosmeticGalleryComponent,
     DegradationAlertComponent,
     LoadingSpinnerComponent,
   ],
@@ -96,6 +98,11 @@ import { DegradationAlertComponent } from '../../shared/components';
     <section class="profile__achievements-section">
       <h2>Achievements</h2>
       <nx-achievement-grid />
+    </section>
+
+    <section class="profile__cosmetics-section">
+      <h2>Station Customization</h2>
+      <nx-cosmetic-gallery />
     </section>
 
     }

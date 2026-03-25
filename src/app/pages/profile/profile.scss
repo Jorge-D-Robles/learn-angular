@@ -75,7 +75,17 @@ nx-xp-progress-bar {
 }
 
 .profile__achievements-section {
+  margin-bottom: var(--nx-space-6);
+
   h2 {
     margin: 0 0 var(--nx-space-2);
+  }
+}
+
+.profile__cosmetics-section {
+  margin-bottom: var(--nx-space-6);
+
+  h2 {
+    margin: 0 0 var(--nx-space-4);
   }
 }
