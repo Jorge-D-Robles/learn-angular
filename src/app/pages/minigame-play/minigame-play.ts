@@ -56,6 +56,7 @@ import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner
             [message]="loadError()!"
             [retryable]="true"
             (retry)="onRetryLoad()" />
+          <a [routerLink]="['/minigames', gameId()]">Back to Level Select</a>
         </div>
       }
       @case ('loading') {

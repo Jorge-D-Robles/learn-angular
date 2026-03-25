@@ -1535,6 +1535,31 @@ describe('MinigamePlayPage', () => {
     expect(component.engine()).not.toBeNull();
   });
 
+  // --- 49b. Error state renders Back link to level select page ---
+  it('should render a Back link to level select in the error state', async () => {
+    const factory = vi.fn().mockReturnValue(new TestEngine());
+    const { element, fixture } = await setup({
+      registry: {
+        getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+        getEngineFactory: vi.fn().mockReturnValue(factory),
+      },
+      levelLoader: {
+        loadLevel: vi.fn().mockReturnValue(throwError(() => new Error('Not found'))),
+      },
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const errorDiv = element.querySelector('.play-state--load-error');
+    expect(errorDiv).toBeTruthy();
+
+    const link = errorDiv?.querySelector('a');
+    expect(link).toBeTruthy();
+    expect(link?.textContent).toContain('Back to Level Select');
+    expect(link?.getAttribute('href')).toBe('/minigames/module-assembly');
+  });
+
   // --- 50. Registry scoreConfig.maxScore overrides engine maxScore ---
   it('should use registry scoreConfig.maxScore over engine maxScore', async () => {
     const scoringEngine = new TestEngineForScoring({ maxScore: 1000 });
