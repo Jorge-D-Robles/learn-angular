@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { GameProgressionService } from '../core/progression/game-progression.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter, map } from 'rxjs';
 
 @Component({
   selector: 'app-bottom-nav',
@@ -17,12 +18,12 @@ import { GameProgressionService } from '../core/progression/game-progression.ser
         <span class="bottom-nav__label">Dashboard</span>
       </a>
       <a
-        [routerLink]="missionLink()"
-        routerLinkActive="active"
+        routerLink="/campaign"
+        [class.active]="isMissionActive()"
         class="bottom-nav__tab"
       >
         <span class="bottom-nav__icon bottom-nav__icon--mission" aria-hidden="true"></span>
-        <span class="bottom-nav__label">{{ missionLabel() }}</span>
+        <span class="bottom-nav__label">Mission</span>
       </a>
       <a
         routerLink="/minigames"
@@ -45,14 +46,18 @@ import { GameProgressionService } from '../core/progression/game-progression.ser
   styleUrl: './bottom-nav.scss',
 })
 export class BottomNavComponent {
-  private readonly progression = inject(GameProgressionService);
+  private readonly router = inject(Router);
 
-  readonly missionLink = computed(() => {
-    const mission = this.progression.currentMission();
-    return mission ? `/mission/${mission.chapterId}` : '/campaign';
-  });
+  private readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects),
+    ),
+    { initialValue: this.router.url },
+  );
 
-  readonly missionLabel = computed(() => {
-    return this.progression.currentMission() ? 'Mission' : 'Complete';
+  readonly isMissionActive = computed(() => {
+    const url = this.currentUrl().split('?')[0];
+    return url.startsWith('/campaign') || url.startsWith('/mission/');
   });
 }

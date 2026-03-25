@@ -1,22 +1,11 @@
-import { Component, signal, WritableSignal } from '@angular/core';
+import { Component } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { provideRouter, RouterLinkActive } from '@angular/router';
-import { createComponent, getMockProvider } from '../../testing/test-utils';
+import { provideRouter, Router, RouterLinkActive } from '@angular/router';
+import { createComponent } from '../../testing/test-utils';
 import { BottomNavComponent } from './bottom-nav';
-import { GameProgressionService } from '../core/progression/game-progression.service';
-import type { StoryMission } from '../core/curriculum/curriculum.types';
 
-function stubMission(chapterId: number): StoryMission {
-  return {
-    chapterId,
-    title: `Chapter ${chapterId}`,
-    angularTopic: 'test',
-    narrative: 'test',
-    unlocksMinigame: null,
-    deps: [],
-    phase: 1,
-  } as StoryMission;
-}
+@Component({ template: '', standalone: true })
+class DummyComponent {}
 
 @Component({
   template: `<app-bottom-nav />`,
@@ -25,17 +14,16 @@ function stubMission(chapterId: number): StoryMission {
 class TestHost {}
 
 describe('BottomNavComponent', () => {
-  async function setup(
-    missionSignal?: WritableSignal<StoryMission | null>,
-  ) {
-    const currentMission =
-      missionSignal ?? signal<StoryMission | null>(stubMission(1));
+  async function setup() {
     return createComponent(TestHost, {
       providers: [
-        provideRouter([]),
-        getMockProvider(GameProgressionService, {
-          currentMission: currentMission.asReadonly(),
-        }),
+        provideRouter([
+          { path: '', component: DummyComponent },
+          { path: 'campaign', component: DummyComponent },
+          { path: 'mission/:chapterId', component: DummyComponent },
+          { path: 'minigames', component: DummyComponent },
+          { path: 'profile', component: DummyComponent },
+        ]),
       ],
     });
   }
@@ -62,7 +50,7 @@ describe('BottomNavComponent', () => {
     const { element } = await setup();
     const links = element.querySelectorAll('nav a');
     const hrefs = Array.from(links).map((a) => a.getAttribute('href'));
-    expect(hrefs).toEqual(['/', '/mission/1', '/minigames', '/profile']);
+    expect(hrefs).toEqual(['/', '/campaign', '/minigames', '/profile']);
   });
 
   it('should use a nav element for accessibility', async () => {
@@ -93,70 +81,63 @@ describe('BottomNavComponent', () => {
     expect(icons.length).toBe(4);
   });
 
-  // --- Dynamic link resolution ---
+  // --- Static Mission link ---
 
-  it('should render mission link pointing to /mission/1 when currentMission is chapter 1', async () => {
-    const missionSignal = signal<StoryMission | null>(stubMission(1));
-    const { element } = await setup(missionSignal);
+  it('should have Mission tab link pointing to /campaign', async () => {
+    const { element } = await setup();
     const links = element.querySelectorAll('nav a');
-    expect(links[1].getAttribute('href')).toBe('/mission/1');
+    expect(links[1].getAttribute('href')).toBe('/campaign');
   });
 
-  it('should render mission link pointing to /mission/5 when currentMission is chapter 5', async () => {
-    const missionSignal = signal<StoryMission | null>(stubMission(5));
-    const { element } = await setup(missionSignal);
-    const links = element.querySelectorAll('nav a');
-    expect(links[1].getAttribute('href')).toBe('/mission/5');
-  });
-
-  it('should display "Mission" as link text when a mission is available', async () => {
-    const missionSignal = signal<StoryMission | null>(stubMission(1));
-    const { element } = await setup(missionSignal);
+  it('should always display "Mission" as the label', async () => {
+    const { element } = await setup();
     const labels = element.querySelectorAll('.bottom-nav__label');
     expect(labels[1].textContent?.trim()).toBe('Mission');
   });
 
-  // --- Completed state ---
+  // --- Active state highlighting ---
 
-  it('should render link pointing to /campaign when all missions complete', async () => {
-    const missionSignal = signal<StoryMission | null>(null);
-    const { element } = await setup(missionSignal);
-    const links = element.querySelectorAll('nav a');
-    expect(links[1].getAttribute('href')).toBe('/campaign');
-  });
+  it('should apply active class to Mission tab when navigated to /campaign', async () => {
+    const { fixture, element } = await setup();
+    const router = fixture.debugElement.injector.get(Router);
 
-  it('should display "Complete" as link text when all missions complete', async () => {
-    const missionSignal = signal<StoryMission | null>(null);
-    const { element } = await setup(missionSignal);
-    const labels = element.querySelectorAll('.bottom-nav__label');
-    expect(labels[1].textContent?.trim()).toBe('Complete');
-  });
-
-  // --- Reactivity ---
-
-  it('should update link when currentMission signal changes', async () => {
-    const missionSignal = signal<StoryMission | null>(stubMission(1));
-    const { fixture, element } = await setup(missionSignal);
-    const links = element.querySelectorAll('nav a');
-    expect(links[1].getAttribute('href')).toBe('/mission/1');
-
-    missionSignal.set(stubMission(3));
+    await router.navigateByUrl('/campaign');
+    await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(links[1].getAttribute('href')).toBe('/mission/3');
+    const missionTab = element.querySelectorAll('nav a')[1];
+    expect(missionTab.classList.contains('active')).toBe(true);
   });
 
-  it('should update to campaign link when missions become fully completed', async () => {
-    const missionSignal = signal<StoryMission | null>(stubMission(1));
-    const { fixture, element } = await setup(missionSignal);
-    const links = element.querySelectorAll('nav a');
-    expect(links[1].getAttribute('href')).toBe('/mission/1');
-    expect(element.querySelectorAll('.bottom-nav__label')[1].textContent?.trim()).toBe('Mission');
+  it('should apply active class to Mission tab when navigated to /mission/3', async () => {
+    const { fixture, element } = await setup();
+    const router = fixture.debugElement.injector.get(Router);
 
-    missionSignal.set(null);
+    await router.navigateByUrl('/mission/3');
+    await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(links[1].getAttribute('href')).toBe('/campaign');
-    expect(element.querySelectorAll('.bottom-nav__label')[1].textContent?.trim()).toBe('Complete');
+    const missionTab = element.querySelectorAll('nav a')[1];
+    expect(missionTab.classList.contains('active')).toBe(true);
+  });
+
+  it('should not apply active class to Mission tab when navigated to /minigames', async () => {
+    const { fixture, element } = await setup();
+    const router = fixture.debugElement.injector.get(Router);
+
+    await router.navigateByUrl('/minigames');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const missionTab = element.querySelectorAll('nav a')[1];
+    expect(missionTab.classList.contains('active')).toBe(false);
+  });
+
+  it('should create without GameProgressionService', async () => {
+    const { fixture } = await setup();
+    const bottomNav = fixture.debugElement.query(
+      By.directive(BottomNavComponent),
+    );
+    expect(bottomNav.componentInstance).toBeInstanceOf(BottomNavComponent);
   });
 });
