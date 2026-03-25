@@ -39,12 +39,14 @@
 
 <section class="dashboard__shortcuts">
   <h2 class="dashboard__section-title">Quick Play</h2>
-  @if (quickPlayGames().length > 0) {
+  @if (quickPlayCards().length > 0) {
     <div class="dashboard__shortcut-list">
-      @for (game of quickPlayGames(); track game.id) {
-        <button type="button" class="dashboard__shortcut-btn" (click)="navigateToMinigame(game.id)">
-          {{ game.name }}
-        </button>
+      @for (game of quickPlayCards(); track game.config.id) {
+        <nx-minigame-card
+          [config]="game.config"
+          [mastery]="game.masteryStars"
+          [levelsCompleted]="game.levelsCompleted"
+          (cardClicked)="navigateToMinigame($event)" />
       }
     </div>
   } @else {

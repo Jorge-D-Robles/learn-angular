@@ -49,7 +49,7 @@ h1 {
 .dashboard__shortcut-list {
   display: flex;
   flex-wrap: nowrap;
-  gap: 0.5rem;
+  gap: 0.75rem;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
@@ -58,21 +58,10 @@ h1 {
   &::-webkit-scrollbar {
     display: none;
   }
-}
 
-.dashboard__shortcut-btn {
-  flex-shrink: 0;
-  scroll-snap-align: start;
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--nx-color-border, #334155);
-  border-radius: 0.25rem;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  font-weight: 500;
-
-  &:hover {
-    background: var(--nx-color-surface-hover, #1e293b);
+  > nx-minigame-card {
+    flex: 0 0 200px;
+    scroll-snap-align: start;
   }
 }
 
@@ -92,6 +81,11 @@ h1 {
   .dashboard__shortcut-list {
     flex-wrap: wrap;
     overflow-x: visible;
+
+    > nx-minigame-card {
+      flex: 1 1 200px;
+      max-width: 250px;
+    }
   }
 }
 

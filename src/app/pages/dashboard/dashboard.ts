@@ -11,7 +11,8 @@ import {
   getNextRankThreshold,
 } from '../../core/progression';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
-import type { MinigameId } from '../../core/minigame/minigame.types';
+import { LevelProgressionService } from '../../core/levels/level-progression.service';
+import type { MinigameConfig, MinigameId } from '../../core/minigame/minigame.types';
 import { ALL_STORY_MISSIONS } from '../../core/curriculum/curriculum.data';
 import type { ChapterId } from '../../core/curriculum/curriculum.types';
 import type { DegradingTopicItem } from '../../shared/components/degradation-alert/degradation-alert';
@@ -22,7 +23,14 @@ import {
   StreakBadgeComponent,
   DegradationAlertComponent,
   DailyChallengeCardComponent,
+  MinigameCardComponent,
 } from '../../shared/components';
+
+interface QuickPlayCardData {
+  readonly config: MinigameConfig;
+  readonly masteryStars: number;
+  readonly levelsCompleted: number;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -33,6 +41,7 @@ import {
     StreakBadgeComponent,
     DegradationAlertComponent,
     DailyChallengeCardComponent,
+    MinigameCardComponent,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
@@ -44,6 +53,7 @@ export class DashboardPage {
   private readonly spacedRepetition = inject(SpacedRepetitionService);
   private readonly masteryService = inject(MasteryService);
   private readonly minigameRegistry = inject(MinigameRegistryService);
+  private readonly levelProgression = inject(LevelProgressionService);
   private readonly streakService = inject(StreakService);
   private readonly router = inject(Router);
 
@@ -75,12 +85,16 @@ export class DashboardPage {
     return getNextRankThreshold(totalXp)?.rank ?? '';
   });
 
-  readonly quickPlayGames = computed(() => {
+  readonly quickPlayCards = computed<QuickPlayCardData[]>(() => {
     const unlocked = this.gameProgression.getUnlockedMinigames();
-    return unlocked.slice(0, 4).map((id) => ({
-      id,
-      name: this.minigameRegistry.getConfig(id)?.name ?? id,
-    }));
+    return unlocked.slice(0, 4).map((id) => {
+      const config = this.minigameRegistry.getConfig(id);
+      if (!config) return null;
+      const masteryStars = this.masteryService.getMastery(id);
+      const progress = this.levelProgression.getLevelProgress(id);
+      const levelsCompleted = progress.filter(l => l.completed).length;
+      return { config, masteryStars, levelsCompleted };
+    }).filter((item): item is QuickPlayCardData => item !== null);
   });
 
   readonly degradingTopicItems = computed<DegradingTopicItem[]>(() => {

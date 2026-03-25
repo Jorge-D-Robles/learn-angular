@@ -15,6 +15,7 @@ import { SpacedRepetitionService, type DegradingTopic } from '../../core/progres
 import { MasteryService } from '../../core/progression/mastery.service';
 import { StreakService } from '../../core/progression/streak.service';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
+import { LevelProgressionService, type LevelProgress } from '../../core/levels/level-progression.service';
 import { DifficultyTier, type MinigameConfig, type MinigameId } from '../../core/minigame/minigame.types';
 import { APP_ICONS } from '../../shared/icons';
 import type { Rank } from '../../core/state/rank.constants';
@@ -67,6 +68,18 @@ const TEST_CHALLENGE: DailyChallenge = {
   completed: false,
 };
 
+function makeLevelProgress(overrides: Partial<LevelProgress> = {}): LevelProgress {
+  return {
+    levelId: 'test-level',
+    completed: false,
+    bestScore: 0,
+    starRating: 0,
+    perfect: false,
+    attempts: 0,
+    ...overrides,
+  };
+}
+
 interface SetupOptions {
   totalXp?: number;
   currentRank?: Rank;
@@ -78,6 +91,7 @@ interface SetupOptions {
   mastery?: ReadonlyMap<MinigameId, number>;
   currentStreak?: number;
   streakMultiplier?: number;
+  levelProgress?: Map<MinigameId, readonly LevelProgress[]>;
 }
 
 async function setup(options: SetupOptions = {}) {
@@ -92,6 +106,7 @@ async function setup(options: SetupOptions = {}) {
     mastery = new Map<MinigameId, number>(),
     currentStreak = 3,
     streakMultiplier = 1.3,
+    levelProgress = new Map<MinigameId, readonly LevelProgress[]>(),
   } = options;
 
   // Default: when currentMission is null and completedMissionCount not explicitly set,
@@ -130,6 +145,9 @@ async function setup(options: SetupOptions = {}) {
       getMockProvider(StreakService, {
         activeStreakDays: signal(currentStreak),
         streakMultiplier: signal(streakMultiplier),
+      }),
+      getMockProvider(LevelProgressionService, {
+        getLevelProgress: (id: MinigameId) => levelProgress.get(id) ?? [],
       }),
       getMockProvider(Router, {
         navigate: navigateFn,
@@ -261,6 +279,9 @@ describe('DashboardPage', () => {
           activeStreakDays: signal(3),
           streakMultiplier: signal(1.3),
         }),
+        getMockProvider(LevelProgressionService, {
+          getLevelProgress: () => [],
+        }),
         getMockProvider(Router, {
           navigate: vi.fn(),
         }),
@@ -302,15 +323,91 @@ describe('DashboardPage', () => {
     const { element } = await setup({
       unlockedMinigames: ['module-assembly' as MinigameId, 'wire-protocol' as MinigameId],
     });
-    const shortcuts = element.querySelectorAll('.dashboard__shortcut-btn');
-    expect(shortcuts.length).toBeGreaterThan(0);
+    const cards = element.querySelectorAll('nx-minigame-card');
+    expect(cards.length).toBeGreaterThan(0);
   });
 
   it('should show empty state for quick-play when no games unlocked', async () => {
     const { element } = await setup({ unlockedMinigames: [] });
-    const shortcuts = element.querySelectorAll('.dashboard__shortcut-btn');
-    expect(shortcuts.length).toBe(0);
+    const cards = element.querySelectorAll('nx-minigame-card');
+    expect(cards.length).toBe(0);
     expect(element.textContent).toContain('Start your first mission');
+  });
+
+  it('should render MinigameCardComponent for each quick-play game', async () => {
+    const { element } = await setup({
+      unlockedMinigames: ['module-assembly' as MinigameId, 'wire-protocol' as MinigameId],
+    });
+    const cards = element.querySelectorAll('.dashboard__shortcut-list nx-minigame-card');
+    expect(cards.length).toBe(2);
+  });
+
+  it('should pass mastery stars to MinigameCardComponent', async () => {
+    const mastery = new Map<MinigameId, number>([
+      ['module-assembly' as MinigameId, 3],
+    ]);
+    const { element } = await setup({
+      unlockedMinigames: ['module-assembly' as MinigameId],
+      mastery,
+    });
+    const card = element.querySelector('.dashboard__shortcut-list nx-minigame-card');
+    expect(card).toBeTruthy();
+    // The mastery-stars component renders star icons based on the mastery input
+    const starsContainer = card!.querySelector('nx-mastery-stars');
+    expect(starsContainer).toBeTruthy();
+    // Card also shows completion label
+    expect(card!.textContent).toContain('Module Assembly');
+  });
+
+  it('should pass level completion count to MinigameCardComponent', async () => {
+    const progress: LevelProgress[] = Array.from({ length: 18 }, (_, i) =>
+      makeLevelProgress({
+        levelId: `module-assembly-${i + 1}`,
+        completed: i < 5,
+      }),
+    );
+    const levelProgress = new Map<MinigameId, readonly LevelProgress[]>([
+      ['module-assembly' as MinigameId, progress],
+    ]);
+    const { element } = await setup({
+      unlockedMinigames: ['module-assembly' as MinigameId],
+      levelProgress,
+    });
+    const card = element.querySelector('.dashboard__shortcut-list nx-minigame-card');
+    expect(card).toBeTruthy();
+    expect(card!.textContent).toContain('5/18 levels');
+  });
+
+  it('should limit quick-play cards to 4 maximum', async () => {
+    const { element } = await setup({
+      unlockedMinigames: [
+        'module-assembly' as MinigameId,
+        'wire-protocol' as MinigameId,
+        'flow-commander' as MinigameId,
+        'signal-corps' as MinigameId,
+        'corridor-runner' as MinigameId,
+        'terminal-hack' as MinigameId,
+      ],
+    });
+    const cards = element.querySelectorAll('.dashboard__shortcut-list nx-minigame-card');
+    expect(cards.length).toBe(4);
+  });
+
+  it('should navigate to /minigames/:gameId when card is clicked', async () => {
+    const { element, fixture, navigateFn } = await setup({
+      unlockedMinigames: ['module-assembly' as MinigameId],
+    });
+    const card = element.querySelector('.dashboard__shortcut-list nx-minigame-card') as HTMLElement;
+    expect(card).toBeTruthy();
+    card.click();
+    fixture.detectChanges();
+    expect(navigateFn).toHaveBeenCalledWith(['/minigames', 'module-assembly']);
+  });
+
+  it('should not render any cards when no games are unlocked', async () => {
+    const { element } = await setup({ unlockedMinigames: [] });
+    const cards = element.querySelectorAll('.dashboard__shortcut-list nx-minigame-card');
+    expect(cards.length).toBe(0);
   });
 
   it('should render streak badge', async () => {
