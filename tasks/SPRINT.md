@@ -1,9 +1,9 @@
 # Current Sprint
 
-Sprint: S29-p2-ui-components
+Sprint: S30-p2-wiring
 Milestone: P2
-Goal: Build P2 UI components, page layouts, and wiring integrations
-Started: 2026-03-24
+Goal: Wire remaining P2 components, pages, and integration tests
+Started: 2026-03-25
 
 <!-- Velocity: (recorded at sprint close) -->
 
@@ -11,35 +11,15 @@ Started: 2026-03-24
 
 ## Active
 
-*(none)*
 
 ---
 
 ## Queue
 
-- Title: Create ProfilePage component with player stats
-- Priority: medium | Size: M | Milestone: P2
-
-- Title: Create StationVisualizationComponent for dashboard module glow map
-- Priority: medium | Size: M | Milestone: P2
-
-- Title: Create CampaignProgressPage for story mission overview
-- Priority: medium | Size: M | Milestone: P2
-
-- Title: Create MinigameCardComponent for minigame hub grid
-- Priority: medium | Size: S | Milestone: P2
-
-- Title: Create StepProgressComponent for story mission step indicator
-- Priority: medium | Size: S | Milestone: P2
-
-- Title: Create MasteryTableComponent for sortable topic mastery display
-- Priority: medium | Size: S | Milestone: P2
-
-- Title: Create ProgressBarComponent for generic progress display
-- Priority: medium | Size: S | Milestone: P2
-
-- Title: Create LevelCardComponent for level select page level list
-- Priority: medium | Size: S | Milestone: P2
+- T-2026-339: Wire MinigameCardComponent into MinigameHubPage grid layout [S]
+- T-2026-340: Wire LevelCardComponent into LevelSelectPage level list [S]
+- T-2026-341: Wire StepProgressComponent into StoryMissionPage for step indicator [S]
+- T-2026-343: Wire MasteryTableComponent into ProfilePage mastery section [S]
 
 ---
 
