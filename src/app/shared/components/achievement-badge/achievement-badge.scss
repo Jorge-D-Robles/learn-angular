@@ -1,0 +1,86 @@
+:host {
+  display: inline-flex;
+  background-color: var(--nx-color-hull);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-button);
+  line-height: 1;
+}
+
+.achievement-badge__inner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nx-space-2);
+}
+
+// State variants
+:host(.achievement-badge--earned) {
+  opacity: 1;
+}
+
+:host(.achievement-badge--locked) {
+  opacity: 0.5;
+}
+
+:host(.achievement-badge--hidden) {
+  opacity: 0.4;
+}
+
+// Type variants (border-color accent for earned)
+:host(.achievement-badge--discovery.achievement-badge--earned) {
+  border-color: var(--nx-color-reactor-blue);
+  filter: drop-shadow(0 0 4px var(--nx-color-reactor-blue));
+}
+
+:host(.achievement-badge--mastery.achievement-badge--earned) {
+  border-color: var(--nx-color-solar-gold);
+  filter: drop-shadow(0 0 4px var(--nx-color-solar-gold));
+}
+
+:host(.achievement-badge--commitment.achievement-badge--earned) {
+  border-color: var(--nx-color-sensor-green);
+  filter: drop-shadow(0 0 4px var(--nx-color-sensor-green));
+}
+
+// Type color applied to icon for all states
+:host(.achievement-badge--discovery) {
+  color: var(--nx-color-reactor-blue);
+}
+
+:host(.achievement-badge--mastery) {
+  color: var(--nx-color-solar-gold);
+}
+
+:host(.achievement-badge--commitment) {
+  color: var(--nx-color-sensor-green);
+}
+
+// Size variants
+:host(.achievement-badge--sm) {
+  padding: 2px var(--nx-space-2);
+  font-size: 0.75rem;
+}
+
+:host(.achievement-badge--md) {
+  padding: var(--nx-space-2) var(--nx-space-3);
+  font-size: var(--nx-text-caption-size, 0.875rem);
+}
+
+:host(.achievement-badge--lg) {
+  padding: var(--nx-space-3) var(--nx-space-4);
+  font-size: var(--nx-text-body-size, 1rem);
+}
+
+.achievement-badge__title {
+  font-weight: 600;
+}
+
+.achievement-badge__date {
+  font-size: var(--nx-text-caption-size);
+  opacity: 0.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host(.achievement-badge--earned) {
+    filter: none;
+  }
+}

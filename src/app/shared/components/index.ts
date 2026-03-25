@@ -1,3 +1,4 @@
+export { AchievementBadgeComponent } from './achievement-badge/achievement-badge';
 export { CodeEditorComponent } from './code-editor/code-editor';
 export { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog';
 export { DegradationAlertComponent } from './degradation-alert/degradation-alert';

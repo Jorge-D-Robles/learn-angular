@@ -47,6 +47,7 @@ class ColorInheritTestHost {}
 })
 class AllIconsTestHost {
   iconNames = [
+    'eye-off',
     'house',
     'lock',
     'map',
@@ -63,6 +64,7 @@ class AllIconsTestHost {
     'chevron-up',
     'circle-alert',
     'refresh-cw',
+    'trophy',
     'x',
   ];
 }
@@ -134,6 +136,6 @@ describe('Icon Configuration', () => {
       providers: ICON_PROVIDERS,
     });
     const svgs = element.querySelectorAll('svg');
-    expect(svgs.length).toBe(17);
+    expect(svgs.length).toBe(19);
   });
 });
