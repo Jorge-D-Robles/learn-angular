@@ -89,13 +89,13 @@ describe('CampaignPage', () => {
 
   it('should render all 6 phase groups', async () => {
     const { element } = await setup();
-    const phaseHeaders = element.querySelectorAll('.campaign__phase-header');
+    const phaseHeaders = element.querySelectorAll('nx-phase-header');
     expect(phaseHeaders.length).toBe(6);
   });
 
   it('should show correct phase names', async () => {
     const { element } = await setup();
-    const phaseNames = element.querySelectorAll('.campaign__phase-name');
+    const phaseNames = element.querySelectorAll('.phase-header__name');
     const names = Array.from(phaseNames).map((el) => el.textContent?.trim());
     expect(names).toContain('Phase 1: Foundations');
     expect(names).toContain('Phase 2: Navigation');
@@ -108,7 +108,7 @@ describe('CampaignPage', () => {
   it('should show progress counts in phase headers', async () => {
     const completedPhase1 = new Set<ChapterId>([1, 2, 3]);
     const { element } = await setup({ completedMissions: completedPhase1 });
-    const progressLabels = element.querySelectorAll('.campaign__phase-progress');
+    const progressLabels = element.querySelectorAll('.phase-header__progress');
     const firstPhaseProgress = progressLabels[0]?.textContent?.trim();
     expect(firstPhaseProgress).toContain('3');
     expect(firstPhaseProgress).toContain('10');
@@ -202,26 +202,21 @@ describe('CampaignPage', () => {
     expect(overviewBar?.getAttribute('aria-valuenow')).toBe('15');
   });
 
-  it('should render progress bar in each phase header', async () => {
-    const { element } = await setup();
-    const phaseHeaderBars = element.querySelectorAll('.campaign__phase-header nx-progress-bar');
-    expect(phaseHeaderBars.length).toBe(6);
-  });
-
-  it('should bind phase progress bar value to completedCount and max to totalCount', async () => {
+  it('should pass progress counts to each phase header component', async () => {
     const completedSet = new Set<ChapterId>([1, 2, 3]);
     const { element } = await setup({ completedMissions: completedSet });
-    const phaseHeaderBars = element.querySelectorAll('.campaign__phase-header nx-progress-bar');
-    const firstPhaseBar = phaseHeaderBars[0];
-    // 3/10 = 30%
-    expect(firstPhaseBar?.getAttribute('aria-valuenow')).toBe('30');
+    const phaseHeaders = element.querySelectorAll('nx-phase-header');
+    // First phase: 3 of 10 completed
+    expect(phaseHeaders[0]?.getAttribute('aria-label')).toContain('3 of 10 completed');
+    // Second phase: 0 of 3 completed
+    expect(phaseHeaders[1]?.getAttribute('aria-label')).toContain('0 of 3 completed');
   });
 
-  it('should show 0% progress bar when no missions completed', async () => {
+  it('should show 0 progress when no missions completed', async () => {
     const { element } = await setup({ completedMissions: new Set() });
-    const allBars = element.querySelectorAll('nx-progress-bar');
-    allBars.forEach((bar) => {
-      expect(bar.getAttribute('aria-valuenow')).toBe('0');
+    const phaseHeaders = element.querySelectorAll('nx-phase-header');
+    phaseHeaders.forEach((header) => {
+      expect(header.getAttribute('aria-label')).toContain('0 of');
     });
   });
 
@@ -231,5 +226,20 @@ describe('CampaignPage', () => {
     expect(overviewBar).toBeTruthy();
     expect(overviewBar?.getAttribute('aria-valuemax')).toBe('100');
     expect(overviewBar?.getAttribute('aria-valuenow')).toBe('0');
+  });
+
+  it('should project mission cards inside phase headers', async () => {
+    const { element } = await setup();
+    const firstPhaseHeader = element.querySelector('nx-phase-header');
+    const projectedCards = firstPhaseHeader?.querySelectorAll('nx-mission-card');
+    // First phase (Foundations) has 10 chapters
+    expect(projectedCards?.length).toBe(10);
+  });
+
+  it('should render phase descriptions via PhaseHeaderComponent', async () => {
+    const { element } = await setup();
+    const descriptions = element.querySelectorAll('.phase-header__description');
+    const firstDesc = descriptions[0]?.textContent?.trim();
+    expect(firstDesc).toContain('core systems are offline');
   });
 });

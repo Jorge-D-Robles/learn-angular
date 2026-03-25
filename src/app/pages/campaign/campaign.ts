@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { GameProgressionService } from '../../core/progression/game-progression.service';
 import { ALL_STORY_MISSIONS, CURRICULUM } from '../../core/curriculum/curriculum.data';
 import type { ChapterId, PhaseNumber, StoryMission } from '../../core/curriculum/curriculum.types';
-import { MissionCardComponent, ProgressBarComponent } from '../../shared/components';
+import { MissionCardComponent, PhaseHeaderComponent, ProgressBarComponent } from '../../shared/components';
 
 interface MissionViewModel {
   mission: StoryMission;
@@ -23,7 +23,7 @@ interface PhaseGroupViewModel {
 
 @Component({
   selector: 'app-campaign',
-  imports: [MissionCardComponent, ProgressBarComponent],
+  imports: [MissionCardComponent, PhaseHeaderComponent, ProgressBarComponent],
   templateUrl: './campaign.html',
   styleUrl: './campaign.scss',
 })
