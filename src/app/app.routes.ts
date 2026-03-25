@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { DashboardPage } from './pages/dashboard/dashboard';
 import { NotFoundPage } from './pages/not-found/not-found';
-import { missionGuard, minigameLevelGuard } from './core/guards';
+import { missionGuard, minigameLevelGuard, minigamePlayGuard } from './core/guards';
 
 export const routes: Routes = [
   { path: '', component: DashboardPage, title: 'Dashboard' },
@@ -31,6 +31,7 @@ export const routes: Routes = [
     path: 'minigames/:gameId/level/:levelId',
     title: 'Play',
     canActivate: [minigameLevelGuard],
+    canDeactivate: [minigamePlayGuard],
     loadComponent: () =>
       import('./pages/minigame-play/minigame-play').then((m) => m.MinigamePlayPage),
   },
