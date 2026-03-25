@@ -64,20 +64,12 @@
 <section class="dashboard__alerts">
   <nx-degradation-alert
     [degradingTopics]="degradingTopicItems()"
-    (practiceRequested)="navigateToMinigame($event)" />
+    (practiceRequested)="navigateToRefresher($event)" />
 </section>
 
-<section class="dashboard__modules">
+<section class="dashboard__visualization">
   <h2 class="dashboard__section-title">Station Modules</h2>
-  <div class="dashboard__module-grid">
-    @for (mod of moduleGrid(); track mod.id) {
-      <nx-station-card
-        [cardTitle]="mod.name"
-        class="dashboard__module-card"
-        [class.dashboard__module-card--locked]="!mod.unlocked"
-        (click)="mod.unlocked ? navigateToMinigame(mod.id) : null">
-        <nx-mastery-stars [stars]="mod.mastery" size="sm" />
-      </nx-station-card>
-    }
-  </div>
+  <nx-station-visualization
+    [masteryData]="masteryMap()"
+    (moduleClicked)="navigateToMinigame($event)" />
 </section>

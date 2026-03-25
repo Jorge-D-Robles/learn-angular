@@ -180,10 +180,90 @@ describe('DashboardPage', () => {
     expect(element.textContent).toContain('Completed');
   });
 
-  it('should render station module grid with 12 mastery-stars', async () => {
+  it('should render station visualization component', async () => {
     const { element } = await setup();
-    const stars = element.querySelectorAll('nx-mastery-stars');
-    expect(stars.length).toBe(12);
+    const viz = element.querySelector('nx-station-visualization');
+    expect(viz).toBeTruthy();
+  });
+
+  it('should pass mastery data to station visualization', async () => {
+    const mastery = new Map<MinigameId, number>([
+      ['module-assembly' as MinigameId, 3],
+      ['wire-protocol' as MinigameId, 2],
+    ]);
+    const { element } = await setup({ mastery });
+    const node = element.querySelector('[data-game-id="module-assembly"]');
+    const masteryText = node?.querySelector('.station-viz__node-mastery');
+    expect(masteryText?.textContent?.trim()).toContain('3');
+  });
+
+  it('should navigate to minigame when moduleClicked fires', async () => {
+    const { element, fixture, navigateFn } = await setup();
+    const node = element.querySelector('[data-game-id="module-assembly"]') as HTMLButtonElement;
+    expect(node).toBeTruthy();
+    node.click();
+    fixture.detectChanges();
+    expect(navigateFn).toHaveBeenCalledWith(['/minigames', 'module-assembly']);
+  });
+
+  it('should update visualization reactively when mastery changes', async () => {
+    const masterySignal = signal(new Map<MinigameId, number>([
+      ['module-assembly' as MinigameId, 1],
+    ]) as ReadonlyMap<MinigameId, number>);
+
+    const navigateFn = vi.fn();
+
+    const result = await createComponent(DashboardPage, {
+      providers: [
+        ...ICON_PROVIDERS,
+        getMockProvider(XpService, {
+          totalXp: signal(750),
+          currentRank: signal('Ensign'),
+        }),
+        getMockProvider(GameProgressionService, {
+          currentMission: signal(TEST_MISSION),
+          completedMissions: signal(new Set()),
+          getUnlockedMinigames: () => ['module-assembly' as MinigameId],
+        }),
+        getMockProvider(DailyChallengeService, {
+          todaysChallenge: signal(TEST_CHALLENGE),
+        }),
+        getMockProvider(SpacedRepetitionService, {
+          getDegradingTopics: () => [],
+        }),
+        getMockProvider(MasteryService, {
+          mastery: masterySignal,
+          getMastery: (id: MinigameId) => masterySignal().get(id) ?? 0,
+        }),
+        getMockProvider(MinigameRegistryService, {
+          getAllGames: () => TEST_GAME_CONFIGS,
+          getConfig: (id: string) => TEST_GAME_CONFIGS.find(c => c.id === id),
+        }),
+        getMockProvider(StreakService, {
+          activeStreakDays: signal(3),
+          streakMultiplier: signal(1.3),
+        }),
+        getMockProvider(Router, {
+          navigate: navigateFn,
+        }),
+      ],
+    });
+
+    const { element, fixture } = result;
+    let node = element.querySelector('[data-game-id="module-assembly"]');
+    let masteryText = node?.querySelector('.station-viz__node-mastery');
+    expect(masteryText?.textContent?.trim()).toContain('1');
+
+    // Update mastery signal
+    masterySignal.set(new Map<MinigameId, number>([
+      ['module-assembly' as MinigameId, 4],
+    ]));
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    node = element.querySelector('[data-game-id="module-assembly"]');
+    masteryText = node?.querySelector('.station-viz__node-mastery');
+    expect(masteryText?.textContent?.trim()).toContain('4');
   });
 
   it('should render degradation alert when topics are degrading', async () => {
@@ -221,7 +301,7 @@ describe('DashboardPage', () => {
     expect(badge).toBeTruthy();
   });
 
-  it('should navigate to minigame when practiceRequested fires', async () => {
+  it('should navigate to refresher when practiceRequested fires', async () => {
     const degrading: DegradingTopic[] = [{
       topicId: 'module-assembly',
       rawMastery: 3,
@@ -235,6 +315,13 @@ describe('DashboardPage', () => {
     expect(practiceBtn).toBeTruthy();
     practiceBtn.click();
     fixture.detectChanges();
-    expect(navigateFn).toHaveBeenCalledWith(['/minigames', 'module-assembly']);
+    expect(navigateFn).toHaveBeenCalledWith(['/refresher', 'module-assembly']);
+  });
+
+  it('should hide degradation alert when no topics are degrading', async () => {
+    const { element } = await setup({ degradingTopics: [] });
+    const alert = element.querySelector('nx-degradation-alert') as HTMLElement;
+    expect(alert).toBeTruthy();
+    expect(alert.style.display).toBe('none');
   });
 });

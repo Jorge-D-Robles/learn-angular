@@ -14,8 +14,8 @@ import { MinigameRegistryService } from '../../core/minigame/minigame-registry.s
 import type { DegradingTopicItem } from '../../shared/components/degradation-alert/degradation-alert';
 import {
   XpProgressBarComponent,
-  MasteryStarsComponent,
   StationCardComponent,
+  StationVisualizationComponent,
   MissionCardComponent,
   StreakBadgeComponent,
   DegradationAlertComponent,
@@ -25,8 +25,8 @@ import {
   selector: 'app-dashboard',
   imports: [
     XpProgressBarComponent,
-    MasteryStarsComponent,
     StationCardComponent,
+    StationVisualizationComponent,
     MissionCardComponent,
     StreakBadgeComponent,
     DegradationAlertComponent,
@@ -85,16 +85,7 @@ export class DashboardPage {
     }));
   });
 
-  readonly moduleGrid = computed(() => {
-    const allGames = this.minigameRegistry.getAllGames();
-    const unlocked = new Set(this.gameProgression.getUnlockedMinigames());
-    return allGames.map((config) => ({
-      id: config.id,
-      name: config.name,
-      mastery: this.masteryService.getMastery(config.id),
-      unlocked: unlocked.has(config.id),
-    }));
-  });
+  readonly masteryMap = computed(() => new Map<string, number>(this.masteryService.mastery()));
 
   readonly challengeGameName = computed(() => {
     const challenge = this.todaysChallenge();
@@ -110,6 +101,10 @@ export class DashboardPage {
 
   navigateToMinigame(gameId: string): void {
     this.router.navigate(['/minigames', gameId]);
+  }
+
+  navigateToRefresher(topicId: string): void {
+    this.router.navigate(['/refresher', topicId]);
   }
 
   navigateToChallenge(): void {
