@@ -11,6 +11,7 @@ import { LevelSelectPage } from './level-select';
 import { LevelLoaderService } from '../../core/levels/level-loader.service';
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
 import { LeaderboardService } from '../../core/progression/leaderboard.service';
+import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { LeaderboardComponent } from '../../shared/components/leaderboard/leaderboard';
 import { APP_ICONS } from '../../shared/icons';
 import { DifficultyTier } from '../../core/minigame/minigame.types';
@@ -122,6 +123,13 @@ function setup(overrides: {
       }),
       getMockProvider(LeaderboardService, {
         getLeaderboard: vi.fn().mockReturnValue([]),
+      }),
+      getMockProvider(MinigameRegistryService, {
+        getConfig: vi.fn().mockImplementation((id: string) =>
+          id === 'module-assembly'
+            ? { id: 'module-assembly', name: 'Module Assembly' }
+            : undefined,
+        ),
       }),
     ],
   });
@@ -318,12 +326,46 @@ describe('LevelSelectPage', () => {
     ]);
   });
 
-  // 17. Show empty state when no levels
-  it('should show empty state when no levels', async () => {
+  // 17. Show EmptyStateComponent when no levels
+  it('should show EmptyStateComponent when no levels', async () => {
     const { element } = await setup({ levels: [] });
-    const empty = element.querySelector('.level-select__empty');
-    expect(empty).toBeTruthy();
-    expect(empty!.textContent).toContain('No levels available');
+    const emptyState = element.querySelector('nx-empty-state');
+    expect(emptyState).toBeTruthy();
+  });
+
+  // 17b. Empty state title says "Levels coming soon"
+  it('should display "Levels coming soon" in the empty state title', async () => {
+    const { element } = await setup({ levels: [] });
+    const title = element.querySelector('.empty-state__title');
+    expect(title).toBeTruthy();
+    expect(title!.textContent).toContain('Levels coming soon');
+  });
+
+  // 17c. Empty state message contains game name from registry
+  it('should display the game name in the empty state message', async () => {
+    const { element } = await setup({ levels: [] });
+    const message = element.querySelector('.empty-state__message');
+    expect(message).toBeTruthy();
+    expect(message!.textContent).toContain('Module Assembly');
+  });
+
+  // 17d. "Back to Minigames" button navigates to /minigames
+  it('should navigate to /minigames when "Back to Minigames" is clicked', async () => {
+    const { element, fixture } = await setup({ levels: [] });
+    const backBtn = element.querySelector('.level-select__back-btn') as HTMLButtonElement;
+    expect(backBtn).toBeTruthy();
+    expect(backBtn.textContent).toContain('Back to Minigames');
+    backBtn.click();
+    fixture.detectChanges();
+    const router = fixture.debugElement.injector.get(Router);
+    expect(router.navigate).toHaveBeenCalledWith(['/minigames']);
+  });
+
+  // 17e. Empty state is hidden when levels exist
+  it('should not show EmptyStateComponent when levels exist', async () => {
+    const { element } = await setup();
+    const emptyState = element.querySelector('nx-empty-state');
+    expect(emptyState).toBeNull();
   });
 
   // 18. Navigate to speedrun route on Speed Run mode launch

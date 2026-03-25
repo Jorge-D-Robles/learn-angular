@@ -5,8 +5,10 @@ import { map } from 'rxjs';
 import { TierBadgeComponent } from '../../shared/components/tier-badge/tier-badge';
 import { LevelCardComponent } from '../../shared/components/level-card/level-card';
 import { LeaderboardComponent } from '../../shared/components/leaderboard/leaderboard';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
 import { LevelLoaderService } from '../../core/levels/level-loader.service';
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
+import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { LEVEL_TIER_CONFIGS } from '../../core/levels/level.types';
 import { PlayMode, type DifficultyTier, type MinigameId } from '../../core/minigame/minigame.types';
 
@@ -48,7 +50,7 @@ const MODE_DESCRIPTIONS: Record<Exclude<PlayMode, PlayMode.Story>, string> = {
 @Component({
   selector: 'app-level-select',
   standalone: true,
-  imports: [TierBadgeComponent, LevelCardComponent, LeaderboardComponent],
+  imports: [TierBadgeComponent, LevelCardComponent, LeaderboardComponent, EmptyStateComponent],
   template: `
     <h1>Level Select</h1>
 
@@ -84,7 +86,9 @@ const MODE_DESCRIPTIONS: Record<Exclude<PlayMode, PlayMode.Story>, string> = {
           }
         </section>
       } @empty {
-        <p class="level-select__empty">No levels available for this minigame.</p>
+        <nx-empty-state icon="map" title="Levels coming soon" [message]="'Levels coming soon for ' + gameName()">
+          <button class="level-select__back-btn" (click)="navigateToMinigames()">Back to Minigames</button>
+        </nx-empty-state>
       }
     }
 
@@ -110,6 +114,7 @@ export class LevelSelectPage {
   private readonly router = inject(Router);
   private readonly levelLoader = inject(LevelLoaderService);
   private readonly levelProgression = inject(LevelProgressionService);
+  private readonly registry = inject(MinigameRegistryService);
 
   readonly PlayMode = PlayMode;
   readonly tabs = TABS;
@@ -119,6 +124,12 @@ export class LevelSelectPage {
     this.route.paramMap.pipe(map((params) => params.get('gameId') ?? '')),
     { initialValue: '' },
   );
+
+  readonly gameName = computed(() => {
+    const gid = this.gameId();
+    if (!gid) return '';
+    return this.registry.getConfig(gid as MinigameId)?.name ?? gid;
+  });
 
   readonly tierGroups = computed<TierGroup[]>(() => {
     const gid = this.gameId();
@@ -182,6 +193,10 @@ export class LevelSelectPage {
 
   onLevelClick(levelId: string): void {
     this.router.navigate(['/minigames', this.gameId(), 'level', levelId]);
+  }
+
+  navigateToMinigames(): void {
+    this.router.navigate(['/minigames']);
   }
 
   launchMode(): void {
