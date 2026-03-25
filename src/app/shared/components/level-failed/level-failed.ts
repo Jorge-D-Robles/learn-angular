@@ -1,12 +1,15 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
+import { AnimationService } from '../../../core/animation/animation.service';
 
 @Component({
   selector: 'nx-level-failed',
   imports: [LucideAngularModule],
   template: `
     <div class="level-failed" role="dialog" aria-modal="true" aria-labelledby="failed-title">
-      <div class="level-failed__panel">
+      <div class="level-failed__panel"
+           [class.level-failed__panel--fade-in]="animationReady()"
+           [style.animation-duration.ms]="fadeInDuration()">
         <lucide-icon
           class="level-failed__icon"
           name="circle-alert"
@@ -43,7 +46,9 @@ import { LucideAngularModule } from 'lucide-angular';
   `,
   styleUrl: './level-failed.scss',
 })
-export class LevelFailedComponent {
+export class LevelFailedComponent implements OnInit {
+  private readonly animationService = inject(AnimationService);
+
   readonly reason = input.required<string>();
   readonly score = input(0);
   readonly hintsAvailable = input(false);
@@ -51,4 +56,13 @@ export class LevelFailedComponent {
   readonly retry = output();
   readonly useHint = output();
   readonly quit = output();
+
+  readonly animationReady = signal(false);
+
+  /** Fade-in duration (250ms base). */
+  readonly fadeInDuration = computed(() => this.animationService.getDuration('overlay'));
+
+  ngOnInit(): void {
+    this.animationReady.set(true);
+  }
 }

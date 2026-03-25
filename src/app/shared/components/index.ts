@@ -1,4 +1,5 @@
 export { AchievementBadgeComponent } from './achievement-badge/achievement-badge';
+export { AchievementNotificationComponent } from './achievement-notification/achievement-notification';
 export { AchievementGridComponent } from './achievement-grid/achievement-grid';
 export { ActiveMissionCardComponent } from './active-mission-card/active-mission-card';
 export { CodeEditorComponent } from './code-editor/code-editor';
@@ -31,6 +32,7 @@ export { PhaseHeaderComponent } from './phase-header/phase-header';
 export { ProgressBarComponent } from './progress-bar/progress-bar';
 export type { ProgressBarVariant } from './progress-bar/progress-bar';
 export { RankUpOverlayComponent } from './rank-up-overlay/rank-up-overlay';
+export { ReplayModeHudComponent, type ReplayMode } from './replay-mode-hud/replay-mode-hud';
 export { ScoreBreakdownComponent } from './score-breakdown/score-breakdown';
 export type { ScoreBreakdownItem } from './score-breakdown/score-breakdown.types';
 export { StationCardComponent } from './station-card/station-card';
