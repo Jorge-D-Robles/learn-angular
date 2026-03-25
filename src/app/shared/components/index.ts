@@ -4,6 +4,7 @@ export { AchievementGridComponent } from './achievement-grid/achievement-grid';
 export { ActiveMissionCardComponent } from './active-mission-card/active-mission-card';
 export { CodeEditorComponent } from './code-editor/code-editor';
 export { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog';
+export { CosmeticGalleryComponent } from './cosmetic-gallery/cosmetic-gallery';
 export { DailyChallengeCardComponent } from './daily-challenge-card/daily-challenge-card';
 export { DegradationAlertComponent } from './degradation-alert/degradation-alert';
 export { EmptyStateComponent } from './empty-state/empty-state';

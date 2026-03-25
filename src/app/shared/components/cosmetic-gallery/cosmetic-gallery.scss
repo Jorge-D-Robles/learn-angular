@@ -1,0 +1,92 @@
+:host {
+  display: block;
+}
+
+.cosmetic-gallery__section {
+  margin-bottom: var(--nx-space-6);
+}
+
+.cosmetic-gallery__heading {
+  font-size: var(--nx-text-h3-size, 1.25rem);
+  color: var(--nx-color-text-primary);
+  margin-bottom: var(--nx-space-3);
+}
+
+.cosmetic-gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--nx-space-3);
+}
+
+.cosmetic-gallery__item {
+  padding: var(--nx-space-3);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card, 8px);
+  background-color: var(--nx-color-hull);
+  display: flex;
+  flex-direction: column;
+  gap: var(--nx-space-2);
+  transition: border-color 0.15s ease;
+
+  &--locked {
+    opacity: 0.6;
+    border-style: dashed;
+  }
+
+  &--equipped {
+    border-color: var(--nx-color-reactor-blue);
+    background-color: var(--nx-color-hull-highlight, var(--nx-color-hull));
+  }
+}
+
+.cosmetic-gallery__item-name {
+  font-weight: 600;
+  color: var(--nx-color-text-primary);
+}
+
+.cosmetic-gallery__lock-condition {
+  font-size: var(--nx-text-caption-size, 0.875rem);
+  color: var(--nx-color-text-secondary);
+}
+
+.cosmetic-gallery__equipped {
+  font-size: var(--nx-text-caption-size, 0.875rem);
+  color: var(--nx-color-reactor-blue);
+  font-weight: 600;
+}
+
+.cosmetic-gallery__equip-btn {
+  padding: var(--nx-space-1) var(--nx-space-3);
+  border: 1px solid var(--nx-color-reactor-blue);
+  border-radius: var(--nx-radius-button);
+  background-color: transparent;
+  color: var(--nx-color-reactor-blue);
+  cursor: pointer;
+  font-size: var(--nx-text-caption-size, 0.875rem);
+  align-self: flex-start;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: var(--nx-color-reactor-blue);
+    color: var(--nx-color-text-primary);
+  }
+}
+
+@media (min-width: 768px) {
+  .cosmetic-gallery__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cosmetic-gallery__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmetic-gallery__item,
+  .cosmetic-gallery__equip-btn {
+    transition: none;
+  }
+}
