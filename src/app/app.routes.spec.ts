@@ -29,13 +29,14 @@ describe('routes', () => {
     'minigames/:gameId/endless',
     'minigames/:gameId/speedrun',
     'minigames/:gameId/daily',
+    'refresher/:topicId',
     'profile',
     'settings',
     '**',
   ];
 
-  it('should have 12 routes', () => {
-    expect(routes.length).toBe(12);
+  it('should have 13 routes', () => {
+    expect(routes.length).toBe(13);
   });
 
   it('should define all expected paths', () => {
@@ -65,6 +66,7 @@ describe('routes', () => {
       'minigames/:gameId/endless',
       'minigames/:gameId/speedrun',
       'minigames/:gameId/daily',
+      'refresher/:topicId',
       'profile',
       'settings',
     ];
@@ -139,6 +141,12 @@ describe('routes', () => {
       const component = await (route?.loadComponent as () => Promise<unknown>)();
       expect(component).toBeDefined();
     });
+
+    it('should resolve RefresherChallengePage', async () => {
+      const route = routes.find((r) => r.path === 'refresher/:topicId');
+      const component = await (route?.loadComponent as () => Promise<unknown>)();
+      expect(component).toBeDefined();
+    });
   });
 
   describe('route titles', () => {
@@ -185,6 +193,11 @@ describe('routes', () => {
     it('should have a title on the daily challenge route', () => {
       const route = routes.find((r) => r.path === 'minigames/:gameId/daily');
       expect(route?.title).toBe('Daily Challenge');
+    });
+
+    it('should have a title on the refresher route', () => {
+      const route = routes.find((r) => r.path === 'refresher/:topicId');
+      expect(route?.title).toBe('Refresher Challenge');
     });
 
     it('should have a title on the profile route', () => {

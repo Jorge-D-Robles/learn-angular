@@ -50,6 +50,12 @@ export const routes: Routes = [
       import('./pages/daily-challenge/daily-challenge').then((m) => m.DailyChallengePage),
   },
   {
+    path: 'refresher/:topicId',
+    title: 'Refresher Challenge',
+    loadComponent: () =>
+      import('./pages/refresher/refresher').then((m) => m.RefresherChallengePage),
+  },
+  {
     path: 'profile',
     title: 'Profile',
     loadComponent: () => import('./pages/profile/profile').then((m) => m.ProfilePage),
