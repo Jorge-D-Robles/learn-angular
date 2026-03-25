@@ -1,4 +1,5 @@
 import { signal, WritableSignal } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   LucideIconConfig,
   LucideIconProvider,
@@ -9,7 +10,7 @@ import { ProfilePage } from './profile';
 import { LifetimeStatsService, type ProfileStats } from '../../core/progression/lifetime-stats.service';
 import { MasteryService } from '../../core/progression/mastery.service';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
-import { SpacedRepetitionService } from '../../core/progression/spaced-repetition.service';
+import { SpacedRepetitionService, type DegradingTopic } from '../../core/progression/spaced-repetition.service';
 import { AchievementService, type Achievement } from '../../core/progression/achievement.service';
 import { APP_ICONS } from '../../shared/icons';
 import type { MinigameConfig, MinigameId } from '../../core/minigame/minigame.types';
@@ -150,6 +151,7 @@ async function setup(overrides: {
   getMastery?: (id: MinigameId) => number;
   masteryMap?: ReadonlyMap<MinigameId, number>;
   lastPracticedMap?: ReadonlyMap<MinigameId, number>;
+  degradingTopics?: DegradingTopic[];
 } = {}) {
   const {
     profileStats: statsOverrides = {},
@@ -158,6 +160,7 @@ async function setup(overrides: {
     getMastery = () => 0,
     masteryMap = new Map(),
     lastPracticedMap = new Map(),
+    degradingTopics = [],
   } = overrides;
 
   const mockProfileStats: WritableSignal<ProfileStats> = signal({
@@ -167,6 +170,7 @@ async function setup(overrides: {
 
   const mockMasterySignal = signal<ReadonlyMap<MinigameId, number>>(masteryMap);
   const mockLastPracticedSignal = signal<ReadonlyMap<MinigameId, number>>(lastPracticedMap);
+  const navigateFn = vi.fn();
 
   const result = await createComponent(ProfilePage, {
     providers: [
@@ -181,19 +185,26 @@ async function setup(overrides: {
       }),
       getMockProvider(MinigameRegistryService, {
         getAllGames: vi.fn().mockReturnValue(getAllGames),
+        getConfig: vi.fn().mockImplementation(
+          (id: string) => getAllGames.find((g) => g.id === id),
+        ),
       }),
       getMockProvider(SpacedRepetitionService, {
         getEffectiveMastery: vi.fn().mockImplementation(getEffectiveMastery),
         lastPracticed: mockLastPracticedSignal,
+        getDegradingTopics: vi.fn().mockReturnValue(degradingTopics),
       }),
       getMockProvider(AchievementService, {
         achievements: signal<readonly Achievement[]>([]),
         earnedCount: signal(0),
       }),
+      getMockProvider(Router, {
+        navigate: navigateFn,
+      }),
     ],
   });
 
-  return { ...result, mockProfileStats };
+  return { ...result, mockProfileStats, navigateFn };
 }
 
 describe('ProfilePage', () => {
@@ -408,5 +419,42 @@ describe('ProfilePage', () => {
     const data = component.masteryTableData();
     const moduleRow = data.find((r) => r.topicId === 'module-assembly');
     expect(moduleRow?.lastPracticed).toBeNull();
+  });
+
+  // --- New tests for T-2026-221 ---
+
+  // 24. Render degradation alert when topics are degrading
+  it('should render degradation alert when topics are degrading', async () => {
+    const degrading: DegradingTopic[] = [{
+      topicId: 'module-assembly',
+      rawMastery: 3,
+      effectiveMastery: 2,
+      degradation: 1,
+      daysSinceLastPractice: 10,
+      lastPracticed: Date.now() - 10 * 86_400_000,
+    }];
+    const { element } = await setup({ degradingTopics: degrading });
+    const alert = element.querySelector('nx-degradation-alert');
+    expect(alert).toBeTruthy();
+    const practiceBtn = element.querySelector('.degradation-alert__practice-btn');
+    expect(practiceBtn).toBeTruthy();
+  });
+
+  // 25. Navigate to /refresher/:topicId when practiceRequested fires
+  it('should navigate to /refresher/:topicId when practiceRequested fires', async () => {
+    const degrading: DegradingTopic[] = [{
+      topicId: 'module-assembly',
+      rawMastery: 3,
+      effectiveMastery: 2,
+      degradation: 1,
+      daysSinceLastPractice: 10,
+      lastPracticed: Date.now() - 10 * 86_400_000,
+    }];
+    const { element, fixture, navigateFn } = await setup({ degradingTopics: degrading });
+    const practiceBtn = element.querySelector('.degradation-alert__practice-btn') as HTMLButtonElement;
+    expect(practiceBtn).toBeTruthy();
+    practiceBtn.click();
+    fixture.detectChanges();
+    expect(navigateFn).toHaveBeenCalledWith(['/refresher', 'module-assembly']);
   });
 });

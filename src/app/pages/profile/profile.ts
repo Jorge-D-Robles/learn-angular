@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { Router } from '@angular/router';
 import { getCurrentRankThreshold, getNextRankThreshold } from '../../core/progression/xp.service';
 import { LifetimeStatsService } from '../../core/progression/lifetime-stats.service';
 import { MasteryService } from '../../core/progression/mastery.service';
@@ -14,6 +15,8 @@ import { StreakBadgeComponent } from '../../shared/components/streak-badge/strea
 import { ProgressBarComponent } from '../../shared/components/progress-bar/progress-bar';
 import { TimeFormatPipe } from '../../shared/pipes/time-format.pipe';
 import { AchievementGridComponent } from '../../shared/components/achievement-grid/achievement-grid';
+import type { DegradingTopicItem } from '../../shared/components/degradation-alert/degradation-alert';
+import { DegradationAlertComponent } from '../../shared/components';
 
 @Component({
   selector: 'app-profile',
@@ -26,6 +29,7 @@ import { AchievementGridComponent } from '../../shared/components/achievement-gr
     ProgressBarComponent,
     TimeFormatPipe,
     AchievementGridComponent,
+    DegradationAlertComponent,
   ],
   template: `
     <h1>Profile</h1>
@@ -76,6 +80,13 @@ import { AchievementGridComponent } from '../../shared/components/achievement-gr
       <nx-mastery-table [masteryData]="masteryTableData()" />
     </section>
 
+    <section class="profile__degradation-section">
+      <nx-degradation-alert
+        [degradingTopics]="degradingTopicItems()"
+        variant="full"
+        (practiceRequested)="navigateToRefresher($event)" />
+    </section>
+
     <section class="profile__achievements-section">
       <h2>Achievements</h2>
       <nx-achievement-grid />
@@ -88,6 +99,7 @@ export class ProfilePage {
   private readonly masteryService = inject(MasteryService);
   private readonly registry = inject(MinigameRegistryService);
   private readonly spacedRepetition = inject(SpacedRepetitionService);
+  private readonly router = inject(Router);
 
   readonly stats = computed(() => this.lifetimeStats.profileStats());
 
@@ -135,4 +147,18 @@ export class ProfilePage {
       };
     });
   });
+
+  readonly degradingTopicItems = computed<DegradingTopicItem[]>(() => {
+    return this.spacedRepetition.getDegradingTopics().map((t) => ({
+      topicId: t.topicId,
+      topicName: this.registry.getConfig(t.topicId)?.name ?? t.topicId,
+      currentMastery: t.rawMastery,
+      effectiveMastery: t.effectiveMastery,
+      daysSinceLastPractice: t.daysSinceLastPractice,
+    }));
+  });
+
+  navigateToRefresher(topicId: string): void {
+    this.router.navigate(['/refresher', topicId]);
+  }
 }
