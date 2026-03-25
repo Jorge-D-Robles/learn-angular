@@ -7,6 +7,7 @@ import {
 import { createComponent, getMockProvider } from '../../../testing/test-utils';
 import { ProfilePage } from './profile';
 import { LifetimeStatsService, type ProfileStats } from '../../core/progression/lifetime-stats.service';
+import { MasteryService } from '../../core/progression/mastery.service';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { SpacedRepetitionService } from '../../core/progression/spaced-repetition.service';
 import { AchievementService, type Achievement } from '../../core/progression/achievement.service';
@@ -146,11 +147,17 @@ async function setup(overrides: {
   profileStats?: Partial<ProfileStats>;
   getAllGames?: MinigameConfig[];
   getEffectiveMastery?: (id: MinigameId) => number;
+  getMastery?: (id: MinigameId) => number;
+  masteryMap?: ReadonlyMap<MinigameId, number>;
+  lastPracticedMap?: ReadonlyMap<MinigameId, number>;
 } = {}) {
   const {
     profileStats: statsOverrides = {},
     getAllGames = MOCK_GAMES,
     getEffectiveMastery = () => 0,
+    getMastery = () => 0,
+    masteryMap = new Map(),
+    lastPracticedMap = new Map(),
   } = overrides;
 
   const mockProfileStats: WritableSignal<ProfileStats> = signal({
@@ -158,17 +165,26 @@ async function setup(overrides: {
     ...statsOverrides,
   });
 
+  const mockMasterySignal = signal<ReadonlyMap<MinigameId, number>>(masteryMap);
+  const mockLastPracticedSignal = signal<ReadonlyMap<MinigameId, number>>(lastPracticedMap);
+
   const result = await createComponent(ProfilePage, {
     providers: [
       ...ICON_PROVIDERS,
       getMockProvider(LifetimeStatsService, {
         profileStats: mockProfileStats,
       }),
+      getMockProvider(MasteryService, {
+        mastery: mockMasterySignal,
+        getMastery: vi.fn().mockImplementation(getMastery),
+        getAllMastery: vi.fn().mockReturnValue(masteryMap),
+      }),
       getMockProvider(MinigameRegistryService, {
         getAllGames: vi.fn().mockReturnValue(getAllGames),
       }),
       getMockProvider(SpacedRepetitionService, {
         getEffectiveMastery: vi.fn().mockImplementation(getEffectiveMastery),
+        lastPracticed: mockLastPracticedSignal,
       }),
       getMockProvider(AchievementService, {
         achievements: signal<readonly Achievement[]>([]),
@@ -241,61 +257,61 @@ describe('ProfilePage', () => {
     expect(campaignCard?.textContent).toContain('10 / 34');
   });
 
-  // 9. Render mastery table with all 12 minigame topics
-  it('should render mastery table with all 12 minigame topics', async () => {
+  // 9. Render MasteryTableComponent in mastery section
+  it('should render MasteryTableComponent in mastery section', async () => {
     const { element } = await setup();
-    const rows = element.querySelectorAll('.profile__mastery-table tbody tr');
-    expect(rows.length).toBe(12);
+    const table = element.querySelector('.profile__mastery-section nx-mastery-table');
+    expect(table).toBeTruthy();
   });
 
-  // 10. Display effective mastery stars via MasteryStarsComponent
-  it('should display effective mastery stars via MasteryStarsComponent', async () => {
-    const { element } = await setup({
+  // 10. Populate masteryTableData with 12 topics from registry
+  it('should populate masteryTableData with 12 topics from registry', async () => {
+    const { component } = await setup();
+    const data = component.masteryTableData();
+    expect(data.length).toBe(12);
+    expect(data[0].topicName).toBeTruthy();
+  });
+
+  // 11. Effective mastery values are passed through masteryTableData
+  it('should pass effective mastery values through masteryTableData', async () => {
+    const masteryMap = new Map<MinigameId, number>([['module-assembly', 4]]);
+    const { component } = await setup({
+      masteryMap,
+      getMastery: (id: MinigameId) => (id === 'module-assembly' ? 4 : 0),
       getEffectiveMastery: (id: MinigameId) =>
         id === 'module-assembly' ? 3.7 : 0,
     });
-    const starEls = element.querySelectorAll('nx-mastery-stars');
-    expect(starEls.length).toBe(12);
+    const data = component.masteryTableData();
+    const moduleRow = data.find((r) => r.topicId === 'module-assembly');
+    expect(moduleRow?.mastery).toBe(3);
   });
 
-  // 11. Sort mastery table by topic name ascending by default
-  it('should sort mastery table by topic name ascending by default', async () => {
-    const { element } = await setup();
-    const rows = element.querySelectorAll('.profile__mastery-table tbody tr');
-    const firstRowText = rows[0]?.textContent ?? '';
-    expect(firstRowText).toContain('Components');
-  });
-
-  // 12. Toggle sort direction when clicking the same column header
-  it('should toggle sort direction when clicking the same column header', async () => {
-    const { element, fixture } = await setup();
-    const topicHeader = element.querySelector('.profile__mastery-table th') as HTMLElement;
-
-    topicHeader.click();
-    fixture.detectChanges();
-
-    const rows = element.querySelectorAll('.profile__mastery-table tbody tr');
-    const firstRowText = rows[0]?.textContent ?? '';
-    expect(firstRowText).toContain('Testing');
-  });
-
-  // 13. Sort by stars when clicking Stars column header
-  it('should sort by stars when clicking Stars column header', async () => {
-    const { element, fixture } = await setup({
-      getEffectiveMastery: (id: MinigameId) => {
-        if (id === 'module-assembly') return 4;
-        if (id === 'corridor-runner') return 2;
-        return 0;
-      },
+  // 12. Set degrading flag when effective mastery < raw mastery
+  it('should set degrading flag when effective mastery < raw mastery', async () => {
+    const masteryMap = new Map<MinigameId, number>([['module-assembly', 3]]);
+    const { component } = await setup({
+      masteryMap,
+      getMastery: (id: MinigameId) => (id === 'module-assembly' ? 3 : 0),
+      getEffectiveMastery: (id: MinigameId) =>
+        id === 'module-assembly' ? 1 : 0,
     });
-    const headers = element.querySelectorAll('.profile__mastery-table th');
-    const starsHeader = headers[2] as HTMLElement;
-    starsHeader.click();
-    fixture.detectChanges();
+    const data = component.masteryTableData();
+    const moduleRow = data.find((r) => r.topicId === 'module-assembly');
+    expect(moduleRow?.degrading).toBe(true);
+  });
 
-    const rows = element.querySelectorAll('.profile__mastery-table tbody tr');
-    const firstRowText = rows[0]?.textContent ?? '';
-    expect(firstRowText).toContain('Module Assembly');
+  // 13. Set degrading flag to false when effective mastery equals raw mastery
+  it('should set degrading flag to false when effective mastery equals raw mastery', async () => {
+    const masteryMap = new Map<MinigameId, number>([['module-assembly', 3]]);
+    const { component } = await setup({
+      masteryMap,
+      getMastery: (id: MinigameId) => (id === 'module-assembly' ? 3 : 0),
+      getEffectiveMastery: (id: MinigameId) =>
+        id === 'module-assembly' ? 3 : 0,
+    });
+    const data = component.masteryTableData();
+    const moduleRow = data.find((r) => r.topicId === 'module-assembly');
+    expect(moduleRow?.degrading).toBe(false);
   });
 
   // 14. Display page heading "Profile"
@@ -371,5 +387,26 @@ describe('ProfilePage', () => {
     });
     const campaignCard = element.querySelector('.profile__stat-card--campaign');
     expect(campaignCard?.textContent).toContain('0%');
+  });
+
+  // --- New tests for T-2026-343 ---
+
+  // 22. Convert lastPracticed epoch to Date object
+  it('should convert lastPracticed epoch to Date object', async () => {
+    const epoch = 1711234567890;
+    const lastPracticedMap = new Map<MinigameId, number>([['module-assembly', epoch]]);
+    const { component } = await setup({ lastPracticedMap });
+    const data = component.masteryTableData();
+    const moduleRow = data.find((r) => r.topicId === 'module-assembly');
+    expect(moduleRow?.lastPracticed).toBeInstanceOf(Date);
+    expect(moduleRow?.lastPracticed?.getTime()).toBe(epoch);
+  });
+
+  // 23. Set lastPracticed to null when topic has no practice record
+  it('should set lastPracticed to null when topic has no practice record', async () => {
+    const { component } = await setup();
+    const data = component.masteryTableData();
+    const moduleRow = data.find((r) => r.topicId === 'module-assembly');
+    expect(moduleRow?.lastPracticed).toBeNull();
   });
 });

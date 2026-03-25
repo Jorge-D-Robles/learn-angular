@@ -74,35 +74,6 @@ nx-xp-progress-bar {
   }
 }
 
-.profile__mastery-table {
-  width: 100%;
-  border-collapse: collapse;
-
-  th,
-  td {
-    padding: var(--nx-space-2) var(--nx-space-3);
-    text-align: left;
-    border-bottom: 1px solid var(--nx-color-corridor);
-  }
-
-  th {
-    font-size: var(--nx-text-caption-size, 0.75rem);
-    color: var(--nx-color-corridor);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    user-select: none;
-
-    &:hover {
-      color: inherit;
-    }
-  }
-
-  td {
-    font-size: var(--nx-text-body-size, 0.875rem);
-  }
-}
-
 .profile__achievements-section {
   h2 {
     margin: 0 0 var(--nx-space-2);

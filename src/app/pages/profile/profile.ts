@@ -1,25 +1,19 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { getCurrentRankThreshold, getNextRankThreshold } from '../../core/progression/xp.service';
 import { LifetimeStatsService } from '../../core/progression/lifetime-stats.service';
+import { MasteryService } from '../../core/progression/mastery.service';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { SpacedRepetitionService } from '../../core/progression/spaced-repetition.service';
 import { XpProgressBarComponent } from '../../shared/components/xp-progress-bar/xp-progress-bar';
-import { MasteryStarsComponent } from '../../shared/components/mastery-stars/mastery-stars';
+import {
+  MasteryTableComponent,
+  type MasteryTableRow,
+} from '../../shared/components/mastery-table/mastery-table';
 import { StreakBadgeComponent } from '../../shared/components/streak-badge/streak-badge';
 import { ProgressBarComponent } from '../../shared/components/progress-bar/progress-bar';
 import { TimeFormatPipe } from '../../shared/pipes/time-format.pipe';
 import { AchievementGridComponent } from '../../shared/components/achievement-grid/achievement-grid';
-import type { MinigameConfig } from '../../core/minigame/minigame.types';
-
-interface MasteryRow {
-  readonly topic: string;
-  readonly minigameName: string;
-  readonly stars: number;
-}
-
-type SortColumn = 'topic' | 'minigame' | 'stars';
-type SortDirection = 'asc' | 'desc';
 
 @Component({
   selector: 'app-profile',
@@ -27,7 +21,7 @@ type SortDirection = 'asc' | 'desc';
   imports: [
     DecimalPipe,
     XpProgressBarComponent,
-    MasteryStarsComponent,
+    MasteryTableComponent,
     StreakBadgeComponent,
     ProgressBarComponent,
     TimeFormatPipe,
@@ -79,24 +73,7 @@ type SortDirection = 'asc' | 'desc';
 
     <section class="profile__mastery-section">
       <h2>Mastery</h2>
-      <table class="profile__mastery-table">
-        <thead>
-          <tr>
-            <th (click)="toggleSort('topic')">Topic</th>
-            <th (click)="toggleSort('minigame')">Minigame</th>
-            <th (click)="toggleSort('stars')">Stars</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of sortedMasteryRows(); track row.minigameName) {
-            <tr>
-              <td>{{ row.topic }}</td>
-              <td>{{ row.minigameName }}</td>
-              <td><nx-mastery-stars [stars]="row.stars" size="sm" /></td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      <nx-mastery-table [masteryData]="masteryTableData()" />
     </section>
 
     <section class="profile__achievements-section">
@@ -108,11 +85,9 @@ type SortDirection = 'asc' | 'desc';
 })
 export class ProfilePage {
   private readonly lifetimeStats = inject(LifetimeStatsService);
+  private readonly masteryService = inject(MasteryService);
   private readonly registry = inject(MinigameRegistryService);
   private readonly spacedRepetition = inject(SpacedRepetitionService);
-
-  readonly sortColumn = signal<SortColumn>('topic');
-  readonly sortDirection = signal<SortDirection>('asc');
 
   readonly stats = computed(() => this.lifetimeStats.profileStats());
 
@@ -138,39 +113,26 @@ export class ProfilePage {
     return Math.floor((missionsCompleted / totalMissions) * 100);
   });
 
-  private readonly masteryRows = computed<MasteryRow[]>(() => {
-    const games: MinigameConfig[] = this.registry.getAllGames();
-    return games.map((game) => ({
-      topic: game.angularTopic,
-      minigameName: game.name,
-      stars: Math.floor(this.spacedRepetition.getEffectiveMastery(game.id)),
-    }));
-  });
+  readonly masteryTableData = computed<MasteryTableRow[]>(() => {
+    const games = this.registry.getAllGames();
+    // Read reactive signals to establish dependency tracking
+    const masteryMap = this.masteryService.mastery();
+    const lastPracticedMap = this.spacedRepetition.lastPracticed();
 
-  readonly sortedMasteryRows = computed<MasteryRow[]>(() => {
-    const rows = [...this.masteryRows()];
-    const col = this.sortColumn();
-    const dir = this.sortDirection();
-    const mult = dir === 'asc' ? 1 : -1;
+    return games.map((game) => {
+      const rawMastery = masteryMap.get(game.id) ?? 0;
+      const effectiveMastery = Math.floor(
+        this.spacedRepetition.getEffectiveMastery(game.id),
+      );
+      const lastPracticedMs = lastPracticedMap.get(game.id);
 
-    rows.sort((a, b) => {
-      if (col === 'stars') {
-        return (a.stars - b.stars) * mult;
-      }
-      const aVal = col === 'minigame' ? a.minigameName : a.topic;
-      const bVal = col === 'minigame' ? b.minigameName : b.topic;
-      return aVal.localeCompare(bVal) * mult;
+      return {
+        topicId: game.id,
+        topicName: game.angularTopic,
+        mastery: effectiveMastery,
+        lastPracticed: lastPracticedMs !== undefined ? new Date(lastPracticedMs) : null,
+        degrading: rawMastery > 0 && effectiveMastery < rawMastery,
+      };
     });
-
-    return rows;
   });
-
-  toggleSort(column: SortColumn): void {
-    if (this.sortColumn() === column) {
-      this.sortDirection.update((d) => (d === 'asc' ? 'desc' : 'asc'));
-    } else {
-      this.sortColumn.set(column);
-      this.sortDirection.set(column === 'stars' ? 'desc' : 'asc');
-    }
-  }
 }
