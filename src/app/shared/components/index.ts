@@ -12,6 +12,7 @@ export { validateExpression, type ValidationResult } from './expression-builder/
 export { LeaderboardComponent } from './leaderboard/leaderboard';
 export { LevelCardComponent } from './level-card/level-card';
 export { LevelFailedComponent } from './level-failed/level-failed';
+export { LevelProgressSummaryComponent } from './level-progress-summary/level-progress-summary';
 export { LevelResultsComponent } from './level-results/level-results';
 export { LevelStarsComponent } from './level-stars/level-stars';
 export { LoadingSpinnerComponent } from './loading-spinner/loading-spinner';

@@ -1,0 +1,46 @@
+:host {
+  display: block;
+}
+
+// Compact variant: single-line flex layout for card embedding
+:host(.level-progress-summary--compact) {
+  .level-progress-summary__fraction,
+  .level-progress-summary__stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--nx-text-caption-size, 0.75rem);
+    color: var(--nx-color-corridor);
+  }
+
+  .level-progress-summary__stars {
+    margin-left: 12px;
+  }
+
+  nx-progress-bar {
+    margin-top: 4px;
+  }
+}
+
+// Full variant: stacked layout for page headers
+:host(.level-progress-summary--full) {
+  .level-progress-summary__fraction {
+    display: block;
+    font-size: var(--nx-text-body-size, 1rem);
+    font-weight: 600;
+    color: var(--nx-color-starlight);
+  }
+
+  .level-progress-summary__stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    font-size: var(--nx-text-caption-size, 0.75rem);
+    color: var(--nx-color-solar-gold);
+  }
+
+  nx-progress-bar {
+    margin-top: 8px;
+  }
+}
