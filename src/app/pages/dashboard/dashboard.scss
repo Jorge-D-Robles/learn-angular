@@ -33,6 +33,10 @@ h1 {
   font-size: 1.125rem;
 }
 
+.dashboard__cards {
+  margin-bottom: 1.5rem;
+}
+
 .dashboard__mission,
 .dashboard__challenge,
 .dashboard__shortcuts,
@@ -66,13 +70,24 @@ h1 {
   color: var(--nx-color-success, #22c55e);
 }
 
+// Mobile-first: horizontally scrollable shortcut list
 .dashboard__shortcut-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .dashboard__shortcut-btn {
+  flex-shrink: 0;
+  scroll-snap-align: start;
   padding: 0.5rem 1rem;
   border: 1px solid var(--nx-color-border, #334155);
   border-radius: 0.25rem;
@@ -93,8 +108,8 @@ h1 {
 
 .dashboard__module-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.5rem;
 }
 
 .dashboard__module-card {
@@ -108,12 +123,28 @@ h1 {
   }
 }
 
-@media (max-width: 768px) {
+// Tablet breakpoint: 2-column cards, revert shortcut wrap
+@media (min-width: 768px) {
+  .dashboard__cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .dashboard__shortcut-list {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
   .dashboard__module-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
   }
 }
+
+// Desktop breakpoint intentionally omitted — tablet 2-column layout
+// carries through to desktop. Only 2 card sections exist (mission + challenge),
+// so 1fr 1fr is the correct layout at all widths >= 768px.
 
 @media (prefers-reduced-motion: reduce) {
   * {

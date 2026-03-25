@@ -15,34 +15,36 @@
     variant="full" />
 </section>
 
-<section class="dashboard__mission">
-  @if (currentMission(); as mission) {
-    <nx-mission-card
-      [mission]="mission"
-      [isCurrent]="true"
-      (missionClicked)="navigateToMission()" />
-  } @else {
-    <nx-station-card cardTitle="Mission Status">
-      <p class="dashboard__mission-complete">All Missions Complete</p>
-    </nx-station-card>
-  }
-</section>
+<div class="dashboard__cards">
+  <section class="dashboard__mission">
+    @if (currentMission(); as mission) {
+      <nx-mission-card
+        [mission]="mission"
+        [isCurrent]="true"
+        (missionClicked)="navigateToMission()" />
+    } @else {
+      <nx-station-card cardTitle="Mission Status">
+        <p class="dashboard__mission-complete">All Missions Complete</p>
+      </nx-station-card>
+    }
+  </section>
 
-<section class="dashboard__challenge">
-  <h2 class="dashboard__section-title">Daily Challenge</h2>
-  @if (!todaysChallenge().completed) {
-    <nx-station-card [cardTitle]="challengeGameName()">
-      <p class="dashboard__challenge-bonus">+{{ todaysChallenge().bonusXp }} XP bonus</p>
-      <button type="button" class="dashboard__challenge-play" (click)="navigateToChallenge()">
-        Play
-      </button>
-    </nx-station-card>
-  } @else {
-    <nx-station-card cardTitle="Daily Challenge">
-      <p class="dashboard__challenge-done">Completed</p>
-    </nx-station-card>
-  }
-</section>
+  <section class="dashboard__challenge">
+    <h2 class="dashboard__section-title">Daily Challenge</h2>
+    @if (!todaysChallenge().completed) {
+      <nx-station-card [cardTitle]="challengeGameName()">
+        <p class="dashboard__challenge-bonus">+{{ todaysChallenge().bonusXp }} XP bonus</p>
+        <button type="button" class="dashboard__challenge-play" (click)="navigateToChallenge()">
+          Play
+        </button>
+      </nx-station-card>
+    } @else {
+      <nx-station-card cardTitle="Daily Challenge">
+        <p class="dashboard__challenge-done">Completed</p>
+      </nx-station-card>
+    }
+  </section>
+</div>
 
 <section class="dashboard__shortcuts">
   <h2 class="dashboard__section-title">Quick Play</h2>
