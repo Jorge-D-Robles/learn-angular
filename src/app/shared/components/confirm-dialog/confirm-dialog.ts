@@ -15,6 +15,7 @@ import {
       class="confirm-dialog"
       [class.confirm-dialog--danger]="variant() === 'danger'"
       [class.confirm-dialog--warning]="variant() === 'warning'"
+      [class.confirm-dialog--info]="variant() === 'info'"
       aria-labelledby="confirm-dialog-title"
       (cancel)="onCancel()">
       <h2 id="confirm-dialog-title" class="confirm-dialog__title">{{ title() }}</h2>
@@ -42,7 +43,7 @@ export class ConfirmDialogComponent {
   readonly message = input.required<string>();
   readonly confirmLabel = input<string>('Confirm');
   readonly cancelLabel = input<string>('Cancel');
-  readonly variant = input<'danger' | 'warning'>('danger');
+  readonly variant = input<'danger' | 'warning' | 'info'>('danger');
 
   readonly confirmed = output();
   readonly cancelled = output();

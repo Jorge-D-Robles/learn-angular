@@ -24,7 +24,7 @@ class TestHost {
   message = 'This action cannot be undone.';
   confirmLabel = 'Delete';
   cancelLabel = 'Keep';
-  variant: 'danger' | 'warning' = 'danger';
+  variant: 'danger' | 'warning' | 'info' = 'danger';
   onConfirm = vi.fn();
   onCancel = vi.fn();
 }
@@ -159,6 +159,16 @@ describe('ConfirmDialogComponent', () => {
     await fixture.whenStable();
     const dialogEl = element.querySelector('dialog') as HTMLDialogElement;
     expect(dialogEl.classList.contains('confirm-dialog--warning')).toBe(true);
+  });
+
+  it('should apply confirm-dialog--info class for info variant', async () => {
+    const { fixture, element } = await setup();
+    (fixture.componentInstance as TestHost).variant = 'info';
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const dialogEl = element.querySelector('dialog') as HTMLDialogElement;
+    expect(dialogEl.classList.contains('confirm-dialog--info')).toBe(true);
   });
 
   it('should have aria-labelledby pointing to title', async () => {

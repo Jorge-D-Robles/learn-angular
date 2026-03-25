@@ -69,6 +69,11 @@
   background: var(--nx-color-alert-orange);
 }
 
+// Variant: info -> Reactor Blue confirm button
+.confirm-dialog--info .confirm-dialog__btn--confirm {
+  background: var(--nx-color-reactor-blue);
+}
+
 @keyframes dialogFadeIn {
   from {
     opacity: 0;
