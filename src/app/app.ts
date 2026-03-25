@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { BottomNavComponent } from './bottom-nav/bottom-nav';
-import { StreakService, XpService, RankUpNotificationService, getCurrentRankThreshold, getNextRankThreshold } from './core';
+import { RouteAnnouncerService, StreakService, XpService, RankUpNotificationService, getCurrentRankThreshold, getNextRankThreshold } from './core';
 import { SideNavComponent } from './side-nav/side-nav';
 import { RankUpOverlayComponent, StreakBadgeComponent, XpNotificationComponent, XpProgressBarComponent } from './shared';
 
@@ -12,6 +12,7 @@ import { RankUpOverlayComponent, StreakBadgeComponent, XpNotificationComponent, 
   styleUrl: './app.scss',
 })
 export class App {
+  private readonly routeAnnouncer = inject(RouteAnnouncerService);
   private readonly streakService = inject(StreakService);
   private readonly xpService = inject(XpService);
   protected readonly rankUpService = inject(RankUpNotificationService);
