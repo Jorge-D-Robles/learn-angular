@@ -18,17 +18,11 @@
 <div class="dashboard__cards">
   <section class="dashboard__mission">
     <h2 class="dashboard__section-title">Active Mission</h2>
-    @if (currentMission(); as mission) {
-      <nx-mission-card
-        [mission]="mission"
-        [isCurrent]="true"
-        (missionClicked)="navigateToMission()" />
-    } @else {
-      <nx-station-card cardTitle="Campaign Complete">
-        <p class="dashboard__mission-complete">Campaign Complete</p>
-        <p class="dashboard__mission-progress">{{ campaignProgress() }} missions completed</p>
-      </nx-station-card>
-    }
+    <nx-active-mission-card
+      [mission]="currentMission()"
+      [isAllComplete]="isAllComplete()"
+      [totalXp]="totalXp()"
+      (continueClicked)="navigateToMission($event)" />
   </section>
 
   <section class="dashboard__challenge">

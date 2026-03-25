@@ -13,12 +13,12 @@ import {
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import type { MinigameId } from '../../core/minigame/minigame.types';
 import { ALL_STORY_MISSIONS } from '../../core/curriculum/curriculum.data';
+import type { ChapterId } from '../../core/curriculum/curriculum.types';
 import type { DegradingTopicItem } from '../../shared/components/degradation-alert/degradation-alert';
 import {
   XpProgressBarComponent,
-  StationCardComponent,
   StationVisualizationComponent,
-  MissionCardComponent,
+  ActiveMissionCardComponent,
   StreakBadgeComponent,
   DegradationAlertComponent,
   DailyChallengeCardComponent,
@@ -28,9 +28,8 @@ import {
   selector: 'app-dashboard',
   imports: [
     XpProgressBarComponent,
-    StationCardComponent,
     StationVisualizationComponent,
-    MissionCardComponent,
+    ActiveMissionCardComponent,
     StreakBadgeComponent,
     DegradationAlertComponent,
     DailyChallengeCardComponent,
@@ -53,6 +52,11 @@ export class DashboardPage {
   readonly todaysChallenge = this.dailyChallenge.todaysChallenge;
   readonly activeStreakDays = this.streakService.activeStreakDays;
   readonly streakMultiplier = this.streakService.streakMultiplier;
+  readonly totalXp = this.xpService.totalXp;
+
+  readonly isAllComplete = computed(
+    () => this.gameProgression.completedMissionCount() === ALL_STORY_MISSIONS.length,
+  );
 
   readonly rankXpProgress = computed(() => {
     const totalXp = this.xpService.totalXp();
@@ -101,15 +105,8 @@ export class DashboardPage {
     return this.minigameRegistry.getConfig(challenge.gameId)?.angularTopic ?? '';
   });
 
-  readonly campaignProgress = computed(
-    () => `${this.gameProgression.completedMissionCount()}/${ALL_STORY_MISSIONS.length}`,
-  );
-
-  navigateToMission(): void {
-    const mission = this.currentMission();
-    if (mission) {
-      this.router.navigate(['/mission', mission.chapterId]);
-    }
+  navigateToMission(chapterId: ChapterId): void {
+    this.router.navigate(['/mission', chapterId]);
   }
 
   navigateToMinigame(gameId: string): void {

@@ -19,6 +19,7 @@ import { DifficultyTier, type MinigameConfig, type MinigameId } from '../../core
 import { APP_ICONS } from '../../shared/icons';
 import type { Rank } from '../../core/state/rank.constants';
 import type { StoryMission } from '../../core/curriculum/curriculum.types';
+import { ALL_STORY_MISSIONS } from '../../core/curriculum/curriculum.data';
 
 const ICON_PROVIDERS = [
   {
@@ -70,6 +71,7 @@ interface SetupOptions {
   totalXp?: number;
   currentRank?: Rank;
   currentMission?: StoryMission | null;
+  completedMissionCount?: number;
   unlockedMinigames?: MinigameId[];
   todaysChallenge?: DailyChallenge;
   degradingTopics?: DegradingTopic[];
@@ -83,6 +85,7 @@ async function setup(options: SetupOptions = {}) {
     totalXp = 750,
     currentRank = 'Ensign' as Rank,
     currentMission = TEST_MISSION,
+    completedMissionCount,
     unlockedMinigames = ['module-assembly' as MinigameId, 'wire-protocol' as MinigameId],
     todaysChallenge = TEST_CHALLENGE,
     degradingTopics = [],
@@ -90,6 +93,10 @@ async function setup(options: SetupOptions = {}) {
     currentStreak = 3,
     streakMultiplier = 1.3,
   } = options;
+
+  // Default: when currentMission is null and completedMissionCount not explicitly set,
+  // assume all missions complete (34). Otherwise, use explicit value or 0.
+  const resolvedCompletedCount = completedMissionCount ?? (currentMission === null ? ALL_STORY_MISSIONS.length : 0);
 
   const navigateFn = vi.fn();
 
@@ -103,7 +110,7 @@ async function setup(options: SetupOptions = {}) {
       getMockProvider(GameProgressionService, {
         currentMission: signal(currentMission),
         completedMissions: signal(new Set()),
-        completedMissionCount: signal(currentMission === null ? 34 : 0),
+        completedMissionCount: signal(resolvedCompletedCount),
         getUnlockedMinigames: () => unlockedMinigames,
       }),
       getMockProvider(DailyChallengeService, {
@@ -156,16 +163,18 @@ describe('DashboardPage', () => {
     expect(bar).toBeTruthy();
   });
 
-  it('should show active mission prompt when mission exists', async () => {
+  it('should show active mission card when mission exists', async () => {
     const { element } = await setup({ currentMission: TEST_MISSION });
-    const missionCard = element.querySelector('nx-mission-card');
+    const missionCard = element.querySelector('nx-active-mission-card');
     expect(missionCard).toBeTruthy();
+    expect(missionCard!.classList.contains('active-mission-card--active')).toBe(true);
   });
 
-  it('should show completion message when all missions complete', async () => {
+  it('should show completion state when all missions complete', async () => {
     const { element } = await setup({ currentMission: null });
-    const missionCard = element.querySelector('nx-mission-card');
-    expect(missionCard).toBeFalsy();
+    const missionCard = element.querySelector('nx-active-mission-card');
+    expect(missionCard).toBeTruthy();
+    expect(missionCard!.classList.contains('active-mission-card--complete')).toBe(true);
     expect(element.textContent).toContain('Campaign Complete');
   });
 
@@ -221,8 +230,6 @@ describe('DashboardPage', () => {
       ['module-assembly' as MinigameId, 1],
     ]) as ReadonlyMap<MinigameId, number>);
 
-    const navigateFn = vi.fn();
-
     const result = await createComponent(DashboardPage, {
       providers: [
         ...ICON_PROVIDERS,
@@ -255,7 +262,7 @@ describe('DashboardPage', () => {
           streakMultiplier: signal(1.3),
         }),
         getMockProvider(Router, {
-          navigate: navigateFn,
+          navigate: vi.fn(),
         }),
       ],
     });
@@ -336,19 +343,19 @@ describe('DashboardPage', () => {
     expect(alert.style.display).toBe('none');
   });
 
-  it('should navigate to /mission/:chapterId when mission card is clicked', async () => {
+  it('should navigate to /mission/:chapterId when Continue button is clicked', async () => {
     const { element, fixture, navigateFn } = await setup({ currentMission: TEST_MISSION });
-    const missionCard = element.querySelector('nx-mission-card') as HTMLElement;
-    expect(missionCard).toBeTruthy();
-    missionCard.click();
+    const continueBtn = element.querySelector('.active-mission-card__action') as HTMLButtonElement;
+    expect(continueBtn).toBeTruthy();
+    continueBtn.click();
     fixture.detectChanges();
     expect(navigateFn).toHaveBeenCalledWith(['/mission', 1]);
   });
 
-  it('should show "Campaign Complete" with mission count when all missions done', async () => {
-    const { element } = await setup({ currentMission: null });
+  it('should show "Campaign Complete" with total XP when all missions done', async () => {
+    const { element } = await setup({ currentMission: null, totalXp: 2500 });
     expect(element.textContent).toContain('Campaign Complete');
-    expect(element.textContent).toContain('34/34');
+    expect(element.textContent).toContain('2500');
   });
 
   it('should display "Active Mission" section header when mission exists', async () => {
@@ -397,5 +404,46 @@ describe('DashboardPage', () => {
     expect(card).toBeTruthy();
     const streak = card?.querySelector('.daily-challenge-card__streak-count');
     expect(streak?.textContent?.trim()).toBe('5');
+  });
+
+  it('should bind isAllComplete to true when completedMissionCount equals total missions', async () => {
+    const { element } = await setup({
+      currentMission: null,
+      completedMissionCount: ALL_STORY_MISSIONS.length,
+    });
+    const card = element.querySelector('nx-active-mission-card');
+    expect(card).toBeTruthy();
+    expect(card!.classList.contains('active-mission-card--complete')).toBe(true);
+  });
+
+  it('should bind totalXp to ActiveMissionCardComponent when all complete', async () => {
+    const { element } = await setup({
+      currentMission: null,
+      completedMissionCount: ALL_STORY_MISSIONS.length,
+      totalXp: 2500,
+    });
+    const card = element.querySelector('nx-active-mission-card');
+    expect(card).toBeTruthy();
+    expect(card!.textContent).toContain('2500');
+  });
+
+  it('should navigate to /mission/1 when continueClicked emits from empty state', async () => {
+    const { element, fixture, navigateFn } = await setup({
+      currentMission: null,
+      completedMissionCount: 0,
+    });
+    const startBtn = element.querySelector('.active-mission-card__action') as HTMLButtonElement;
+    expect(startBtn).toBeTruthy();
+    expect(startBtn.textContent!.trim()).toBe('Start Mission 1');
+    startBtn.click();
+    fixture.detectChanges();
+    expect(navigateFn).toHaveBeenCalledWith(['/mission', 1]);
+  });
+
+  it('should render ActiveMissionCardComponent (not MissionCardComponent) in mission section', async () => {
+    const { element } = await setup();
+    const missionSection = element.querySelector('.dashboard__mission');
+    expect(missionSection!.querySelector('nx-active-mission-card')).toBeTruthy();
+    expect(missionSection!.querySelector('nx-mission-card')).toBeNull();
   });
 });
