@@ -1,0 +1,115 @@
+:host {
+  display: block;
+  padding: var(--nx-space-6);
+}
+
+h1 {
+  margin: 0 0 var(--nx-space-6);
+}
+
+.profile__rank-section {
+  margin-bottom: var(--nx-space-6);
+
+  .profile__rank-header {
+    display: flex;
+    align-items: center;
+    gap: var(--nx-space-3);
+    margin-bottom: var(--nx-space-3);
+  }
+
+  .profile__rank-name {
+    font-size: var(--nx-text-heading-size, 1.125rem);
+    font-weight: 600;
+  }
+
+  .profile__total-xp {
+    font-size: var(--nx-text-body-size, 0.875rem);
+    color: var(--nx-color-corridor);
+  }
+}
+
+nx-xp-progress-bar {
+  display: block;
+  margin-bottom: var(--nx-space-4);
+}
+
+.profile__stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--nx-space-4);
+  margin-bottom: var(--nx-space-6);
+}
+
+.profile__stat-card {
+  border-radius: var(--nx-radius-card);
+  background: var(--nx-color-surface, #1a1e2e);
+  border: 1px solid var(--nx-color-corridor);
+  padding: var(--nx-space-4);
+
+  h3 {
+    margin: 0 0 var(--nx-space-2);
+    font-size: var(--nx-text-caption-size, 0.75rem);
+    color: var(--nx-color-corridor);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .profile__stat-value {
+    font-size: var(--nx-text-heading-size, 1.125rem);
+    font-weight: 600;
+  }
+
+  .profile__stat-detail {
+    font-size: var(--nx-text-caption-size, 0.75rem);
+    color: var(--nx-color-corridor);
+    margin-top: var(--nx-space-1);
+  }
+}
+
+.profile__mastery-section {
+  margin-bottom: var(--nx-space-6);
+
+  h2 {
+    margin: 0 0 var(--nx-space-4);
+  }
+}
+
+.profile__mastery-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--nx-space-2) var(--nx-space-3);
+    text-align: left;
+    border-bottom: 1px solid var(--nx-color-corridor);
+  }
+
+  th {
+    font-size: var(--nx-text-caption-size, 0.75rem);
+    color: var(--nx-color-corridor);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      color: inherit;
+    }
+  }
+
+  td {
+    font-size: var(--nx-text-body-size, 0.875rem);
+  }
+}
+
+.profile__achievements-section {
+  h2 {
+    margin: 0 0 var(--nx-space-2);
+  }
+
+  .profile__coming-soon {
+    color: var(--nx-color-corridor);
+    font-size: var(--nx-text-body-size, 0.875rem);
+  }
+}
