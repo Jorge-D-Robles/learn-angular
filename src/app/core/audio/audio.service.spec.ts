@@ -74,9 +74,9 @@ describe('AudioService', () => {
 
     service.play(SoundEffect.click);
 
-    // Should have preloaded (9 Audio constructor calls) and cloned one for play
-    // 9 for preload + 1 clone = 10 total MockAudio instances
-    expect(createdMocks.length).toBeGreaterThanOrEqual(9);
+    // Should have preloaded (10 Audio constructor calls) and cloned one for play
+    // 10 for preload + 1 clone = 11 total MockAudio instances
+    expect(createdMocks.length).toBeGreaterThanOrEqual(10);
 
     // Find a clone that was played
     const playedMocks = createdMocks.filter((m) => m.playSpy.mock.calls.length > 0);
@@ -127,8 +127,8 @@ describe('AudioService', () => {
   it('should create audio elements for all sounds on preload', () => {
     service.preload();
 
-    // One Audio element per SoundEffect value
-    expect(createdMocks).toHaveLength(9);
+    // One Audio element per SoundEffect value (10 including achievement)
+    expect(createdMocks).toHaveLength(10);
   });
 
   // Test 9: play() triggers lazy preload on first call
@@ -137,8 +137,8 @@ describe('AudioService', () => {
 
     service.play(SoundEffect.correct);
 
-    // 9 for preload + 1 clone for play = 10
-    expect(createdMocks).toHaveLength(10);
+    // 10 for preload + 1 clone for play = 11
+    expect(createdMocks).toHaveLength(11);
 
     // Second call should not preload again (only 1 additional clone)
     const countBefore = createdMocks.length;
@@ -172,9 +172,9 @@ describe('AudioService', () => {
   });
 
   // Test 11: All SoundEffect enum values exist
-  it('should have exactly 9 SoundEffect enum values', () => {
+  it('should have exactly 10 SoundEffect enum values', () => {
     const values = Object.values(SoundEffect);
-    expect(values).toHaveLength(9);
+    expect(values).toHaveLength(10);
     expect(values).toContain('correct');
     expect(values).toContain('incorrect');
     expect(values).toContain('complete');
@@ -184,6 +184,12 @@ describe('AudioService', () => {
     expect(values).toContain('hint');
     expect(values).toContain('click');
     expect(values).toContain('tick');
+    expect(values).toContain('achievement');
+  });
+
+  // Test 13: SoundEffect.achievement exists in SOUND_PATHS
+  it('should have achievement in SOUND_PATHS', () => {
+    expect(SOUND_PATHS[SoundEffect.achievement]).toBe('audio/achievement.mp3');
   });
 
   // Test 12: play() uses cloneNode for overlapping playback
