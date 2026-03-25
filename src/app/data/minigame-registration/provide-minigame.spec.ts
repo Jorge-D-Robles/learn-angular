@@ -239,6 +239,15 @@ describe('provideMinigame — corridor-runner', () => {
     expect(config).toBeDefined();
     expect(config!.name).toBe('Corridor Runner');
   });
+
+  it('should include tutorialSteps for corridor-runner after registration', () => {
+    const config = registry.getConfig('corridor-runner');
+    const tutorial = getMinigameTutorial('corridor-runner');
+    expect(config!.tutorialSteps).toBeDefined();
+    expect(tutorial).toBeDefined();
+    expect(config!.tutorialSteps!.length).toBe(tutorial!.steps.length);
+    expect(config!.tutorialSteps![0].title).toBe(tutorial!.steps[0].title);
+  });
 });
 
 describe('provideMinigame — terminal-hack', () => {
