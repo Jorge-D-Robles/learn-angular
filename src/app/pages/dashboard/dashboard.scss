@@ -41,7 +41,7 @@ h1 {
 .dashboard__challenge,
 .dashboard__shortcuts,
 .dashboard__alerts,
-.dashboard__modules {
+.dashboard__visualization {
   margin-bottom: 1.5rem;
 }
 
@@ -106,23 +106,6 @@ h1 {
   opacity: 0.7;
 }
 
-.dashboard__module-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 0.5rem;
-}
-
-.dashboard__module-card {
-  cursor: pointer;
-  text-align: center;
-
-  &--locked {
-    opacity: 0.4;
-    cursor: default;
-    pointer-events: none;
-  }
-}
-
 // Tablet breakpoint: 2-column cards, revert shortcut wrap
 @media (min-width: 768px) {
   .dashboard__cards {
@@ -134,11 +117,6 @@ h1 {
   .dashboard__shortcut-list {
     flex-wrap: wrap;
     overflow-x: visible;
-  }
-
-  .dashboard__module-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 0.75rem;
   }
 }
 
