@@ -116,19 +116,19 @@ describe('MinigameHubPage', () => {
   // 2. Render a card for each minigame
   it('should render a card for each minigame from the registry', async () => {
     const { element } = await setup();
-    const cards = element.querySelectorAll('.minigame-hub__card');
+    const cards = element.querySelectorAll('nx-minigame-card');
     expect(cards.length).toBe(3);
   });
 
   // 3. Display game name and Angular topic
   it('should display game name and Angular topic on each card', async () => {
     const { element } = await setup();
-    const cards = element.querySelectorAll('.minigame-hub__card');
+    const cards = element.querySelectorAll('nx-minigame-card');
 
-    expect(cards[0].textContent).toContain('Module Assembly');
-    expect(cards[0].textContent).toContain('Components');
-    expect(cards[2].textContent).toContain('Corridor Runner');
-    expect(cards[2].textContent).toContain('Routing');
+    expect(cards[0].querySelector('.minigame-card__name')?.textContent).toContain('Module Assembly');
+    expect(cards[0].querySelector('.minigame-card__topic')?.textContent).toContain('Components');
+    expect(cards[2].querySelector('.minigame-card__name')?.textContent).toContain('Corridor Runner');
+    expect(cards[2].querySelector('.minigame-card__topic')?.textContent).toContain('Routing');
   });
 
   // 4. Render MasteryStarsComponent for each card
@@ -145,12 +145,9 @@ describe('MinigameHubPage', () => {
     const { element } = await setup({
       isMinigameUnlocked: (id: string) => id !== 'corridor-runner',
     });
-    const cards = element.querySelectorAll('.minigame-hub__card');
+    const cards = element.querySelectorAll('nx-minigame-card');
     // corridor-runner is the 3rd card (index 2)
-    const lockedContent = cards[2].querySelector('nx-locked-content');
-    expect(lockedContent).toBeTruthy();
-    // The LockedContentComponent renders the unlock message in its overlay
-    const overlay = lockedContent!.querySelector('.locked-content__overlay');
+    const overlay = cards[2].querySelector('.locked-content__overlay');
     expect(overlay).toBeTruthy();
     expect(overlay!.textContent).toContain('Complete mission: Station Map');
   });
@@ -176,17 +173,8 @@ describe('MinigameHubPage', () => {
     const { element } = await setup({
       getLevelProgress: (id: string) => (id === 'module-assembly' ? progress : []),
     });
-    const cards = element.querySelectorAll('.minigame-hub__card');
-    expect(cards[0].textContent).toContain('3 / 18 levels');
-  });
-
-  // 8. Display best score 0 when no levels are registered
-  it('should display best score 0 when no levels are registered', async () => {
-    const { element } = await setup({
-      getLevelProgress: () => [],
-    });
-    const cards = element.querySelectorAll('.minigame-hub__card');
-    expect(cards[0].textContent).toContain('Best: 0');
+    const cards = element.querySelectorAll('nx-minigame-card');
+    expect(cards[0].querySelector('.minigame-card__stats')?.textContent).toContain('3/18 levels');
   });
 
   // 9. Filter by topic
@@ -194,7 +182,7 @@ describe('MinigameHubPage', () => {
     const { component, element, fixture } = await setup();
     component.topicFilter.set('Routing');
     fixture.detectChanges();
-    const cards = element.querySelectorAll('.minigame-hub__card');
+    const cards = element.querySelectorAll('nx-minigame-card');
     expect(cards.length).toBe(1);
     expect(cards[0].textContent).toContain('Corridor Runner');
   });
@@ -210,7 +198,7 @@ describe('MinigameHubPage', () => {
     });
     component.masteryFilter.set(3);
     fixture.detectChanges();
-    const cards = element.querySelectorAll('.minigame-hub__card');
+    const cards = element.querySelectorAll('nx-minigame-card');
     expect(cards.length).toBe(1);
     expect(cards[0].textContent).toContain('Module Assembly');
   });
@@ -220,12 +208,12 @@ describe('MinigameHubPage', () => {
     const { component, element, fixture } = await setup();
     component.topicFilter.set('Routing');
     fixture.detectChanges();
-    expect(element.querySelectorAll('.minigame-hub__card').length).toBe(1);
+    expect(element.querySelectorAll('nx-minigame-card').length).toBe(1);
 
     component.topicFilter.set('');
     component.masteryFilter.set(-1);
     fixture.detectChanges();
-    expect(element.querySelectorAll('.minigame-hub__card').length).toBe(3);
+    expect(element.querySelectorAll('nx-minigame-card').length).toBe(3);
   });
 
   // 12. Navigate to /minigames/:gameId on unlocked card click
@@ -233,7 +221,7 @@ describe('MinigameHubPage', () => {
     const { element, fixture } = await setup({
       isMinigameUnlocked: () => true,
     });
-    const card = element.querySelector('.minigame-hub__card') as HTMLElement;
+    const card = element.querySelector('nx-minigame-card') as HTMLElement;
     card.click();
     fixture.detectChanges();
 
@@ -246,7 +234,7 @@ describe('MinigameHubPage', () => {
     const { element, fixture } = await setup({
       isMinigameUnlocked: (id: string) => id !== 'corridor-runner',
     });
-    const cards = element.querySelectorAll('.minigame-hub__card');
+    const cards = element.querySelectorAll('nx-minigame-card');
     // corridor-runner is card at index 2
     (cards[2] as HTMLElement).click();
     fixture.detectChanges();

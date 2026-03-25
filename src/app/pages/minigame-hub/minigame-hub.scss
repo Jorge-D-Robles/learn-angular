@@ -30,52 +30,8 @@ h1 {
   gap: var(--nx-space-4);
 }
 
-.minigame-hub__card {
-  position: relative;
-  border-radius: var(--nx-radius-card);
-  background: var(--nx-color-surface, #1a1e2e);
-  border: 1px solid var(--nx-color-corridor);
-  overflow: hidden;
-  cursor: default;
-  transition: transform var(--nx-duration-fast) var(--nx-ease-out),
-              box-shadow var(--nx-duration-fast) var(--nx-ease-out);
-
-  &--unlocked {
-    cursor: pointer;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-  }
-}
-
-.minigame-hub__card-name {
-  margin: 0 0 var(--nx-space-1);
-  font-size: var(--nx-text-heading-size, 1.125rem);
-}
-
-.minigame-hub__card-topic {
+nx-minigame-card {
   display: block;
-  font-size: var(--nx-text-caption-size, 0.75rem);
-  color: var(--nx-color-corridor);
-  margin-bottom: var(--nx-space-2);
-}
-
-nx-mastery-stars {
-  margin-bottom: var(--nx-space-2);
-}
-
-.minigame-hub__card-stats {
-  display: flex;
-  justify-content: space-between;
-  font-size: var(--nx-text-caption-size, 0.75rem);
-  color: var(--nx-color-corridor);
-}
-
-nx-locked-content {
-  display: block;
-  padding: var(--nx-space-4);
 }
 
 .minigame-hub__empty {
@@ -83,10 +39,4 @@ nx-locked-content {
   text-align: center;
   color: var(--nx-color-corridor);
   padding: var(--nx-space-8) 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .minigame-hub__card {
-    transition: none;
-  }
 }

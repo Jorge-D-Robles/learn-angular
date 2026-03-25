@@ -5,8 +5,7 @@ import { GameProgressionService } from '../../core/progression/game-progression.
 import { MasteryService } from '../../core/progression/mastery.service';
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
 import { ALL_STORY_MISSIONS } from '../../core/curriculum';
-import { MasteryStarsComponent } from '../../shared/components/mastery-stars/mastery-stars';
-import { LockedContentComponent } from '../../shared/components/locked-content/locked-content';
+import { MinigameCardComponent } from '../../shared/components/minigame-card/minigame-card';
 import type { MinigameConfig, MinigameId } from '../../core/minigame/minigame.types';
 
 interface MinigameCardData {
@@ -14,14 +13,13 @@ interface MinigameCardData {
   readonly isUnlocked: boolean;
   readonly masteryStars: number;
   readonly levelsCompleted: number;
-  readonly bestScore: number;
   readonly unlockMessage: string;
 }
 
 @Component({
   selector: 'app-minigame-hub',
   standalone: true,
-  imports: [MasteryStarsComponent, LockedContentComponent],
+  imports: [MinigameCardComponent],
   template: `
     <h1>Minigame Hub</h1>
 
@@ -42,22 +40,15 @@ interface MinigameCardData {
 
     <div class="minigame-hub__grid">
       @for (game of filteredGames(); track game.config.id) {
-        <div class="minigame-hub__card"
-             [class.minigame-hub__card--unlocked]="game.isUnlocked"
-             [tabindex]="game.isUnlocked ? 0 : -1"
-             role="button"
-             (click)="onCardClick(game)"
-             (keydown.enter)="onCardClick(game)">
-          <nx-locked-content [isLocked]="!game.isUnlocked" [unlockMessage]="game.unlockMessage">
-            <h3 class="minigame-hub__card-name">{{ game.config.name }}</h3>
-            <span class="minigame-hub__card-topic">{{ game.config.angularTopic }}</span>
-            <nx-mastery-stars [stars]="game.masteryStars" size="sm" />
-            <div class="minigame-hub__card-stats">
-              <span>{{ game.levelsCompleted }} / {{ game.config.totalLevels }} levels</span>
-              <span>Best: {{ game.bestScore }}</span>
-            </div>
-          </nx-locked-content>
-        </div>
+        <nx-minigame-card
+          [config]="game.config"
+          [mastery]="game.masteryStars"
+          [levelsCompleted]="game.levelsCompleted"
+          [isLocked]="!game.isUnlocked"
+          [unlockMessage]="game.unlockMessage"
+          [attr.tabindex]="game.isUnlocked ? 0 : -1"
+          (cardClicked)="onCardClick($event)"
+          (keydown.enter)="game.isUnlocked && onCardClick(game.config.id)" />
       } @empty {
         <p class="minigame-hub__empty">No minigames match the selected filters.</p>
       }
@@ -104,10 +95,8 @@ export class MinigameHubPage {
     this.masteryFilter.set(+(event.target as HTMLSelectElement).value);
   }
 
-  onCardClick(game: MinigameCardData): void {
-    if (game.isUnlocked) {
-      this.router.navigate(['/minigames', game.config.id]);
-    }
+  onCardClick(gameId: MinigameId): void {
+    this.router.navigate(['/minigames', gameId]);
   }
 
   private buildCardData(config: MinigameConfig): MinigameCardData {
@@ -116,12 +105,9 @@ export class MinigameHubPage {
     const masteryStars = this.mastery.getMastery(gameId);
     const progress = this.levelProgression.getLevelProgress(gameId);
     const levelsCompleted = progress.filter(l => l.completed).length;
-    const bestScore = progress.length > 0
-      ? Math.max(0, ...progress.map(l => l.bestScore))
-      : 0;
     const unlockMessage = this.deriveUnlockMessage(gameId);
 
-    return { config, isUnlocked, masteryStars, levelsCompleted, bestScore, unlockMessage };
+    return { config, isUnlocked, masteryStars, levelsCompleted, unlockMessage };
   }
 
   private deriveUnlockMessage(gameId: MinigameId): string {
