@@ -1,6 +1,6 @@
 import { inject, Injectable, signal, type Signal } from '@angular/core';
 import { StatePersistenceService } from '../persistence/state-persistence.service';
-import type { MinigameId } from './minigame.types';
+import { DifficultyTier, type MinigameId, type MinigameLevel } from './minigame.types';
 
 /** Difficulty scaling parameters returned by getDifficultyParams(). */
 export interface DifficultyParams {
@@ -10,6 +10,12 @@ export interface DifficultyParams {
   readonly complexity: number;
   /** Count of items/elements per round (starts at base, increases). */
   readonly count: number;
+}
+
+/** Level data shape for procedurally generated endless mode rounds. */
+export interface EndlessLevelData {
+  readonly round: number;
+  readonly difficulty: DifficultyParams;
 }
 
 /** Runtime state of an active endless mode session. */
@@ -100,6 +106,19 @@ export class EndlessModeService {
     );
   }
 
+  /** Generates a procedural MinigameLevel for the given game and round. */
+  generateLevel(gameId: MinigameId, round: number): MinigameLevel<EndlessLevelData> {
+    const difficulty = this.getDifficultyParams(round);
+    return {
+      id: `endless-${gameId}-r${round}`,
+      gameId,
+      tier: this._tierForRound(round),
+      conceptIntroduced: 'Endless Mode',
+      description: `Endless round ${round}`,
+      data: { round, difficulty },
+    };
+  }
+
   /** Returns difficulty scaling parameters for the given round (pure calculation). */
   getDifficultyParams(round: number): DifficultyParams {
     if (round <= 0) {
@@ -120,6 +139,14 @@ export class EndlessModeService {
         DIFFICULTY_BASE.COUNT +
         Math.floor(logRound * DIFFICULTY_BASE.COUNT_FACTOR),
     };
+  }
+
+  /** Maps a round number to a DifficultyTier. */
+  private _tierForRound(round: number): DifficultyTier {
+    if (round <= 3) return DifficultyTier.Basic;
+    if (round <= 6) return DifficultyTier.Intermediate;
+    if (round <= 9) return DifficultyTier.Advanced;
+    return DifficultyTier.Boss;
   }
 
   /** Checks if the score is a new high score and persists it if so. */

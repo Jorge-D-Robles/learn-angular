@@ -3,8 +3,10 @@ import {
   EndlessModeService,
   DIFFICULTY_BASE,
   type DifficultyParams,
+  type EndlessLevelData,
   type EndlessSession,
 } from './endless-mode.service';
+import { DifficultyTier } from './minigame.types';
 import { StatePersistenceService } from '../persistence/state-persistence.service';
 
 function createFakeStorage(): Storage {
@@ -274,6 +276,47 @@ describe('EndlessModeService', () => {
       expect(paramsNeg.speed).toBe(DIFFICULTY_BASE.SPEED);
       expect(paramsNeg.complexity).toBe(DIFFICULTY_BASE.COMPLEXITY);
       expect(paramsNeg.count).toBe(DIFFICULTY_BASE.COUNT);
+    });
+  });
+
+  // --- generateLevel ---
+
+  describe('generateLevel', () => {
+    it('should return a valid MinigameLevel for round 1', () => {
+      const level = service.generateLevel('module-assembly', 1);
+      expect(level.id).toBe('endless-module-assembly-r1');
+      expect(level.gameId).toBe('module-assembly');
+      expect(level.tier).toBe(DifficultyTier.Basic);
+      expect(level.conceptIntroduced).toBe('Endless Mode');
+      expect(level.description).toBe('Endless round 1');
+      expect(level.data.round).toBe(1);
+      expect(level.data.difficulty).toBeTruthy();
+    });
+
+    it('should map tier correctly at tier boundaries', () => {
+      // Rounds 1-3 = Basic
+      expect(service.generateLevel('module-assembly', 3).tier).toBe(DifficultyTier.Basic);
+      // Rounds 4-6 = Intermediate
+      expect(service.generateLevel('module-assembly', 4).tier).toBe(DifficultyTier.Intermediate);
+      expect(service.generateLevel('module-assembly', 6).tier).toBe(DifficultyTier.Intermediate);
+      // Rounds 7-9 = Advanced
+      expect(service.generateLevel('module-assembly', 7).tier).toBe(DifficultyTier.Advanced);
+      expect(service.generateLevel('module-assembly', 9).tier).toBe(DifficultyTier.Advanced);
+      // Rounds 10+ = Boss
+      expect(service.generateLevel('module-assembly', 10).tier).toBe(DifficultyTier.Boss);
+      expect(service.generateLevel('module-assembly', 50).tier).toBe(DifficultyTier.Boss);
+    });
+
+    it('should scale difficulty params with higher rounds', () => {
+      const level1 = service.generateLevel('module-assembly', 1);
+      const level5 = service.generateLevel('module-assembly', 5);
+      expect(level5.data.difficulty.speed).toBeGreaterThan(level1.data.difficulty.speed);
+      expect(level5.data.difficulty.complexity).toBeGreaterThan(level1.data.difficulty.complexity);
+    });
+
+    it('should export EndlessLevelData interface (compile-time check)', () => {
+      const data: EndlessLevelData = { round: 1, difficulty: { speed: 1, complexity: 1, count: 3 } };
+      expect(data).toBeTruthy();
     });
   });
 
