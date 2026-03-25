@@ -28,6 +28,7 @@ export type { TutorialStep } from './minigame-tutorial/minigame-tutorial.types';
 export { tutorialSeenKey } from './minigame-tutorial/minigame-tutorial.types';
 export { MissionCardComponent } from './mission-card/mission-card';
 export { MissionUnlockNotificationComponent } from './mission-unlock-notification/mission-unlock-notification';
+export { OnboardingOverlayComponent } from './onboarding-overlay/onboarding-overlay';
 export { PauseMenuComponent } from './pause-menu/pause-menu';
 export { PhaseHeaderComponent } from './phase-header/phase-header';
 export { ProgressBarComponent } from './progress-bar/progress-bar';
