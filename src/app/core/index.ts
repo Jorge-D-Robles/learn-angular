@@ -2,6 +2,7 @@ export * from './animation';
 export * from './audio';
 export * from './curriculum';
 export * from './error';
+export * from './guards';
 export * from './levels';
 export * from './minigame';
 export * from './notifications';
