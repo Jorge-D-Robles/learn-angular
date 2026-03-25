@@ -294,6 +294,99 @@ describe('SettingsService', () => {
     });
   });
 
+  // --- Theme body class ---
+
+  describe('theme body class', () => {
+    afterEach(() => {
+      document.body.classList.remove('theme-dark', 'theme-station', 'theme-light');
+    });
+
+    it('should apply theme-station class to body on construction with default settings', () => {
+      TestBed.flushEffects();
+      expect(document.body.classList.contains('theme-station')).toBe(true);
+    });
+
+    it('should apply theme-dark class when theme changes to dark', () => {
+      service.updateSetting('theme', 'dark');
+      TestBed.flushEffects();
+      expect(document.body.classList.contains('theme-dark')).toBe(true);
+      expect(document.body.classList.contains('theme-station')).toBe(false);
+    });
+
+    it('should apply theme-light class when theme changes to light', () => {
+      service.updateSetting('theme', 'light');
+      TestBed.flushEffects();
+      expect(document.body.classList.contains('theme-light')).toBe(true);
+    });
+
+    it('should have exactly one theme class at a time after multiple changes', () => {
+      service.updateSetting('theme', 'dark');
+      TestBed.flushEffects();
+      service.updateSetting('theme', 'light');
+      TestBed.flushEffects();
+      service.updateSetting('theme', 'station');
+      TestBed.flushEffects();
+
+      const themeClasses = Array.from(document.body.classList).filter(c => c.startsWith('theme-'));
+      expect(themeClasses).toEqual(['theme-station']);
+    });
+
+    it('should load theme from persistence and apply correct body class', () => {
+      fakeStorage.setItem('nexus-station:settings', JSON.stringify({
+        soundEnabled: true,
+        animationSpeed: 'normal',
+        theme: 'light',
+        reducedMotion: false,
+      }));
+
+      // Clean previous theme classes
+      document.body.classList.remove('theme-dark', 'theme-station', 'theme-light');
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const svc = TestBed.inject(SettingsService);
+      TestBed.flushEffects();
+
+      expect(svc.settings().theme).toBe('light');
+      expect(document.body.classList.contains('theme-light')).toBe(true);
+    });
+
+    it('should accept light as a valid theme value from persistence', () => {
+      fakeStorage.setItem('nexus-station:settings', JSON.stringify({
+        soundEnabled: true,
+        animationSpeed: 'normal',
+        theme: 'light',
+        reducedMotion: false,
+      }));
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const svc = TestBed.inject(SettingsService);
+
+      expect(svc.settings().theme).toBe('light');
+    });
+
+    it('should fall back to station when an invalid theme is persisted', () => {
+      fakeStorage.setItem('nexus-station:settings', JSON.stringify({
+        soundEnabled: true,
+        animationSpeed: 'normal',
+        theme: 'invalid',
+        reducedMotion: false,
+      }));
+
+      // Clean previous theme classes
+      document.body.classList.remove('theme-dark', 'theme-station', 'theme-light');
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const svc = TestBed.inject(SettingsService);
+      TestBed.flushEffects();
+
+      expect(svc.settings().theme).toBe('station');
+      expect(document.body.classList.contains('theme-station')).toBe(true);
+    });
+  });
+
   // --- Read-only enforcement ---
 
   it('should expose settings as read-only signal', () => {

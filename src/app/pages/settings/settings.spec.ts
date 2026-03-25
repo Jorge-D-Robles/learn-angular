@@ -170,6 +170,17 @@ describe('SettingsPage', () => {
     expect(selectedOption?.value).toBe('station');
   });
 
+  it('should render theme select with 3 options (dark, station, light)', async () => {
+    const { element } = await setup();
+    const select = element.querySelector('#theme-select') as HTMLSelectElement;
+    const options = select.querySelectorAll('option');
+    expect(options.length).toBe(3);
+    const values = Array.from(options).map(o => o.value);
+    expect(values).toContain('dark');
+    expect(values).toContain('station');
+    expect(values).toContain('light');
+  });
+
   it('should render reduced motion toggle', async () => {
     const { element } = await setup();
     const toggles = element.querySelectorAll('.settings-page__toggle');

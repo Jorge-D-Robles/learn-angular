@@ -10,7 +10,7 @@ import { DOCUMENT } from '@angular/common';
 import { StatePersistenceService } from '../persistence/state-persistence.service';
 
 export type AnimationSpeed = 'normal' | 'fast' | 'off';
-export type Theme = 'dark' | 'station';
+export type Theme = 'dark' | 'station' | 'light';
 
 export interface UserSettings {
   soundEnabled: boolean;
@@ -20,6 +20,7 @@ export interface UserSettings {
 }
 
 const SETTINGS_KEY = 'settings';
+const VALID_THEMES: readonly Theme[] = ['dark', 'station', 'light'] as const;
 
 function getDefaultSettings(): UserSettings {
   const prefersReduced =
@@ -37,6 +38,7 @@ function getDefaultSettings(): UserSettings {
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
   static readonly SAVE_DEBOUNCE_MS = 500;
+  private static readonly THEME_CLASSES = VALID_THEMES.map(t => `theme-${t}`);
 
   private readonly persistence = inject(StatePersistenceService);
   private readonly document = inject(DOCUMENT);
@@ -49,6 +51,7 @@ export class SettingsService {
   constructor() {
     this._loadSettings();
     this._setupAutoSave();
+    this._applyThemeClass();
     this.destroyRef.onDestroy(() => {
       if (this._saveTimeout !== null) {
         clearTimeout(this._saveTimeout);
@@ -82,8 +85,8 @@ export class SettingsService {
             ? saved.animationSpeed
             : defaults.animationSpeed,
         theme:
-          typeof saved.theme === 'string' && ['dark', 'station'].includes(saved.theme)
-            ? saved.theme
+          typeof saved.theme === 'string' && VALID_THEMES.includes(saved.theme as Theme)
+            ? (saved.theme as Theme)
             : defaults.theme,
         reducedMotion:
           typeof saved.reducedMotion === 'boolean' ? saved.reducedMotion : defaults.reducedMotion,
@@ -95,6 +98,16 @@ export class SettingsService {
     effect(() => {
       const snapshot = this.settings();
       untracked(() => this._debouncedSave(snapshot));
+    });
+  }
+
+  private _applyThemeClass(): void {
+    effect(() => {
+      const theme = this.settings().theme;
+      const body = this.document.body;
+      if (!body) return;
+      body.classList.remove(...SettingsService.THEME_CLASSES);
+      body.classList.add(`theme-${theme}`);
     });
   }
 

@@ -52,6 +52,7 @@ import { ConfirmDialogComponent } from '../../shared/components';
         <select id="theme-select" (change)="setTheme($event)" class="settings-page__select">
           <option value="dark" [selected]="settings().theme === 'dark'">Dark</option>
           <option value="station" [selected]="settings().theme === 'station'">Station</option>
+          <option value="light" [selected]="settings().theme === 'light'">Light</option>
         </select>
       </div>
     </section>
