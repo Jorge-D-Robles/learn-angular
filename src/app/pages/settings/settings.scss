@@ -104,3 +104,38 @@ h1 {
     transition: none;
   }
 }
+
+@media (max-width: 768px) {
+  :host {
+    padding: var(--nx-space-4);
+  }
+
+  .settings-page__row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--nx-space-2);
+
+    &--actions {
+      flex-direction: column;
+    }
+  }
+
+  .settings-page__toggle {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .settings-page__select {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .settings-page__btn {
+    width: 100%;
+    min-height: 44px;
+
+    &--danger {
+      min-height: 44px;
+    }
+  }
+}

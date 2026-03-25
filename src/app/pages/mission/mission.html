@@ -8,69 +8,50 @@
   <header class="mission__header">
     <h1 class="mission__title">{{ missionMeta()?.title }}</h1>
     <p class="mission__topic">{{ missionMeta()?.angularTopic }}</p>
-    <nx-step-progress
-      [totalSteps]="totalSteps()"
-      [currentStep]="currentStep() + 1"
-      [completedSteps]="completedStepIndices()"
-      variant="full" />
+    <nx-step-progress [totalSteps]="totalSteps()" [currentStep]="currentStep() + 1" [completedSteps]="completedStepIndices()" variant="full" />
   </header>
-
-  @if (errorMessage()) {
-    <div class="mission__error" role="alert">{{ errorMessage() }}</div>
-  }
-
+  @if (errorMessage()) { <div class="mission__error" role="alert">{{ errorMessage() }}</div> }
   <main class="mission__content">
     @if (currentStepData(); as step) {
       <div class="mission__narrative">{{ step.narrativeText }}</div>
-
       @if (codeExample(); as ex) {
         @if (codeBlocks(); as blocks) {
           @for (block of blocks; track $index) {
             <div class="mission__code-block">
-              @if (block.label) {
-                <div class="mission__code-label">{{ block.label }}</div>
-              }
-              <nx-code-editor
-                [code]="block.code"
-                [language]="block.language"
-                [readOnly]="true"
-                [highlightLines]="[...(block.highlightLines ?? [])]" />
+              @if (block.label) { <div class="mission__code-label">{{ block.label }}</div> }
+              <nx-code-editor [code]="block.code" [language]="block.language" [readOnly]="true" [highlightLines]="[...(block.highlightLines ?? [])]" />
             </div>
           }
         } @else {
-          <nx-code-editor
-            [code]="ex.code"
-            [language]="ex.language"
-            [readOnly]="true"
-            [highlightLines]="[...(ex.highlightLines ?? [])]" />
+          <nx-code-editor [code]="ex.code" [language]="ex.language" [readOnly]="true" [highlightLines]="[...(ex.highlightLines ?? [])]" />
         }
         <div class="mission__explanation">{{ ex.explanation }}</div>
       }
-
       @if (concept(); as con) {
         <div class="mission__concept-panel">
-          <button class="mission__concept-toggle"
-                  (click)="toggleConceptPanel()"
-                  [attr.aria-expanded]="!collapsedConcept()">
-            {{ con.conceptTitle }}
-          </button>
+          <button class="mission__concept-toggle" (click)="toggleConceptPanel()" [attr.aria-expanded]="!collapsedConcept()">{{ con.conceptTitle }}</button>
           @if (!collapsedConcept()) {
             <div class="mission__concept-body">
               <p>{{ con.conceptBody }}</p>
-              @if (con.keyPoints) {
-                <ul class="mission__key-points">
-                  @for (point of con.keyPoints; track $index) {
-                    <li>{{ point }}</li>
-                  }
-                </ul>
-              }
+              @if (con.keyPoints) { <ul class="mission__key-points">@for (point of con.keyPoints; track $index) { <li>{{ point }}</li> }</ul> }
             </div>
           }
         </div>
       }
     }
   </main>
-
+  @if (showCompletionSummary()) {
+    <section class="mission__summary" aria-label="Mission Complete">
+      <h2 class="mission__summary-heading">Mission Complete</h2>
+      <div class="mission__summary-xp">+{{ completionResult()!.xpAwarded }} XP</div>
+      <div class="mission__summary-mastery">Mastery: +1 star</div>
+      @if (completionResult()!.unlockedMinigame) {
+        <div class="mission__summary-unlock">Minigame Unlocked: {{ minigameName() }}</div>
+        <button type="button" class="mission__launch-btn" (click)="launchMinigame()">Launch {{ minigameName() }}</button>
+      }
+      <button type="button" class="mission__continue-btn" (click)="navigateToNext()">{{ continueLabel() }}</button>
+    </section>
+  }
   <footer class="mission__nav">
     <button (click)="previousStep()" [disabled]="isFirstStep()">Previous</button>
     @if (!isLastStep()) {
@@ -78,11 +59,11 @@
     } @else if (canComplete() && !missionCompleted() && !isCompleted()) {
       <button class="mission__complete-btn" (click)="completeMission()">Complete Mission</button>
     }
-    @if (missionCompleted() || isCompleted()) {
+    @if (!showCompletionSummary() && (missionCompleted() || isCompleted())) {
       @if (unlocksMinigame()) {
         <button type="button" class="mission__launch-btn" (click)="launchMinigame()">Launch {{ minigameName() }}</button>
       } @else {
-        <button type="button" disabled class="mission__continue-btn">Continue to Next Mission</button>
+        <button type="button" class="mission__continue-btn" (click)="navigateToNext()">{{ continueLabel() }}</button>
       }
     }
   </footer>

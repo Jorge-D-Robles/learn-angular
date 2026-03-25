@@ -74,9 +74,9 @@ describe('AudioService', () => {
 
     service.play(SoundEffect.click);
 
-    // Should have preloaded (10 Audio constructor calls) and cloned one for play
-    // 10 for preload + 1 clone = 11 total MockAudio instances
-    expect(createdMocks.length).toBeGreaterThanOrEqual(10);
+    // Should have preloaded (11 Audio constructor calls) and cloned one for play
+    // 11 for preload + 1 clone = 12 total MockAudio instances
+    expect(createdMocks.length).toBeGreaterThanOrEqual(11);
 
     // Find a clone that was played
     const playedMocks = createdMocks.filter((m) => m.playSpy.mock.calls.length > 0);
@@ -127,8 +127,8 @@ describe('AudioService', () => {
   it('should create audio elements for all sounds on preload', () => {
     service.preload();
 
-    // One Audio element per SoundEffect value (10 including achievement)
-    expect(createdMocks).toHaveLength(10);
+    // One Audio element per SoundEffect value (11 including achievement + missionComplete)
+    expect(createdMocks).toHaveLength(11);
   });
 
   // Test 9: play() triggers lazy preload on first call
@@ -137,8 +137,8 @@ describe('AudioService', () => {
 
     service.play(SoundEffect.correct);
 
-    // 10 for preload + 1 clone for play = 11
-    expect(createdMocks).toHaveLength(11);
+    // 11 for preload + 1 clone for play = 12
+    expect(createdMocks).toHaveLength(12);
 
     // Second call should not preload again (only 1 additional clone)
     const countBefore = createdMocks.length;
@@ -172,9 +172,9 @@ describe('AudioService', () => {
   });
 
   // Test 11: All SoundEffect enum values exist
-  it('should have exactly 10 SoundEffect enum values', () => {
+  it('should have exactly 11 SoundEffect enum values', () => {
     const values = Object.values(SoundEffect);
-    expect(values).toHaveLength(10);
+    expect(values).toHaveLength(11);
     expect(values).toContain('correct');
     expect(values).toContain('incorrect');
     expect(values).toContain('complete');
@@ -185,6 +185,7 @@ describe('AudioService', () => {
     expect(values).toContain('click');
     expect(values).toContain('tick');
     expect(values).toContain('achievement');
+    expect(values).toContain('missionComplete');
   });
 
   // Test 13: SoundEffect.achievement exists in SOUND_PATHS

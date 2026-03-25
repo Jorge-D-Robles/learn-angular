@@ -7,6 +7,7 @@ import {
 import { vi } from 'vitest';
 import { createComponent } from '../../../../testing/test-utils';
 import { APP_ICONS } from '../../icons';
+import { AnimationService } from '../../../core/animation/animation.service';
 import { LevelFailedComponent } from './level-failed';
 
 @Component({
@@ -48,7 +49,7 @@ const ICON_PROVIDERS = [
 describe('LevelFailedComponent', () => {
   async function setup(overrides: Partial<TestHost> = {}) {
     const { fixture, component, element } = await createComponent(TestHost, {
-      providers: ICON_PROVIDERS,
+      providers: [...ICON_PROVIDERS, { provide: AnimationService, useValue: { getDuration: () => 250, isReducedMotion: () => false } }],
       detectChanges: false,
     });
     Object.assign(fixture.componentInstance, overrides);

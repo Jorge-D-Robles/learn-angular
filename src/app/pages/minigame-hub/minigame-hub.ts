@@ -23,7 +23,6 @@ interface MinigameCardData {
   imports: [EmptyStateComponent, MinigameCardComponent],
   template: `
     <h1>Minigame Hub</h1>
-
     @if (hasUnlockedGames()) {
       <div class="minigame-hub__filters">
         <select (change)="onTopicChange($event)">
@@ -42,7 +41,6 @@ interface MinigameCardData {
           <button type="button" class="minigame-hub__clear-filters" (click)="clearFilters()">Clear Filters</button>
         }
       </div>
-
       <div class="minigame-hub__grid">
         @for (game of filteredGames(); track game.config.id) {
           <nx-minigame-card
@@ -63,9 +61,7 @@ interface MinigameCardData {
         icon="gamepad-2"
         title="No minigames unlocked yet"
         message="Complete your first mission to unlock a minigame!">
-        <button type="button" class="minigame-hub__cta" (click)="goToCampaign()">
-          Start Campaign
-        </button>
+        <button type="button" class="minigame-hub__cta" (click)="goToCampaign()">Start Campaign</button>
       </nx-empty-state>
     }
   `,
@@ -86,16 +82,11 @@ export class MinigameHubPage {
     const games = this.registry.getAllGames();
     return games.map(config => this.buildCardData(config));
   });
-
-  readonly hasUnlockedGames = computed<boolean>(() =>
-    this.allGames().some(g => g.isUnlocked),
-  );
-
+  readonly hasUnlockedGames = computed<boolean>(() => this.allGames().some(g => g.isUnlocked));
   readonly uniqueTopics = computed<string[]>(() => {
     const topics = this.allGames().map(g => g.config.angularTopic);
     return [...new Set(topics)].sort();
   });
-
   readonly filteredGames = computed<MinigameCardData[]>(() => {
     const topic = this.topicFilter();
     const minMastery = this.masteryFilter();
@@ -105,31 +96,13 @@ export class MinigameHubPage {
       return true;
     });
   });
+  readonly hasActiveFilters = computed<boolean>(() => this.topicFilter() !== '' || this.masteryFilter() !== -1);
 
-  readonly hasActiveFilters = computed<boolean>(() =>
-    this.topicFilter() !== '' || this.masteryFilter() !== -1,
-  );
-
-  onTopicChange(event: Event): void {
-    this.topicFilter.set((event.target as HTMLSelectElement).value);
-  }
-
-  onMasteryChange(event: Event): void {
-    this.masteryFilter.set(+(event.target as HTMLSelectElement).value);
-  }
-
-  clearFilters(): void {
-    this.topicFilter.set('');
-    this.masteryFilter.set(-1);
-  }
-
-  onCardClick(gameId: MinigameId): void {
-    this.router.navigate(['/minigames', gameId]);
-  }
-
-  goToCampaign(): void {
-    this.router.navigate(['/campaign']);
-  }
+  onTopicChange(event: Event): void { this.topicFilter.set((event.target as HTMLSelectElement).value); }
+  onMasteryChange(event: Event): void { this.masteryFilter.set(+(event.target as HTMLSelectElement).value); }
+  clearFilters(): void { this.topicFilter.set(''); this.masteryFilter.set(-1); }
+  onCardClick(gameId: MinigameId): void { this.router.navigate(['/minigames', gameId]); }
+  goToCampaign(): void { this.router.navigate(['/campaign']); }
 
   private buildCardData(config: MinigameConfig): MinigameCardData {
     const gameId = config.id;
@@ -138,7 +111,6 @@ export class MinigameHubPage {
     const progress = this.levelProgression.getLevelProgress(gameId);
     const levelsCompleted = progress.filter(l => l.completed).length;
     const unlockMessage = this.deriveUnlockMessage(gameId);
-
     return { config, isUnlocked, masteryStars, levelsCompleted, unlockMessage };
   }
 

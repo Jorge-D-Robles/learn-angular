@@ -8,6 +8,7 @@ import {
 import { createComponent } from '../../../../testing/test-utils';
 import { APP_ICONS } from '../../../shared/icons';
 import { AudioService, SoundEffect } from '../../audio';
+import { KeyboardShortcutService, type ShortcutRegistration } from '../keyboard-shortcut.service';
 import { LevelFailedComponent } from '../../../shared/components/level-failed/level-failed';
 import { LevelResultsComponent } from '../../../shared/components/level-results/level-results';
 import type { ScoreBreakdownItem } from '../../../shared/components/score-breakdown/score-breakdown.types';
@@ -34,6 +35,20 @@ const ICON_PROVIDERS = [
 
 const mockAudio = { play: vi.fn(), preload: vi.fn() };
 const AUDIO_PROVIDER = { provide: AudioService, useValue: mockAudio };
+
+const TEST_SHORTCUTS: ShortcutRegistration[] = [
+  { key: '1', label: 'Slot 1', callback: () => {} },
+  { key: 'space', label: 'Confirm', callback: () => {} },
+];
+const mockKeyboardShortcuts = {
+  getRegistered: vi.fn().mockReturnValue(TEST_SHORTCUTS),
+  register: vi.fn(),
+  unregister: vi.fn(),
+  unregisterAll: vi.fn(),
+  setEnabled: vi.fn(),
+  isEnabled: vi.fn().mockReturnValue(true),
+};
+const KEYBOARD_PROVIDER = { provide: KeyboardShortcutService, useValue: mockKeyboardShortcuts };
 
 const TEST_RESULT: MinigameResult = {
   gameId: 'module-assembly',
@@ -904,5 +919,66 @@ describe('MinigameShellComponent', () => {
     fixture.debugElement.query(By.directive(PauseMenuComponent)).triggerEventHandler('howToPlay');
     fixture.detectChanges();
     expect(fixture.componentInstance.howToPlayCalled).toBe(true);
+  });
+
+  // === Keyboard shortcut hints (T-2026-495) ===
+
+  it('should render shortcuts toggle button in HUD', async () => {
+    const { element } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER, KEYBOARD_PROVIDER],
+    });
+    const toggleBtn = element.querySelector('.shell-hud__shortcuts-toggle');
+    expect(toggleBtn).toBeTruthy();
+    expect(toggleBtn?.textContent?.trim()).toBe('?');
+  });
+
+  it('should not show shortcuts panel by default', async () => {
+    const { element } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER, KEYBOARD_PROVIDER],
+    });
+    expect(element.querySelector('.shell-hud__shortcuts-panel')).toBeNull();
+  });
+
+  it('should toggle shortcuts panel on button click', async () => {
+    const { element, fixture } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER, KEYBOARD_PROVIDER],
+    });
+    const toggleBtn = element.querySelector('.shell-hud__shortcuts-toggle') as HTMLButtonElement;
+    toggleBtn.click();
+    fixture.detectChanges();
+    expect(element.querySelector('.shell-hud__shortcuts-panel')).toBeTruthy();
+
+    toggleBtn.click();
+    fixture.detectChanges();
+    expect(element.querySelector('.shell-hud__shortcuts-panel')).toBeNull();
+  });
+
+  it('should display registered shortcuts from KeyboardShortcutService', async () => {
+    const { element, fixture } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER, KEYBOARD_PROVIDER],
+    });
+    const toggleBtn = element.querySelector('.shell-hud__shortcuts-toggle') as HTMLButtonElement;
+    toggleBtn.click();
+    fixture.detectChanges();
+    const items = element.querySelectorAll('.shell-hud__shortcut-item');
+    expect(items.length).toBe(2);
+    expect(items[0].querySelector('kbd')?.textContent?.trim()).toBe('1');
+    expect(items[0].querySelector('span')?.textContent?.trim()).toBe('Slot 1');
+  });
+
+  it('should auto-hide shortcuts panel after 5 seconds', async () => {
+    vi.useFakeTimers();
+    const { element, fixture } = await createComponent(TestHost, {
+      providers: [...ICON_PROVIDERS, AUDIO_PROVIDER, KEYBOARD_PROVIDER],
+    });
+    const shell = fixture.debugElement.query(By.directive(MinigameShellComponent)).componentInstance as MinigameShellComponent;
+    shell.toggleShortcutHints();
+    fixture.detectChanges();
+    expect(element.querySelector('.shell-hud__shortcuts-panel')).toBeTruthy();
+
+    vi.advanceTimersByTime(5000);
+    fixture.detectChanges();
+    expect(element.querySelector('.shell-hud__shortcuts-panel')).toBeNull();
+    vi.useRealTimers();
   });
 });

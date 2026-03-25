@@ -36,6 +36,13 @@ export class PlayTimeService {
   readonly totalPlayTime = this._totalPlayTime.asReadonly();
   readonly sessionActive = computed(() => this._sessionStartTime() !== null);
 
+  /** Elapsed seconds since session start, or 0 when no session is active. */
+  readonly elapsedSessionTime = computed(() => {
+    const start = this._sessionStartTime();
+    if (start === null) return 0;
+    return Math.floor((Date.now() - start) / 1000);
+  });
+
   private readonly _onBeforeUnload = (): void => {
     if (this.sessionActive()) {
       this.endSession();

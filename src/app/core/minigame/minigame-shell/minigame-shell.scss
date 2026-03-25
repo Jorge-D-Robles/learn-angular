@@ -196,3 +196,62 @@
   }
 }
 
+
+.shell-hud__shortcuts-toggle {
+  background: none;
+  border: 1px solid var(--nx-color-bulkhead);
+  color: var(--nx-color-beacon);
+  border-radius: var(--nx-radius-button);
+  padding: var(--nx-space-1) var(--nx-space-2);
+  cursor: pointer;
+  font-weight: 600;
+  min-width: 28px;
+}
+
+.shell-hud__shortcuts-panel {
+  position: absolute;
+  top: 100%;
+  right: var(--nx-space-4);
+  margin-top: var(--nx-space-1);
+  background: var(--nx-color-hull);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card);
+  padding: var(--nx-space-3);
+  z-index: 10;
+  min-width: 180px;
+  opacity: 0.92;
+}
+
+.shell-hud__shortcuts-title {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--nx-color-corridor);
+  margin-bottom: var(--nx-space-2);
+}
+
+.shell-hud__shortcut-item {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-2);
+  padding: var(--nx-space-1) 0;
+  font-size: 0.875rem;
+
+  kbd {
+    display: inline-block;
+    background: var(--nx-color-bulkhead);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: monospace;
+    font-size: 0.75rem;
+    min-width: 24px;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell-hud__shortcuts-panel {
+    transition: none;
+  }
+}

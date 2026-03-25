@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { GameProgressionService } from '../progression/game-progression.service';
 import { MasteryService } from '../progression/mastery.service';
 import { XpService } from '../progression/xp.service';
+import { AudioService, SoundEffect } from '../audio/audio.service';
 import { CurriculumService } from './curriculum.service';
 import type { ChapterId } from './curriculum.types';
 import type { MinigameId } from '../minigame/minigame.types';
@@ -30,6 +31,7 @@ export class StoryMissionCompletionService {
   private readonly gameProgression = inject(GameProgressionService);
   private readonly masteryService = inject(MasteryService);
   private readonly xpService = inject(XpService);
+  private readonly audioService = inject(AudioService);
   private readonly curriculum = inject(CurriculumService);
 
   /**
@@ -54,6 +56,9 @@ export class StoryMissionCompletionService {
 
     // Capture XP before to compute delta (GameProgressionService.completeMission is void)
     const xpBefore = this.xpService.totalXp();
+
+    // Play mission complete sound before XP notification (audio reinforces the moment)
+    this.audioService.play(SoundEffect.missionComplete);
 
     // Delegate to GameProgressionService (XP, notification, unlock, campaign state)
     // Throws on invalid chapter or unmet prerequisites

@@ -8,13 +8,7 @@ import { filter, map } from 'rxjs';
   imports: [RouterLink, RouterLinkActive],
   template: `
     <nav aria-label="Main navigation">
-      <a
-        routerLink="/"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >
-        Dashboard
-      </a>
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
       <a routerLink="/campaign" [class.active]="isMissionActive()">Current Mission</a>
       <a routerLink="/minigames" routerLinkActive="active">Minigames</a>
       <a routerLink="/profile" routerLinkActive="active">Profile</a>
@@ -24,7 +18,6 @@ import { filter, map } from 'rxjs';
 })
 export class SideNavComponent {
   private readonly router = inject(Router);
-
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -32,7 +25,6 @@ export class SideNavComponent {
     ),
     { initialValue: this.router.url },
   );
-
   readonly isMissionActive = computed(() => {
     const url = this.currentUrl().split('?')[0];
     return url.startsWith('/campaign') || url.startsWith('/mission/');

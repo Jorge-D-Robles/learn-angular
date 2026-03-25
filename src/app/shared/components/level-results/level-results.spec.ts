@@ -11,6 +11,7 @@ import { APP_ICONS } from '../../icons';
 import { MinigameResult } from '../../../core/minigame/minigame.types';
 import { ScoreBreakdownComponent } from '../score-breakdown/score-breakdown';
 import type { ScoreBreakdownItem } from '../score-breakdown/score-breakdown.types';
+import { AnimationService } from '../../../core/animation/animation.service';
 import { LevelResultsComponent } from './level-results';
 
 @Component({

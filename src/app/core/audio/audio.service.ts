@@ -12,6 +12,7 @@ export enum SoundEffect {
   click = 'click',
   tick = 'tick',
   achievement = 'achievement',
+  missionComplete = 'missionComplete',
 }
 
 const AUDIO_BASE_PATH = 'audio/';
@@ -27,6 +28,7 @@ export const SOUND_PATHS: Record<SoundEffect, string> = {
   [SoundEffect.click]: `${AUDIO_BASE_PATH}click.mp3`,
   [SoundEffect.tick]: `${AUDIO_BASE_PATH}tick.mp3`,
   [SoundEffect.achievement]: `${AUDIO_BASE_PATH}achievement.mp3`,
+  [SoundEffect.missionComplete]: `${AUDIO_BASE_PATH}missionComplete.mp3`,
 };
 
 @Injectable({ providedIn: 'root' })
