@@ -1,0 +1,61 @@
+:host {
+  display: block;
+  background: var(--nx-color-hull);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card);
+  overflow: hidden;
+  transition:
+    border-color var(--nx-duration-fast) var(--nx-ease-out),
+    box-shadow var(--nx-duration-fast) var(--nx-ease-out),
+    transform var(--nx-duration-fast) var(--nx-ease-out);
+}
+
+:host(.minigame-card--unlocked) {
+  cursor: pointer;
+}
+
+:host(.minigame-card--unlocked):hover {
+  border-color: var(--nx-color-reactor-blue);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+}
+
+:host(.minigame-card--locked) {
+  opacity: 0.6;
+  cursor: default;
+}
+
+nx-locked-content {
+  display: block;
+  padding: var(--nx-space-4);
+}
+
+.minigame-card__name {
+  margin: 0 0 var(--nx-space-1) 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--nx-color-display);
+}
+
+.minigame-card__topic {
+  display: block;
+  font-size: var(--nx-text-caption-size);
+  color: var(--nx-color-corridor);
+  margin-bottom: var(--nx-space-2);
+}
+
+nx-mastery-stars {
+  margin-bottom: var(--nx-space-2);
+}
+
+.minigame-card__stats {
+  display: flex;
+  font-size: var(--nx-text-caption-size);
+  color: var(--nx-color-corridor);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    transition: none;
+  }
+}
