@@ -1,6 +1,7 @@
 import { effect, inject, Injectable, untracked } from '@angular/core';
 import { AchievementService } from './achievement.service';
 import { AchievementNotificationService } from '../notifications/achievement-notification.service';
+import { AudioService, SoundEffect } from '../audio/audio.service';
 import { XpService } from './xp.service';
 import { StreakService } from './streak.service';
 import type { Rank } from '../state/rank.constants';
@@ -9,6 +10,7 @@ import type { Rank } from '../state/rank.constants';
 export class AchievementTriggerService {
   private readonly achievementService = inject(AchievementService);
   private readonly notificationService = inject(AchievementNotificationService);
+  private readonly audioService = inject(AudioService);
   private readonly xpService = inject(XpService);
   private readonly streakService = inject(StreakService);
 
@@ -49,6 +51,7 @@ export class AchievementTriggerService {
     const newlyEarned = this.achievementService.checkAchievements();
     for (const achievement of newlyEarned) {
       this.notificationService.show(achievement);
+      this.audioService.play(SoundEffect.achievement);
     }
   }
 }

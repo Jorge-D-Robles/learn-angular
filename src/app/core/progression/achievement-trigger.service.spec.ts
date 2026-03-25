@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { AchievementTriggerService } from './achievement-trigger.service';
 import { AchievementService, type Achievement } from './achievement.service';
 import { AchievementNotificationService } from '../notifications/achievement-notification.service';
+import { AudioService, SoundEffect } from '../audio/audio.service';
 import { GameStateService } from '../state';
 import { StreakService } from './streak.service';
 
@@ -45,6 +46,7 @@ describe('AchievementTriggerService', () => {
   let service: AchievementTriggerService;
   let achievementService: AchievementService;
   let notificationService: AchievementNotificationService;
+  let audioService: AudioService;
   let fakeStorage: Storage;
   let originalLocalStorage: Storage;
 
@@ -61,6 +63,7 @@ describe('AchievementTriggerService', () => {
     TestBed.configureTestingModule({});
     achievementService = TestBed.inject(AchievementService);
     notificationService = TestBed.inject(AchievementNotificationService);
+    audioService = TestBed.inject(AudioService);
     service = TestBed.inject(AchievementTriggerService);
     TestBed.flushEffects();
   });
@@ -128,6 +131,29 @@ describe('AchievementTriggerService', () => {
 
     expect(spy).toHaveBeenCalled();
     vi.useRealTimers();
+  });
+
+  it('should play achievement sound for each newly earned achievement', () => {
+    vi.spyOn(achievementService, 'checkAchievements').mockReturnValue([
+      MOCK_ACHIEVEMENT,
+      MOCK_ACHIEVEMENT_2,
+    ]);
+    vi.spyOn(notificationService, 'show');
+    const playSpy = vi.spyOn(audioService, 'play');
+
+    service.triggerCheck();
+
+    expect(playSpy).toHaveBeenCalledTimes(2);
+    expect(playSpy).toHaveBeenCalledWith(SoundEffect.achievement);
+  });
+
+  it('should not play achievement sound when no new achievements earned', () => {
+    vi.spyOn(achievementService, 'checkAchievements').mockReturnValue([]);
+    const playSpy = vi.spyOn(audioService, 'play');
+
+    service.triggerCheck();
+
+    expect(playSpy).not.toHaveBeenCalled();
   });
 
   it('should not trigger check on initial rank value (effect skip)', () => {
