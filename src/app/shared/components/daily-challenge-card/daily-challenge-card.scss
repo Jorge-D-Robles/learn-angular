@@ -1,0 +1,105 @@
+:host {
+  display: block;
+  background-color: var(--nx-color-hull);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card);
+  padding: var(--nx-space-4) var(--nx-space-6);
+  transition: border-color var(--nx-duration-fast) var(--nx-ease-out);
+}
+
+:host:hover {
+  border-color: var(--nx-color-reactor-blue);
+}
+
+.daily-challenge-card__header {
+  margin-bottom: var(--nx-space-3);
+}
+
+.daily-challenge-card__game-name {
+  margin: 0;
+  font-size: var(--nx-text-card-title-size);
+  font-weight: var(--nx-text-card-title-weight);
+  color: var(--nx-color-display);
+}
+
+.daily-challenge-card__topic {
+  font-size: var(--nx-text-caption-size);
+  color: var(--nx-color-corridor);
+}
+
+.daily-challenge-card__complete-icon {
+  color: var(--nx-color-sensor-green);
+  margin-right: var(--nx-space-2);
+  vertical-align: middle;
+}
+
+.daily-challenge-card__complete-text {
+  font-size: var(--nx-text-body-size);
+  font-weight: 600;
+  color: var(--nx-color-sensor-green);
+}
+
+.daily-challenge-card__countdown {
+  font-size: var(--nx-text-caption-size);
+  color: var(--nx-color-corridor);
+  margin-top: var(--nx-space-2);
+}
+
+.daily-challenge-card__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-3);
+  margin-top: var(--nx-space-3);
+}
+
+.daily-challenge-card__xp-badge {
+  font-size: var(--nx-text-caption-size);
+  font-weight: 600;
+  color: var(--nx-color-reactor-blue);
+  background: rgba(59, 130, 246, 0.15);
+  padding: 2px 8px;
+  border-radius: var(--nx-radius-button);
+}
+
+.daily-challenge-card__accept-button {
+  background: var(--nx-color-reactor-blue);
+  color: var(--nx-color-display);
+  border: none;
+  border-radius: var(--nx-radius-button);
+  padding: var(--nx-space-2) var(--nx-space-4);
+  font-size: var(--nx-text-body-size);
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity var(--nx-duration-fast) var(--nx-ease-out);
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.daily-challenge-card__streak {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-1);
+  margin-top: var(--nx-space-3);
+  color: var(--nx-color-corridor);
+  font-size: var(--nx-text-caption-size);
+
+  lucide-icon {
+    color: var(--nx-color-reactor-blue);
+  }
+}
+
+.daily-challenge-card__streak-count {
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    transition: none;
+  }
+
+  .daily-challenge-card__accept-button {
+    transition: none;
+  }
+}
