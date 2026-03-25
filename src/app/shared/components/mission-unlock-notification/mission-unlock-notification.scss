@@ -1,0 +1,77 @@
+:host {
+  position: fixed;
+  top: 80px;
+  right: 16px;
+  z-index: 1000;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.unlock-toast {
+  pointer-events: auto;
+  background-color: var(--nx-color-hull);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card);
+  padding: var(--nx-space-3) var(--nx-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: slideIn 250ms ease-out;
+}
+
+.unlock-toast__game-name {
+  color: var(--nx-color-solar-gold);
+  font-weight: 700;
+  font-size: var(--nx-text-body-large-size, 1.125rem);
+}
+
+.unlock-toast__actions {
+  display: flex;
+  gap: var(--nx-space-3);
+  align-items: center;
+}
+
+.unlock-toast__play-now {
+  color: var(--nx-color-beacon);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: var(--nx-text-caption-size, 0.75rem);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.unlock-toast__dismiss {
+  background: none;
+  border: none;
+  color: var(--nx-color-corridor);
+  cursor: pointer;
+  font-size: var(--nx-text-caption-size, 0.75rem);
+  padding: 0;
+
+  &:hover {
+    color: var(--nx-color-beacon);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .unlock-toast {
+    animation: none;
+    opacity: 1;
+  }
+}

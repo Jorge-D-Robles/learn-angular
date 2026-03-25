@@ -6,7 +6,7 @@ import {
   LucideIconProvider,
 } from 'lucide-angular';
 import { App } from './app';
-import { GameStateService, RankUpNotificationService, StreakService, XpService } from './core';
+import { GameStateService, MissionUnlockNotificationService, RankUpNotificationService, StreakService, XpService } from './core';
 import { APP_ICONS } from './shared';
 
 const ICON_PROVIDERS = [
@@ -175,6 +175,46 @@ describe('App', () => {
     const xpNotification =
       fixture.nativeElement.querySelector('nx-xp-notification');
     expect(xpNotification).toBeTruthy();
+  });
+
+  // ---------------------------------------------------------------------------
+  // Mission unlock notification
+  // ---------------------------------------------------------------------------
+  it('should render the mission unlock notification component', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const el = fixture.nativeElement.querySelector(
+      'nx-mission-unlock-notification',
+    );
+    expect(el).toBeTruthy();
+  });
+
+  it('should show unlock toast when MissionUnlockNotificationService fires', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    const unlockService = TestBed.inject(MissionUnlockNotificationService);
+    unlockService.showUnlock('Module Assembly', 'module-assembly');
+    fixture.detectChanges();
+
+    const toast = fixture.nativeElement.querySelector('.unlock-toast');
+    expect(toast).toBeTruthy();
+  });
+
+  it('should remove unlock toast after service dismiss', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    const unlockService = TestBed.inject(MissionUnlockNotificationService);
+    unlockService.showUnlock('Module Assembly', 'module-assembly');
+    fixture.detectChanges();
+
+    const id = unlockService.notifications()[0].id;
+    unlockService.dismiss(id);
+    fixture.detectChanges();
+
+    const toast = fixture.nativeElement.querySelector('.unlock-toast');
+    expect(toast).toBeFalsy();
   });
 
   it('should NOT render rank-up overlay when no rank up', () => {

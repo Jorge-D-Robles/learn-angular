@@ -19,6 +19,7 @@ export { MinigameTutorialOverlayComponent } from './minigame-tutorial/minigame-t
 export type { TutorialStep } from './minigame-tutorial/minigame-tutorial.types';
 export { tutorialSeenKey } from './minigame-tutorial/minigame-tutorial.types';
 export { MissionCardComponent } from './mission-card/mission-card';
+export { MissionUnlockNotificationComponent } from './mission-unlock-notification/mission-unlock-notification';
 export { PauseMenuComponent } from './pause-menu/pause-menu';
 export { ProgressBarComponent } from './progress-bar/progress-bar';
 export type { ProgressBarVariant } from './progress-bar/progress-bar';
