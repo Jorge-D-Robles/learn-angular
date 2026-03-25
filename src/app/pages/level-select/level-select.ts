@@ -3,8 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { TierBadgeComponent } from '../../shared/components/tier-badge/tier-badge';
-import { LevelStarsComponent } from '../../shared/components/level-stars/level-stars';
-import { LockedContentComponent } from '../../shared/components/locked-content/locked-content';
+import { LevelCardComponent } from '../../shared/components/level-card/level-card';
 import { LeaderboardComponent } from '../../shared/components/leaderboard/leaderboard';
 import { LevelLoaderService } from '../../core/levels/level-loader.service';
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
@@ -18,6 +17,7 @@ interface LevelViewModel {
   readonly isLocked: boolean;
   readonly starRating: number;
   readonly bestScore: number | null;
+  readonly isCurrent: boolean;
 }
 
 interface TierGroup {
@@ -48,7 +48,7 @@ const MODE_DESCRIPTIONS: Record<Exclude<PlayMode, PlayMode.Story>, string> = {
 @Component({
   selector: 'app-level-select',
   standalone: true,
-  imports: [TierBadgeComponent, LevelStarsComponent, LockedContentComponent, LeaderboardComponent],
+  imports: [TierBadgeComponent, LevelCardComponent, LeaderboardComponent],
   template: `
     <h1>Level Select</h1>
 
@@ -72,21 +72,15 @@ const MODE_DESCRIPTIONS: Record<Exclude<PlayMode, PlayMode.Story>, string> = {
             <nx-tier-badge [tier]="group.tier" />
           </h2>
           @for (level of group.levels; track level.levelId) {
-            <nx-locked-content
+            <nx-level-card
+              [levelId]="level.levelId"
+              [levelNumber]="level.order"
+              [levelTitle]="level.title"
+              [starRating]="level.starRating"
+              [bestScore]="level.bestScore"
               [isLocked]="level.isLocked"
-              [unlockMessage]="unlockMessage(group.tier)">
-              <button
-                class="level-select__level-btn"
-                [disabled]="level.isLocked"
-                (click)="onLevelClick(level)">
-                <span class="level-select__level-order">{{ level.order }}</span>
-                <span class="level-select__level-title">{{ level.title }}</span>
-                <nx-level-stars [stars]="level.starRating" size="sm" />
-                <span class="level-select__level-score">
-                  {{ level.bestScore !== null ? level.bestScore : '--' }}
-                </span>
-              </button>
-            </nx-locked-content>
+              [isCurrent]="level.isCurrent"
+              (levelClicked)="onLevelClick($event)" />
           }
         </section>
       } @empty {
@@ -138,6 +132,18 @@ export class LevelSelectPage {
       levels = l;
     });
 
+    // Compute the current level: first unlocked, uncompleted level in canonical order.
+    const sortedAll = [...levels].sort((a, b) => {
+      const tierIndexA = LEVEL_TIER_CONFIGS.findIndex((c) => c.tier === a.tier);
+      const tierIndexB = LEVEL_TIER_CONFIGS.findIndex((c) => c.tier === b.tier);
+      return tierIndexA !== tierIndexB ? tierIndexA - tierIndexB : a.order - b.order;
+    });
+    const currentLevel = sortedAll.find((l) => {
+      const progress = this.levelProgression.getLevel(l.levelId);
+      return !progress?.completed;
+    });
+    const currentLevelId = currentLevel?.levelId ?? null;
+
     return LEVEL_TIER_CONFIGS
       .map((config) => ({
         tier: config.tier,
@@ -153,6 +159,7 @@ export class LevelSelectPage {
               isLocked: !this.levelProgression.isLevelUnlocked(l.levelId),
               starRating: progress?.starRating ?? 0,
               bestScore: progress ? progress.bestScore : null,
+              isCurrent: l.levelId === currentLevelId,
             };
           }),
       }))
@@ -173,10 +180,8 @@ export class LevelSelectPage {
     this.activeTab.set(mode);
   }
 
-  onLevelClick(level: LevelViewModel): void {
-    if (!level.isLocked) {
-      this.router.navigate(['/minigames', this.gameId(), 'level', level.levelId]);
-    }
+  onLevelClick(levelId: string): void {
+    this.router.navigate(['/minigames', this.gameId(), 'level', levelId]);
   }
 
   launchMode(): void {
@@ -185,9 +190,5 @@ export class LevelSelectPage {
     if (tab) {
       this.router.navigate(['/minigames', this.gameId(), tab.routeSlug]);
     }
-  }
-
-  unlockMessage(tier: DifficultyTier): string {
-    return LEVEL_TIER_CONFIGS.find((c) => c.tier === tier)?.unlockRequirement ?? '';
   }
 }

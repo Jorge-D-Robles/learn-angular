@@ -141,26 +141,27 @@ describe('LevelSelectPage', () => {
     expect(badges.length).toBe(2);
   });
 
-  // 3. Group levels by tier
+  // 3. Group levels by tier -- uses nx-level-card instead of .level-select__level-btn
   it('should group levels by tier', async () => {
     const { element } = await setup();
     const sections = element.querySelectorAll('.level-select__tier-group');
     expect(sections.length).toBe(2);
-    // Basic section has 2 level buttons, Intermediate section has 2
-    const firstButtons = sections[0].querySelectorAll('.level-select__level-btn');
-    const secondButtons = sections[1].querySelectorAll('.level-select__level-btn');
-    expect(firstButtons.length).toBe(2);
-    expect(secondButtons.length).toBe(2);
+    const firstCards = sections[0].querySelectorAll('nx-level-card');
+    const secondCards = sections[1].querySelectorAll('nx-level-card');
+    expect(firstCards.length).toBe(2);
+    expect(secondCards.length).toBe(2);
   });
 
-  // 4. Display level title and order number
+  // 4. Display level title and order number via card-internal selectors
   it('should display level title and order number', async () => {
     const { element } = await setup();
-    const buttons = element.querySelectorAll('.level-select__level-btn');
-    expect(buttons[0].textContent).toContain('1');
-    expect(buttons[0].textContent).toContain('Minimal Component');
-    expect(buttons[1].textContent).toContain('2');
-    expect(buttons[1].textContent).toContain('Template Binding');
+    const cards = element.querySelectorAll('nx-level-card');
+    const firstCard = cards[0];
+    expect(firstCard.querySelector('.level-card__number')!.textContent!.trim()).toBe('1');
+    expect(firstCard.querySelector('.level-card__title')!.textContent).toContain('Minimal Component');
+    const secondCard = cards[1];
+    expect(secondCard.querySelector('.level-card__number')!.textContent!.trim()).toBe('2');
+    expect(secondCard.querySelector('.level-card__title')!.textContent).toContain('Template Binding');
   });
 
   // 5. Display LevelStarsComponent for each level
@@ -185,8 +186,9 @@ describe('LevelSelectPage', () => {
             }
           : null,
     });
-    const scores = element.querySelectorAll('.level-select__level-score');
-    expect(scores[0].textContent).toContain('500');
+    const firstCard = element.querySelector('nx-level-card')!;
+    const score = firstCard.querySelector('.level-card__score');
+    expect(score!.textContent).toContain('500');
   });
 
   // 7. Show "--" for unplayed levels
@@ -194,31 +196,31 @@ describe('LevelSelectPage', () => {
     const { element } = await setup({
       getLevel: () => null,
     });
-    const scores = element.querySelectorAll('.level-select__level-score');
-    expect(scores[0].textContent).toContain('--');
+    const firstCard = element.querySelector('nx-level-card')!;
+    const score = firstCard.querySelector('.level-card__score');
+    expect(score!.textContent).toContain('--');
   });
 
-  // 8. Wrap locked levels in LockedContentComponent
-  it('should wrap locked levels in LockedContentComponent', async () => {
+  // 8. Locked levels have .level-card--locked class (replaces LockedContentComponent test)
+  it('should apply locked class to locked level cards', async () => {
     const { element } = await setup({
       isLevelUnlocked: (id: string) => id.includes('basic'),
     });
-    // Intermediate levels are locked
     const sections = element.querySelectorAll('.level-select__tier-group');
     const intermediateSection = sections[1];
-    const lockedOverlays = intermediateSection.querySelectorAll(
-      '.locked-content__overlay',
+    const lockedCards = intermediateSection.querySelectorAll(
+      'nx-level-card.level-card--locked',
     );
-    expect(lockedOverlays.length).toBe(2);
+    expect(lockedCards.length).toBe(2);
   });
 
-  // 9. Not wrap unlocked levels in locked state
-  it('should not wrap unlocked levels in locked state', async () => {
+  // 9. Unlocked levels do not have locked class
+  it('should not apply locked class to unlocked level cards', async () => {
     const { element } = await setup({
       isLevelUnlocked: () => true,
     });
-    const overlays = element.querySelectorAll('.locked-content__overlay');
-    expect(overlays.length).toBe(0);
+    const lockedCards = element.querySelectorAll('nx-level-card.level-card--locked');
+    expect(lockedCards.length).toBe(0);
   });
 
   // 10. Navigate to level route on unlocked level click
@@ -226,8 +228,8 @@ describe('LevelSelectPage', () => {
     const { element, fixture } = await setup({
       isLevelUnlocked: () => true,
     });
-    const btn = element.querySelector('.level-select__level-btn') as HTMLButtonElement;
-    btn.click();
+    const card = element.querySelector('nx-level-card') as HTMLElement;
+    card.click();
     fixture.detectChanges();
 
     const router = fixture.debugElement.injector.get(Router);
@@ -239,17 +241,14 @@ describe('LevelSelectPage', () => {
     ]);
   });
 
-  // 11. Not navigate on locked level click (disabled button)
+  // 11. Not navigate on locked level click (card suppresses event)
   it('should not navigate on locked level click', async () => {
     const { element, fixture } = await setup({
       isLevelUnlocked: (id: string) => id.includes('basic'),
     });
     const sections = element.querySelectorAll('.level-select__tier-group');
-    const lockedBtn = sections[1].querySelector(
-      '.level-select__level-btn',
-    ) as HTMLButtonElement;
-    expect(lockedBtn.disabled).toBe(true);
-    lockedBtn.click();
+    const lockedCard = sections[1].querySelector('nx-level-card') as HTMLElement;
+    lockedCard.click();
     fixture.detectChanges();
 
     const router = fixture.debugElement.injector.get(Router);
@@ -424,5 +423,60 @@ describe('LevelSelectPage', () => {
     const container = element.querySelector('.level-select__leaderboard');
     expect(container).toBeTruthy();
     expect(container!.querySelector('nx-leaderboard')).toBeTruthy();
+  });
+
+  // === New isCurrent tests ===
+
+  // 25. Current level highlighted -- first unlocked uncompleted level
+  it('should highlight the current level (first unlocked uncompleted)', async () => {
+    const { element } = await setup({
+      isLevelUnlocked: (id: string) => id.includes('basic'),
+      getLevel: (id: string) =>
+        id === 'ma-basic-01'
+          ? {
+              levelId: id,
+              completed: true,
+              bestScore: 500,
+              starRating: 2,
+              perfect: false,
+              attempts: 1,
+            }
+          : null,
+    });
+    const cards = element.querySelectorAll('nx-level-card');
+    // ma-basic-01 is completed, so NOT current
+    expect(cards[0].classList.contains('level-card--current')).toBe(false);
+    // ma-basic-02 is the first unlocked uncompleted level, so IS current
+    expect(cards[1].classList.contains('level-card--current')).toBe(true);
+  });
+
+  // 26. No current level when all completed
+  it('should not highlight any level when all are completed', async () => {
+    const { element } = await setup({
+      isLevelUnlocked: () => true,
+      getLevel: (id: string) => ({
+        levelId: id,
+        completed: true,
+        bestScore: 500,
+        starRating: 3,
+        perfect: false,
+        attempts: 1,
+      }),
+    });
+    const currentCards = element.querySelectorAll('nx-level-card.level-card--current');
+    expect(currentCards.length).toBe(0);
+  });
+
+  // 27. Current level is the first level when none completed
+  it('should highlight the first level when none are completed', async () => {
+    const { element } = await setup({
+      isLevelUnlocked: (id: string) => id.includes('basic'),
+      getLevel: () => null,
+    });
+    const cards = element.querySelectorAll('nx-level-card');
+    // ma-basic-01 is the first unlocked uncompleted, so IS current
+    expect(cards[0].classList.contains('level-card--current')).toBe(true);
+    // ma-basic-02 is NOT current (not the first)
+    expect(cards[1].classList.contains('level-card--current')).toBe(false);
   });
 });
