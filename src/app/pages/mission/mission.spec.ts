@@ -162,12 +162,11 @@ describe('MissionPage', () => {
     expect(narrative?.textContent).toContain(CHAPTER_01_CONTENT.steps[0].narrativeText);
   });
 
-  it('should render progress indicator showing "Step 1 of 4"', async () => {
+  it('should render StepProgressComponent in the header', async () => {
     const { element } = await setup();
-    const progress = element.querySelector('.mission__progress');
-    expect(progress?.textContent?.trim()).toBe('Step 1 of 4');
-    expect(progress?.getAttribute('role')).toBe('progressbar');
-    expect(progress?.getAttribute('aria-valuemin')).toBe('1');
+    const stepProgress = element.querySelector('.mission__header nx-step-progress');
+    expect(stepProgress).toBeTruthy();
+    expect(stepProgress?.getAttribute('role')).toBe('progressbar');
   });
 
   // === Step navigation (6 tests) ===
@@ -686,5 +685,92 @@ describe('MissionPage', () => {
       (b) => b.textContent?.trim() === 'Launch Minigame',
     ) as HTMLButtonElement;
     expect(launch).toBeTruthy();
+  });
+
+  // === Step progress indicator (6 tests) ===
+
+  it('should bind totalSteps to mission step count', async () => {
+    const { element } = await setup();
+    const stepProgress = element.querySelector('nx-step-progress');
+    expect(stepProgress).toBeTruthy();
+    // Chapter 1 has 4 steps; aria-valuemax reflects totalSteps
+    expect(stepProgress?.getAttribute('aria-valuemax')).toBe('4');
+  });
+
+  it('should bind currentStep as 1-based index', async () => {
+    const { element } = await setup();
+    const stepProgress = element.querySelector('nx-step-progress');
+    expect(stepProgress).toBeTruthy();
+    // On initial render (step 0 internally), the first dot should be active
+    const dots = stepProgress!.querySelectorAll('.step-progress__dot');
+    expect(dots.length).toBe(4);
+    expect(dots[0].classList.contains('step-progress__dot--active')).toBe(true);
+    expect(dots[1].classList.contains('step-progress__dot--future')).toBe(true);
+  });
+
+  it('should update completedSteps when advancing through steps', async () => {
+    const { element, fixture, component } = await setup();
+    // Navigate from step 0 to step 1
+    component.nextStep();
+    fixture.detectChanges();
+
+    const stepProgress = element.querySelector('nx-step-progress')!;
+    let dots = stepProgress.querySelectorAll('.step-progress__dot');
+    // Step 1 (1-based) should now be completed, step 2 active
+    expect(dots[0].classList.contains('step-progress__dot--completed')).toBe(true);
+    expect(dots[1].classList.contains('step-progress__dot--active')).toBe(true);
+
+    // Navigate to step 2 (0-based)
+    component.nextStep();
+    fixture.detectChanges();
+
+    dots = stepProgress.querySelectorAll('.step-progress__dot');
+    // Steps 1 and 2 completed, step 3 active
+    expect(dots[0].classList.contains('step-progress__dot--completed')).toBe(true);
+    expect(dots[1].classList.contains('step-progress__dot--completed')).toBe(true);
+    expect(dots[2].classList.contains('step-progress__dot--active')).toBe(true);
+  });
+
+  it('should preserve completed state when navigating back', async () => {
+    const { element, fixture, component } = await setup();
+    // Navigate forward to step 3 (0-based), so stepsViewed = 4
+    component.nextStep();
+    component.nextStep();
+    component.nextStep();
+    fixture.detectChanges();
+    expect(component.stepsViewed()).toBe(4);
+
+    // Now navigate back to step 1 (0-based)
+    component.previousStep();
+    component.previousStep();
+    fixture.detectChanges();
+    expect(component.currentStep()).toBe(1);
+
+    const stepProgress = element.querySelector('nx-step-progress')!;
+    const dots = stepProgress.querySelectorAll('.step-progress__dot');
+    // Step 1 (1-based) should be completed (visited earlier)
+    expect(dots[0].classList.contains('step-progress__dot--completed')).toBe(true);
+    // Step 2 (1-based) is the current step (0-based step 1), so active
+    expect(dots[1].classList.contains('step-progress__dot--active')).toBe(true);
+    // Step 3 (1-based) should be completed (visited earlier, stepsViewed=4)
+    expect(dots[2].classList.contains('step-progress__dot--completed')).toBe(true);
+    // Step 4 (1-based) should be completed (visited earlier, stepsViewed=4)
+    expect(dots[3].classList.contains('step-progress__dot--completed')).toBe(true);
+  });
+
+  it('should not render StepProgressComponent when mission content is null', async () => {
+    const { element } = await setup({ chapterId: '999' });
+    const stepProgress = element.querySelector('nx-step-progress');
+    expect(stepProgress).toBeFalsy();
+  });
+
+  it('should use full variant for step progress', async () => {
+    const { element } = await setup();
+    const stepProgress = element.querySelector('nx-step-progress');
+    expect(stepProgress).toBeTruthy();
+    expect(stepProgress!.classList.contains('step-progress--full')).toBe(true);
+    // Full variant shows step number labels
+    const labels = stepProgress!.querySelectorAll('.step-progress__label');
+    expect(labels.length).toBe(4);
   });
 });

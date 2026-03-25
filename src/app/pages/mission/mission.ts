@@ -10,11 +10,11 @@ import { StoryMissionContentService } from '../../core/curriculum/story-mission-
 import type { CodeExampleStep, ConceptStep } from '../../core/curriculum/story-mission-content.types';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import type { MinigameId } from '../../core/minigame/minigame.types';
-import { CodeEditorComponent, LockedContentComponent } from '../../shared/components';
+import { CodeEditorComponent, LockedContentComponent, StepProgressComponent } from '../../shared/components';
 
 @Component({
   selector: 'app-mission',
-  imports: [CodeEditorComponent, LockedContentComponent],
+  imports: [CodeEditorComponent, LockedContentComponent, StepProgressComponent],
   templateUrl: './mission.html',
   styleUrl: './mission.scss',
 })
@@ -54,6 +54,18 @@ export class MissionPage {
   readonly stepsViewed = signal(1);
 
   readonly totalSteps = computed(() => this.missionContent()?.steps.length ?? 0);
+
+  readonly completedStepIndices = computed(() => {
+    const viewed = this.stepsViewed();
+    const current1Based = this.currentStep() + 1;
+    const result: number[] = [];
+    for (let i = 1; i <= viewed; i++) {
+      if (i !== current1Based) {
+        result.push(i);
+      }
+    }
+    return result;
+  });
 
   readonly currentStepData = computed(
     () => this.missionContent()?.steps[this.currentStep()] ?? null,
