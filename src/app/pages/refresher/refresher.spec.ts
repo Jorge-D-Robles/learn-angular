@@ -1,3 +1,4 @@
+import { Component, signal } from '@angular/core';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { LucideIconConfig, LucideIconProvider, LUCIDE_ICONS } from 'lucide-angular';
 import { of } from 'rxjs';
@@ -10,8 +11,14 @@ import {
 } from '../../core/progression/refresher-challenge.service';
 import { SpacedRepetitionService } from '../../core/progression/spaced-repetition.service';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
+import { AudioService } from '../../core/audio';
+import { KeyboardShortcutService } from '../../core/minigame/keyboard-shortcut.service';
+import { MinigameEngine, type ActionResult } from '../../core/minigame/minigame-engine';
+import { PlayMode } from '../../core/minigame/minigame.types';
 import type { MinigameConfig } from '../../core/minigame/minigame.types';
 import { DifficultyTier } from '../../core/minigame/minigame.types';
+
+// --- Lucide icon providers needed by MinigameShellComponent sub-components ---
 
 const ICON_PROVIDERS = [
   {
@@ -27,6 +34,30 @@ const ICON_PROVIDERS = [
     }),
   },
 ];
+
+// --- Concrete test engine subclass ---
+
+class TestEngine extends MinigameEngine<unknown> {
+  constructor() {
+    super({ initialLives: 3, timerDuration: null });
+  }
+  protected onLevelLoad(): void { /* stub */ }
+  protected onStart(): void { /* stub */ }
+  protected onComplete(): void { /* stub */ }
+  protected validateAction(): ActionResult {
+    return { valid: true, scoreChange: 10, livesChange: 0 };
+  }
+}
+
+// --- Dummy game component for NgComponentOutlet ---
+
+@Component({
+  selector: 'app-test-dummy',
+  template: '<p class="dummy-game">dummy</p>',
+})
+class DummyGameComponent {}
+
+// --- Test data ---
 
 const TEST_CONFIG: MinigameConfig = {
   id: 'module-assembly',
@@ -69,6 +100,8 @@ interface SetupOptions {
   beforeMastery?: number;
   afterMastery?: number;
   config?: MinigameConfig | undefined;
+  hasEngineFactory?: boolean;
+  hasComponent?: boolean;
 }
 
 function setup(options: SetupOptions = {}) {
@@ -79,9 +112,12 @@ function setup(options: SetupOptions = {}) {
     beforeMastery = 2,
     afterMastery = 3,
     config = TEST_CONFIG,
+    hasEngineFactory = true,
+    hasComponent = true,
   } = options;
 
   let mastery = beforeMastery;
+  const mockEngine = new TestEngine();
   const generateRefresher = challengeError
     ? vi.fn().mockRejectedValue(challengeError)
     : vi.fn().mockResolvedValue(challenge);
@@ -92,6 +128,29 @@ function setup(options: SetupOptions = {}) {
   });
 
   const getEffectiveMastery = vi.fn().mockImplementation(() => mastery);
+
+  const registryMock = {
+    getConfig: vi.fn((id: string) => (id === config?.id ? config : undefined)),
+    getEngineFactory: vi.fn(() => (hasEngineFactory ? () => mockEngine : null)),
+    getComponent: vi.fn(() => (hasComponent ? DummyGameComponent : null)),
+  };
+
+  const audioMock = {
+    play: vi.fn(),
+    volume: signal(0.5),
+    setVolume: vi.fn(),
+    preload: vi.fn(),
+  };
+
+  const keyboardMock = {
+    register: vi.fn(),
+    unregister: vi.fn(),
+    unregisterAll: vi.fn(),
+    getRegistered: vi.fn(() => []),
+    setEnabled: vi.fn(),
+    isEnabled: signal(true),
+    destroy: vi.fn(),
+  };
 
   const providers = [
     provideRouter([]),
@@ -104,12 +163,12 @@ function setup(options: SetupOptions = {}) {
     getMockProvider(SpacedRepetitionService, {
       getEffectiveMastery,
     }),
-    getMockProvider(MinigameRegistryService, {
-      getConfig: vi.fn((id: string) => (id === config?.id ? config : undefined)),
-    }),
+    getMockProvider(MinigameRegistryService, registryMock),
+    getMockProvider(AudioService, audioMock),
+    getMockProvider(KeyboardShortcutService, keyboardMock),
   ];
 
-  return { providers, generateRefresher, completeRefresher, getEffectiveMastery };
+  return { providers, mockEngine, registryMock, generateRefresher, completeRefresher, getEffectiveMastery };
 }
 
 describe('RefresherChallengePage', () => {
@@ -182,92 +241,41 @@ describe('RefresherChallengePage', () => {
     expect(element.textContent).toContain('Module Assembly');
   });
 
-  // 6. Playing state - micro-level count
-  it('should display the correct number of micro-levels', async () => {
-    const { providers } = setup();
-    const { fixture, element } = await createComponent(RefresherChallengePage, {
-      providers,
-    });
-    await flushMicrotasks();
-    fixture.detectChanges();
-    const levelItems = element.querySelectorAll('.refresher__level-item');
-    expect(levelItems.length).toBe(4);
-  });
-
-  // 7. Playing state - progress tracking
-  it('should track current progress', async () => {
-    const { providers } = setup();
-    const { fixture, element } = await createComponent(RefresherChallengePage, {
+  // 9. Challenge completion - completeRefresher called (via engine wins)
+  it('should call completeRefresher when all micro-levels are won via engine', async () => {
+    const { providers, completeRefresher, mockEngine } = setup();
+    const { fixture } = await createComponent(RefresherChallengePage, {
       providers,
     });
     await flushMicrotasks();
     fixture.detectChanges();
 
-    // Initially 0 of 4 completed
-    expect(element.textContent).toContain('0 of 4 completed');
-
-    // Click first "Complete" button
-    const buttons = element.querySelectorAll<HTMLButtonElement>('.refresher__complete-btn');
-    buttons[0].click();
-    fixture.detectChanges();
-
-    expect(element.textContent).toContain('1 of 4 completed');
-  });
-
-  // 8. Level completion - clicking Complete advances progress
-  it('should advance progress when clicking Complete on a micro-level', async () => {
-    const { providers } = setup();
-    const { fixture, element } = await createComponent(RefresherChallengePage, {
-      providers,
-    });
-    await flushMicrotasks();
-    fixture.detectChanges();
-
-    const buttons = element.querySelectorAll<HTMLButtonElement>('.refresher__complete-btn');
-    expect(buttons.length).toBe(4);
-
-    buttons[0].click();
-    fixture.detectChanges();
-
-    // First button should be gone (replaced by "Done")
-    const updatedButtons = element.querySelectorAll<HTMLButtonElement>('.refresher__complete-btn');
-    expect(updatedButtons.length).toBe(3);
-  });
-
-  // 9. Challenge completion - completeRefresher called
-  it('should call completeRefresher when all micro-levels are completed', async () => {
-    const { providers, completeRefresher } = setup();
-    const { fixture, element } = await createComponent(RefresherChallengePage, {
-      providers,
-    });
-    await flushMicrotasks();
-    fixture.detectChanges();
-
-    // Complete all 4 levels
+    // Win all 4 levels sequentially
     for (let i = 0; i < 4; i++) {
-      const btn = element.querySelector<HTMLButtonElement>('.refresher__complete-btn');
-      expect(btn).toBeTruthy();
-      btn!.click();
+      mockEngine.submitAction({});
+      mockEngine.complete();
       fixture.detectChanges();
+      await fixture.whenStable();
     }
 
     expect(completeRefresher).toHaveBeenCalledWith('module-assembly');
   });
 
-  // 10. Completed state - mastery restoration display
+  // 10. Completed state - mastery restoration display (via engine wins)
   it('should show mastery restoration result with before/after stars', async () => {
-    const { providers } = setup({ beforeMastery: 2, afterMastery: 3 });
+    const { providers, mockEngine } = setup({ beforeMastery: 2, afterMastery: 3 });
     const { fixture, element } = await createComponent(RefresherChallengePage, {
       providers,
     });
     await flushMicrotasks();
     fixture.detectChanges();
 
-    // Complete all levels
+    // Win all 4 levels
     for (let i = 0; i < 4; i++) {
-      const btn = element.querySelector<HTMLButtonElement>('.refresher__complete-btn');
-      btn!.click();
+      mockEngine.submitAction({});
+      mockEngine.complete();
       fixture.detectChanges();
+      await fixture.whenStable();
     }
 
     expect(element.textContent).toContain('2');
@@ -276,20 +284,21 @@ describe('RefresherChallengePage', () => {
     expect(masteryStars.length).toBeGreaterThanOrEqual(2);
   });
 
-  // 11. Completed state - back link
+  // 11. Completed state - back link (via engine wins)
   it('should show "Back to Dashboard" link in completed state', async () => {
-    const { providers } = setup();
+    const { providers, mockEngine } = setup();
     const { fixture, element } = await createComponent(RefresherChallengePage, {
       providers,
     });
     await flushMicrotasks();
     fixture.detectChanges();
 
-    // Complete all levels
+    // Win all 4 levels
     for (let i = 0; i < 4; i++) {
-      const btn = element.querySelector<HTMLButtonElement>('.refresher__complete-btn');
-      btn!.click();
+      mockEngine.submitAction({});
+      mockEngine.complete();
       fixture.detectChanges();
+      await fixture.whenStable();
     }
 
     const link = element.querySelector('a[href="/dashboard"]');
@@ -343,5 +352,144 @@ describe('RefresherChallengePage', () => {
       providers,
     });
     expect(element.textContent).toContain('All caught up!');
+  });
+
+  // --- Engine integration tests ---
+
+  // E1. Engine factory resolution
+  it('should create engine from registry factory when challenge loads', async () => {
+    const { providers, registryMock, mockEngine } = setup();
+    const { fixture, component } = await createComponent(RefresherChallengePage, {
+      providers,
+    });
+    await flushMicrotasks();
+    fixture.detectChanges();
+
+    expect(registryMock.getEngineFactory).toHaveBeenCalledWith('module-assembly');
+    expect(component.engine()).toBe(mockEngine);
+    expect(component.viewState()).toBe('playing');
+  });
+
+  // E2. Engine initialized with PlayMode.Story
+  it('should initialize engine with PlayMode.Story', async () => {
+    const { providers, mockEngine } = setup();
+    const { fixture } = await createComponent(RefresherChallengePage, {
+      providers,
+    });
+    await flushMicrotasks();
+    fixture.detectChanges();
+
+    expect(mockEngine.playMode()).toBe(PlayMode.Story);
+  });
+
+  // E3. Advance to next micro-level on Win
+  it('should advance to next micro-level when engine status becomes Won', async () => {
+    const { providers, mockEngine } = setup();
+    const { fixture, component } = await createComponent(RefresherChallengePage, {
+      providers,
+    });
+    await flushMicrotasks();
+    fixture.detectChanges();
+
+    // Win first level
+    mockEngine.submitAction({});
+    mockEngine.complete();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.completedCount()).toBe(1);
+    // Engine should still exist (more levels to go)
+    expect(component.engine()).toBe(mockEngine);
+    // Should be re-initialized for next level
+    expect(mockEngine.currentLevel()).toBe('ma-basic-02');
+  });
+
+  // E4. Complete all micro-levels
+  it('should call completeRefresher when all micro-levels are won', async () => {
+    const { providers, completeRefresher, mockEngine } = setup();
+    const { fixture, component } = await createComponent(RefresherChallengePage, {
+      providers,
+    });
+    await flushMicrotasks();
+    fixture.detectChanges();
+
+    // Win all 4 levels
+    for (let i = 0; i < 4; i++) {
+      mockEngine.submitAction({});
+      mockEngine.complete();
+      fixture.detectChanges();
+      await fixture.whenStable();
+    }
+
+    expect(completeRefresher).toHaveBeenCalledWith('module-assembly');
+    expect(component.viewState()).toBe('completed');
+    expect(component.engine()).toBeNull();
+  });
+
+  // E5. No engine factory available
+  it('should show error if no engine factory is available', async () => {
+    const { providers } = setup({ hasEngineFactory: false });
+    const { fixture, component } = await createComponent(RefresherChallengePage, {
+      providers,
+    });
+    await flushMicrotasks();
+    fixture.detectChanges();
+
+    expect(component.viewState()).toBe('error');
+  });
+
+  // E6. Destroy engine on quit
+  it('should destroy engine and reset on quit', async () => {
+    const { providers, mockEngine } = setup();
+    const { fixture, component } = await createComponent(RefresherChallengePage, {
+      providers,
+    });
+    await flushMicrotasks();
+    fixture.detectChanges();
+
+    const destroySpy = vi.spyOn(mockEngine, 'destroy');
+
+    component.onQuit();
+    fixture.detectChanges();
+
+    expect(destroySpy).toHaveBeenCalled();
+    expect(component.engine()).toBeNull();
+    expect(component.viewState()).toBe('loading');
+  });
+
+  // E7. Destroy engine on component destroy
+  it('should destroy engine on component destroy', async () => {
+    const { providers, mockEngine } = setup();
+    const { fixture } = await createComponent(RefresherChallengePage, {
+      providers,
+    });
+    await flushMicrotasks();
+    fixture.detectChanges();
+
+    const destroySpy = vi.spyOn(mockEngine, 'destroy');
+
+    fixture.destroy();
+
+    expect(destroySpy).toHaveBeenCalled();
+  });
+
+  // E8. Re-initialize on retry (not reset)
+  it('should re-initialize engine with PlayMode.Story on shell retry (not reset)', async () => {
+    const { providers, mockEngine } = setup();
+    const { fixture, component } = await createComponent(RefresherChallengePage, {
+      providers,
+    });
+    await flushMicrotasks();
+    fixture.detectChanges();
+
+    const initSpy = vi.spyOn(mockEngine, 'initialize');
+    const setPlayModeSpy = vi.spyOn(mockEngine, 'setPlayMode');
+    const startSpy = vi.spyOn(mockEngine, 'start');
+
+    component.onShellRetry();
+
+    expect(initSpy).toHaveBeenCalled();
+    expect(setPlayModeSpy).toHaveBeenCalledWith(PlayMode.Story);
+    expect(startSpy).toHaveBeenCalled();
   });
 });
