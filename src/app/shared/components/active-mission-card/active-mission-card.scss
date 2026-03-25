@@ -1,0 +1,98 @@
+:host {
+  display: block;
+  padding: var(--nx-space-4) var(--nx-space-6);
+  background: var(--nx-color-hull);
+  border: 1px solid var(--nx-color-bulkhead);
+  border-radius: var(--nx-radius-card);
+  transition: border-color var(--nx-duration-fast) var(--nx-ease-out);
+}
+
+:host(.active-mission-card--active) {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-4);
+  border-color: var(--nx-color-sensor-green);
+}
+
+:host(.active-mission-card--complete) {
+  border-color: var(--nx-color-solar-gold);
+  text-align: center;
+}
+
+:host(.active-mission-card--empty) {
+  text-align: center;
+}
+
+.active-mission-card__badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--nx-color-bulkhead);
+  color: var(--nx-color-display);
+  font-weight: 600;
+  font-size: var(--nx-text-caption-size);
+  flex-shrink: 0;
+}
+
+.active-mission-card__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.active-mission-card__title {
+  margin: 0;
+  font-size: var(--nx-text-body-size);
+  font-weight: 600;
+  color: var(--nx-color-display);
+}
+
+.active-mission-card__topic {
+  font-size: var(--nx-text-caption-size);
+  color: var(--nx-color-corridor);
+}
+
+.active-mission-card__icon {
+  color: var(--nx-color-solar-gold);
+  margin-bottom: var(--nx-space-3);
+}
+
+.active-mission-card__summary {
+  font-size: var(--nx-text-caption-size);
+  color: var(--nx-color-corridor);
+  margin: var(--nx-space-2) 0 0;
+}
+
+.active-mission-card__action {
+  color: white;
+  border: none;
+  border-radius: var(--nx-radius-button);
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+:host(.active-mission-card--active) .active-mission-card__action {
+  background: var(--nx-color-sensor-green);
+}
+
+:host(.active-mission-card--empty) .active-mission-card__action {
+  background: var(--nx-color-reactor-blue);
+  margin-top: var(--nx-space-3);
+}
+
+:host(.active-mission-card--complete) .active-mission-card__title {
+  font-size: var(--nx-text-card-title-size);
+}
+
+:host(.active-mission-card--empty) .active-mission-card__title {
+  font-size: var(--nx-text-card-title-size);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    transition: none;
+  }
+}
