@@ -12,4 +12,5 @@ export * from './streak-reward.service';
 export * from './xp-diminishing-returns.service';
 export * from './leaderboard.service';
 export * from './onboarding.service';
+export * from './quick-play.service';
 export * from './xp.service';
