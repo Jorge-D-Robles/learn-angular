@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { DashboardPage } from './pages/dashboard/dashboard';
 import { NotFoundPage } from './pages/not-found/not-found';
+import { missionGuard, minigameLevelGuard } from './core/guards';
 
 export const routes: Routes = [
   { path: '', component: DashboardPage, title: 'Dashboard' },
@@ -13,6 +14,7 @@ export const routes: Routes = [
     path: 'mission/:chapterId',
     // dynamic title resolver deferred to T-2026-372
     title: 'Mission',
+    canActivate: [missionGuard],
     loadComponent: () => import('./pages/mission/mission').then((m) => m.MissionPage),
   },
   {
@@ -28,6 +30,7 @@ export const routes: Routes = [
   {
     path: 'minigames/:gameId/level/:levelId',
     title: 'Play',
+    canActivate: [minigameLevelGuard],
     loadComponent: () =>
       import('./pages/minigame-play/minigame-play').then((m) => m.MinigamePlayPage),
   },
