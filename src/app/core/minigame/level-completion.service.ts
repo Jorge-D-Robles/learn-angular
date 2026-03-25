@@ -6,6 +6,7 @@ import { MasteryService } from '../progression/mastery.service';
 import { XpNotificationService } from '../notifications';
 import { XpDiminishingReturnsService } from '../progression/xp-diminishing-returns.service';
 import { HintService } from './hint.service';
+import { AchievementTriggerService } from '../progression/achievement-trigger.service';
 
 /** Summary returned after completing a level. */
 export interface LevelCompletionSummary {
@@ -52,6 +53,7 @@ export class LevelCompletionService {
   private readonly xpNotification = inject(XpNotificationService);
   private readonly diminishingReturns = inject(XpDiminishingReturnsService);
   private readonly hintService = inject(HintService);
+  private readonly achievementTrigger = inject(AchievementTriggerService);
 
   /**
    * Orchestrates the full completion pipeline for a finished level.
@@ -139,6 +141,9 @@ export class LevelCompletionService {
       bonuses.push(`Rank Up: ${rankAfter}`);
     }
     this.xpNotification.show(xpEarned, bonuses, 3000, { isLevelUp: true });
+
+    // 11. Trigger achievement check
+    this.achievementTrigger.triggerCheck();
 
     // perfectBonus = XP difference between perfect and non-perfect for this tier
     const perfectBonus = effectivePerfect

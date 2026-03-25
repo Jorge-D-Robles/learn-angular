@@ -6,6 +6,7 @@ import type { MinigameId } from '../minigame/minigame.types';
 import { StreakService } from './streak.service';
 import { StreakRewardService } from './streak-reward.service';
 import { MissionUnlockNotificationService, XpNotificationService } from '../notifications';
+import { AchievementTriggerService } from './achievement-trigger.service';
 
 // --- Test helpers ---
 
@@ -438,6 +439,25 @@ describe('GameProgressionService', () => {
 
     it('should not trigger unlock notification for idempotent re-completion', () => {
       const spy = vi.spyOn(TestBed.inject(MissionUnlockNotificationService), 'showUnlock');
+      service.completeMission(1);
+      service.completeMission(1);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // --- 12. Achievement trigger integration ---
+
+  describe('achievement trigger integration', () => {
+    it('should call AchievementTriggerService.triggerCheck() on mission complete', () => {
+      const triggerService = TestBed.inject(AchievementTriggerService);
+      const spy = vi.spyOn(triggerService, 'triggerCheck');
+      service.completeMission(1);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not call triggerCheck on idempotent re-completion', () => {
+      const triggerService = TestBed.inject(AchievementTriggerService);
+      const spy = vi.spyOn(triggerService, 'triggerCheck');
       service.completeMission(1);
       service.completeMission(1);
       expect(spy).toHaveBeenCalledTimes(1);

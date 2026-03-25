@@ -12,6 +12,7 @@ import { LevelCompletionService } from './level-completion.service';
 import { XpNotificationService } from '../notifications';
 import { StreakService } from '../progression/streak.service';
 import { HintService, type HintDefinition } from './hint.service';
+import { AchievementTriggerService } from '../progression/achievement-trigger.service';
 
 // --- Test fixtures ---
 
@@ -618,5 +619,14 @@ describe('LevelCompletionService', () => {
       const hasHintPenalty = bonuses.some((b) => b.includes('Hint Penalty'));
       expect(hasHintPenalty).toBe(false);
     });
+  });
+
+  // --- Achievement trigger integration ---
+
+  it('should call AchievementTriggerService.triggerCheck() on level complete', () => {
+    const triggerService = TestBed.inject(AchievementTriggerService);
+    const spy = vi.spyOn(triggerService, 'triggerCheck');
+    service.completeLevel(makeResult());
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });

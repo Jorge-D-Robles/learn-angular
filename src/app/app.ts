@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { BottomNavComponent } from './bottom-nav/bottom-nav';
-import { RouteAnnouncerService, StreakService, XpService, RankUpNotificationService, getCurrentRankThreshold, getNextRankThreshold } from './core';
+import { AchievementTriggerService, RouteAnnouncerService, StreakService, XpService, RankUpNotificationService, getCurrentRankThreshold, getNextRankThreshold } from './core';
 import { SideNavComponent } from './side-nav/side-nav';
 import { MissionUnlockNotificationComponent, RankUpOverlayComponent, StreakBadgeComponent, XpNotificationComponent, XpProgressBarComponent } from './shared';
 
@@ -13,6 +13,7 @@ import { MissionUnlockNotificationComponent, RankUpOverlayComponent, StreakBadge
 })
 export class App {
   private readonly routeAnnouncer = inject(RouteAnnouncerService);
+  private readonly achievementTrigger = inject(AchievementTriggerService);
   private readonly streakService = inject(StreakService);
   private readonly xpService = inject(XpService);
   protected readonly rankUpService = inject(RankUpNotificationService);

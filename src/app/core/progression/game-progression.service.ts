@@ -4,6 +4,7 @@ import {
   effect,
   inject,
   Injectable,
+  Injector,
   signal,
   untracked,
 } from '@angular/core';
@@ -14,6 +15,7 @@ import { ALL_STORY_MISSIONS } from '../curriculum/curriculum.data';
 import type { ChapterId, PhaseNumber, StoryMission } from '../curriculum/curriculum.types';
 import type { MinigameId } from '../minigame/minigame.types';
 import { DEFAULT_MINIGAME_CONFIGS } from '../minigame/minigame-registry.service';
+import { AchievementTriggerService } from './achievement-trigger.service';
 
 const PERSISTENCE_KEY = 'game-progression';
 
@@ -38,6 +40,16 @@ export class GameProgressionService {
   private readonly unlockNotification = inject(MissionUnlockNotificationService);
   private readonly destroyRef = inject(DestroyRef);
   private _saveTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  private readonly injector = inject(Injector);
+  private _achievementTrigger: AchievementTriggerService | null = null;
+
+  private get achievementTrigger(): AchievementTriggerService {
+    if (this._achievementTrigger === null) {
+      this._achievementTrigger = this.injector.get(AchievementTriggerService);
+    }
+    return this._achievementTrigger;
+  }
 
   private readonly _completedMissions = signal<ReadonlySet<ChapterId>>(new Set());
 
@@ -137,6 +149,8 @@ export class GameProgressionService {
       bonuses.push(`+${xpBreakdown.streakBonus} Streak Bonus`);
     }
     this.xpNotification.show(xpBreakdown.totalXp, bonuses);
+
+    this.achievementTrigger.triggerCheck();
   }
 
   /** Returns the list of unlocked minigame IDs (deduplicated). */

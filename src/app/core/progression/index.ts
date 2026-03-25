@@ -1,4 +1,5 @@
 export * from './achievement.service';
+export * from './achievement-trigger.service';
 export * from './daily-challenge.service';
 export * from './game-progression.service';
 export * from './lifetime-stats.service';
