@@ -1,0 +1,25 @@
+<h1>Campaign</h1>
+
+<section class="campaign__overview">
+  <p class="campaign__overview-text">{{ overallCompleted() }} / 34 missions completed</p>
+</section>
+
+@for (phase of phaseGroups(); track phase.phaseNumber) {
+  <section class="campaign__phase">
+    <div class="campaign__phase-header">
+      <h2 class="campaign__phase-name">Phase {{ phase.phaseNumber }}: {{ phase.name }}</h2>
+      <span class="campaign__phase-progress">{{ phase.completedCount }}/{{ phase.totalCount }} completed</span>
+      <p class="campaign__phase-desc">{{ phase.description }}</p>
+    </div>
+    <div class="campaign__phase-missions">
+      @for (m of phase.missions; track m.mission.chapterId) {
+        <nx-mission-card
+          [mission]="m.mission"
+          [isCompleted]="m.isCompleted"
+          [isLocked]="m.isLocked"
+          [isCurrent]="m.isCurrent"
+          (missionClicked)="onMissionClicked($event)" />
+      }
+    </div>
+  </section>
+}
