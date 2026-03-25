@@ -1,0 +1,123 @@
+:host {
+  display: block;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  cursor: pointer;
+  color: var(--nx-color-corridor);
+  font-size: var(--nx-text-caption-size, 0.875rem);
+  font-weight: 600;
+  text-align: left;
+  padding: var(--nx-space-2) var(--nx-space-3);
+  border-bottom: 1px solid var(--nx-color-bulkhead);
+  user-select: none;
+
+  &:hover {
+    color: var(--nx-color-display);
+  }
+
+  &:last-child {
+    cursor: default;
+  }
+}
+
+.mastery-table__sort-icon {
+  display: inline-flex;
+  vertical-align: middle;
+  color: var(--nx-color-reactor-blue);
+  margin-left: var(--nx-space-1, 0.25rem);
+}
+
+tbody td {
+  padding: var(--nx-space-3);
+  color: var(--nx-color-display);
+  border-bottom: 1px solid var(--nx-color-bulkhead);
+}
+
+.mastery-table__topic-name {
+  font-weight: 500;
+}
+
+.mastery-table__row--degrading {
+  border-left: 3px solid var(--nx-color-alert-orange);
+}
+
+.mastery-table__status--degrading {
+  color: var(--nx-color-alert-orange);
+  font-weight: 600;
+}
+
+.mastery-table__status--active {
+  color: var(--nx-color-sensor-green);
+}
+
+.mastery-table__empty {
+  text-align: center;
+  color: var(--nx-color-corridor);
+  padding: var(--nx-space-6, 1.5rem) var(--nx-space-3);
+  font-style: italic;
+}
+
+@media (max-width: 767px) {
+  thead {
+    display: none;
+  }
+
+  tbody tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'topic mastery'
+      'practiced status';
+    background: var(--nx-color-hull);
+    border-radius: var(--nx-radius-card, 8px);
+    padding: var(--nx-space-3);
+    margin-bottom: var(--nx-space-2);
+    border: 1px solid var(--nx-color-bulkhead);
+  }
+
+  tbody td {
+    border-bottom: none;
+    padding: var(--nx-space-1) var(--nx-space-2);
+
+    &::before {
+      content: attr(data-label);
+      display: block;
+      font-size: var(--nx-text-caption-size, 0.75rem);
+      color: var(--nx-color-corridor);
+      font-weight: 600;
+      margin-bottom: var(--nx-space-1, 0.25rem);
+    }
+  }
+
+  .mastery-table__topic-name {
+    grid-area: topic;
+  }
+
+  .mastery-table__mastery {
+    grid-area: mastery;
+  }
+
+  .mastery-table__last-practiced {
+    grid-area: practiced;
+  }
+
+  .mastery-table__status {
+    grid-area: status;
+  }
+
+  .mastery-table__row--degrading {
+    border-left: 3px solid var(--nx-color-alert-orange);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
