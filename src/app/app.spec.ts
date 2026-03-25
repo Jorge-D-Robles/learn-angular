@@ -6,7 +6,7 @@ import {
   LucideIconProvider,
 } from 'lucide-angular';
 import { App } from './app';
-import { GameStateService, MissionUnlockNotificationService, RankUpNotificationService, StreakService, XpService } from './core';
+import { AchievementNotificationService, GameStateService, MissionUnlockNotificationService, RankUpNotificationService, StreakService, XpService } from './core';
 import { APP_ICONS } from './shared';
 
 const ICON_PROVIDERS = [
@@ -175,6 +175,36 @@ describe('App', () => {
     const xpNotification =
       fixture.nativeElement.querySelector('nx-xp-notification');
     expect(xpNotification).toBeTruthy();
+  });
+
+  // ---------------------------------------------------------------------------
+  // Achievement notification
+  // ---------------------------------------------------------------------------
+  it('should render the achievement notification component', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const el = fixture.nativeElement.querySelector('nx-achievement-notification');
+    expect(el).toBeTruthy();
+  });
+
+  it('should show achievement toast when AchievementNotificationService fires', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    const achievementNotifService = TestBed.inject(AchievementNotificationService);
+    achievementNotifService.show({
+      id: 'first-steps',
+      title: 'First Steps',
+      description: 'Complete your first story mission',
+      type: 'discovery',
+      isHidden: false,
+      isEarned: true,
+      earnedDate: '2026-03-25T00:00:00.000Z',
+    });
+    fixture.detectChanges();
+
+    const toast = fixture.nativeElement.querySelector('.achievement-toast');
+    expect(toast).toBeTruthy();
   });
 
   // ---------------------------------------------------------------------------

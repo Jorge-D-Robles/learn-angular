@@ -3,11 +3,11 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import { BottomNavComponent } from './bottom-nav/bottom-nav';
 import { AchievementTriggerService, RouteAnnouncerService, StreakService, XpService, RankUpNotificationService, getCurrentRankThreshold, getNextRankThreshold } from './core';
 import { SideNavComponent } from './side-nav/side-nav';
-import { MissionUnlockNotificationComponent, RankUpOverlayComponent, StreakBadgeComponent, XpNotificationComponent, XpProgressBarComponent } from './shared';
+import { AchievementNotificationComponent, MissionUnlockNotificationComponent, RankUpOverlayComponent, StreakBadgeComponent, XpNotificationComponent, XpProgressBarComponent } from './shared';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterLink, RouterOutlet, BottomNavComponent, SideNavComponent, MissionUnlockNotificationComponent, StreakBadgeComponent, XpNotificationComponent, XpProgressBarComponent, RankUpOverlayComponent],
+  imports: [RouterLink, RouterOutlet, BottomNavComponent, SideNavComponent, AchievementNotificationComponent, MissionUnlockNotificationComponent, StreakBadgeComponent, XpNotificationComponent, XpProgressBarComponent, RankUpOverlayComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

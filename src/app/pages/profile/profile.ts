@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { getCurrentRankThreshold, getNextRankThreshold } from '../../core/progression/xp.service';
@@ -15,6 +15,7 @@ import { StreakBadgeComponent } from '../../shared/components/streak-badge/strea
 import { ProgressBarComponent } from '../../shared/components/progress-bar/progress-bar';
 import { TimeFormatPipe } from '../../shared/pipes/time-format.pipe';
 import { AchievementGridComponent } from '../../shared/components/achievement-grid/achievement-grid';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import type { DegradingTopicItem } from '../../shared/components/degradation-alert/degradation-alert';
 import { DegradationAlertComponent } from '../../shared/components';
 
@@ -30,9 +31,14 @@ import { DegradationAlertComponent } from '../../shared/components';
     TimeFormatPipe,
     AchievementGridComponent,
     DegradationAlertComponent,
+    LoadingSpinnerComponent,
   ],
   template: `
     <h1>Profile</h1>
+
+    @if (isLoading()) {
+      <nx-loading-spinner size="lg" message="Loading profile data..." />
+    } @else {
 
     <section class="profile__rank-section">
       <div class="profile__rank-header">
@@ -91,15 +97,20 @@ import { DegradationAlertComponent } from '../../shared/components';
       <h2>Achievements</h2>
       <nx-achievement-grid />
     </section>
+
+    }
   `,
   styleUrl: './profile.scss',
 })
-export class ProfilePage {
+export class ProfilePage implements OnInit {
   private readonly lifetimeStats = inject(LifetimeStatsService);
   private readonly masteryService = inject(MasteryService);
   private readonly registry = inject(MinigameRegistryService);
   private readonly spacedRepetition = inject(SpacedRepetitionService);
   private readonly router = inject(Router);
+
+  /** Loading state: false after critical signals settle. */
+  readonly isLoading = signal(true);
 
   readonly stats = computed(() => this.lifetimeStats.profileStats());
 
@@ -157,6 +168,10 @@ export class ProfilePage {
       daysSinceLastPractice: t.daysSinceLastPractice,
     }));
   });
+
+  ngOnInit(): void {
+    this.isLoading.set(false);
+  }
 
   navigateToRefresher(topicId: string): void {
     this.router.navigate(['/refresher', topicId]);
