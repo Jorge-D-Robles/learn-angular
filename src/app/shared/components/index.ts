@@ -11,6 +11,8 @@ export { LevelStarsComponent } from './level-stars/level-stars';
 export { LoadingSpinnerComponent } from './loading-spinner/loading-spinner';
 export { LockedContentComponent } from './locked-content/locked-content';
 export { MasteryStarsComponent } from './mastery-stars/mastery-stars';
+export { MasteryTableComponent } from './mastery-table/mastery-table';
+export type { MasteryTableRow } from './mastery-table/mastery-table';
 export { MinigameCardComponent } from './minigame-card/minigame-card';
 export { MinigameTutorialOverlayComponent } from './minigame-tutorial/minigame-tutorial';
 export type { TutorialStep } from './minigame-tutorial/minigame-tutorial.types';

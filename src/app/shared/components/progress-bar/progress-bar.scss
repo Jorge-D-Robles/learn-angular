@@ -1,0 +1,59 @@
+:host {
+  display: block;
+}
+
+.progress-bar__track {
+  background: var(--nx-color-bulkhead);
+  border-radius: 4px;
+  overflow: hidden;
+  height: 8px;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width var(--nx-duration-normal) var(--nx-ease-out);
+}
+
+// Variant colors on fill
+:host(.progress-bar--default) .progress-bar__fill {
+  background: var(--nx-color-reactor-blue);
+}
+
+:host(.progress-bar--xp) .progress-bar__fill {
+  background: var(--nx-color-solar-gold);
+}
+
+:host(.progress-bar--mastery) .progress-bar__fill {
+  background: var(--nx-color-sensor-green);
+}
+
+:host(.progress-bar--timer) .progress-bar__fill {
+  background: var(--nx-color-sensor-green);
+}
+
+// Timer state classes — scoped to match variant specificity
+:host(.progress-bar--timer) .progress-bar__fill--safe {
+  background: var(--nx-color-sensor-green);
+}
+
+:host(.progress-bar--timer) .progress-bar__fill--warning {
+  background: var(--nx-color-alert-orange);
+}
+
+:host(.progress-bar--timer) .progress-bar__fill--critical {
+  background: var(--nx-color-emergency-red);
+}
+
+.progress-bar__percentage {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--nx-text-caption-size, 0.75rem);
+  color: var(--nx-color-corridor);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-bar__fill {
+    transition: none;
+  }
+}
