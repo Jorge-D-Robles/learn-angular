@@ -400,3 +400,5 @@
 [2026-03-25] T-2026-219: Create LeaderboardComponent for per-minigame score display — LeaderboardComponent with mode tabs, linkedSignal, medal classes, player highlight, 15 tests (claude)
 [2026-03-25] T-2026-317: Create ActiveMissionCardComponent for dashboard mission prompt widget — ActiveMissionCardComponent with 3 states, chapter badge, trophy icon, 18 tests (claude)
 [2026-03-25] T-2026-316: Create DailyChallengeCardComponent for dashboard daily challenge widget — DailyChallengeCardComponent with countdown timer, bonusXp, streak indicator, 18 tests (claude)
+[2026-03-25] T-2026-253: Wire LeaderboardComponent into LevelSelectPage replay mode tabs — Leaderboard tab wired into LevelSelectPage with type widening, 5 new tests (claude)
+[2026-03-25] T-2026-217: Create RefresherChallengePage for mastery restoration gameplay — RefresherChallengePage with 5 states, mastery before/after stars, micro-level checklist, 14 tests (claude)
