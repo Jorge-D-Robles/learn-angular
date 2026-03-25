@@ -259,4 +259,47 @@ describe('MinigameHubPage', () => {
     const texts = Array.from(options).map(o => o.textContent?.trim());
     expect(texts).toEqual(['All Topics', 'Components', 'Routing']);
   });
+
+  // 16. Empty state when no minigames are unlocked
+  it('should show EmptyStateComponent when no minigames are unlocked', async () => {
+    const { element } = await setup({
+      isMinigameUnlocked: () => false,
+    });
+    const emptyState = element.querySelector('nx-empty-state');
+    expect(emptyState).toBeTruthy();
+    expect(emptyState!.querySelector('.empty-state__title')?.textContent).toContain('No minigames unlocked yet');
+    expect(emptyState!.querySelector('.empty-state__message')?.textContent).toContain('Complete your first mission to unlock a minigame!');
+  });
+
+  // 17. Hide empty state when at least one minigame is unlocked
+  it('should hide EmptyStateComponent when at least one minigame is unlocked', async () => {
+    const { element } = await setup({
+      isMinigameUnlocked: () => true,
+    });
+    expect(element.querySelector('nx-empty-state')).toBeNull();
+    expect(element.querySelectorAll('nx-minigame-card').length).toBe(3);
+  });
+
+  // 18. Hide filters when no minigames are unlocked
+  it('should hide filters when no minigames are unlocked', async () => {
+    const { element } = await setup({
+      isMinigameUnlocked: () => false,
+    });
+    expect(element.querySelector('.minigame-hub__filters')).toBeNull();
+    expect(element.querySelector('.minigame-hub__grid')).toBeNull();
+  });
+
+  // 19. Navigate to /campaign when empty state action button is clicked
+  it('should navigate to /campaign when empty state action button is clicked', async () => {
+    const { element, fixture } = await setup({
+      isMinigameUnlocked: () => false,
+    });
+    const button = element.querySelector('nx-empty-state button') as HTMLButtonElement;
+    expect(button).toBeTruthy();
+    button.click();
+    fixture.detectChanges();
+
+    const router = fixture.debugElement.injector.get(Router);
+    expect(router.navigate).toHaveBeenCalledWith(['/campaign']);
+  });
 });

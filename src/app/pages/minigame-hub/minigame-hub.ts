@@ -5,6 +5,7 @@ import { GameProgressionService } from '../../core/progression/game-progression.
 import { MasteryService } from '../../core/progression/mastery.service';
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
 import { ALL_STORY_MISSIONS } from '../../core/curriculum';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
 import { MinigameCardComponent } from '../../shared/components/minigame-card/minigame-card';
 import type { MinigameConfig, MinigameId } from '../../core/minigame/minigame.types';
 
@@ -19,40 +20,51 @@ interface MinigameCardData {
 @Component({
   selector: 'app-minigame-hub',
   standalone: true,
-  imports: [MinigameCardComponent],
+  imports: [EmptyStateComponent, MinigameCardComponent],
   template: `
     <h1>Minigame Hub</h1>
 
-    <div class="minigame-hub__filters">
-      <select (change)="onTopicChange($event)">
-        <option value="">All Topics</option>
-        @for (topic of uniqueTopics(); track topic) {
-          <option [value]="topic">{{ topic }}</option>
-        }
-      </select>
-      <select (change)="onMasteryChange($event)">
-        <option [value]="-1">All Mastery</option>
-        @for (level of masteryLevels; track level) {
-          <option [value]="level">{{ level }}+ Stars</option>
-        }
-      </select>
-    </div>
+    @if (hasUnlockedGames()) {
+      <div class="minigame-hub__filters">
+        <select (change)="onTopicChange($event)">
+          <option value="">All Topics</option>
+          @for (topic of uniqueTopics(); track topic) {
+            <option [value]="topic">{{ topic }}</option>
+          }
+        </select>
+        <select (change)="onMasteryChange($event)">
+          <option [value]="-1">All Mastery</option>
+          @for (level of masteryLevels; track level) {
+            <option [value]="level">{{ level }}+ Stars</option>
+          }
+        </select>
+      </div>
 
-    <div class="minigame-hub__grid">
-      @for (game of filteredGames(); track game.config.id) {
-        <nx-minigame-card
-          [config]="game.config"
-          [mastery]="game.masteryStars"
-          [levelsCompleted]="game.levelsCompleted"
-          [isLocked]="!game.isUnlocked"
-          [unlockMessage]="game.unlockMessage"
-          [attr.tabindex]="game.isUnlocked ? 0 : -1"
-          (cardClicked)="onCardClick($event)"
-          (keydown.enter)="game.isUnlocked && onCardClick(game.config.id)" />
-      } @empty {
-        <p class="minigame-hub__empty">No minigames match the selected filters.</p>
-      }
-    </div>
+      <div class="minigame-hub__grid">
+        @for (game of filteredGames(); track game.config.id) {
+          <nx-minigame-card
+            [config]="game.config"
+            [mastery]="game.masteryStars"
+            [levelsCompleted]="game.levelsCompleted"
+            [isLocked]="!game.isUnlocked"
+            [unlockMessage]="game.unlockMessage"
+            [attr.tabindex]="game.isUnlocked ? 0 : -1"
+            (cardClicked)="onCardClick($event)"
+            (keydown.enter)="game.isUnlocked && onCardClick(game.config.id)" />
+        } @empty {
+          <p class="minigame-hub__empty">No minigames match the selected filters.</p>
+        }
+      </div>
+    } @else {
+      <nx-empty-state
+        icon="gamepad-2"
+        title="No minigames unlocked yet"
+        message="Complete your first mission to unlock a minigame!">
+        <button type="button" class="minigame-hub__cta" (click)="goToCampaign()">
+          Start Campaign
+        </button>
+      </nx-empty-state>
+    }
   `,
   styleUrl: './minigame-hub.scss',
 })
@@ -71,6 +83,10 @@ export class MinigameHubPage {
     const games = this.registry.getAllGames();
     return games.map(config => this.buildCardData(config));
   });
+
+  readonly hasUnlockedGames = computed<boolean>(() =>
+    this.allGames().some(g => g.isUnlocked),
+  );
 
   readonly uniqueTopics = computed<string[]>(() => {
     const topics = this.allGames().map(g => g.config.angularTopic);
@@ -97,6 +113,10 @@ export class MinigameHubPage {
 
   onCardClick(gameId: MinigameId): void {
     this.router.navigate(['/minigames', gameId]);
+  }
+
+  goToCampaign(): void {
+    this.router.navigate(['/campaign']);
   }
 
   private buildCardData(config: MinigameConfig): MinigameCardData {
