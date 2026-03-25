@@ -5,6 +5,7 @@ import { map } from 'rxjs';
 import { TierBadgeComponent } from '../../shared/components/tier-badge/tier-badge';
 import { LevelStarsComponent } from '../../shared/components/level-stars/level-stars';
 import { LockedContentComponent } from '../../shared/components/locked-content/locked-content';
+import { LeaderboardComponent } from '../../shared/components/leaderboard/leaderboard';
 import { LevelLoaderService } from '../../core/levels/level-loader.service';
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
 import { LEVEL_TIER_CONFIGS } from '../../core/levels/level.types';
@@ -25,7 +26,7 @@ interface TierGroup {
 }
 
 interface TabConfig {
-  readonly mode: PlayMode;
+  readonly mode: PlayMode | 'leaderboard';
   readonly label: string;
   readonly routeSlug: string;
 }
@@ -35,6 +36,7 @@ const TABS: readonly TabConfig[] = [
   { mode: PlayMode.Endless, label: 'Endless', routeSlug: 'endless' },
   { mode: PlayMode.SpeedRun, label: 'Speed Run', routeSlug: 'speedrun' },
   { mode: PlayMode.DailyChallenge, label: 'Daily', routeSlug: 'daily' },
+  { mode: 'leaderboard' as const, label: 'Leaderboard', routeSlug: 'leaderboard' },
 ];
 
 const MODE_DESCRIPTIONS: Record<Exclude<PlayMode, PlayMode.Story>, string> = {
@@ -46,7 +48,7 @@ const MODE_DESCRIPTIONS: Record<Exclude<PlayMode, PlayMode.Story>, string> = {
 @Component({
   selector: 'app-level-select',
   standalone: true,
-  imports: [TierBadgeComponent, LevelStarsComponent, LockedContentComponent],
+  imports: [TierBadgeComponent, LevelStarsComponent, LockedContentComponent, LeaderboardComponent],
   template: `
     <h1>Level Select</h1>
 
@@ -92,7 +94,13 @@ const MODE_DESCRIPTIONS: Record<Exclude<PlayMode, PlayMode.Story>, string> = {
       }
     }
 
-    @if (activeTab() !== PlayMode.Story) {
+    @if (activeTab() === 'leaderboard') {
+      <div class="level-select__leaderboard">
+        <nx-leaderboard [gameId]="$any(gameId())" />
+      </div>
+    }
+
+    @if (activeTab() !== PlayMode.Story && activeTab() !== 'leaderboard') {
       <div class="level-select__mode-launcher">
         <p class="level-select__mode-description">{{ modeDescription() }}</p>
         <button class="level-select__launch-btn" (click)="launchMode()">
@@ -111,7 +119,7 @@ export class LevelSelectPage {
 
   readonly PlayMode = PlayMode;
   readonly tabs = TABS;
-  readonly activeTab = signal<PlayMode>(PlayMode.Story);
+  readonly activeTab = signal<PlayMode | 'leaderboard'>(PlayMode.Story);
 
   readonly gameId = toSignal(
     this.route.paramMap.pipe(map((params) => params.get('gameId') ?? '')),
@@ -153,7 +161,7 @@ export class LevelSelectPage {
 
   readonly modeDescription = computed(() => {
     const tab = this.activeTab();
-    if (tab === PlayMode.Story) return '';
+    if (tab === PlayMode.Story || tab === 'leaderboard') return '';
     return MODE_DESCRIPTIONS[tab];
   });
 
@@ -161,7 +169,7 @@ export class LevelSelectPage {
     return TABS.find((t) => t.mode === this.activeTab())?.label ?? '';
   });
 
-  setTab(mode: PlayMode): void {
+  setTab(mode: PlayMode | 'leaderboard'): void {
     this.activeTab.set(mode);
   }
 
@@ -172,8 +180,8 @@ export class LevelSelectPage {
   }
 
   launchMode(): void {
+    if (this.activeTab() === 'leaderboard') return;
     const tab = TABS.find((t) => t.mode === this.activeTab());
-    // tab is always found because activeTab is constrained to PlayMode values in TABS
     if (tab) {
       this.router.navigate(['/minigames', this.gameId(), tab.routeSlug]);
     }

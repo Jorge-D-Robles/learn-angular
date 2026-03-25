@@ -3,12 +3,15 @@ import {
   LucideIconProvider,
   LUCIDE_ICONS,
 } from 'lucide-angular';
+import { By } from '@angular/platform-browser';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { createComponent, getMockProvider } from '../../../testing/test-utils';
 import { LevelSelectPage } from './level-select';
 import { LevelLoaderService } from '../../core/levels/level-loader.service';
 import { LevelProgressionService } from '../../core/levels/level-progression.service';
+import { LeaderboardService } from '../../core/progression/leaderboard.service';
+import { LeaderboardComponent } from '../../shared/components/leaderboard/leaderboard';
 import { APP_ICONS } from '../../shared/icons';
 import { DifficultyTier } from '../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../core/levels/level.types';
@@ -116,6 +119,9 @@ function setup(overrides: {
       }),
       getMockProvider(Router, {
         navigate: navigateFn,
+      }),
+      getMockProvider(LeaderboardService, {
+        getLeaderboard: vi.fn().mockReturnValue([]),
       }),
     ],
   });
@@ -250,13 +256,13 @@ describe('LevelSelectPage', () => {
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  // 12. Render replay mode tabs
+  // 12. Render replay mode tabs (including Leaderboard)
   it('should render replay mode tabs', async () => {
     const { element } = await setup();
     const tabs = element.querySelectorAll('[role="tab"]');
-    expect(tabs.length).toBe(4);
+    expect(tabs.length).toBe(5);
     const labels = Array.from(tabs).map((t) => t.textContent?.trim());
-    expect(labels).toEqual(['Story', 'Endless', 'Speed Run', 'Daily']);
+    expect(labels).toEqual(['Story', 'Endless', 'Speed Run', 'Daily', 'Leaderboard']);
   });
 
   // 13. Show Story tab as active by default
@@ -357,5 +363,66 @@ describe('LevelSelectPage', () => {
       'module-assembly',
       'daily',
     ]);
+  });
+
+  // 20. Render nx-leaderboard when Leaderboard tab is active
+  it('should render nx-leaderboard when Leaderboard tab is active', async () => {
+    const { element, fixture } = await setup();
+    const tabs = element.querySelectorAll('[role="tab"]');
+    (tabs[4] as HTMLButtonElement).click(); // Leaderboard tab (index 4)
+    fixture.detectChanges();
+
+    const leaderboard = element.querySelector('nx-leaderboard');
+    expect(leaderboard).toBeTruthy();
+
+    const launcher = element.querySelector('.level-select__mode-launcher');
+    expect(launcher).toBeNull();
+  });
+
+  // 21. Pass gameId to nx-leaderboard
+  it('should pass gameId to nx-leaderboard', async () => {
+    const { fixture } = await setup();
+    const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
+    (tabs[4] as HTMLButtonElement).click();
+    fixture.detectChanges();
+
+    const leaderboardDebug = fixture.debugElement.query(By.directive(LeaderboardComponent));
+    expect(leaderboardDebug).toBeTruthy();
+    const leaderboardInstance = leaderboardDebug.componentInstance as LeaderboardComponent;
+    expect(leaderboardInstance.gameId()).toBe('module-assembly');
+  });
+
+  // 22. Mode launcher NOT shown when Leaderboard tab is active
+  it('should not show mode launcher when Leaderboard tab is active', async () => {
+    const { element, fixture } = await setup();
+    const tabs = element.querySelectorAll('[role="tab"]');
+    (tabs[4] as HTMLButtonElement).click();
+    fixture.detectChanges();
+
+    const launcher = element.querySelector('.level-select__mode-launcher');
+    expect(launcher).toBeNull();
+  });
+
+  // 23. Story levels NOT shown when Leaderboard tab is active
+  it('should not show story levels when Leaderboard tab is active', async () => {
+    const { element, fixture } = await setup();
+    const tabs = element.querySelectorAll('[role="tab"]');
+    (tabs[4] as HTMLButtonElement).click();
+    fixture.detectChanges();
+
+    const tierGroups = element.querySelectorAll('.level-select__tier-group');
+    expect(tierGroups.length).toBe(0);
+  });
+
+  // 24. Leaderboard tab wrapped in leaderboard container
+  it('should wrap leaderboard in a container div', async () => {
+    const { element, fixture } = await setup();
+    const tabs = element.querySelectorAll('[role="tab"]');
+    (tabs[4] as HTMLButtonElement).click();
+    fixture.detectChanges();
+
+    const container = element.querySelector('.level-select__leaderboard');
+    expect(container).toBeTruthy();
+    expect(container!.querySelector('nx-leaderboard')).toBeTruthy();
   });
 });
