@@ -16,13 +16,13 @@ Started: 2026-03-25
 
 ## Queue
 
-- T-2026-339: Wire MinigameCardComponent into MinigameHubPage grid layout [S]
-- T-2026-340: Wire LevelCardComponent into LevelSelectPage level list [S]
-- T-2026-341: Wire StepProgressComponent into StoryMissionPage for step indicator [S]
-- T-2026-343: Wire MasteryTableComponent into ProfilePage mastery section [S]
+*(empty — all tickets completed)*
 
 ---
 
 ## Done This Sprint
 
-*(none yet)*
+- T-2026-339: Wire MinigameCardComponent into MinigameHubPage grid layout
+- T-2026-340: Wire LevelCardComponent into LevelSelectPage level list
+- T-2026-341: Wire StepProgressComponent into StoryMissionPage for step indicator
+- T-2026-343: Wire MasteryTableComponent into ProfilePage mastery section
