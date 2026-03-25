@@ -94,11 +94,11 @@ type ViewState = 'error' | 'pre-run' | 'in-run' | 'post-run';
     }
   `,
   styles: [`
-    .timer--under-par { color: #22c55e; }
-    .timer--near-par { color: #f59e0b; }
-    .timer--over-par { color: #ef4444; }
+    .timer--under-par { color: var(--nx-color-sensor-green); }
+    .timer--near-par { color: var(--nx-color-alert-orange); }
+    .timer--over-par { color: var(--nx-color-emergency-red); }
     .speed-run__timer { font-size: 2rem; font-weight: bold; font-variant-numeric: tabular-nums; }
-    .speed-run__new-best { color: #22c55e; font-weight: bold; }
+    .speed-run__new-best { color: var(--nx-color-sensor-green); font-weight: bold; }
   `],
 })
 export class SpeedRunPage {

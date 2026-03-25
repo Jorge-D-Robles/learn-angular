@@ -26,6 +26,14 @@ $nx-color-comm-purple: #a855f7;
 $nx-color-solar-gold: #eab308;
 
 // -----------------------------------------------------------------------------
+// Colors — Semantic Aliases
+// -----------------------------------------------------------------------------
+$nx-color-surface: $nx-color-hull;
+$nx-color-border: $nx-color-bulkhead;
+$nx-color-surface-hover: #1e2538;
+$nx-color-deep-space: $nx-color-void;
+
+// -----------------------------------------------------------------------------
 // Colors — Code Block
 // -----------------------------------------------------------------------------
 $nx-color-code-bg: #0d1117;
@@ -124,6 +132,12 @@ $nx-radius-button: 6px;
   --nx-color-emergency-red: #{$nx-color-emergency-red};
   --nx-color-comm-purple: #{$nx-color-comm-purple};
   --nx-color-solar-gold: #{$nx-color-solar-gold};
+
+  // Colors — Semantic Aliases
+  --nx-color-surface: #{$nx-color-surface};
+  --nx-color-border: #{$nx-color-border};
+  --nx-color-surface-hover: #{$nx-color-surface-hover};
+  --nx-color-deep-space: #{$nx-color-deep-space};
 
   // Colors — Code Block
   --nx-color-code-bg: #{$nx-color-code-bg};

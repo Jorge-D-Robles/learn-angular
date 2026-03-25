@@ -1,9 +1,9 @@
 // =============================================================================
-// Theme Class Selectors — Placeholders
-// T-2026-325 will populate these with color overrides.
+// Theme Class Selectors
+// Each theme file defines a body.theme-* selector with --nx-* overrides.
 // The body class is applied by SettingsService based on user preference.
 // =============================================================================
 
-body.theme-dark {}
-body.theme-station {}
-body.theme-light {}
+@use 'themes/station';
+@use 'themes/dark';
+@use 'themes/light';

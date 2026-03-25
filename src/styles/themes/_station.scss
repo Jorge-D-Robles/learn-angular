@@ -1,0 +1,40 @@
+// =============================================================================
+// Station Theme — Nexus Station default palette
+// Matches :root defaults from _tokens.scss / docs/ux/visual-style.md.
+// Explicit selector ensures correct values when body.theme-station is set.
+// =============================================================================
+
+$station-void: #0a0e1a;
+$station-hull: #1a1f2e;
+$station-bulkhead: #252b3d;
+$station-corridor: #8b92a8;
+$station-display: #e2e8f0;
+$station-beacon: #ffffff;
+$station-reactor-blue: #3b82f6;
+$station-sensor-green: #22c55e;
+$station-alert-orange: #f97316;
+$station-emergency-red: #ef4444;
+$station-comm-purple: #a855f7;
+$station-solar-gold: #eab308;
+$station-code-bg: #0d1117;
+$station-surface-hover: #1e2538;
+
+body.theme-station {
+  --nx-color-void: #{$station-void};
+  --nx-color-hull: #{$station-hull};
+  --nx-color-bulkhead: #{$station-bulkhead};
+  --nx-color-corridor: #{$station-corridor};
+  --nx-color-display: #{$station-display};
+  --nx-color-beacon: #{$station-beacon};
+  --nx-color-reactor-blue: #{$station-reactor-blue};
+  --nx-color-sensor-green: #{$station-sensor-green};
+  --nx-color-alert-orange: #{$station-alert-orange};
+  --nx-color-emergency-red: #{$station-emergency-red};
+  --nx-color-comm-purple: #{$station-comm-purple};
+  --nx-color-solar-gold: #{$station-solar-gold};
+  --nx-color-code-bg: #{$station-code-bg};
+  --nx-color-surface: #{$station-hull};
+  --nx-color-border: #{$station-bulkhead};
+  --nx-color-surface-hover: #{$station-surface-hover};
+  --nx-color-deep-space: #{$station-void};
+}

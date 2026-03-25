@@ -1,0 +1,27 @@
+// =============================================================================
+// Dark Theme — Deeper blacks, higher contrast text
+// Accent colors unchanged (already high-contrast on dark backgrounds).
+// =============================================================================
+
+$dark-void: #050810;
+$dark-hull: #0f1320;
+$dark-bulkhead: #1a1f2e;
+$dark-corridor: #94a3b8;
+$dark-display: #f1f5f9;
+$dark-beacon: #ffffff;
+$dark-code-bg: #080c14;
+$dark-surface-hover: #141929;
+
+body.theme-dark {
+  --nx-color-void: #{$dark-void};
+  --nx-color-hull: #{$dark-hull};
+  --nx-color-bulkhead: #{$dark-bulkhead};
+  --nx-color-corridor: #{$dark-corridor};
+  --nx-color-display: #{$dark-display};
+  --nx-color-beacon: #{$dark-beacon};
+  --nx-color-code-bg: #{$dark-code-bg};
+  --nx-color-surface: #{$dark-hull};
+  --nx-color-border: #{$dark-bulkhead};
+  --nx-color-surface-hover: #{$dark-surface-hover};
+  --nx-color-deep-space: #{$dark-void};
+}
