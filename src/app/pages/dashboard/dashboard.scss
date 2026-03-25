@@ -50,11 +50,23 @@ h1 {
   font-weight: 600;
 }
 
+.dashboard__mission-progress {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.dashboard__challenge-topic {
+  margin: 0 0 0.25rem;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
 .dashboard__challenge-bonus {
   margin: 0 0 0.5rem;
 }
 
-.dashboard__challenge-play {
+.dashboard__challenge-accept {
   padding: 0.5rem 1.5rem;
   border: none;
   border-radius: 0.25rem;
@@ -65,9 +77,22 @@ h1 {
 }
 
 .dashboard__challenge-done {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin: 0;
   font-weight: 600;
   color: var(--nx-color-success, #22c55e);
+}
+
+.dashboard__challenge-checkmark {
+  flex-shrink: 0;
+}
+
+.dashboard__challenge-countdown {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  opacity: 0.8;
 }
 
 // Mobile-first: horizontally scrollable shortcut list

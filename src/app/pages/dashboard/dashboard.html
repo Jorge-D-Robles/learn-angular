@@ -17,14 +17,16 @@
 
 <div class="dashboard__cards">
   <section class="dashboard__mission">
+    <h2 class="dashboard__section-title">Active Mission</h2>
     @if (currentMission(); as mission) {
       <nx-mission-card
         [mission]="mission"
         [isCurrent]="true"
         (missionClicked)="navigateToMission()" />
     } @else {
-      <nx-station-card cardTitle="Mission Status">
-        <p class="dashboard__mission-complete">All Missions Complete</p>
+      <nx-station-card cardTitle="Campaign Complete">
+        <p class="dashboard__mission-complete">Campaign Complete</p>
+        <p class="dashboard__mission-progress">{{ campaignProgress() }} missions completed</p>
       </nx-station-card>
     }
   </section>
@@ -33,14 +35,19 @@
     <h2 class="dashboard__section-title">Daily Challenge</h2>
     @if (!todaysChallenge().completed) {
       <nx-station-card [cardTitle]="challengeGameName()">
+        <p class="dashboard__challenge-topic">{{ challengeGameTopic() }}</p>
         <p class="dashboard__challenge-bonus">+{{ todaysChallenge().bonusXp }} XP bonus</p>
-        <button type="button" class="dashboard__challenge-play" (click)="navigateToChallenge()">
-          Play
+        <button type="button" class="dashboard__challenge-accept" (click)="navigateToChallenge()">
+          Accept Challenge
         </button>
       </nx-station-card>
     } @else {
       <nx-station-card cardTitle="Daily Challenge">
-        <p class="dashboard__challenge-done">Completed</p>
+        <div class="dashboard__challenge-done">
+          <lucide-icon class="dashboard__challenge-checkmark" name="circle-check" [size]="20" aria-hidden="true" />
+          <span>Challenge Complete</span>
+        </div>
+        <p class="dashboard__challenge-countdown">{{ countdownToNextChallenge() }}</p>
       </nx-station-card>
     }
   </section>

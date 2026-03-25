@@ -243,6 +243,7 @@ describe('routes', () => {
           getMockProvider(GameProgressionService, {
             currentMission: signal(null),
             completedMissions: signal(new Set()),
+            completedMissionCount: signal(0),
             getUnlockedMinigames: () => [],
           }),
           getMockProvider(DailyChallengeService, {

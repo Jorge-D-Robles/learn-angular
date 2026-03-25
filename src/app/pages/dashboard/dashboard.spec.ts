@@ -103,6 +103,7 @@ async function setup(options: SetupOptions = {}) {
       getMockProvider(GameProgressionService, {
         currentMission: signal(currentMission),
         completedMissions: signal(new Set()),
+        completedMissionCount: signal(currentMission === null ? 34 : 0),
         getUnlockedMinigames: () => unlockedMinigames,
       }),
       getMockProvider(DailyChallengeService, {
@@ -135,6 +136,7 @@ async function setup(options: SetupOptions = {}) {
 describe('DashboardPage', () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   it('should render "Station Dashboard" heading', async () => {
@@ -164,20 +166,27 @@ describe('DashboardPage', () => {
     const { element } = await setup({ currentMission: null });
     const missionCard = element.querySelector('nx-mission-card');
     expect(missionCard).toBeFalsy();
-    expect(element.textContent).toContain('All Missions Complete');
+    expect(element.textContent).toContain('Campaign Complete');
   });
 
-  it('should show daily challenge when not completed', async () => {
+  it('should show daily challenge with Accept Challenge button when not completed', async () => {
     const { element } = await setup({ todaysChallenge: TEST_CHALLENGE });
     expect(element.textContent).toContain('Daily Challenge');
-    const playBtn = element.querySelector('.dashboard__challenge-play');
-    expect(playBtn).toBeTruthy();
+    const acceptBtn = element.querySelector('.dashboard__challenge-accept');
+    expect(acceptBtn).toBeTruthy();
+    expect(acceptBtn?.textContent?.trim()).toBe('Accept Challenge');
   });
 
-  it('should show completed text when daily challenge is done', async () => {
+  it('should show completed state with checkmark and countdown when daily challenge is done', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-03-08T20:00:00'));
     const completedChallenge = { ...TEST_CHALLENGE, completed: true };
     const { element } = await setup({ todaysChallenge: completedChallenge });
-    expect(element.textContent).toContain('Completed');
+    expect(element.textContent).toContain('Challenge Complete');
+    const checkmark = element.querySelector('lucide-icon[name="circle-check"]');
+    expect(checkmark).toBeTruthy();
+    const countdown = element.querySelector('.dashboard__challenge-countdown');
+    expect(countdown).toBeTruthy();
   });
 
   it('should render station visualization component', async () => {
@@ -223,6 +232,7 @@ describe('DashboardPage', () => {
         getMockProvider(GameProgressionService, {
           currentMission: signal(TEST_MISSION),
           completedMissions: signal(new Set()),
+          completedMissionCount: signal(0),
           getUnlockedMinigames: () => ['module-assembly' as MinigameId],
         }),
         getMockProvider(DailyChallengeService, {
@@ -323,5 +333,98 @@ describe('DashboardPage', () => {
     const alert = element.querySelector('nx-degradation-alert') as HTMLElement;
     expect(alert).toBeTruthy();
     expect(alert.style.display).toBe('none');
+  });
+
+  it('should navigate to /mission/:chapterId when mission card is clicked', async () => {
+    const { element, fixture, navigateFn } = await setup({ currentMission: TEST_MISSION });
+    const missionCard = element.querySelector('nx-mission-card') as HTMLElement;
+    expect(missionCard).toBeTruthy();
+    missionCard.click();
+    fixture.detectChanges();
+    expect(navigateFn).toHaveBeenCalledWith(['/mission', 1]);
+  });
+
+  it('should show "Campaign Complete" with mission count when all missions done', async () => {
+    const { element } = await setup({ currentMission: null });
+    expect(element.textContent).toContain('Campaign Complete');
+    expect(element.textContent).toContain('34/34');
+  });
+
+  it('should display "Active Mission" section header when mission exists', async () => {
+    const { element } = await setup({ currentMission: TEST_MISSION });
+    const missionSection = element.querySelector('.dashboard__mission');
+    const header = missionSection?.querySelector('.dashboard__section-title');
+    expect(header).toBeTruthy();
+    expect(header?.textContent).toContain('Active Mission');
+  });
+
+  it('should display game topic in daily challenge card', async () => {
+    const { element } = await setup({ todaysChallenge: TEST_CHALLENGE });
+    const topic = element.querySelector('.dashboard__challenge-topic');
+    expect(topic).toBeTruthy();
+    expect(topic?.textContent?.trim()).toBe('Topic for module-assembly');
+  });
+
+  it('should display "+50 XP" bonus indicator', async () => {
+    const { element } = await setup({ todaysChallenge: TEST_CHALLENGE });
+    expect(element.textContent).toContain('+50 XP');
+  });
+
+  it('should navigate to /minigames/:gameId/daily when Accept Challenge clicked', async () => {
+    const { element, fixture, navigateFn } = await setup({ todaysChallenge: TEST_CHALLENGE });
+    const acceptBtn = element.querySelector('.dashboard__challenge-accept') as HTMLButtonElement;
+    expect(acceptBtn).toBeTruthy();
+    acceptBtn.click();
+    fixture.detectChanges();
+    expect(navigateFn).toHaveBeenCalledWith(['/minigames', 'module-assembly', 'daily']);
+  });
+
+  it('should show checkmark icon when challenge completed', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-03-08T20:00:00'));
+    const completedChallenge = { ...TEST_CHALLENGE, completed: true };
+    const { element } = await setup({ todaysChallenge: completedChallenge });
+    const checkmark = element.querySelector('lucide-icon[name="circle-check"]');
+    expect(checkmark).toBeTruthy();
+  });
+
+  it('should show countdown to next challenge when completed', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-03-08T20:00:00'));
+    const completedChallenge = { ...TEST_CHALLENGE, completed: true };
+    const { element } = await setup({ todaysChallenge: completedChallenge });
+    const countdown = element.querySelector('.dashboard__challenge-countdown');
+    expect(countdown).toBeTruthy();
+    expect(countdown?.textContent?.trim()).toBe('4h 0m');
+  });
+
+  it('should update countdown every minute', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-03-08T20:00:00'));
+    const completedChallenge = { ...TEST_CHALLENGE, completed: true };
+    const { element, fixture } = await setup({ todaysChallenge: completedChallenge });
+    const countdown = element.querySelector('.dashboard__challenge-countdown');
+    expect(countdown?.textContent?.trim()).toBe('4h 0m');
+
+    vi.advanceTimersByTime(60_000);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(countdown?.textContent?.trim()).toBe('3h 59m');
+  });
+
+  it('should show "New challenge available" at midnight', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-03-09T00:00:00'));
+    const completedChallenge = { ...TEST_CHALLENGE, completed: true };
+    const { element } = await setup({ todaysChallenge: completedChallenge });
+    const countdown = element.querySelector('.dashboard__challenge-countdown');
+    expect(countdown?.textContent?.trim()).toBe('New challenge available');
+  });
+
+  it('should hide countdown when challenge not completed', async () => {
+    const { element } = await setup({ todaysChallenge: TEST_CHALLENGE });
+    const countdown = element.querySelector('.dashboard__challenge-countdown');
+    expect(countdown).toBeFalsy();
   });
 });
