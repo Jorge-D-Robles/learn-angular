@@ -1,0 +1,72 @@
+:host {
+  display: flex;
+  align-items: center;
+}
+
+.step-progress__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.step-progress__dot {
+  border-radius: 50%;
+  transition:
+    background-color var(--nx-duration-normal, 200ms) var(--nx-ease-out, ease-out),
+    box-shadow var(--nx-duration-normal, 200ms) var(--nx-ease-out, ease-out);
+
+  &--completed {
+    background-color: var(--nx-color-sensor-green);
+  }
+
+  &--active {
+    background-color: var(--nx-color-reactor-blue);
+    box-shadow: 0 0 6px var(--nx-color-reactor-blue);
+  }
+
+  &--future {
+    background-color: var(--nx-color-bulkhead);
+  }
+}
+
+.step-progress__connector {
+  flex-grow: 1;
+  min-width: 16px;
+  height: 2px;
+  background-color: var(--nx-color-bulkhead);
+  transition: background-color var(--nx-duration-normal, 200ms) var(--nx-ease-out, ease-out);
+
+  &--completed {
+    background-color: var(--nx-color-sensor-green);
+  }
+}
+
+// Compact variant: small 12px dots, no labels
+:host(.step-progress--compact) {
+  .step-progress__dot {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+// Full variant: larger 16px dots with step number labels
+:host(.step-progress--full) {
+  .step-progress__dot {
+    width: 16px;
+    height: 16px;
+  }
+
+  .step-progress__label {
+    margin-top: 4px;
+    font-size: var(--nx-text-caption-size, 0.75rem);
+    color: var(--nx-color-corridor);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-progress__dot,
+  .step-progress__connector {
+    transition: none;
+  }
+}
