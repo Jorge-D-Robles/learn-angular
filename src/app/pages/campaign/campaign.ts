@@ -1,9 +1,9 @@
 import { Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { GameProgressionService } from '../../core/progression/game-progression.service';
-import { CURRICULUM } from '../../core/curriculum/curriculum.data';
+import { ALL_STORY_MISSIONS, CURRICULUM } from '../../core/curriculum/curriculum.data';
 import type { ChapterId, PhaseNumber, StoryMission } from '../../core/curriculum/curriculum.types';
-import { MissionCardComponent } from '../../shared/components';
+import { MissionCardComponent, ProgressBarComponent } from '../../shared/components';
 
 interface MissionViewModel {
   mission: StoryMission;
@@ -23,7 +23,7 @@ interface PhaseGroupViewModel {
 
 @Component({
   selector: 'app-campaign',
-  imports: [MissionCardComponent],
+  imports: [MissionCardComponent, ProgressBarComponent],
   templateUrl: './campaign.html',
   styleUrl: './campaign.scss',
 })
@@ -32,6 +32,7 @@ export class CampaignPage {
   private readonly router = inject(Router);
 
   readonly overallCompleted = this.progression.completedMissionCount;
+  readonly totalMissions = ALL_STORY_MISSIONS.length;
 
   readonly phaseGroups = computed<PhaseGroupViewModel[]>(() => {
     // Read the completedMissions signal at the top to establish reactivity

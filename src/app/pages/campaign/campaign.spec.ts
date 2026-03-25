@@ -192,4 +192,44 @@ describe('CampaignPage', () => {
     // Chapter 2 is locked (depends on chapter 1)
     expect(cards[1]?.classList.contains('mission-card--locked')).toBe(true);
   });
+
+  it('should render overall progress bar in overview section', async () => {
+    const completedSet = new Set<ChapterId>([1, 2, 3, 4, 5]);
+    const { element } = await setup({ completedMissions: completedSet });
+    const overviewBar = element.querySelector('.campaign__overview nx-progress-bar');
+    expect(overviewBar).toBeTruthy();
+    // 5/34 = 14.7... rounds to 15
+    expect(overviewBar?.getAttribute('aria-valuenow')).toBe('15');
+  });
+
+  it('should render progress bar in each phase header', async () => {
+    const { element } = await setup();
+    const phaseHeaderBars = element.querySelectorAll('.campaign__phase-header nx-progress-bar');
+    expect(phaseHeaderBars.length).toBe(6);
+  });
+
+  it('should bind phase progress bar value to completedCount and max to totalCount', async () => {
+    const completedSet = new Set<ChapterId>([1, 2, 3]);
+    const { element } = await setup({ completedMissions: completedSet });
+    const phaseHeaderBars = element.querySelectorAll('.campaign__phase-header nx-progress-bar');
+    const firstPhaseBar = phaseHeaderBars[0];
+    // 3/10 = 30%
+    expect(firstPhaseBar?.getAttribute('aria-valuenow')).toBe('30');
+  });
+
+  it('should show 0% progress bar when no missions completed', async () => {
+    const { element } = await setup({ completedMissions: new Set() });
+    const allBars = element.querySelectorAll('nx-progress-bar');
+    allBars.forEach((bar) => {
+      expect(bar.getAttribute('aria-valuenow')).toBe('0');
+    });
+  });
+
+  it('should show overall progress bar with correct aria attributes', async () => {
+    const { element } = await setup({ completedMissions: new Set() });
+    const overviewBar = element.querySelector('.campaign__overview nx-progress-bar');
+    expect(overviewBar).toBeTruthy();
+    expect(overviewBar?.getAttribute('aria-valuemax')).toBe('100');
+    expect(overviewBar?.getAttribute('aria-valuenow')).toBe('0');
+  });
 });

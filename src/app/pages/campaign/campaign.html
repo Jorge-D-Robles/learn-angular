@@ -2,6 +2,7 @@
 
 <section class="campaign__overview">
   <p class="campaign__overview-text">{{ overallCompleted() }} / 34 missions completed</p>
+  <nx-progress-bar [value]="overallCompleted()" [max]="totalMissions" label="Overall campaign progress" />
 </section>
 
 @for (phase of phaseGroups(); track phase.phaseNumber) {
@@ -10,6 +11,7 @@
       <h2 class="campaign__phase-name">Phase {{ phase.phaseNumber }}: {{ phase.name }}</h2>
       <span class="campaign__phase-progress">{{ phase.completedCount }}/{{ phase.totalCount }} completed</span>
       <p class="campaign__phase-desc">{{ phase.description }}</p>
+      <nx-progress-bar [value]="phase.completedCount" [max]="phase.totalCount" [label]="'Phase ' + phase.phaseNumber + ' progress'" />
     </div>
     <div class="campaign__phase-missions">
       @for (m of phase.missions; track m.mission.chapterId) {
