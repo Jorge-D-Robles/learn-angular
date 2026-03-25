@@ -113,3 +113,32 @@
     box-shadow: 0 0 20px rgba(255, 196, 0, 0.3), 0 0 40px rgba(255, 196, 0, 0.15);
   }
 }
+
+// --- Entrance animations (T-2026-390) ---
+
+.level-results__panel--slide-in {
+  animation: slideInUp var(--nx-duration-overlay, 300ms) var(--nx-ease-out) both;
+}
+
+.level-results__stars--animate {
+  animation: scaleIn var(--nx-duration-ui, 200ms) var(--nx-ease-out) both;
+}
+
+.level-results__xp--fade-in {
+  animation: fadeIn var(--nx-duration-ui, 200ms) var(--nx-ease-out) both;
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

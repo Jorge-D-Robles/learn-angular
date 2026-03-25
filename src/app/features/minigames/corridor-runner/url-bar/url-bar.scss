@@ -1,0 +1,95 @@
+.cr-url-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #1a1f2e;
+  border: 1px solid #252b3d;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: #e2e8f0;
+
+  &--hull-breach {
+    border-color: #ef4444;
+    color: #ef4444;
+    animation: url-bar-shake 0.4s ease;
+  }
+}
+
+.cr-url-bar__chrome {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.cr-url-bar__nav-btn {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: #252b3d;
+  color: #4a5270;
+  font-size: 0.6rem;
+  cursor: default;
+  opacity: 0.5;
+}
+
+.cr-url-bar__address {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.cr-url-bar__prefix {
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+.cr-url-bar__input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 2px 0;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.cr-url-bar__breach-indicator {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.cr-url-bar__resolved {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+@keyframes url-bar-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-url-bar--hull-breach { animation: none; }
+}

@@ -109,7 +109,6 @@ export class ProfilePage implements OnInit {
   private readonly spacedRepetition = inject(SpacedRepetitionService);
   private readonly router = inject(Router);
 
-  /** Loading state: false after critical signals settle. */
   readonly isLoading = signal(true);
 
   readonly stats = computed(() => this.lifetimeStats.profileStats());
@@ -138,7 +137,6 @@ export class ProfilePage implements OnInit {
 
   readonly masteryTableData = computed<MasteryTableRow[]>(() => {
     const games = this.registry.getAllGames();
-    // Read reactive signals to establish dependency tracking
     const masteryMap = this.masteryService.mastery();
     const lastPracticedMap = this.spacedRepetition.lastPracticed();
 

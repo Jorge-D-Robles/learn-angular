@@ -14,3 +14,4 @@ export * from './leaderboard.service';
 export * from './onboarding.service';
 export * from './quick-play.service';
 export * from './xp.service';
+export * from './cosmetic.service';

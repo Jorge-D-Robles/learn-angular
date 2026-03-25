@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import type { MinigameResult } from './minigame.types';
+import { PlayMode, type MinigameResult } from './minigame.types';
 import { LevelProgressionService } from '../levels/level-progression.service';
 import { XpService } from '../progression/xp.service';
 import { MasteryService } from '../progression/mastery.service';
@@ -7,6 +7,8 @@ import { XpNotificationService } from '../notifications';
 import { XpDiminishingReturnsService } from '../progression/xp-diminishing-returns.service';
 import { HintService } from './hint.service';
 import { AchievementTriggerService } from '../progression/achievement-trigger.service';
+import { LeaderboardService, type LeaderboardMode } from '../progression/leaderboard.service';
+import { GameStateService } from '../state/game-state.service';
 
 /** Summary returned after completing a level. */
 export interface LevelCompletionSummary {
@@ -54,15 +56,32 @@ export class LevelCompletionService {
   private readonly diminishingReturns = inject(XpDiminishingReturnsService);
   private readonly hintService = inject(HintService);
   private readonly achievementTrigger = inject(AchievementTriggerService);
+  private readonly leaderboard = inject(LeaderboardService);
+  private readonly gameState = inject(GameStateService);
+
+  /** Maps PlayMode to LeaderboardMode, returning null for non-leaderboard modes. */
+  private _toLeaderboardMode(mode: PlayMode): LeaderboardMode | null {
+    switch (mode) {
+      case PlayMode.Story:
+        return 'story';
+      case PlayMode.Endless:
+        return 'endless';
+      case PlayMode.SpeedRun:
+        return 'speedRun';
+      case PlayMode.DailyChallenge:
+        return null;
+    }
+  }
 
   /**
    * Orchestrates the full completion pipeline for a finished level.
    *
    * @param result - The MinigameResult from the engine (xpEarned will be overridden).
+   * @param playMode - The play mode context for leaderboard recording. Defaults to Story.
    * @returns A LevelCompletionSummary with XP, bonuses, rank-up, and best-score info.
    * @throws Error if the levelId is not registered in LevelProgressionService.
    */
-  completeLevel(result: MinigameResult): LevelCompletionSummary {
+  completeLevel(result: MinigameResult, playMode: PlayMode = PlayMode.Story): LevelCompletionSummary {
     // 1. Look up level definition for tier
     const levelDef = this.levelProgression.getLevelDefinition(result.levelId);
     if (levelDef === null) {
@@ -144,6 +163,18 @@ export class LevelCompletionService {
 
     // 11. Trigger achievement check
     this.achievementTrigger.triggerCheck();
+
+    // 12. Record leaderboard entry (only for modes with leaderboards)
+    const leaderboardMode = this._toLeaderboardMode(playMode);
+    if (leaderboardMode !== null) {
+      this.leaderboard.addEntry(result.gameId, {
+        playerName: this.gameState.playerName() || 'Player',
+        score: result.score,
+        time: Math.max(0, result.timeElapsed),
+        date: new Date().toISOString(),
+        mode: leaderboardMode,
+      });
+    }
 
     // perfectBonus = XP difference between perfect and non-perfect for this tier
     const perfectBonus = effectivePerfect

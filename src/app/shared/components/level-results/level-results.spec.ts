@@ -62,7 +62,7 @@ const ICON_PROVIDERS = [
 describe('LevelResultsComponent', () => {
   async function setup(overrides: Partial<TestHost> = {}) {
     const { fixture, component, element } = await createComponent(TestHost, {
-      providers: ICON_PROVIDERS,
+      providers: [...ICON_PROVIDERS, { provide: AnimationService, useValue: { getDuration: () => 300, isReducedMotion: () => false } }],
       detectChanges: false,
     });
     Object.assign(fixture.componentInstance, overrides);

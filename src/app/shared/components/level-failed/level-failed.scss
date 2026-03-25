@@ -89,3 +89,14 @@
     transition: none;
   }
 }
+
+// --- Entrance animation (T-2026-390) ---
+
+.level-failed__panel--fade-in {
+  animation: levelFailedFadeIn var(--nx-duration-overlay, 250ms) var(--nx-ease-out) both;
+}
+
+@keyframes levelFailedFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

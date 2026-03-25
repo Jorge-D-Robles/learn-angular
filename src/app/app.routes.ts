@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { DashboardPage } from './pages/dashboard/dashboard';
 import { NotFoundPage } from './pages/not-found/not-found';
 import { missionGuard, minigameLevelGuard, minigamePlayGuard } from './core/guards';
+import { endlessTitleResolver, speedRunTitleResolver, dailyChallengeTitleResolver } from './core/routing/replay-title.resolver';
 
 export const routes: Routes = [
   { path: '', component: DashboardPage, title: 'Dashboard' },
@@ -12,7 +13,6 @@ export const routes: Routes = [
   },
   {
     path: 'mission/:chapterId',
-    // dynamic title resolver deferred to T-2026-372
     title: 'Mission',
     canActivate: [missionGuard],
     loadComponent: () => import('./pages/mission/mission').then((m) => m.MissionPage),
@@ -37,19 +37,19 @@ export const routes: Routes = [
   },
   {
     path: 'minigames/:gameId/endless',
-    title: 'Endless Mode',
+    title: endlessTitleResolver,
     loadComponent: () =>
       import('./pages/endless-mode/endless-mode').then((m) => m.EndlessModePage),
   },
   {
     path: 'minigames/:gameId/speedrun',
-    title: 'Speed Run',
+    title: speedRunTitleResolver,
     loadComponent: () =>
       import('./pages/speed-run/speed-run').then((m) => m.SpeedRunPage),
   },
   {
     path: 'minigames/:gameId/daily',
-    title: 'Daily Challenge',
+    title: dailyChallengeTitleResolver,
     loadComponent: () =>
       import('./pages/daily-challenge/daily-challenge').then((m) => m.DailyChallengePage),
   },

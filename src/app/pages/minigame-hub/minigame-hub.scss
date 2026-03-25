@@ -12,6 +12,7 @@ h1 {
   gap: var(--nx-space-4);
   margin-bottom: var(--nx-space-6);
   flex-wrap: wrap;
+  align-items: center;
 
   select {
     padding: var(--nx-space-2) var(--nx-space-3);
@@ -21,6 +22,20 @@ h1 {
     color: inherit;
     font-size: var(--nx-text-body-size, 0.875rem);
     min-width: 160px;
+  }
+}
+
+.minigame-hub__clear-filters {
+  padding: var(--nx-space-2) var(--nx-space-3);
+  border-radius: var(--nx-radius-card);
+  border: 1px solid var(--nx-color-corridor);
+  background: transparent;
+  color: inherit;
+  font-size: var(--nx-text-body-size, 0.875rem);
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
   }
 }
 

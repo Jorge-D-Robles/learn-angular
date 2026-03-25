@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import {
   DifficultyTier,
+  PlayMode,
   type MinigameId,
   type MinigameResult,
 } from './minigame.types';
@@ -13,6 +14,7 @@ import { XpNotificationService } from '../notifications';
 import { StreakService } from '../progression/streak.service';
 import { HintService, type HintDefinition } from './hint.service';
 import { AchievementTriggerService } from '../progression/achievement-trigger.service';
+import { LeaderboardService } from '../progression/leaderboard.service';
 
 // --- Test fixtures ---
 
@@ -628,5 +630,67 @@ describe('LevelCompletionService', () => {
     const spy = vi.spyOn(triggerService, 'triggerCheck');
     service.completeLevel(makeResult());
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  // --- Leaderboard integration ---
+
+  describe('leaderboard integration', () => {
+    it('should record leaderboard entry on level completion in Story mode', () => {
+      const leaderboard = TestBed.inject(LeaderboardService);
+      const spy = vi.spyOn(leaderboard, 'addEntry');
+      service.completeLevel(makeResult({ score: 100, timeElapsed: 30 }), PlayMode.Story);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][0]).toBe(TEST_GAME_ID);
+      expect(spy.mock.calls[0][1].score).toBe(100);
+      expect(spy.mock.calls[0][1].time).toBe(30);
+      expect(spy.mock.calls[0][1].mode).toBe('story');
+    });
+
+    it('should record leaderboard entry in Endless mode', () => {
+      const leaderboard = TestBed.inject(LeaderboardService);
+      const spy = vi.spyOn(leaderboard, 'addEntry');
+      service.completeLevel(makeResult(), PlayMode.Endless);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1].mode).toBe('endless');
+    });
+
+    it('should record leaderboard entry in SpeedRun mode', () => {
+      const leaderboard = TestBed.inject(LeaderboardService);
+      const spy = vi.spyOn(leaderboard, 'addEntry');
+      service.completeLevel(makeResult(), PlayMode.SpeedRun);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1].mode).toBe('speedRun');
+    });
+
+    it('should NOT record leaderboard entry in DailyChallenge mode', () => {
+      const leaderboard = TestBed.inject(LeaderboardService);
+      const spy = vi.spyOn(leaderboard, 'addEntry');
+      service.completeLevel(makeResult(), PlayMode.DailyChallenge);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should use player name from GameStateService', () => {
+      const gameState = TestBed.inject(GameStateService);
+      gameState.setPlayerName('TestPlayer');
+      const leaderboard = TestBed.inject(LeaderboardService);
+      const spy = vi.spyOn(leaderboard, 'addEntry');
+      service.completeLevel(makeResult(), PlayMode.Story);
+      expect(spy.mock.calls[0][1].playerName).toBe('TestPlayer');
+    });
+
+    it('should use "Player" as default name when player name is empty', () => {
+      const leaderboard = TestBed.inject(LeaderboardService);
+      const spy = vi.spyOn(leaderboard, 'addEntry');
+      service.completeLevel(makeResult(), PlayMode.Story);
+      expect(spy.mock.calls[0][1].playerName).toBe('Player');
+    });
+
+    it('should default to Story mode when no playMode is specified', () => {
+      const leaderboard = TestBed.inject(LeaderboardService);
+      const spy = vi.spyOn(leaderboard, 'addEntry');
+      service.completeLevel(makeResult());
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1].mode).toBe('story');
+    });
   });
 });

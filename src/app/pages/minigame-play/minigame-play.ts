@@ -127,6 +127,7 @@ export class MinigamePlayPage {
   private completionFired = false;
   private loadSub: Subscription | null = null;
   private hintDismissTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly _beforeUnloadHandler: (event: BeforeUnloadEvent) => void;
 
   readonly loadingStatus = MinigameStatus.Loading;
 
@@ -342,8 +343,29 @@ export class MinigamePlayPage {
       }
     });
 
+    // Beforeunload handler: warn when game is active (Playing or Paused)
+    this._beforeUnloadHandler = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    effect(() => {
+      const eng = this.engine();
+      const status = eng?.status();
+      const shouldWarn = status === MinigameStatus.Playing || status === MinigameStatus.Paused;
+
+      untracked(() => {
+        if (shouldWarn) {
+          window.addEventListener('beforeunload', this._beforeUnloadHandler);
+        } else {
+          window.removeEventListener('beforeunload', this._beforeUnloadHandler);
+        }
+      });
+    });
+
     // Cleanup on destroy
     this.destroyRef.onDestroy(() => {
+      window.removeEventListener('beforeunload', this._beforeUnloadHandler);
       this.loadSub?.unsubscribe();
       this.engine()?.destroy();
       if (this.hintDismissTimer) clearTimeout(this.hintDismissTimer);

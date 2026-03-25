@@ -302,4 +302,60 @@ describe('MinigameHubPage', () => {
     const router = fixture.debugElement.injector.get(Router);
     expect(router.navigate).toHaveBeenCalledWith(['/campaign']);
   });
+
+  // === Filter enhancements (T-2026-493) ===
+
+  // 20. Combined topic and mastery filter
+  it('should apply combined topic and mastery filters', async () => {
+    const { component, element, fixture } = await setup({
+      getMastery: (id: string) => {
+        if (id === 'module-assembly') return 4;
+        if (id === 'signal-corps') return 1;
+        return 0;
+      },
+    });
+    component.topicFilter.set('Components');
+    component.masteryFilter.set(3);
+    fixture.detectChanges();
+    const cards = element.querySelectorAll('nx-minigame-card');
+    expect(cards.length).toBe(1);
+    expect(cards[0].textContent).toContain('Module Assembly');
+  });
+
+  // 21. Clear filters button shown when filter is active
+  it('should show clear filters button when a filter is active', async () => {
+    const { component, element, fixture } = await setup();
+    expect(element.querySelector('.minigame-hub__clear-filters')).toBeNull();
+    component.topicFilter.set('Routing');
+    fixture.detectChanges();
+    expect(element.querySelector('.minigame-hub__clear-filters')).toBeTruthy();
+  });
+
+  // 22. Clear filters resets to all games
+  it('should reset filters when clear filters button is clicked', async () => {
+    const { component, element, fixture } = await setup();
+    component.topicFilter.set('Routing');
+    component.masteryFilter.set(3);
+    fixture.detectChanges();
+    expect(element.querySelectorAll('nx-minigame-card').length).toBeLessThan(3);
+
+    const clearBtn = element.querySelector('.minigame-hub__clear-filters') as HTMLButtonElement;
+    expect(clearBtn).toBeTruthy();
+    clearBtn.click();
+    fixture.detectChanges();
+    expect(element.querySelectorAll('nx-minigame-card').length).toBe(3);
+  });
+
+  // 23. Show empty message when combined filters match nothing
+  it('should show empty message when combined filters match nothing', async () => {
+    const { component, element, fixture } = await setup({
+      getMastery: () => 0,
+    });
+    component.topicFilter.set('Routing');
+    component.masteryFilter.set(5);
+    fixture.detectChanges();
+    const empty = element.querySelector('.minigame-hub__empty');
+    expect(empty).toBeTruthy();
+    expect(empty?.textContent).toContain('No minigames match');
+  });
 });

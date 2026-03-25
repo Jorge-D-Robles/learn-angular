@@ -38,6 +38,9 @@ interface MinigameCardData {
             <option [value]="level">{{ level }}+ Stars</option>
           }
         </select>
+        @if (hasActiveFilters()) {
+          <button type="button" class="minigame-hub__clear-filters" (click)="clearFilters()">Clear Filters</button>
+        }
       </div>
 
       <div class="minigame-hub__grid">
@@ -103,12 +106,21 @@ export class MinigameHubPage {
     });
   });
 
+  readonly hasActiveFilters = computed<boolean>(() =>
+    this.topicFilter() !== '' || this.masteryFilter() !== -1,
+  );
+
   onTopicChange(event: Event): void {
     this.topicFilter.set((event.target as HTMLSelectElement).value);
   }
 
   onMasteryChange(event: Event): void {
     this.masteryFilter.set(+(event.target as HTMLSelectElement).value);
+  }
+
+  clearFilters(): void {
+    this.topicFilter.set('');
+    this.masteryFilter.set(-1);
   }
 
   onCardClick(gameId: MinigameId): void {

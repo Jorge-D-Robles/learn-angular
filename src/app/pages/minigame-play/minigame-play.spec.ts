@@ -2059,4 +2059,81 @@ describe('MinigamePlayPage', () => {
     expect(component.isLoading()).toBe(true);
     expect(component.engine()).toBeNull();
   });
+
+  // --- beforeunload handler ---
+
+  describe('beforeunload handler', () => {
+    let addSpy: ReturnType<typeof vi.spyOn>;
+    let removeSpy: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      addSpy = vi.spyOn(window, 'addEventListener');
+      removeSpy = vi.spyOn(window, 'removeEventListener');
+    });
+
+    afterEach(() => {
+      addSpy.mockRestore();
+      removeSpy.mockRestore();
+    });
+
+    it('should register beforeunload handler when engine status is Playing', async () => {
+      const engine = new TestEngine();
+      const factory = vi.fn().mockReturnValue(engine);
+      const { fixture } = await setup({
+        registry: {
+          getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+          getConfig: vi.fn().mockReturnValue({ id: 'module-assembly', name: 'Module Assembly', description: '', angularTopic: '', totalLevels: 18, difficultyTiers: [] }),
+          getEngineFactory: vi.fn().mockReturnValue(factory),
+        },
+      });
+
+      fixture.detectChanges();
+      TestBed.flushEffects();
+
+      const beforeUnloadCalls = addSpy.mock.calls.filter((c: unknown[]) => c[0] === 'beforeunload');
+      expect(beforeUnloadCalls.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('should remove beforeunload handler when engine status is Won', async () => {
+      const engine = new TestEngine();
+      const factory = vi.fn().mockReturnValue(engine);
+      const { fixture } = await setup({
+        registry: {
+          getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+          getConfig: vi.fn().mockReturnValue({ id: 'module-assembly', name: 'Module Assembly', description: '', angularTopic: '', totalLevels: 18, difficultyTiers: [] }),
+          getEngineFactory: vi.fn().mockReturnValue(factory),
+        },
+      });
+
+      fixture.detectChanges();
+      TestBed.flushEffects();
+
+      engine.complete();
+      fixture.detectChanges();
+      TestBed.flushEffects();
+
+      const removeCalls = removeSpy.mock.calls.filter((c: unknown[]) => c[0] === 'beforeunload');
+      expect(removeCalls.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('should remove beforeunload handler on component destroy', async () => {
+      const engine = new TestEngine();
+      const factory = vi.fn().mockReturnValue(engine);
+      const { fixture } = await setup({
+        registry: {
+          getComponent: vi.fn().mockReturnValue(DummyGameComponent),
+          getConfig: vi.fn().mockReturnValue({ id: 'module-assembly', name: 'Module Assembly', description: '', angularTopic: '', totalLevels: 18, difficultyTiers: [] }),
+          getEngineFactory: vi.fn().mockReturnValue(factory),
+        },
+      });
+
+      fixture.detectChanges();
+      TestBed.flushEffects();
+
+      fixture.destroy();
+
+      const removeCalls = removeSpy.mock.calls.filter((c: unknown[]) => c[0] === 'beforeunload');
+      expect(removeCalls.length).toBeGreaterThanOrEqual(1);
+    });
+  });
 });

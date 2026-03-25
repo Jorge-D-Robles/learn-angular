@@ -1,5 +1,6 @@
-import { Component, computed, effect, inject, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { AudioService, SoundEffect } from '../../audio';
+import { KeyboardShortcutService } from '../keyboard-shortcut.service';
 import { LevelFailedComponent } from '../../../shared/components/level-failed/level-failed';
 import { LevelResultsComponent } from '../../../shared/components/level-results/level-results';
 import { MinigameTutorialOverlayComponent } from '../../../shared/components/minigame-tutorial/minigame-tutorial';
@@ -52,9 +53,32 @@ import { MinigameStatus, PlayMode, type MinigameId, type MinigameResult } from '
             }
           </div>
         }
+        <button
+          class="shell-hud__shortcuts-toggle"
+          type="button"
+          (click)="toggleShortcutHints()"
+          aria-label="Toggle keyboard shortcuts">
+          ?
+        </button>
         <button class="shell-hud__pause" type="button" (click)="onPauseClick()" aria-label="Pause">
         </button>
       </div>
+
+      <!-- Shortcut Hints Panel -->
+      @if (showShortcutHints()) {
+        <div class="shell-hud__shortcuts-panel" role="status" aria-live="polite">
+          <div class="shell-hud__shortcuts-title">Keyboard Shortcuts</div>
+          @for (shortcut of registeredShortcuts(); track shortcut.key) {
+            <div class="shell-hud__shortcut-item">
+              <kbd>{{ shortcut.key }}</kbd>
+              <span>{{ shortcut.label }}</span>
+            </div>
+          }
+          @if (registeredShortcuts().length === 0) {
+            <div class="shell-hud__shortcut-item">No shortcuts registered</div>
+          }
+        </div>
+      }
 
       <!-- Game Content -->
       <div class="shell-content">
@@ -106,6 +130,7 @@ import { MinigameStatus, PlayMode, type MinigameId, type MinigameResult } from '
 })
 export class MinigameShellComponent {
   private readonly audio = inject(AudioService);
+  private readonly keyboardShortcuts = inject(KeyboardShortcutService);
 
   // --- Signal inputs ---
   readonly playMode = input(PlayMode.Story);
@@ -147,6 +172,13 @@ export class MinigameShellComponent {
   readonly paused = MinigameStatus.Paused;
   readonly won = MinigameStatus.Won;
   readonly lost = MinigameStatus.Lost;
+
+  // --- Shortcut hints state ---
+  readonly showShortcutHints = signal(false);
+  private _autoHideTimer: ReturnType<typeof setTimeout> | null = null;
+  private static readonly AUTO_HIDE_MS = 5000;
+
+  readonly registeredShortcuts = computed(() => this.keyboardShortcuts.getRegistered());
 
   // --- Computed signals ---
   readonly failureReason = computed(() => {
@@ -206,6 +238,15 @@ export class MinigameShellComponent {
     });
   }
 
+  toggleShortcutHints(): void {
+    const newValue = !this.showShortcutHints();
+    this.showShortcutHints.set(newValue);
+    this._clearAutoHide();
+    if (newValue) {
+      this._startAutoHide();
+    }
+  }
+
   onPauseClick(): void {
     this.audio.play(SoundEffect.click);
     this.pauseGame.emit();
@@ -214,5 +255,19 @@ export class MinigameShellComponent {
   onResumeClick(): void {
     this.audio.play(SoundEffect.click);
     this.resumeGame.emit();
+  }
+
+  private _startAutoHide(): void {
+    this._autoHideTimer = setTimeout(() => {
+      this.showShortcutHints.set(false);
+      this._autoHideTimer = null;
+    }, MinigameShellComponent.AUTO_HIDE_MS);
+  }
+
+  private _clearAutoHide(): void {
+    if (this._autoHideTimer !== null) {
+      clearTimeout(this._autoHideTimer);
+      this._autoHideTimer = null;
+    }
   }
 }

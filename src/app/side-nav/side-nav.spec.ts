@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { provideRouter, RouterLinkActive } from '@angular/router';
+import { provideRouter, Router, RouterLinkActive } from '@angular/router';
 import { createComponent } from '../../testing/test-utils';
 import { SideNavComponent } from './side-nav';
+
+@Component({ template: '', standalone: true })
+class DummyComponent {}
 
 @Component({
   template: `<app-side-nav />`,
@@ -14,7 +17,13 @@ describe('SideNavComponent', () => {
   async function setup() {
     return createComponent(TestHost, {
       providers: [
-        provideRouter([]),
+        provideRouter([
+          { path: '', component: DummyComponent },
+          { path: 'campaign', component: DummyComponent },
+          { path: 'mission/:chapterId', component: DummyComponent },
+          { path: 'minigames', component: DummyComponent },
+          { path: 'profile', component: DummyComponent },
+        ]),
       ],
     });
   }
@@ -66,8 +75,37 @@ describe('SideNavComponent', () => {
     const rlaDirectives = fixture.debugElement.queryAll(
       By.directive(RouterLinkActive),
     );
-    // Dashboard is the first link
     const dashboardRla = rlaDirectives[0].injector.get(RouterLinkActive);
     expect(dashboardRla.routerLinkActiveOptions).toEqual({ exact: true });
+  });
+
+  it('should apply active class to Current Mission link when on /campaign', async () => {
+    const { fixture, element } = await setup();
+    const router = fixture.debugElement.injector.get(Router);
+    await router.navigateByUrl('/campaign');
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const missionLink = element.querySelectorAll('nav a')[1];
+    expect(missionLink.classList.contains('active')).toBe(true);
+  });
+
+  it('should apply active class to Current Mission link when on /mission/3', async () => {
+    const { fixture, element } = await setup();
+    const router = fixture.debugElement.injector.get(Router);
+    await router.navigateByUrl('/mission/3');
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const missionLink = element.querySelectorAll('nav a')[1];
+    expect(missionLink.classList.contains('active')).toBe(true);
+  });
+
+  it('should not apply active class to Current Mission link when on /minigames', async () => {
+    const { fixture, element } = await setup();
+    const router = fixture.debugElement.injector.get(Router);
+    await router.navigateByUrl('/minigames');
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const missionLink = element.querySelectorAll('nav a')[1];
+    expect(missionLink.classList.contains('active')).toBe(false);
   });
 });
