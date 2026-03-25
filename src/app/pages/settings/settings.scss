@@ -88,6 +88,17 @@ h1 {
   }
 }
 
+.settings-page__file-input {
+  display: none;
+}
+
+.settings-page__status {
+  color: var(--nx-color-emergency-red);
+  font-size: var(--nx-text-body-size, 0.875rem);
+  margin-top: var(--nx-space-3);
+  padding: var(--nx-space-2) var(--nx-space-4);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .settings-page__toggle {
     transition: none;
