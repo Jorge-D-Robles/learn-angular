@@ -10,6 +10,7 @@ import { XpProgressBarComponent } from '../../shared/components/xp-progress-bar/
 import { MasteryStarsComponent } from '../../shared/components/mastery-stars/mastery-stars';
 import { StreakBadgeComponent } from '../../shared/components/streak-badge/streak-badge';
 import { TimeFormatPipe } from '../../shared/pipes/time-format.pipe';
+import { AchievementGridComponent } from '../../shared/components/achievement-grid/achievement-grid';
 import type { MinigameConfig } from '../../core/minigame/minigame.types';
 
 interface MasteryRow {
@@ -30,6 +31,7 @@ type SortDirection = 'asc' | 'desc';
     MasteryStarsComponent,
     StreakBadgeComponent,
     TimeFormatPipe,
+    AchievementGridComponent,
   ],
   template: `
     <h1>Profile</h1>
@@ -94,7 +96,7 @@ type SortDirection = 'asc' | 'desc';
 
     <section class="profile__achievements-section">
       <h2>Achievements</h2>
-      <p class="profile__coming-soon">Coming Soon</p>
+      <nx-achievement-grid />
     </section>
   `,
   styleUrl: './profile.scss',

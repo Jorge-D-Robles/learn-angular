@@ -12,6 +12,7 @@ import { PlayTimeService } from '../../core/progression/play-time.service';
 import { GameProgressionService, type CampaignProgress } from '../../core/progression/game-progression.service';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { SpacedRepetitionService } from '../../core/progression/spaced-repetition.service';
+import { AchievementService, type Achievement } from '../../core/progression/achievement.service';
 import { APP_ICONS } from '../../shared/icons';
 import type { MinigameConfig, MinigameId } from '../../core/minigame/minigame.types';
 import { DifficultyTier } from '../../core/minigame/minigame.types';
@@ -181,6 +182,10 @@ function setup(overrides: {
       getMockProvider(SpacedRepetitionService, {
         getEffectiveMastery: vi.fn().mockImplementation(getEffectiveMastery),
       }),
+      getMockProvider(AchievementService, {
+        achievements: signal<readonly Achievement[]>([]),
+        earnedCount: signal(0),
+      }),
     ],
   });
 }
@@ -331,5 +336,20 @@ describe('ProfilePage', () => {
     });
     const campaignCard = element.querySelector('.profile__stat-card--campaign');
     expect(campaignCard?.textContent).toContain('29%');
+  });
+
+  // 16. Render achievement grid in achievements section
+  it('should render nx-achievement-grid in the achievements section', async () => {
+    const { element } = await setup();
+    const section = element.querySelector('.profile__achievements-section');
+    const grid = section?.querySelector('nx-achievement-grid');
+    expect(grid).toBeTruthy();
+  });
+
+  // 17. Display "Achievements" heading in achievements section
+  it('should display "Achievements" heading in the achievements section', async () => {
+    const { element } = await setup();
+    const heading = element.querySelector('.profile__achievements-section h2');
+    expect(heading?.textContent).toContain('Achievements');
   });
 });
