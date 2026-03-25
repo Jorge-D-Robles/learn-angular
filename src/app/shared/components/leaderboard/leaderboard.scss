@@ -1,0 +1,111 @@
+:host {
+  display: block;
+}
+
+.leaderboard__tabs {
+  display: flex;
+  gap: var(--nx-space-2);
+  border-bottom: 1px solid var(--nx-color-bulkhead);
+  padding-bottom: var(--nx-space-2);
+  margin-bottom: var(--nx-space-4);
+}
+
+.leaderboard__tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--nx-color-corridor);
+  font-size: var(--nx-text-caption-size, 0.875rem);
+  font-weight: 500;
+  padding: var(--nx-space-2) var(--nx-space-3);
+  cursor: pointer;
+  transition: color var(--nx-duration-fast) var(--nx-ease-out),
+    border-color var(--nx-duration-fast) var(--nx-ease-out);
+
+  &:hover {
+    color: var(--nx-color-display);
+  }
+}
+
+.leaderboard__tab--active {
+  color: var(--nx-color-beacon);
+  border-bottom-color: var(--nx-color-reactor-blue);
+}
+
+.leaderboard__header,
+.leaderboard__row {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr 4rem 4rem 5.5rem;
+  align-items: center;
+}
+
+.leaderboard__header {
+  color: var(--nx-color-corridor);
+  font-size: var(--nx-text-caption-size, 0.875rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: var(--nx-space-2) 0;
+  border-bottom: 1px solid var(--nx-color-bulkhead);
+}
+
+.leaderboard__row {
+  color: var(--nx-color-display);
+  font-size: var(--nx-text-body-size, 1rem);
+  padding: var(--nx-space-2) 0;
+  border-bottom: 1px solid var(--nx-color-bulkhead);
+}
+
+.leaderboard__row--gold .leaderboard__rank {
+  color: var(--nx-color-solar-gold);
+  font-weight: 700;
+}
+
+.leaderboard__row--silver .leaderboard__rank {
+  color: var(--nx-color-display);
+  font-weight: 700;
+}
+
+.leaderboard__row--bronze .leaderboard__rank {
+  color: var(--nx-color-alert-orange);
+  font-weight: 700;
+}
+
+.leaderboard__row--player {
+  background: rgba(59, 130, 246, 0.1); // reactor-blue at 10% opacity
+  border-radius: var(--nx-radius-button, 6px);
+}
+
+.leaderboard__rank,
+.leaderboard__score,
+.leaderboard__time,
+.leaderboard__date {
+  font-variant-numeric: tabular-nums;
+}
+
+.leaderboard__rank {
+  text-align: center;
+}
+
+.leaderboard__score,
+.leaderboard__time {
+  text-align: right;
+}
+
+.leaderboard__date {
+  text-align: right;
+  font-size: var(--nx-text-caption-size, 0.875rem);
+  color: var(--nx-color-corridor);
+}
+
+.leaderboard__name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

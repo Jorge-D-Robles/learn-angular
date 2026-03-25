@@ -1,12 +1,15 @@
 export { AchievementBadgeComponent } from './achievement-badge/achievement-badge';
 export { AchievementGridComponent } from './achievement-grid/achievement-grid';
+export { ActiveMissionCardComponent } from './active-mission-card/active-mission-card';
 export { CodeEditorComponent } from './code-editor/code-editor';
 export { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog';
+export { DailyChallengeCardComponent } from './daily-challenge-card/daily-challenge-card';
 export { DegradationAlertComponent } from './degradation-alert/degradation-alert';
 export { EmptyStateComponent } from './empty-state/empty-state';
 export { ErrorStateComponent } from './error-state/error-state';
 export { ExpressionBuilderComponent } from './expression-builder/expression-builder';
 export { validateExpression, type ValidationResult } from './expression-builder/expression-validator';
+export { LeaderboardComponent } from './leaderboard/leaderboard';
 export { LevelCardComponent } from './level-card/level-card';
 export { LevelFailedComponent } from './level-failed/level-failed';
 export { LevelResultsComponent } from './level-results/level-results';
