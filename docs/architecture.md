@@ -1,6 +1,6 @@
 # Technical Architecture
 
-This document describes the Learn Angular codebase as built. Every claim is traceable to actual source files. Last updated after P6 (Reactor Core).
+This document describes the Learn Angular codebase as built. Every claim is traceable to actual source files. Last updated after P8 (Replay Mode Integration).
 
 See `overview.md` for project vision and `curriculum.md` for content scope.
 
@@ -944,3 +944,124 @@ Uses an `effect()` with `allowSignalWrites: true` to sync 6 internal editing sig
 - **Color scheme**: Dark grid background with glowing colored nodes (blue for signals, green for computed, orange for effects)
 - **Bezier wires**: Smooth curves color-coded by source node type, matching the node colors above
 - **Simulation animation**: 2-second animation period (`SIMULATION_ANIMATION_MS = 2000`) during which the `simulating` signal is true, enabling visual propagation effects in the template
+
+---
+
+## 11. Replay Mode Engine Integration
+
+Three replay mode pages -- `EndlessModePage`, `SpeedRunPage`, and `DailyChallengePage` -- reuse the minigame engine framework (Section 2) but bypass the campaign-oriented `LevelLoaderService` and `LevelCompletionService` pipeline used by `MinigamePlayPage`. This section documents the shared integration pattern, the differences between modes, and the key anti-patterns to avoid.
+
+### 11.1 Shared Pattern
+
+All four play pages (`MinigamePlayPage` plus the three replay modes) follow the same core engine lifecycle:
+
+1. Get engine factory from `MinigameRegistryService.getEngineFactory(gameId)`
+2. Create engine instance via `factory()`
+3. Build or load a `MinigameLevel<unknown>` (source differs per mode -- see comparison table)
+4. Call `engine.initialize(level)` then `engine.setPlayMode(mode)` then `engine.start()`
+5. Render via `NgComponentOutlet` with a child `Injector` providing `MINIGAME_ENGINE`
+6. Watch `engine.status()` via `effect()` for Won/Lost transitions
+7. Cleanup via `DestroyRef.onDestroy()` -- null engine signal, call `engine.destroy()`
+
+**Critical sequencing rule**: `initialize()` resets `_playMode` to `PlayMode.Story` (see `minigame-engine.ts` line 117). The `setPlayMode()` method can only be called during `Loading` status (i.e., after `initialize()` but before `start()`). This means the initialization sequence is strictly forward-only: `initialize()` -> `setPlayMode()` -> `start()`. There is no way to change play mode after `start()` has been called.
+
+### 11.2 The `engine.reset()` Anti-Pattern
+
+`MinigameEngine.reset()` calls `initialize()` followed by `start()`, skipping `setPlayMode()`. Because `initialize()` resets `_playMode` to `PlayMode.Story`, calling `reset()` from a replay mode page silently reverts the engine to story mode. `MinigamePlayPage` can safely use `reset()` because it always runs in `PlayMode.Story`.
+
+Replay mode pages must instead explicitly re-initialize:
+
+```typescript
+// WRONG -- reverts to PlayMode.Story:
+eng.reset();
+
+// CORRECT -- preserves the intended play mode:
+eng.initialize(level);
+eng.setPlayMode(PlayMode.Endless); // or SpeedRun, DailyChallenge
+eng.start();
+```
+
+All three replay mode pages follow this explicit pattern in their restart/retry handlers.
+
+### 11.3 Comparison Table
+
+| Aspect | MinigamePlayPage | EndlessModePage | SpeedRunPage | DailyChallengePage |
+|--------|-----------------|-----------------|--------------|-------------------|
+| PlayMode | `Story` | `Endless` | `SpeedRun` | `DailyChallenge` |
+| Level source | `LevelLoaderService` (static data files) | `EndlessModeService.generateLevel()` (procedural) | `SpeedRunService.generateSpeedRunLevel()` (procedural) | Inline `MinigameLevel` constructed from `DailyChallengeService.todaysChallenge` signal |
+| Level cycling | None (single level) | Infinite (round-based) | Fixed count from `SPEED_RUN_CONFIG` | None (single challenge) |
+| Session service | None (stateless) | `EndlessModeService` | `SpeedRunService` | `DailyChallengeService` |
+| Win behavior | `LevelCompletionService` pipeline (XP, mastery, progression) | `nextRound()` -> generate next level -> re-initialize engine | `completeLevel()` -> check if all levels done -> next or end | `completeChallenge()` -> post-game view |
+| Loss behavior | Shell shows level-failed overlay | Partial score accounting via `nextRound(partialScore)`, then `endSession()` -> post-game summary | `endRun()` -> post-game results (no partial credit) | Shell shows retry/quit overlay; player can retry unlimited times |
+| Scoring | XP pipeline with diminishing returns, streak bonus | Cumulative score across rounds, high score persistence | Time-based (`liveElapsedTime` vs par), best time persistence | Single-level score, bonus XP |
+| View states | not-found, not-ready, locked, loading, error, ready | pre-game, in-game, post-game (writable signal) | error, pre-run, in-run, post-run (computed signal, not writable) | pre-game, in-game, post-game, completed (writable signal) |
+| `engineInjector` when null | Returns `parentInjector` (shell renders without engine) | Returns `null` | Returns `null` | Returns `null` |
+| Source file | `src/app/pages/minigame-play/minigame-play.ts` | `src/app/pages/endless-mode/endless-mode.ts` | `src/app/pages/speed-run/speed-run.ts` | `src/app/pages/daily-challenge/daily-challenge.ts` |
+
+### 11.4 Engine Status Effect Pattern
+
+All three replay mode pages use the same reactive pattern for detecting round/level outcomes:
+
+```typescript
+effect(() => {
+  const eng = this.engine();
+  if (!eng) return;
+  const status = eng.status();
+  untracked(() => {
+    if (status === MinigameStatus.Won) { this.onRoundWon(); }
+    else if (status === MinigameStatus.Lost) { this.onRoundLost(); }
+  });
+});
+```
+
+Key design decision: the engine signal is set to `null` BEFORE updating view state or post-game data. This prevents the effect from re-triggering during teardown, since setting post-game signals could cause Angular to re-evaluate the effect, which would then re-read `engine()` and potentially act on a stale status.
+
+### 11.5 Injector Pattern
+
+All replay mode pages create a child `Injector` to provide the engine instance to the game UI component rendered via `NgComponentOutlet`:
+
+```typescript
+readonly engineInjector = computed(() => {
+  const eng = this.engine();
+  if (!eng) return null;
+  return Injector.create({
+    providers: [{ provide: MINIGAME_ENGINE, useValue: eng }],
+    parent: this.parentInjector,
+  });
+});
+```
+
+This differs from `MinigamePlayPage`, which returns `this.parentInjector` (not `null`) when no engine exists. The reason: `MinigamePlayPage` has a `ready` view state that renders the shell even before the engine loads, so the injector must always be valid. Replay mode pages guard their templates with `@if (engine() && resolvedComponent())`, so a `null` injector is safe.
+
+### 11.6 EndlessModePage
+
+- **Service**: `EndlessModeService` (`src/app/core/minigame/endless-mode.service.ts`)
+- **Session type**: `EndlessSession` -- fields: `gameId`, `currentRound`, `score`, `difficultyLevel`, `isActive`
+- **Level generation**: `generateLevel(gameId, round)` returns `MinigameLevel<EndlessLevelData>` with procedural difficulty params. `EndlessLevelData` nests difficulty under `data.difficulty`, which contains `speed` (multiplier, 1.0 = normal), `complexity` (multiplier, 1.0 = basic), and `count` (integer, items per round). All three scale logarithmically with round number
+- **Round cycling**: on Won -> capture `engine.score()` BEFORE re-initialize (because `initialize()` resets `_score` to 0) -> `nextRound(roundScore)` -> generate next level -> re-initialize with explicit `setPlayMode(PlayMode.Endless)`
+- **Loss behavior**: includes partial score from the failed round. Calls `nextRound(partialScore)` to account for partial progress, then `endSession()`. Shows post-game summary with `finalScore`, `roundsSurvived`, `isNewHighScore`
+- **Persistence**: high score per game stored at `endless-high-score:{gameId}` via `StatePersistenceService`
+
+### 11.7 SpeedRunPage
+
+- **Service**: `SpeedRunService` (`src/app/core/minigame/speed-run.service.ts`)
+- **Session type**: `SpeedRunSession` -- fields: `gameId`, `startTime`, `elapsedTime`, `parTime`, `levelsCompleted`, `totalLevels`, `isActive`, `splitTimes`
+- **Level config**: `SPEED_RUN_CONFIG` constant defines `parTime` (seconds) and `totalLevels` per minigame
+- **Level generation**: `generateSpeedRunLevel(gameId, levelIndex)` returns `MinigameLevel<SpeedRunLevelData>` where `SpeedRunLevelData` contains `levelIndex` and `totalLevels`
+- **Level cycling**: on Won -> `completeLevel()` records split time -> check `levelsCompleted >= totalLevels` -> load next level or end run
+- **Timer**: `session.elapsedTime` is a snapshot updated only at `completeLevel()` and `endRun()` boundaries. It is NOT a live timer. For live display, the page runs a `requestAnimationFrame` loop that updates the `liveElapsedTime` writable signal via `(Date.now() - session.startTime) / 1000`
+- **Timer colors**: under par = green (`--nx-color-sensor-green`), near par >= 80% = orange (`--nx-color-alert-orange`), over par = red (`--nx-color-emergency-red`)
+- **`viewState` is computed**: unlike `EndlessModePage` and `DailyChallengePage` which use writable signals, `SpeedRunPage.viewState` is a `computed<ViewState>` derived from `isValidGame()` and `session()` state. This means view transitions are fully reactive rather than imperative
+- **Loss behavior**: ends run immediately via `endRun()`, no partial credit. Shows post-game results with `finalTime`, `isNewBestTime`, `underPar`
+- **Persistence**: best time per game stored at `speed-run-best-time:{gameId}` via `StatePersistenceService`
+
+### 11.8 DailyChallengePage
+
+- **Service**: `DailyChallengeService` (`src/app/core/progression/daily-challenge.service.ts`)
+- **No session object**: uses the `todaysChallenge` signal directly from `DailyChallengeService`. The challenge is generated deterministically from a date hash at construction time
+- **Level construction**: builds `MinigameLevel` inline from challenge data (`gameId`, `levelId`, `date`), using `DifficultyTier.Basic` and empty `data: {}`
+- **Single play**: no level cycling, one challenge per day
+- **Streak integration**: displays `activeStreakDays` and `streakMultiplier` from `StreakService` (not `DailyChallengeService`). `DailyChallengeService.completeChallenge()` calls `StreakService.recordDailyPlay()` internally, but the display fields are read directly from `StreakService`
+- **View states**: 4 states (`pre-game`, `in-game`, `post-game`, `completed`). The `completed` state shows a countdown to next midnight via `secondsUntilMidnight()` updated by a 1-second `setInterval`
+- **Loss behavior**: does NOT end the challenge or transition view state. The `MinigameShellComponent` shows its built-in level-failed overlay with retry/quit options. Player can retry unlimited times
+- **Persistence**: completion date stored at `daily-challenge` via `StatePersistenceService`
