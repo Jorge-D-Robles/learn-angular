@@ -1,7 +1,8 @@
-import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { SettingsService, AnimationSpeed, Theme } from '../../core/settings';
 import { StatePersistenceService } from '../../core/persistence';
+import { CosmeticService } from '../../core/progression';
 import { ConfirmDialogComponent } from '../../shared/components';
 
 @Component({
@@ -50,9 +51,9 @@ import { ConfirmDialogComponent } from '../../shared/components';
       <div class="settings-page__row">
         <label class="settings-page__label" for="theme-select">Theme</label>
         <select id="theme-select" (change)="setTheme($event)" class="settings-page__select">
-          <option value="dark" [selected]="settings().theme === 'dark'">Dark</option>
-          <option value="station" [selected]="settings().theme === 'station'">Station</option>
-          <option value="light" [selected]="settings().theme === 'light'">Light</option>
+          @for (theme of availableThemes(); track theme.value) {
+            <option [value]="theme.value" [selected]="settings().theme === theme.value">{{ theme.label }}</option>
+          }
         </select>
       </div>
     </section>
@@ -109,9 +110,16 @@ import { ConfirmDialogComponent } from '../../shared/components';
 export class SettingsPage {
   private readonly settingsService = inject(SettingsService);
   private readonly persistence = inject(StatePersistenceService);
+  private readonly cosmeticService = inject(CosmeticService);
   private readonly document = inject(DOCUMENT);
 
   readonly settings = this.settingsService.settings;
+  readonly availableThemes = computed(() =>
+    this.cosmeticService
+      .getUnlockedCosmetics()
+      .filter((c) => c.type === 'theme')
+      .map((c) => ({ value: c.id.replace('theme-', ''), label: c.name })),
+  );
   readonly showResetDialog = signal(false);
   readonly showImportDialog = signal(false);
   readonly statusMessage = signal('');

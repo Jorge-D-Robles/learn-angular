@@ -5,6 +5,7 @@ import { createComponent, getMockProvider } from '../../../testing/test-utils';
 import { SettingsPage } from './settings';
 import { SettingsService, UserSettings } from '../../core/settings';
 import { StatePersistenceService } from '../../core/persistence';
+import { CosmeticService, CosmeticItem } from '../../core/progression';
 
 let mockSettings: WritableSignal<UserSettings>;
 
@@ -36,8 +37,23 @@ let exportStateFn: ReturnType<typeof vi.fn>;
 let importStateFn: ReturnType<typeof vi.fn>;
 let reloadFn: ReturnType<typeof vi.fn>;
 let OriginalFileReader: typeof FileReader;
+let getUnlockedCosmeticsFn: ReturnType<typeof vi.fn>;
 
-async function setup() {
+const DEFAULT_THEME_COSMETICS: CosmeticItem[] = [
+  { id: 'theme-dark', name: 'Deep Space', type: 'theme', unlockCondition: 'none', isUnlocked: true },
+  { id: 'theme-station', name: 'Station Standard', type: 'theme', unlockCondition: 'none', isUnlocked: true },
+  { id: 'theme-light', name: 'Daylight', type: 'theme', unlockCondition: 'none', isUnlocked: true },
+];
+
+const NEON_THEME_COSMETIC: CosmeticItem = {
+  id: 'theme-neon', name: 'Neon Pulse', type: 'theme', unlockCondition: 'Complete 50 levels total', isUnlocked: true,
+};
+
+const NON_THEME_COSMETIC: CosmeticItem = {
+  id: 'badge-first-steps', name: 'Pioneer', type: 'badge', unlockCondition: 'Earn achievement: first-steps', isUnlocked: true,
+};
+
+async function setup(cosmeticItems?: CosmeticItem[]) {
   // Install jsdom polyfills BEFORE component renders
   if (!HTMLDialogElement.prototype.showModal) {
     HTMLDialogElement.prototype.showModal = function () {
@@ -66,6 +82,7 @@ async function setup() {
 
   exportStateFn = vi.fn().mockReturnValue('{"nexus-station:xp":100}');
   importStateFn = vi.fn().mockReturnValue(true);
+  getUnlockedCosmeticsFn = vi.fn().mockReturnValue(cosmeticItems ?? [...DEFAULT_THEME_COSMETICS, NON_THEME_COSMETIC]);
 
   reloadFn = vi.fn();
 
@@ -109,6 +126,9 @@ async function setup() {
       getMockProvider(StatePersistenceService, {
         exportState: exportStateFn,
         importState: importStateFn,
+      }),
+      getMockProvider(CosmeticService, {
+        getUnlockedCosmetics: getUnlockedCosmeticsFn,
       }),
       { provide: DOCUMENT, useValue: docProxy },
     ],
@@ -379,5 +399,30 @@ describe('SettingsPage', () => {
     expect(statusEl).toBeTruthy();
     expect(statusEl!.textContent).toContain('Import failed: invalid file format');
     expect(reloadFn).not.toHaveBeenCalled();
+  });
+
+  // --- Dynamic theme cosmetics tests (T-2026-543) ---
+
+  it('should render only default themes when no extra cosmetics are unlocked', async () => {
+    const { element } = await setup([...DEFAULT_THEME_COSMETICS, NON_THEME_COSMETIC]);
+    const select = element.querySelector('#theme-select') as HTMLSelectElement;
+    const options = select.querySelectorAll('option');
+    expect(options.length).toBe(3);
+    const values = Array.from(options).map(o => o.value);
+    expect(values).toEqual(['dark', 'station', 'light']);
+    const labels = Array.from(options).map(o => o.textContent?.trim());
+    expect(labels).toEqual(['Deep Space', 'Station Standard', 'Daylight']);
+  });
+
+  it('should render unlocked cosmetic themes in the dropdown', async () => {
+    const { element } = await setup([...DEFAULT_THEME_COSMETICS, NEON_THEME_COSMETIC, NON_THEME_COSMETIC]);
+    const select = element.querySelector('#theme-select') as HTMLSelectElement;
+    const options = select.querySelectorAll('option');
+    expect(options.length).toBe(4);
+    const values = Array.from(options).map(o => o.value);
+    expect(values).toEqual(['dark', 'station', 'light', 'neon']);
+    const lastOption = options[3];
+    expect(lastOption.value).toBe('neon');
+    expect(lastOption.textContent?.trim()).toBe('Neon Pulse');
   });
 });

@@ -10,7 +10,7 @@
 // ---------------------------------------------------------------------------
 
 import { TestBed } from '@angular/core/testing';
-import { SettingsService, type Theme } from '../settings/settings.service';
+import { SettingsService } from '../settings/settings.service';
 
 // --- Fake storage ---
 
@@ -28,7 +28,7 @@ function createFakeStorage(): Storage {
 
 // --- Theme property definitions (mirroring SCSS files) ---
 
-const THEME_PROPERTIES: Record<Theme, Record<string, string>> = {
+const THEME_PROPERTIES: Record<'dark' | 'station' | 'light', Record<string, string>> = {
   dark: {
     '--nx-color-void': '#050810',
     '--nx-color-hull': '#0f1320',
@@ -207,7 +207,7 @@ describe('Theme custom properties integration', () => {
   });
 
   it('all critical custom properties are defined in all 3 themes', () => {
-    const themes: Theme[] = ['dark', 'station', 'light'];
+    const themes: ('dark' | 'station' | 'light')[] = ['dark', 'station', 'light'];
 
     for (const theme of themes) {
       const props = THEME_PROPERTIES[theme];

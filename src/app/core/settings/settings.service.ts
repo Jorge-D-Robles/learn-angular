@@ -10,7 +10,7 @@ import { DOCUMENT } from '@angular/common';
 import { StatePersistenceService } from '../persistence/state-persistence.service';
 
 export type AnimationSpeed = 'normal' | 'fast' | 'off';
-export type Theme = 'dark' | 'station' | 'light';
+export type Theme = 'dark' | 'station' | 'light' | 'neon' | 'gold';
 
 export interface UserSettings {
   soundEnabled: boolean;
@@ -20,7 +20,7 @@ export interface UserSettings {
 }
 
 const SETTINGS_KEY = 'settings';
-const VALID_THEMES: readonly Theme[] = ['dark', 'station', 'light'] as const;
+const VALID_THEMES: readonly Theme[] = ['dark', 'station', 'light', 'neon', 'gold'] as const;
 
 function getDefaultSettings(): UserSettings {
   const prefersReduced =
