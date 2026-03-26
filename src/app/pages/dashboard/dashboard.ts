@@ -8,6 +8,7 @@ import {
   MasteryService,
   StreakService,
   OnboardingService,
+  QuickPlayService,
   getCurrentRankThreshold,
   getNextRankThreshold,
 } from '../../core/progression';
@@ -63,6 +64,7 @@ export class DashboardPage implements OnInit {
   private readonly levelProgression = inject(LevelProgressionService);
   private readonly streakService = inject(StreakService);
   private readonly onboardingService = inject(OnboardingService);
+  private readonly quickPlay = inject(QuickPlayService);
   private readonly router = inject(Router);
 
   readonly isLoading = signal(true);
@@ -100,8 +102,8 @@ export class DashboardPage implements OnInit {
   });
 
   readonly quickPlayCards = computed<QuickPlayCardData[]>(() => {
-    const unlocked = this.gameProgression.getUnlockedMinigames();
-    return unlocked.slice(0, 4).map((id) => {
+    const recommended = this.quickPlay.getRecommendedGames(4);
+    return recommended.map((id) => {
       const config = this.minigameRegistry.getConfig(id);
       if (!config) return null;
       const masteryStars = this.masteryService.getMastery(id);

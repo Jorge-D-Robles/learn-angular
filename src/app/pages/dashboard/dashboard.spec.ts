@@ -17,6 +17,7 @@ import { StreakService } from '../../core/progression/streak.service';
 import { OnboardingService } from '../../core/progression/onboarding.service';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { LevelProgressionService, type LevelProgress } from '../../core/levels/level-progression.service';
+import { QuickPlayService } from '../../core/progression/quick-play.service';
 import { DifficultyTier, type MinigameConfig, type MinigameId } from '../../core/minigame/minigame.types';
 import { APP_ICONS } from '../../shared/icons';
 import type { Rank } from '../../core/state/rank.constants';
@@ -87,6 +88,7 @@ interface SetupOptions {
   currentMission?: StoryMission | null;
   completedMissionCount?: number;
   unlockedMinigames?: MinigameId[];
+  recommendedGames?: MinigameId[];
   todaysChallenge?: DailyChallenge;
   degradingTopics?: DegradingTopic[];
   mastery?: ReadonlyMap<MinigameId, number>;
@@ -104,6 +106,7 @@ async function setup(options: SetupOptions = {}) {
     currentMission = TEST_MISSION,
     completedMissionCount,
     unlockedMinigames = ['module-assembly' as MinigameId, 'wire-protocol' as MinigameId],
+    recommendedGames = ['module-assembly' as MinigameId, 'wire-protocol' as MinigameId],
     todaysChallenge = TEST_CHALLENGE,
     degradingTopics = [],
     mastery = new Map<MinigameId, number>(),
@@ -154,6 +157,9 @@ async function setup(options: SetupOptions = {}) {
       }),
       getMockProvider(LevelProgressionService, {
         getLevelProgress: (id: MinigameId) => levelProgress.get(id) ?? [],
+      }),
+      getMockProvider(QuickPlayService, {
+        getRecommendedGames: () => recommendedGames,
       }),
       getMockProvider(OnboardingService, {
         isOnboardingComplete: signal(isOnboardingComplete),
@@ -282,6 +288,9 @@ describe('DashboardPage', () => {
           completedMissionCount: signal(0),
           getUnlockedMinigames: () => ['module-assembly' as MinigameId],
         }),
+        getMockProvider(QuickPlayService, {
+          getRecommendedGames: () => ['module-assembly' as MinigameId],
+        }),
         getMockProvider(DailyChallengeService, {
           todaysChallenge: signal(TEST_CHALLENGE),
         }),
@@ -346,14 +355,14 @@ describe('DashboardPage', () => {
 
   it('should show quick-play shortcuts when games are unlocked', async () => {
     const { element } = await setup({
-      unlockedMinigames: ['module-assembly' as MinigameId, 'wire-protocol' as MinigameId],
+      recommendedGames: ['module-assembly' as MinigameId, 'wire-protocol' as MinigameId],
     });
     const cards = element.querySelectorAll('nx-minigame-card');
     expect(cards.length).toBeGreaterThan(0);
   });
 
   it('should show empty state for quick-play when no games unlocked', async () => {
-    const { element } = await setup({ unlockedMinigames: [] });
+    const { element } = await setup({ recommendedGames: [], unlockedMinigames: [] });
     const cards = element.querySelectorAll('nx-minigame-card');
     expect(cards.length).toBe(0);
     expect(element.textContent).toContain('Start your first mission');
@@ -361,7 +370,7 @@ describe('DashboardPage', () => {
 
   it('should render MinigameCardComponent for each quick-play game', async () => {
     const { element } = await setup({
-      unlockedMinigames: ['module-assembly' as MinigameId, 'wire-protocol' as MinigameId],
+      recommendedGames: ['module-assembly' as MinigameId, 'wire-protocol' as MinigameId],
     });
     const cards = element.querySelectorAll('.dashboard__shortcut-list nx-minigame-card');
     expect(cards.length).toBe(2);
@@ -372,7 +381,7 @@ describe('DashboardPage', () => {
       ['module-assembly' as MinigameId, 3],
     ]);
     const { element } = await setup({
-      unlockedMinigames: ['module-assembly' as MinigameId],
+      recommendedGames: ['module-assembly' as MinigameId],
       mastery,
     });
     const card = element.querySelector('.dashboard__shortcut-list nx-minigame-card');
@@ -395,7 +404,7 @@ describe('DashboardPage', () => {
       ['module-assembly' as MinigameId, progress],
     ]);
     const { element } = await setup({
-      unlockedMinigames: ['module-assembly' as MinigameId],
+      recommendedGames: ['module-assembly' as MinigameId],
       levelProgress,
     });
     const card = element.querySelector('.dashboard__shortcut-list nx-minigame-card');
@@ -403,15 +412,13 @@ describe('DashboardPage', () => {
     expect(card!.textContent).toContain('5/18 levels');
   });
 
-  it('should limit quick-play cards to 4 maximum', async () => {
+  it('should limit quick-play cards to 4 maximum (service handles limit)', async () => {
     const { element } = await setup({
-      unlockedMinigames: [
+      recommendedGames: [
         'module-assembly' as MinigameId,
         'wire-protocol' as MinigameId,
         'flow-commander' as MinigameId,
         'signal-corps' as MinigameId,
-        'corridor-runner' as MinigameId,
-        'terminal-hack' as MinigameId,
       ],
     });
     const cards = element.querySelectorAll('.dashboard__shortcut-list nx-minigame-card');
@@ -420,7 +427,7 @@ describe('DashboardPage', () => {
 
   it('should navigate to /minigames/:gameId when card is clicked', async () => {
     const { element, fixture, navigateFn } = await setup({
-      unlockedMinigames: ['module-assembly' as MinigameId],
+      recommendedGames: ['module-assembly' as MinigameId],
     });
     const card = element.querySelector('.dashboard__shortcut-list nx-minigame-card') as HTMLElement;
     expect(card).toBeTruthy();
@@ -430,9 +437,19 @@ describe('DashboardPage', () => {
   });
 
   it('should not render any cards when no games are unlocked', async () => {
-    const { element } = await setup({ unlockedMinigames: [] });
+    const { element } = await setup({ recommendedGames: [] });
     const cards = element.querySelectorAll('.dashboard__shortcut-list nx-minigame-card');
     expect(cards.length).toBe(0);
+  });
+
+  it('should delegate game selection to QuickPlayService', async () => {
+    const { element } = await setup({
+      recommendedGames: ['flow-commander' as MinigameId, 'signal-corps' as MinigameId],
+    });
+    const cards = element.querySelectorAll('.dashboard__shortcut-list nx-minigame-card');
+    expect(cards.length).toBe(2);
+    expect(cards[0].textContent).toContain('Flow Commander');
+    expect(cards[1].textContent).toContain('Signal Corps');
   });
 
   it('should render streak badge', async () => {
@@ -596,6 +613,7 @@ describe('DashboardPage', () => {
         completedMissionCount: 0,
         currentMission: TEST_MISSION,
         unlockedMinigames: [],
+        recommendedGames: [],
       });
       const emptyState = element.querySelector('nx-empty-state');
       expect(emptyState).toBeTruthy();
@@ -621,6 +639,7 @@ describe('DashboardPage', () => {
         completedMissionCount: 0,
         currentMission: TEST_MISSION,
         unlockedMinigames: [],
+        recommendedGames: [],
       });
       const ctaButton = element.querySelector('nx-empty-state .dashboard__cta-button') as HTMLButtonElement;
       expect(ctaButton).toBeTruthy();
