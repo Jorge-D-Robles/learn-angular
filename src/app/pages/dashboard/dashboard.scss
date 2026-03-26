@@ -97,6 +97,13 @@ h1 {
   }
 }
 
+.dashboard__loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 1rem;
+}
+
 // Tablet breakpoint: 2-column cards, revert shortcut wrap
 @media (min-width: 768px) {
   .dashboard__cards {

@@ -2,6 +2,11 @@
   <nx-onboarding-overlay (dismissed)="onOnboardingDismissed()" />
 }
 
+@if (isLoading()) {
+  <div class="dashboard__loading">
+    <nx-loading-spinner size="lg" message="Loading station data..." />
+  </div>
+} @else {
 <h1>Station Dashboard</h1>
 
 <section class="dashboard__header">
@@ -85,4 +90,5 @@
       </button>
     </nx-empty-state>
   </section>
+}
 }

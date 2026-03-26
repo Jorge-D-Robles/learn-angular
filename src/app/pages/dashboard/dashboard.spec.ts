@@ -94,6 +94,7 @@ interface SetupOptions {
   streakMultiplier?: number;
   levelProgress?: Map<MinigameId, readonly LevelProgress[]>;
   isOnboardingComplete?: boolean;
+  detectChanges?: boolean;
 }
 
 async function setup(options: SetupOptions = {}) {
@@ -110,6 +111,7 @@ async function setup(options: SetupOptions = {}) {
     streakMultiplier = 1.3,
     levelProgress = new Map<MinigameId, readonly LevelProgress[]>(),
     isOnboardingComplete = true,
+    detectChanges = true,
   } = options;
 
   // Default: when currentMission is null and completedMissionCount not explicitly set,
@@ -119,6 +121,7 @@ async function setup(options: SetupOptions = {}) {
   const navigateFn = vi.fn();
 
   const result = await createComponent(DashboardPage, {
+    detectChanges,
     providers: [
       ...ICON_PROVIDERS,
       getMockProvider(XpService, {
@@ -169,6 +172,17 @@ describe('DashboardPage', () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.useRealTimers();
+  });
+
+  it('should have isLoading true before ngOnInit runs', async () => {
+    const { component } = await setup({ detectChanges: false });
+    expect(component.isLoading()).toBe(true);
+  });
+
+  it('should not show loading spinner after initialization', async () => {
+    const { element } = await setup();
+    const spinner = element.querySelector('nx-loading-spinner');
+    expect(spinner).toBeNull();
   });
 
   it('should render "Station Dashboard" heading', async () => {

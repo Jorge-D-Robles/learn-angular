@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   XpService,
@@ -27,6 +27,7 @@ import {
   MinigameCardComponent,
   OnboardingOverlayComponent,
   EmptyStateComponent,
+  LoadingSpinnerComponent,
 } from '../../shared/components';
 
 interface QuickPlayCardData {
@@ -47,11 +48,12 @@ interface QuickPlayCardData {
     MinigameCardComponent,
     OnboardingOverlayComponent,
     EmptyStateComponent,
+    LoadingSpinnerComponent,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
-export class DashboardPage {
+export class DashboardPage implements OnInit {
   private readonly xpService = inject(XpService);
   private readonly gameProgression = inject(GameProgressionService);
   private readonly dailyChallenge = inject(DailyChallengeService);
@@ -63,6 +65,7 @@ export class DashboardPage {
   private readonly onboardingService = inject(OnboardingService);
   private readonly router = inject(Router);
 
+  readonly isLoading = signal(true);
   readonly showOnboarding = signal(!this.onboardingService.isOnboardingComplete());
   readonly currentRank = this.xpService.currentRank;
   readonly currentMission = this.gameProgression.currentMission;
@@ -129,6 +132,10 @@ export class DashboardPage {
     const challenge = this.todaysChallenge();
     return this.minigameRegistry.getConfig(challenge.gameId)?.angularTopic ?? '';
   });
+
+  ngOnInit(): void {
+    this.isLoading.set(false);
+  }
 
   navigateToMission(chapterId: ChapterId): void {
     this.router.navigate(['/mission', chapterId]);
