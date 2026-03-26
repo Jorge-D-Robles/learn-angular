@@ -16,6 +16,9 @@ import { AudioService } from '../../core/audio';
 import { KeyboardShortcutService } from '../../core/minigame/keyboard-shortcut.service';
 import { MinigameEngine, type ActionResult } from '../../core/minigame/minigame-engine';
 import { PlayMode } from '../../core/minigame/minigame.types';
+import { LeaderboardService } from '../../core/progression/leaderboard.service';
+import { LeaderboardComponent } from '../../shared/components';
+import { By } from '@angular/platform-browser';
 
 // --- Lucide icon providers needed by MinigameShellComponent sub-components ---
 
@@ -172,6 +175,7 @@ async function setup(options: SetupOptions = {}) {
       getMockProvider(Router, { navigate: navigateFn }),
       getMockProvider(AudioService, audioMock),
       getMockProvider(KeyboardShortcutService, keyboardMock),
+      getMockProvider(LeaderboardService, { getLeaderboard: vi.fn().mockReturnValue([]) }),
       ...ICON_PROVIDERS,
     ],
   });
@@ -397,6 +401,35 @@ describe('SpeedRunPage', () => {
       fixture.detectChanges();
       const parIndicator = element.querySelector('.speed-run__par-indicator');
       expect(parIndicator?.textContent).toContain('Under Par');
+    });
+  });
+
+  // --- 6b. Leaderboard in post-run ---
+  describe('Leaderboard in post-run', () => {
+    it('should render nx-leaderboard in post-run state', async () => {
+      const { element } = await setup({
+        session: makeSession({ isActive: false }),
+      });
+      const leaderboard = element.querySelector('nx-leaderboard');
+      expect(leaderboard).toBeTruthy();
+    });
+
+    it('should NOT render nx-leaderboard in pre-run state', async () => {
+      const { element } = await setup({ session: null });
+      const leaderboard = element.querySelector('nx-leaderboard');
+      expect(leaderboard).toBeNull();
+    });
+
+    it('should pass correct gameId and mode inputs to LeaderboardComponent', async () => {
+      const { fixture } = await setup({
+        gameId: 'module-assembly',
+        session: makeSession({ isActive: false }),
+      });
+      const leaderboardDebug = fixture.debugElement.query(By.directive(LeaderboardComponent));
+      expect(leaderboardDebug).toBeTruthy();
+      const leaderboardInstance = leaderboardDebug.componentInstance as LeaderboardComponent;
+      expect(leaderboardInstance.gameId()).toBe('module-assembly');
+      expect(leaderboardInstance.activeMode()).toBe('speedRun');
     });
   });
 

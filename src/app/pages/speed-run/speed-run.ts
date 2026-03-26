@@ -10,6 +10,7 @@ import { MinigameStatus, PlayMode, type MinigameId } from '../../core/minigame/m
 import { SpeedRunService, SPEED_RUN_CONFIG } from '../../core/minigame/speed-run.service';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import { TimeFormatPipe } from '../../shared/pipes/time-format.pipe';
+import { LeaderboardComponent } from '../../shared/components';
 
 /** Threshold for "near par" warning: elapsed >= 80% of par time. */
 const NEAR_PAR_THRESHOLD = 0.8;
@@ -25,7 +26,7 @@ type ViewState = 'error' | 'pre-run' | 'in-run' | 'post-run';
 
 @Component({
   selector: 'app-speed-run',
-  imports: [TimeFormatPipe, NgComponentOutlet, MinigameShellComponent],
+  imports: [TimeFormatPipe, NgComponentOutlet, MinigameShellComponent, LeaderboardComponent],
   template: `
     @switch (viewState()) {
       @case ('error') {
@@ -111,6 +112,7 @@ type ViewState = 'error' | 'pre-run' | 'in-run' | 'post-run';
               }
             </ul>
           }
+          <nx-leaderboard [gameId]="$any(gameId())" mode="speedRun" />
           <button class="speed-run__retry-btn" (click)="onRetry()">Retry</button>
           <button class="speed-run__back-btn" (click)="onBack()">Back</button>
         </div>
