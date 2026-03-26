@@ -574,4 +574,45 @@ describe('DashboardPage', () => {
     fixture.detectChanges();
     expect(element.querySelector('nx-onboarding-overlay')).toBeNull();
   });
+
+  describe('empty state (zero progress)', () => {
+    it('should render empty state when XP is 0 and no missions completed', async () => {
+      const { element } = await setup({
+        totalXp: 0,
+        completedMissionCount: 0,
+        currentMission: TEST_MISSION,
+        unlockedMinigames: [],
+      });
+      const emptyState = element.querySelector('nx-empty-state');
+      expect(emptyState).toBeTruthy();
+      expect(emptyState!.textContent).toContain('Welcome to Nexus Station');
+      const ctaButton = element.querySelector('nx-empty-state .dashboard__cta-button');
+      expect(ctaButton).toBeTruthy();
+    });
+
+    it('should NOT render empty state when player has progress', async () => {
+      const { element } = await setup({
+        totalXp: 750,
+        completedMissionCount: 3,
+      });
+      const emptyState = element.querySelector('nx-empty-state');
+      expect(emptyState).toBeNull();
+      expect(element.querySelector('.dashboard__cards')).toBeTruthy();
+      expect(element.querySelector('.dashboard__shortcuts')).toBeTruthy();
+    });
+
+    it('should navigate to first mission when CTA button is clicked', async () => {
+      const { element, fixture, navigateFn } = await setup({
+        totalXp: 0,
+        completedMissionCount: 0,
+        currentMission: TEST_MISSION,
+        unlockedMinigames: [],
+      });
+      const ctaButton = element.querySelector('nx-empty-state .dashboard__cta-button') as HTMLButtonElement;
+      expect(ctaButton).toBeTruthy();
+      ctaButton.click();
+      fixture.detectChanges();
+      expect(navigateFn).toHaveBeenCalledWith(['/mission', 1]);
+    });
+  });
 });

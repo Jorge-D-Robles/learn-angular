@@ -26,6 +26,7 @@ import {
   DailyChallengeCardComponent,
   MinigameCardComponent,
   OnboardingOverlayComponent,
+  EmptyStateComponent,
 } from '../../shared/components';
 
 interface QuickPlayCardData {
@@ -45,6 +46,7 @@ interface QuickPlayCardData {
     DailyChallengeCardComponent,
     MinigameCardComponent,
     OnboardingOverlayComponent,
+    EmptyStateComponent,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
@@ -68,6 +70,10 @@ export class DashboardPage {
   readonly activeStreakDays = this.streakService.activeStreakDays;
   readonly streakMultiplier = this.streakService.streakMultiplier;
   readonly totalXp = this.xpService.totalXp;
+
+  readonly isZeroProgress = computed(
+    () => this.totalXp() === 0 && this.gameProgression.completedMissionCount() === 0,
+  );
 
   readonly isAllComplete = computed(
     () => this.gameProgression.completedMissionCount() === ALL_STORY_MISSIONS.length,

@@ -19,54 +19,70 @@
     variant="full" />
 </section>
 
-<div class="dashboard__cards">
-  <section class="dashboard__mission">
-    <h2 class="dashboard__section-title">Active Mission</h2>
-    <nx-active-mission-card
-      [mission]="currentMission()"
-      [isAllComplete]="isAllComplete()"
-      [totalXp]="totalXp()"
-      (continueClicked)="navigateToMission($event)" />
+@if (!isZeroProgress()) {
+  <div class="dashboard__cards">
+    <section class="dashboard__mission">
+      <h2 class="dashboard__section-title">Active Mission</h2>
+      <nx-active-mission-card
+        [mission]="currentMission()"
+        [isAllComplete]="isAllComplete()"
+        [totalXp]="totalXp()"
+        (continueClicked)="navigateToMission($event)" />
+    </section>
+
+    <section class="dashboard__challenge">
+      <h2 class="dashboard__section-title">Daily Challenge</h2>
+      <nx-daily-challenge-card
+        [challenge]="todaysChallenge()"
+        [isCompleted]="todaysChallenge().completed"
+        [gameName]="challengeGameName()"
+        [gameTopic]="challengeGameTopic()"
+        [streakDays]="activeStreakDays()"
+        (acceptChallenge)="onAcceptChallenge($event)" />
+    </section>
+  </div>
+
+  <section class="dashboard__shortcuts">
+    <h2 class="dashboard__section-title">Quick Play</h2>
+    @if (quickPlayCards().length > 0) {
+      <div class="dashboard__shortcut-list">
+        @for (game of quickPlayCards(); track game.config.id) {
+          <nx-minigame-card
+            [config]="game.config"
+            [mastery]="game.masteryStars"
+            [levelsCompleted]="game.levelsCompleted"
+            (cardClicked)="navigateToMinigame($event)" />
+        }
+      </div>
+    } @else {
+      <p class="dashboard__empty-shortcuts">Start your first mission to unlock minigames.</p>
+    }
   </section>
 
-  <section class="dashboard__challenge">
-    <h2 class="dashboard__section-title">Daily Challenge</h2>
-    <nx-daily-challenge-card
-      [challenge]="todaysChallenge()"
-      [isCompleted]="todaysChallenge().completed"
-      [gameName]="challengeGameName()"
-      [gameTopic]="challengeGameTopic()"
-      [streakDays]="activeStreakDays()"
-      (acceptChallenge)="onAcceptChallenge($event)" />
+  <section class="dashboard__alerts">
+    <nx-degradation-alert
+      [degradingTopics]="degradingTopicItems()"
+      (practiceRequested)="navigateToRefresher($event)" />
   </section>
-</div>
 
-<section class="dashboard__shortcuts">
-  <h2 class="dashboard__section-title">Quick Play</h2>
-  @if (quickPlayCards().length > 0) {
-    <div class="dashboard__shortcut-list">
-      @for (game of quickPlayCards(); track game.config.id) {
-        <nx-minigame-card
-          [config]="game.config"
-          [mastery]="game.masteryStars"
-          [levelsCompleted]="game.levelsCompleted"
-          (cardClicked)="navigateToMinigame($event)" />
-      }
-    </div>
-  } @else {
-    <p class="dashboard__empty-shortcuts">Start your first mission to unlock minigames.</p>
-  }
-</section>
-
-<section class="dashboard__alerts">
-  <nx-degradation-alert
-    [degradingTopics]="degradingTopicItems()"
-    (practiceRequested)="navigateToRefresher($event)" />
-</section>
-
-<section class="dashboard__visualization">
-  <h2 class="dashboard__section-title">Station Modules</h2>
-  <nx-station-visualization
-    [masteryData]="masteryMap()"
-    (moduleClicked)="navigateToMinigame($event)" />
-</section>
+  <section class="dashboard__visualization">
+    <h2 class="dashboard__section-title">Station Modules</h2>
+    <nx-station-visualization
+      [masteryData]="masteryMap()"
+      (moduleClicked)="navigateToMinigame($event)" />
+  </section>
+} @else {
+  <section class="dashboard__empty-state">
+    <nx-empty-state
+      icon="map"
+      title="Welcome to Nexus Station!"
+      message="Start your first mission to begin your Angular training.">
+      <button
+        type="button"
+        class="dashboard__cta-button"
+        (click)="navigateToMission(1)">
+        Start First Mission
+      </button>
+    </nx-empty-state>
+  </section>
+}
