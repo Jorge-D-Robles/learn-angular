@@ -1,4 +1,19 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+
+/**
+ * Dismiss the minigame tutorial overlay if it appears.
+ * Clicking "Skip" closes it immediately.
+ */
+async function dismissTutorialIfPresent(page: Page): Promise<void> {
+  const skipBtn = page.locator('.tutorial__btn--skip');
+  try {
+    await skipBtn.waitFor({ state: 'visible', timeout: 3000 });
+    await skipBtn.click();
+    await expect(skipBtn).not.toBeVisible();
+  } catch {
+    // Tutorial not present — continue
+  }
+}
 
 test.describe('Replay Modes', () => {
   test.describe('Endless Mode', () => {
@@ -48,5 +63,43 @@ test.describe('Replay Modes', () => {
 
       await expect(page.locator('app-minigame-shell')).toHaveCount(0);
     });
+  });
+});
+
+test.describe('Replay Mode Gameplay Rendering', () => {
+  test('endless mode should render MinigameShell after clicking Start', async ({ page }) => {
+    await page.goto('/minigames/module-assembly/endless');
+
+    await expect(page.getByRole('button', { name: 'Start' })).toBeVisible();
+    await page.getByRole('button', { name: 'Start' }).click();
+
+    await dismissTutorialIfPresent(page);
+
+    await expect(page.locator('app-minigame-shell')).toBeVisible();
+    await expect(page.locator('app-module-assembly')).toBeVisible();
+  });
+
+  test('speed run should render MinigameShell after clicking Start Run', async ({ page }) => {
+    await page.goto('/minigames/module-assembly/speedrun');
+
+    await expect(page.getByRole('button', { name: 'Start Run' })).toBeVisible();
+    await page.getByRole('button', { name: 'Start Run' }).click();
+
+    await dismissTutorialIfPresent(page);
+
+    await expect(page.locator('app-minigame-shell')).toBeVisible();
+    await expect(page.locator('app-module-assembly')).toBeVisible();
+  });
+
+  test('daily challenge should render MinigameShell after accepting', async ({ page }) => {
+    await page.evaluate(() => localStorage.clear());
+    await page.goto('/minigames/module-assembly/daily');
+
+    await expect(page.getByRole('button', { name: 'Accept Challenge' })).toBeVisible();
+    await page.getByRole('button', { name: 'Accept Challenge' }).click();
+
+    await dismissTutorialIfPresent(page);
+
+    await expect(page.locator('app-minigame-shell')).toBeVisible();
   });
 });
