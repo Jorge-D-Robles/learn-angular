@@ -27,8 +27,14 @@ export interface BeltPart {
 /** Default belt length in pixels (parts enter from the right at this x). */
 export const DEFAULT_BELT_LENGTH = 800;
 
-/** Spacing between staggered parts on reset, in pixels. */
-export const PART_SPACING = 120;
+/** Minimum gap between parts on the belt, in pixels. */
+export const PART_GAP = 40;
+
+/** Estimated width per character of part content, in pixels. */
+export const CHAR_WIDTH = 8;
+
+/** Minimum part width for layout purposes, in pixels. */
+export const MIN_PART_WIDTH = 100;
 
 // ---------------------------------------------------------------------------
 // Service
@@ -121,11 +127,14 @@ export class ConveyorBeltService {
     this._beltSpeed.set(speed);
 
     const length = this._beltLength();
+    let cursor = length;
     this._parts.set(
-      parts.map((part, index) => ({
-        part,
-        x: length + index * PART_SPACING,
-      })),
+      parts.map((part) => {
+        const x = cursor;
+        const partWidth = Math.max(MIN_PART_WIDTH, part.content.length * CHAR_WIDTH);
+        cursor += partWidth + PART_GAP;
+        return { part, x };
+      }),
     );
   }
 }

@@ -2,7 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import {
   ConveyorBeltService,
   DEFAULT_BELT_LENGTH,
-  PART_SPACING,
+  PART_GAP,
+  CHAR_WIDTH,
+  MIN_PART_WIDTH,
   type BeltPart,
 } from './conveyor-belt.service';
 import type { ComponentPart } from './module-assembly.types';
@@ -70,9 +72,12 @@ describe('ConveyorBeltService', () => {
 
       const beltParts = service.parts();
       expect(beltParts).toHaveLength(3);
+      // Dynamic spacing: each part width = max(MIN_PART_WIDTH, content.length * CHAR_WIDTH)
+      // '<h1>Hello</h1>' = 14 chars -> max(100, 112) = 112; stride = 112 + PART_GAP = 152
+      const partWidth = Math.max(MIN_PART_WIDTH, 14 * CHAR_WIDTH);
       expect(beltParts[0].x).toBe(DEFAULT_BELT_LENGTH);
-      expect(beltParts[1].x).toBe(DEFAULT_BELT_LENGTH + PART_SPACING);
-      expect(beltParts[2].x).toBe(DEFAULT_BELT_LENGTH + 2 * PART_SPACING);
+      expect(beltParts[1].x).toBe(DEFAULT_BELT_LENGTH + partWidth + PART_GAP);
+      expect(beltParts[2].x).toBe(DEFAULT_BELT_LENGTH + 2 * (partWidth + PART_GAP));
     });
 
     it('should set beltSpeed from reset parameter', () => {
@@ -344,8 +349,8 @@ describe('ConveyorBeltService', () => {
       expect(DEFAULT_BELT_LENGTH).toBe(800);
     });
 
-    it('should export PART_SPACING as 120', () => {
-      expect(PART_SPACING).toBe(120);
+    it('should export PART_GAP as 40', () => {
+      expect(PART_GAP).toBe(40);
     });
 
     it('should export BeltPart interface (compile-time check)', () => {

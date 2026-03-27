@@ -144,6 +144,7 @@ export class ModuleAssemblyComponent implements OnDestroy {
     const loop = (timestamp: number) => {
       if (this.lastTimestamp > 0) {
         const dt = (timestamp - this.lastTimestamp) / 1000;
+        this.beltService.tick(dt);
         this.engine?.tick(dt);
       }
       this.lastTimestamp = timestamp;

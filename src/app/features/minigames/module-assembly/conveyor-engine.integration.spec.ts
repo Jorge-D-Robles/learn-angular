@@ -8,7 +8,7 @@
 // ---------------------------------------------------------------------------
 
 import { ModuleAssemblyEngine, DECOY_BONUS_SCORE } from './module-assembly.engine';
-import { ConveyorBeltService, DEFAULT_BELT_LENGTH, PART_SPACING } from './conveyor-belt.service';
+import { ConveyorBeltService, DEFAULT_BELT_LENGTH, PART_GAP, CHAR_WIDTH, MIN_PART_WIDTH } from './conveyor-belt.service';
 import { MODULE_ASSEMBLY_LEVELS } from '../../../data/levels/module-assembly.data';
 import { MinigameStatus, type MinigameLevel } from '../../../core/minigame/minigame.types';
 import type { LevelDefinition } from '../../../core/levels/level.types';
@@ -58,10 +58,14 @@ describe('ConveyorBelt + Engine Integration (real level data)', () => {
     expect(service.beltSpeed()).toBe(40);
     expect(service.isExhausted()).toBe(false);
 
-    // Service parts have staggered positions
+    // Service parts have dynamic staggered positions based on content length
+    // Part 0: '@Component({...})' = 16 chars -> width max(100, 128) = 128
+    // Part 1: "'app-shelter'" = 13 chars -> width max(100, 104) = 104
+    const w0 = Math.max(MIN_PART_WIDTH, level.data.parts[0].content.length * CHAR_WIDTH);
+    const w1 = Math.max(MIN_PART_WIDTH, level.data.parts[1].content.length * CHAR_WIDTH);
     expect(service.parts()[0].x).toBe(DEFAULT_BELT_LENGTH);
-    expect(service.parts()[1].x).toBe(DEFAULT_BELT_LENGTH + PART_SPACING);
-    expect(service.parts()[2].x).toBe(DEFAULT_BELT_LENGTH + 2 * PART_SPACING);
+    expect(service.parts()[1].x).toBe(DEFAULT_BELT_LENGTH + w0 + PART_GAP);
+    expect(service.parts()[2].x).toBe(DEFAULT_BELT_LENGTH + w0 + PART_GAP + w1 + PART_GAP);
 
     // Service part IDs match engine part IDs
     expect(service.parts()[0].part.id).toBe(engine.beltParts()[0].id);
@@ -87,9 +91,10 @@ describe('ConveyorBelt + Engine Integration (real level data)', () => {
     expect(engine.status()).toBe(MinigameStatus.Playing);
 
     // Tick enough to scroll all parts off-screen.
-    // Last part starts at DEFAULT_BELT_LENGTH + 2 * PART_SPACING = 800 + 240 = 1040.
-    // After the 1s tick above, it's at 1000. At 40 px/s, need 1000/40 = 25s plus a bit.
-    engine.tick(26);
+    // Last part position is dynamic based on content lengths. Compute it.
+    const lastPartX = service.parts()[service.parts().length - 1].x + 40; // current x after 1s tick
+    const timeToScroll = (lastPartX / 40) + 1; // plus margin
+    engine.tick(timeToScroll);
 
     expect(service.isExhausted()).toBe(true);
     expect(engine.status()).toBe(MinigameStatus.Lost);
@@ -146,10 +151,10 @@ describe('ConveyorBelt + Engine Integration (real level data)', () => {
     expect(engine.status()).toBe(MinigameStatus.Playing);
     expect(service.parts().length).toBe(1);
 
-    // The remaining part (b1-template) is at its original staggered position:
-    // DEFAULT_BELT_LENGTH + 2 * PART_SPACING = 800 + 240 = 1040.
-    // At speed 40, need 1040/40 = 26s plus a bit to scroll it off.
-    engine.tick(27);
+    // The remaining part is at a dynamic staggered position. Compute scroll-off time.
+    const remainingPart = service.parts()[0]; // only 1 part left
+    const timeToScrollOff = (remainingPart.x / 40) + 1; // plus margin
+    engine.tick(timeToScrollOff);
 
     expect(service.isExhausted()).toBe(true);
     expect(engine.status()).toBe(MinigameStatus.Lost);
@@ -182,10 +187,12 @@ describe('ConveyorBelt + Engine Integration (real level data)', () => {
     expect(service.beltSpeed()).toBe(40);
     expect(service.isExhausted()).toBe(false);
 
-    // Staggered positions restored
+    // Staggered positions restored (dynamic based on content length)
+    const rw0 = Math.max(MIN_PART_WIDTH, level.data.parts[0].content.length * CHAR_WIDTH);
+    const rw1 = Math.max(MIN_PART_WIDTH, level.data.parts[1].content.length * CHAR_WIDTH);
     expect(service.parts()[0].x).toBe(DEFAULT_BELT_LENGTH);
-    expect(service.parts()[1].x).toBe(DEFAULT_BELT_LENGTH + PART_SPACING);
-    expect(service.parts()[2].x).toBe(DEFAULT_BELT_LENGTH + 2 * PART_SPACING);
+    expect(service.parts()[1].x).toBe(DEFAULT_BELT_LENGTH + rw0 + PART_GAP);
+    expect(service.parts()[2].x).toBe(DEFAULT_BELT_LENGTH + rw0 + PART_GAP + rw1 + PART_GAP);
 
     // Part IDs match original level data
     const partIds = service.parts().map((bp) => bp.part.id);
