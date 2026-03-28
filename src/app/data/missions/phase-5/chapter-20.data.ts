@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_20_CONTENT: StoryMissionContent = {
   chapterId: 20,
@@ -90,9 +90,67 @@ export const CHAPTER_20_CONTENT: StoryMissionContent = {
         'Import pipes in the component imports array to use them in templates',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Format the station sensor readouts! Import and use built-in pipes to display the sector ' +
+        'name in uppercase, the timestamp as a date, and the repair budget as currency.',
+      starterCode: [
+        "import { Component } from '@angular/core';",
+        '',
+        '// TODO: Import the formatting pipes from the common module',
+        '',
+        '@Component({',
+        "  selector: 'app-sensor-display',",
+        '  // TODO: Register the imported formatters in the component metadata',
+        '  imports: [],',
+        '  template: `',
+        '    <h3>{{ sectorName }}</h3>',
+        '    <p>Last reading: {{ timestamp }}</p>',
+        '    <p>Budget: {{ budget }}</p>',
+        '  `,',
+        '})',
+        'export class SensorDisplayComponent {',
+        "  sectorName = 'Delta Sector';",
+        '  timestamp = new Date();',
+        '  budget = 4500.75;',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: 'UpperCasePipe',
+          errorMessage: 'Import UpperCasePipe from @angular/common to format text',
+        },
+        {
+          type: 'contains',
+          value: '| uppercase',
+          errorMessage: 'Apply the uppercase pipe to the sector name in the template',
+        },
+        {
+          type: 'contains',
+          value: '| date',
+          errorMessage: 'Apply the date pipe to the timestamp in the template',
+        },
+        {
+          type: 'contains',
+          value: '| currency',
+          errorMessage: 'Apply the currency pipe to the budget in the template',
+        },
+      ],
+      hints: [
+        "Import UpperCasePipe, DatePipe, CurrencyPipe from '@angular/common' and add them to imports",
+        'Use {{ sectorName | uppercase }}, {{ timestamp | date }}, and {{ budget | currency }} in the template',
+      ],
+      successMessage: 'Sensor display formatted! Built-in pipes transform raw data for the crew.',
+      explanation:
+        'Built-in pipes like UpperCasePipe, DatePipe, and CurrencyPipe format values directly in ' +
+        'templates. Import each pipe in the component\'s imports array and apply them using the | operator.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Sensor data formatted!',
-    minStepsViewed: 4,
+    minStepsViewed: 5,
   },
 };

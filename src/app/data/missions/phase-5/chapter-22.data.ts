@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_22_CONTENT: StoryMissionContent = {
   chapterId: 22,
@@ -102,9 +102,116 @@ export const CHAPTER_22_CONTENT: StoryMissionContent = {
         'Custom pipes follow the same | syntax as built-in pipes',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Build a custom temperature converter! Create a @Pipe class that converts Kelvin readings ' +
+        'to Celsius by subtracting 273.15 and formatting the result.',
+      starterCode: [
+        "import { Pipe, PipeTransform } from '@angular/core';",
+        '',
+        '// TODO: Add the decorator that registers this as a named template transformer',
+        'export class KelvinToCelsiusPipe implements PipeTransform {',
+        '  // TODO: Implement the required conversion method',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: '@Pipe',
+          errorMessage: 'Add the @Pipe decorator to register this class as a pipe',
+        },
+        {
+          type: 'pattern',
+          pattern: "name:\\s*'kelvinToCelsius'",
+          errorMessage: "Set the pipe name to 'kelvinToCelsius' in the @Pipe decorator",
+        },
+        {
+          type: 'contains',
+          value: 'transform(',
+          errorMessage: 'Implement the transform() method required by PipeTransform',
+        },
+        {
+          type: 'contains',
+          value: '273.15',
+          errorMessage: 'Subtract 273.15 from the Kelvin value to convert to Celsius',
+        },
+        {
+          type: 'pattern',
+          pattern: ':\\s*string',
+          errorMessage: 'Return a string from the transform method (formatted result)',
+        },
+      ],
+      hints: [
+        "Add @Pipe({ name: 'kelvinToCelsius', standalone: true }) above the class declaration",
+        'Implement transform(kelvin: number): string that returns a formatted Celsius string',
+      ],
+      successMessage: 'Temperature converter deployed! The crew can now read Celsius on all displays.',
+      explanation:
+        '@Pipe registers a class as an Angular pipe with a template name. PipeTransform requires a ' +
+        'transform() method that takes the input value and returns the formatted output. Custom pipes ' +
+        'use the same | syntax as built-in pipes.',
+    } satisfies CodeChallengeStep,
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Deploy the temperature converter! Import your KelvinToCelsiusPipe into a component and ' +
+        'use it in the template.',
+      starterCode: [
+        "import { Component } from '@angular/core';",
+        '',
+        '// TODO: Import the temperature conversion pipe',
+        '',
+        '@Component({',
+        "  selector: 'app-temp-display',",
+        '  // TODO: Register the conversion pipe in the component metadata',
+        '  imports: [],',
+        '  template: `',
+        '    <p>Engine Temp: {{ engineTemp }}K</p>',
+        '  `,',
+        '})',
+        'export class TempDisplayComponent {',
+        '  engineTemp = 573.15;',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: 'KelvinToCelsiusPipe',
+          errorMessage: 'Import KelvinToCelsiusPipe to use the custom pipe',
+        },
+        {
+          type: 'contains',
+          value: '| kelvinToCelsius',
+          errorMessage: 'Apply the kelvinToCelsius pipe to engineTemp in the template',
+        },
+        {
+          type: 'pattern',
+          pattern: 'imports:.*KelvinToCelsius',
+          flags: 's',
+          errorMessage: "Add KelvinToCelsiusPipe to the component's imports array",
+        },
+        {
+          type: 'notContains',
+          value: '{{ engineTemp }}K',
+          errorMessage: 'Pipe the temperature through the custom converter instead of displaying raw Kelvin',
+        },
+      ],
+      hints: [
+        'Import KelvinToCelsiusPipe from its file and add it to the imports array',
+        'Change {{ engineTemp }}K to {{ engineTemp | kelvinToCelsius }} in the template',
+      ],
+      successMessage: 'Custom pipe deployed! Temperature readings now display in Celsius across the station.',
+      explanation:
+        'Custom pipes are used in templates with the same | syntax as built-in pipes. Import the pipe ' +
+        "class and add it to the component's imports array. You can pass parameters with colons, just " +
+        'like built-in pipes.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Custom sensors deployed!',
-    minStepsViewed: 4,
+    minStepsViewed: 6,
   },
 };

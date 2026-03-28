@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_21_CONTENT: StoryMissionContent = {
   chapterId: 21,
@@ -100,9 +100,123 @@ export const CHAPTER_21_CONTENT: StoryMissionContent = {
         'AsyncPipe automatically unsubscribes on component destruction',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Fine-tune the sensor formats! Use pipe parameters to display the mission date in ' +
+        "'fullDate' format and the hull pressure with exactly two decimal places.",
+      starterCode: [
+        "import { Component } from '@angular/core';",
+        "import { DatePipe, DecimalPipe } from '@angular/common';",
+        '',
+        '@Component({',
+        "  selector: 'app-formatted-readout',",
+        '  imports: [DatePipe, DecimalPipe],',
+        '  template: `',
+        '    <!-- TODO: Add a format argument to the pipe below -->',
+        '    <p>Mission Date: {{ missionDate | date }}</p>',
+        '    <!-- TODO: Add a precision argument to the pipe below -->',
+        '    <p>Hull Pressure: {{ pressure | number }} kPa</p>',
+        '  `,',
+        '})',
+        'export class FormattedReadoutComponent {',
+        '  missionDate = new Date();',
+        '  pressure = 101.325;',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: "date:'fullDate'",
+          errorMessage: "Pass the 'fullDate' format parameter to the date pipe",
+        },
+        {
+          type: 'pattern',
+          pattern: "number:'[^']*2-2",
+          errorMessage: 'Set the decimal pipe format to show exactly 2 fraction digits',
+        },
+        {
+          type: 'notContains',
+          value: '{{ missionDate | date }}',
+          errorMessage: 'Add a format parameter to the date pipe',
+        },
+        {
+          type: 'notContains',
+          value: '{{ pressure | number }}',
+          errorMessage: 'Add a format parameter to the number pipe',
+        },
+      ],
+      hints: [
+        "Add a colon after the pipe name followed by the format string: | date:'fullDate'",
+        "For DecimalPipe, use | number:'1.2-2' where 1 = min integer digits, 2-2 = min/max fraction digits",
+      ],
+      successMessage: 'Readouts calibrated! Pipe parameters give you precise control over formatting.',
+      explanation:
+        "Pipe parameters follow the pipe name after a colon. DatePipe accepts format strings like " +
+        "'fullDate', 'short', or custom patterns. DecimalPipe's format string controls integer and " +
+        "fraction digit counts (e.g., '1.2-2' means at least 1 integer digit, exactly 2 fraction digits).",
+    } satisfies CodeChallengeStep,
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Wire up the real-time telemetry feed! Use AsyncPipe to subscribe to an Observable ' +
+        'temperature stream and display the latest reading in the template.',
+      starterCode: [
+        "import { Component } from '@angular/core';",
+        "import { Observable, of } from 'rxjs';",
+        '',
+        '// TODO: Import the pipe that subscribes to Observables',
+        '',
+        '@Component({',
+        "  selector: 'app-telemetry-panel',",
+        '  // TODO: Register the Observable subscriber pipe',
+        '  imports: [],',
+        '  template: `',
+        '    <p>Live Temp: {{ temperature$ }}K</p>',
+        '  `,',
+        '})',
+        'export class TelemetryPanelComponent {',
+        '  temperature$: Observable<number> = of(295.3);',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: 'AsyncPipe',
+          errorMessage: 'Import AsyncPipe from @angular/common to subscribe to Observables in templates',
+        },
+        {
+          type: 'contains',
+          value: '| async',
+          errorMessage: 'Apply the async pipe to temperature$ in the template',
+        },
+        {
+          type: 'pattern',
+          pattern: 'imports:.*AsyncPipe',
+          flags: 's',
+          errorMessage: "Add AsyncPipe to the component's imports array",
+        },
+        {
+          type: 'notContains',
+          value: '{{ temperature$ }}K',
+          errorMessage: 'Pipe the Observable through async before displaying it',
+        },
+      ],
+      hints: [
+        "Import AsyncPipe from '@angular/common' and add it to the imports array",
+        'Change {{ temperature$ }} to {{ temperature$ | async }} so Angular subscribes for you',
+      ],
+      successMessage: 'Telemetry feed is live! AsyncPipe handles Observable subscriptions automatically.',
+      explanation:
+        'AsyncPipe subscribes to an Observable and renders the latest emitted value. It automatically ' +
+        'unsubscribes when the component is destroyed, preventing memory leaks. Import it and add it ' +
+        "to the component's imports array.",
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Advanced formatting online!',
-    minStepsViewed: 4,
+    minStepsViewed: 6,
   },
 };
