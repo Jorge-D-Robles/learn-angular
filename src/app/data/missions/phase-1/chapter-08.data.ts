@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_08_CONTENT: StoryMissionContent = {
   chapterId: 8,
@@ -94,9 +94,66 @@ export const CHAPTER_08_CONTENT: StoryMissionContent = {
         'Replaces the older @Output() + EventEmitter pattern — output() is simpler and type-safe',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Sensor modules need to send distress signals to their parent. Write a component with an output ' +
+        'that emits an alert message when the crew triggers it.',
+      starterCode: [
+        "import { Component, output } from '@angular/core';",
+        '',
+        '@Component({',
+        "  selector: 'app-alert-sensor',",
+        '  template: `',
+        '    <button (click)="sendAlert()">Send Alert</button>',
+        '  `,',
+        '})',
+        'export class AlertSensorComponent {',
+        "  // TODO: Declare 'alertTriggered' as a string typed emitter",
+        '  // TODO: Write sendAlert() method that emits a message string',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'pattern',
+          pattern: 'output<',
+          errorMessage: 'Declare a typed output using output<T>()',
+        },
+        {
+          type: 'contains',
+          value: '.emit(',
+          errorMessage: 'Call .emit() on your output to send data to the parent',
+        },
+        {
+          type: 'pattern',
+          pattern: 'alertTriggered\\s*=\\s*output',
+          errorMessage: 'Declare the output using the variable name alertTriggered',
+        },
+        {
+          type: 'notContains',
+          value: '@Output',
+          errorMessage: 'Use the modern output() function instead of the @Output() decorator',
+        },
+        {
+          type: 'notContains',
+          value: 'EventEmitter',
+          errorMessage: 'Use output() instead of the older EventEmitter pattern',
+        },
+      ],
+      hints: [
+        'output<string>() creates a typed output that emits string values',
+        'Call this.outputName.emit(\'value\') inside a method to send data to the parent',
+      ],
+      successMessage:
+        'Alert sensor is transmitting! Distress signals now flow from child modules to their parents.',
+      explanation:
+        'Signal-based outputs use output<T>() to declare typed emitters. Call .emit(value) to send data ' +
+        'upward to the parent, which listens with (outputName)="handler($event)".',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Distress signals are transmitting to parent modules!',
-    minStepsViewed: 4,
+    minStepsViewed: 5,
   },
 };

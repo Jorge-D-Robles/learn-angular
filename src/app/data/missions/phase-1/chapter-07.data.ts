@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_07_CONTENT: StoryMissionContent = {
   chapterId: 7,
@@ -85,9 +85,68 @@ export const CHAPTER_07_CONTENT: StoryMissionContent = {
         'Replaces the older @Input() decorator — signal-based inputs are the recommended approach',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Station modules need standardized status displays. Write a component that accepts data from its ' +
+        'parent using input() for optional props and input.required() for mandatory ones.',
+      starterCode: [
+        "import { Component, input } from '@angular/core';",
+        '',
+        '@Component({',
+        "  selector: 'app-status-display',",
+        '  template: `',
+        '    <h3>{{ title() }}</h3>',
+        '    <p>Level: {{ level() }}%</p>',
+        '  `,',
+        '})',
+        'export class StatusDisplayComponent {',
+        "  // TODO: Declare 'title' as a required string property",
+        "  // TODO: Declare 'level' as an optional number property with a default of 100",
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'pattern',
+          pattern: 'input\\.required<',
+          errorMessage: 'Use input.required<T>() for the mandatory title input',
+        },
+        {
+          type: 'pattern',
+          pattern: 'input\\s*(?:<[^>]+>)?\\s*\\(\\d+',
+          errorMessage:
+            'Use input(defaultValue) for the optional level input with a numeric default',
+        },
+        {
+          type: 'pattern',
+          pattern: '=\\s*input',
+          errorMessage: 'Assign input() or input.required() to a class property',
+        },
+        {
+          type: 'notContains',
+          value: '@Input',
+          errorMessage: 'Use the modern input() function instead of the @Input() decorator',
+        },
+        {
+          type: 'notContains',
+          value: '// TODO',
+          errorMessage: 'Complete all TODO comments',
+        },
+      ],
+      hints: [
+        'input.required<string>() declares a mandatory input that parents must provide',
+        'input(100) declares an optional input that defaults to 100 when the parent omits it',
+      ],
+      successMessage:
+        'Status display is accepting data from parent modules! Signal-based inputs make components reusable.',
+      explanation:
+        'Signal-based inputs use input.required<T>() for mandatory props and input(default) for optional ' +
+        'ones. Both are read-only signals — call with () in the template to read the value.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Standardized module cards are receiving data!',
-    minStepsViewed: 4,
+    minStepsViewed: 5,
   },
 };

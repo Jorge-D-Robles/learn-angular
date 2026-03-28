@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_09_CONTENT: StoryMissionContent = {
   chapterId: 9,
@@ -69,9 +69,59 @@ export const CHAPTER_09_CONTENT: StoryMissionContent = {
         'Reduces initial bundle size — deferred components are lazy-loaded automatically',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'The station dashboard is overloaded. Write deferrable views that delay rendering heavy modules ' +
+        'until they are needed, with placeholder and loading states.',
+      starterCode: [
+        '<!-- Available components: <app-star-chart />, <app-spinner /> -->',
+        '',
+        '<!-- TODO: Wrap the star chart in a deferred view that loads lazily -->',
+        '<!-- Include a placeholder and loading state -->',
+        '<app-star-chart />',
+      ].join('\n'),
+      language: 'html',
+      validationRules: [
+        {
+          type: 'contains',
+          value: '@defer',
+          errorMessage: 'Use a deferrable view to delay rendering the component',
+        },
+        {
+          type: 'pattern',
+          pattern: 'on\\s+(viewport|interaction|idle|timer|hover)',
+          errorMessage: 'Add a trigger to the deferred view (viewport, interaction, idle, timer, or hover)',
+        },
+        {
+          type: 'contains',
+          value: '@placeholder',
+          errorMessage: 'Add a placeholder block that shows before the trigger fires',
+        },
+        {
+          type: 'pattern',
+          pattern: '@(loading|error)',
+          errorMessage: 'Add a loading or error companion block for loading states',
+        },
+        {
+          type: 'notContains',
+          value: '*ngIf',
+          errorMessage: 'Use @defer for lazy rendering instead of *ngIf',
+        },
+      ],
+      hints: [
+        'Wrap content in @defer (on viewport) { ... } to delay rendering until scrolled into view',
+        'Add @placeholder { ... } and @loading { ... } blocks after the main content',
+      ],
+      successMessage:
+        'Heavy modules now load on demand! The dashboard conserves power by deferring rendering.',
+      explanation:
+        '@defer delays rendering until a trigger fires (viewport, interaction, idle, timer). Companion ' +
+        'blocks @placeholder, @loading, and @error provide UI for each loading state.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Heavy modules now load on demand!',
-    minStepsViewed: 3,
+    minStepsViewed: 4,
   },
 };

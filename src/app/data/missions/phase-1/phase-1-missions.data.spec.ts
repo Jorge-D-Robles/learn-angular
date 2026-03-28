@@ -168,10 +168,10 @@ describe('Cross-reference validation', () => {
     expect(missionIds).toEqual(phase1Ids);
   });
 
-  it('should have total step count between 30 and 50', () => {
+  it('should have total step count between 30 and 55', () => {
     const totalSteps = PHASE_1_MISSIONS.reduce((sum, m) => sum + m.steps.length, 0);
     expect(totalSteps).toBeGreaterThanOrEqual(30);
-    expect(totalSteps).toBeLessThanOrEqual(50);
+    expect(totalSteps).toBeLessThanOrEqual(55);
   });
 });
 
@@ -188,8 +188,8 @@ describe('Code-challenge validation', () => {
     }
   });
 
-  it('should have code-challenge steps for chapters 1-5', () => {
-    for (let ch = 1; ch <= 5; ch++) {
+  it('should have code-challenge steps for chapters 1-10', () => {
+    for (let ch = 1; ch <= 10; ch++) {
       const hasCh = challengeSteps.some(c => c.chapterId === ch);
       expect(hasCh, `Chapter ${ch} should have a code-challenge step`).toBe(true);
     }
@@ -245,6 +245,30 @@ describe('Code-challenge validation', () => {
            (r.type === 'pattern' && r.pattern.includes('@Component')),
     );
     expect(hasComponentRule).toBe(true);
+  });
+
+  it('should have code-challenge for Ch 6 that validates event binding', () => {
+    const ch6Challenge = challengeSteps.find(c => c.chapterId === 6)!;
+    const hasClickRule = ch6Challenge.step.validationRules.some(
+      r => r.type === 'pattern' && r.pattern.includes('click'),
+    );
+    const hasKeyupRule = ch6Challenge.step.validationRules.some(
+      r => r.type === 'pattern' && r.pattern.includes('keyup'),
+    );
+    expect(hasClickRule).toBe(true);
+    expect(hasKeyupRule).toBe(true);
+  });
+
+  it('should have code-challenge for Ch 8 that validates output() pattern', () => {
+    const ch8Challenge = challengeSteps.find(c => c.chapterId === 8)!;
+    const hasOutputRule = ch8Challenge.step.validationRules.some(
+      r => r.type === 'pattern' && r.pattern.includes('output<'),
+    );
+    const hasEmitRule = ch8Challenge.step.validationRules.some(
+      r => r.type === 'contains' && r.value === '.emit(',
+    );
+    expect(hasOutputRule).toBe(true);
+    expect(hasEmitRule).toBe(true);
   });
 
   it('should have starterCode that does NOT pass its own validationRules', () => {

@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_06_CONTENT: StoryMissionContent = {
   chapterId: 6,
@@ -97,9 +97,61 @@ export const CHAPTER_06_CONTENT: StoryMissionContent = {
         'Keep event handlers simple — delegate complex logic to service methods',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'The station control panel is unresponsive. Write event bindings so a button click activates ' +
+        'the module and a keyup handler captures crew commands.',
+      starterCode: [
+        '<!-- Available variables/methods: onActivate() (method), onCommand($event) (method) -->',
+        '',
+        '<!-- TODO: Add a click handler to the button that calls onActivate() -->',
+        '<button>Activate Module</button>',
+        '',
+        '<!-- TODO: Add a keyup handler to the input that calls onCommand with the event -->',
+        '<input placeholder="Enter command..." />',
+      ].join('\n'),
+      language: 'html',
+      validationRules: [
+        {
+          type: 'pattern',
+          pattern: '\\(click\\)\\s*=',
+          errorMessage: 'Use (click) event binding on the button',
+        },
+        {
+          type: 'pattern',
+          pattern: '\\(keyup\\)\\s*=',
+          errorMessage: 'Use (keyup) event binding on the input',
+        },
+        {
+          type: 'contains',
+          value: '$event',
+          errorMessage: 'Pass $event to the keyup handler to access the keyboard event',
+        },
+        {
+          type: 'notContains',
+          value: 'onclick',
+          errorMessage: 'Use Angular (click) event binding instead of the HTML onclick attribute',
+        },
+        {
+          type: 'notContains',
+          value: 'addEventListener',
+          errorMessage: 'Use Angular event binding instead of addEventListener',
+        },
+      ],
+      hints: [
+        'Wrap the event name in parentheses: (click)="methodName()"',
+        'Pass $event to handlers that need the native event object',
+      ],
+      successMessage:
+        'Control panel is live! Buttons and inputs now respond to crew actions via Angular event bindings.',
+      explanation:
+        'Angular event binding uses parentheses to listen to DOM events. (click)="handler()" calls a method ' +
+        'on click. Pass $event to access the native event object for events like keyup.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Crew can now interact with station controls!',
-    minStepsViewed: 4,
+    minStepsViewed: 5,
   },
 };
