@@ -1,37 +1,23 @@
 import {
   Component,
   computed,
-  ElementRef,
+  effect,
   input,
   linkedSignal,
   output,
-  viewChild,
 } from '@angular/core';
-import { tokenize, Token } from './syntax-highlight';
-
-interface CodeLine {
-  readonly tokens: Token[];
-  readonly highlighted: boolean;
-}
+import { FormsModule } from '@angular/forms';
+import { EditorComponent } from 'ngx-monaco-editor-v2';
 
 @Component({
   selector: 'nx-code-editor',
+  imports: [FormsModule, EditorComponent],
   template: `
-    <div class="code-editor">
-      <pre class="code-display" #codeDisplay><code>@for (line of lines(); track $index) {<span class="code-line" [class.code-line--highlighted]="line.highlighted">@for (token of line.tokens; track $index) {<span [class]="'token-' + token.type">{{ token.text }}</span>}
-</span>}
-</code></pre>
-      @if (!readOnly()) {
-        <textarea
-          class="code-textarea"
-          [value]="editableCode()"
-          (input)="onInput($event)"
-          (scroll)="onScroll($event)"
-          spellcheck="false"
-          autocomplete="off"
-        ></textarea>
-      }
-    </div>
+    <ngx-monaco-editor
+      [options]="editorOptions()"
+      [ngModel]="editableCode()"
+      (ngModelChange)="onCodeChange($event)"
+      (onInit)="onEditorInit($event)" />
   `,
   styleUrl: './code-editor.scss',
 })
@@ -43,57 +29,68 @@ export class CodeEditorComponent {
 
   readonly codeChange = output<string>();
 
-  readonly preRef = viewChild<ElementRef>('codeDisplay');
-
   /** Internal editable code — syncs from input, updated locally on typing. */
   readonly editableCode = linkedSignal(() => this.code());
 
-  readonly lines = computed<CodeLine[]>(() => {
-    const allTokens = tokenize(this.editableCode(), this.language());
-    const highlightSet = new Set(this.highlightLines());
+  private editorInstance: import('monaco-editor').editor.IStandaloneCodeEditor | null = null;
+  private decorationCollection: import('monaco-editor').editor.IEditorDecorationsCollection | null = null;
 
-    // Split tokens into lines by splitting on '\n' within token text
-    const result: CodeLine[] = [];
-    let currentLineTokens: Token[] = [];
+  readonly editorOptions = computed(() => ({
+    theme: 'vs-dark',
+    language: this.language(),
+    readOnly: this.readOnly(),
+    automaticLayout: true,
+    minimap: { enabled: false },
+    scrollBeyondLastLine: false,
+    fontSize: 14,
+    tabSize: 2,
+    lineNumbersMinChars: 3,
+    renderLineHighlight: 'none' as const,
+    overviewRulerLanes: 0,
+    scrollbar: {
+      vertical: 'auto' as const,
+      horizontal: 'auto' as const,
+    },
+  }));
 
-    for (const token of allTokens) {
-      const parts = token.text.split('\n');
-      for (let i = 0; i < parts.length; i++) {
-        if (i > 0) {
-          // Newline boundary: push current line and start a new one
-          result.push({
-            tokens: currentLineTokens,
-            highlighted: highlightSet.has(result.length + 1),
-          });
-          currentLineTokens = [];
-        }
-        if (parts[i] !== '') {
-          currentLineTokens.push({ text: parts[i], type: token.type });
-        }
-      }
-    }
-
-    // Push the final line
-    result.push({
-      tokens: currentLineTokens,
-      highlighted: highlightSet.has(result.length + 1),
+  constructor() {
+    effect(() => {
+      const lines = this.highlightLines();
+      this.applyHighlightLines(lines);
     });
-
-    return result;
-  });
-
-  onInput(event: Event): void {
-    const textarea = event.target as HTMLTextAreaElement;
-    this.editableCode.set(textarea.value);
-    this.codeChange.emit(textarea.value);
   }
 
-  onScroll(event: Event): void {
-    const textarea = event.target as HTMLTextAreaElement;
-    const pre = this.preRef()?.nativeElement as HTMLElement | undefined;
-    if (pre) {
-      pre.scrollTop = textarea.scrollTop;
-      pre.scrollLeft = textarea.scrollLeft;
+  onCodeChange(value: string): void {
+    this.editableCode.set(value);
+    this.codeChange.emit(value);
+  }
+
+  onEditorInit(editor: import('monaco-editor').editor.IStandaloneCodeEditor): void {
+    this.editorInstance = editor;
+    this.applyHighlightLines(this.highlightLines());
+  }
+
+  private applyHighlightLines(lines: number[]): void {
+    if (!this.editorInstance) return;
+
+    const decorations = lines.map(line => ({
+      range: {
+        startLineNumber: line,
+        startColumn: 1,
+        endLineNumber: line,
+        endColumn: 1,
+      },
+      options: {
+        isWholeLine: true,
+        className: 'nx-highlight-line',
+      },
+    }));
+
+    if (this.decorationCollection) {
+      this.decorationCollection.set(decorations);
+    } else {
+      this.decorationCollection =
+        this.editorInstance.createDecorationsCollection(decorations);
     }
   }
 }

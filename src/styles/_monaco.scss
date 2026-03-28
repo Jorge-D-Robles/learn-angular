@@ -1,0 +1,7 @@
+// Monaco Editor — global styles for line decorations
+// These must be global because Monaco renders its own DOM outside Angular components.
+
+.nx-highlight-line {
+  background-color: rgba(59, 130, 246, 0.15);
+  border-left: 2px solid var(--nx-color-reactor-blue, #3b82f6);
+}

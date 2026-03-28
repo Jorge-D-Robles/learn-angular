@@ -1,5 +1,6 @@
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { provideMonacoEditor } from 'ngx-monaco-editor-v2';
 import { TerminalHackComponent } from './terminal-hack.component';
 import { TerminalHackCodePanelComponent } from './code-panel/code-panel';
 import { TerminalHackLivePreviewComponent } from './live-preview/live-preview';
@@ -94,6 +95,7 @@ describe('TerminalHackComponent', () => {
     TestBed.configureTestingModule({
       imports: [TerminalHackComponent],
       providers: [
+        provideMonacoEditor(),
         { provide: MINIGAME_ENGINE, useValue: engine },
       ],
     });
@@ -125,6 +127,7 @@ describe('TerminalHackComponent', () => {
     it('should create successfully without engine (inert mode)', () => {
       TestBed.configureTestingModule({
         imports: [TerminalHackComponent],
+        providers: [provideMonacoEditor()],
       });
       const inertFixture = TestBed.createComponent(TerminalHackComponent);
       inertFixture.detectChanges();
@@ -145,6 +148,7 @@ describe('TerminalHackComponent', () => {
     it('should not render code panel when targetFormSpec is null (inert mode)', () => {
       TestBed.configureTestingModule({
         imports: [TerminalHackComponent],
+        providers: [provideMonacoEditor()],
       });
       const inertFixture = TestBed.createComponent(TerminalHackComponent);
       inertFixture.detectChanges();
@@ -168,23 +172,15 @@ describe('TerminalHackComponent', () => {
       expect(codePanelInstance.availableTools()).toEqual(engine.availableElements());
     });
 
-    it('should forward codeChange output to playerCode signal', async () => {
+    it('should render ngx-monaco-editor inside code panel', async () => {
       await asyncSetup();
-      const textarea = fixture.nativeElement.querySelector('nx-code-editor textarea') as HTMLTextAreaElement;
-      expect(textarea).toBeTruthy();
-
-      textarea.value = 'const form = new FormGroup({});';
-      textarea.dispatchEvent(new Event('input'));
-      fixture.detectChanges();
-
-      expect(component.playerCode()).toBe('const form = new FormGroup({});');
+      const monacoEditor = fixture.nativeElement.querySelector('ngx-monaco-editor');
+      expect(monacoEditor).toBeTruthy();
     });
 
-    it('should start with empty initialCode in code editor', async () => {
+    it('should start with empty playerCode', async () => {
       await asyncSetup();
-      const textarea = fixture.nativeElement.querySelector('nx-code-editor textarea') as HTMLTextAreaElement;
-      expect(textarea).toBeTruthy();
-      expect(textarea.value).toBe('');
+      expect(component.playerCode()).toBe('');
     });
   });
 
@@ -429,6 +425,7 @@ describe('TerminalHackComponent', () => {
       // Engine with no level data means null target spec initially
       TestBed.configureTestingModule({
         imports: [TerminalHackComponent],
+        providers: [provideMonacoEditor()],
       });
       const inertFixture = TestBed.createComponent(TerminalHackComponent);
       inertFixture.detectChanges();
@@ -453,6 +450,7 @@ describe('TerminalHackComponent', () => {
     it('should not crash when engine is not provided (inert mode)', () => {
       TestBed.configureTestingModule({
         imports: [TerminalHackComponent],
+        providers: [provideMonacoEditor()],
       });
       const inertFixture = TestBed.createComponent(TerminalHackComponent);
       inertFixture.detectChanges();
@@ -501,6 +499,7 @@ describe('TerminalHackComponent', () => {
     it('should not render live preview when targetFormSpec is null (inert mode)', () => {
       TestBed.configureTestingModule({
         imports: [TerminalHackComponent],
+        providers: [provideMonacoEditor()],
       });
       const inertFixture = TestBed.createComponent(TerminalHackComponent);
       inertFixture.detectChanges();

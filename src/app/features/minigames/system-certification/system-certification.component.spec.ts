@@ -1,4 +1,5 @@
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
+import { provideMonacoEditor } from 'ngx-monaco-editor-v2';
 import { SystemCertificationComponent } from './system-certification.component';
 import { SystemCertificationEngine } from './system-certification.engine';
 import { MINIGAME_ENGINE } from '../../../core/minigame/minigame-engine.tokens';
@@ -91,6 +92,7 @@ describe('SystemCertificationComponent', () => {
     TestBed.configureTestingModule({
       imports: [SystemCertificationComponent],
       providers: [
+        provideMonacoEditor(),
         { provide: MINIGAME_ENGINE, useValue: engine },
       ],
     });
@@ -116,6 +118,7 @@ describe('SystemCertificationComponent', () => {
     it('should create successfully without engine token (inert mode)', () => {
       TestBed.configureTestingModule({
         imports: [SystemCertificationComponent],
+        providers: [provideMonacoEditor()],
       });
       const inertFixture = TestBed.createComponent(SystemCertificationComponent);
       inertFixture.detectChanges();
@@ -175,6 +178,7 @@ describe('SystemCertificationComponent', () => {
     it('should return empty string when no source code', () => {
       TestBed.configureTestingModule({
         imports: [SystemCertificationComponent],
+        providers: [provideMonacoEditor()],
       });
       const inertFixture = TestBed.createComponent(SystemCertificationComponent);
       inertFixture.detectChanges();
@@ -196,6 +200,7 @@ describe('SystemCertificationComponent', () => {
     it('should not throw when updating test code without engine', () => {
       TestBed.configureTestingModule({
         imports: [SystemCertificationComponent],
+        providers: [provideMonacoEditor()],
       });
       const inertFixture = TestBed.createComponent(SystemCertificationComponent);
       inertFixture.detectChanges();
@@ -255,6 +260,7 @@ describe('SystemCertificationComponent', () => {
     it('should not throw when running tests without engine', () => {
       TestBed.configureTestingModule({
         imports: [SystemCertificationComponent],
+        providers: [provideMonacoEditor()],
       });
       const inertFixture = TestBed.createComponent(SystemCertificationComponent);
       inertFixture.detectChanges();
@@ -344,6 +350,7 @@ describe('SystemCertificationComponent', () => {
     it('should not throw when requesting hint without engine', () => {
       TestBed.configureTestingModule({
         imports: [SystemCertificationComponent],
+        providers: [provideMonacoEditor()],
       });
       const inertFixture = TestBed.createComponent(SystemCertificationComponent);
       inertFixture.detectChanges();
@@ -433,6 +440,7 @@ describe('SystemCertificationComponent', () => {
     it('should handle no engine gracefully for all actions', () => {
       TestBed.configureTestingModule({
         imports: [SystemCertificationComponent],
+        providers: [provideMonacoEditor()],
       });
       const inertFixture = TestBed.createComponent(SystemCertificationComponent);
       inertFixture.detectChanges();

@@ -10,6 +10,7 @@ import {
   LUCIDE_ICONS,
 } from 'lucide-angular';
 
+import { provideMonacoEditor } from 'ngx-monaco-editor-v2';
 import { routes } from './app.routes';
 import { GlobalErrorHandler } from './core/error';
 import { NexusTitleStrategy } from './core';
@@ -96,5 +97,6 @@ export const appConfig: ApplicationConfig = {
     provideMinigame('deep-space-radio', DeepSpaceRadioComponent, () => new DeepSpaceRadioEngine()),
     provideMinigame('system-certification', SystemCertificationComponent, () => new SystemCertificationEngine()),
     provideMinigame('blast-doors', BlastDoorsComponent, () => new BlastDoorsEngine()),
+    provideMonacoEditor(),
   ],
 };

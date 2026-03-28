@@ -1,5 +1,6 @@
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { provideMonacoEditor } from 'ngx-monaco-editor-v2';
 import { CorridorRunnerComponent } from './corridor-runner.component';
 import { CorridorRunnerEngine } from './corridor-runner.engine';
 import { CorridorRunnerMapComponent } from './map/map';
@@ -93,6 +94,7 @@ describe('CorridorRunnerComponent', () => {
     TestBed.configureTestingModule({
       imports: [CorridorRunnerComponent],
       providers: [
+        provideMonacoEditor(),
         { provide: MINIGAME_ENGINE, useValue: engine },
       ],
     });
@@ -118,6 +120,7 @@ describe('CorridorRunnerComponent', () => {
     it('should create successfully without engine (inert mode)', () => {
       TestBed.configureTestingModule({
         imports: [CorridorRunnerComponent],
+        providers: [provideMonacoEditor()],
       });
       const inertFixture = TestBed.createComponent(CorridorRunnerComponent);
       inertFixture.detectChanges();

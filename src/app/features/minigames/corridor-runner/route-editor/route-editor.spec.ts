@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { provideMonacoEditor } from 'ngx-monaco-editor-v2';
 import { CorridorRunnerRouteEditorComponent } from './route-editor';
 import type { RouteEntry } from '../corridor-runner.types';
 
@@ -36,6 +38,7 @@ describe('CorridorRunnerRouteEditorComponent', () => {
   async function setup(overrides: Partial<TestHost> = {}): Promise<void> {
     await TestBed.configureTestingModule({
       imports: [TestHost],
+      providers: [provideMonacoEditor()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestHost);
@@ -71,8 +74,9 @@ describe('CorridorRunnerRouteEditorComponent', () => {
 
   it('should render empty editor when initialConfig is empty', async () => {
     await setup({ initialConfig: [] });
-    const textarea = element.querySelector('textarea') as HTMLTextAreaElement;
-    expect(textarea.value).toBe('');
+    const editorDebug = fixture.debugElement.query(By.directive(CorridorRunnerRouteEditorComponent));
+    const editorChild = editorDebug.componentInstance as CorridorRunnerRouteEditorComponent;
+    expect(editorChild.routeConfigText()).toBe('');
   });
 
   // --- 4. Initial config seeding ---
@@ -81,8 +85,9 @@ describe('CorridorRunnerRouteEditorComponent', () => {
     const config: RouteEntry[] = [{ path: 'engineering', component: 'EngineeringBay' }];
     await setup({ initialConfig: config });
 
-    const textarea = element.querySelector('textarea') as HTMLTextAreaElement;
-    expect(textarea.value).toBe(JSON.stringify(config, null, 2));
+    const editorDebug = fixture.debugElement.query(By.directive(CorridorRunnerRouteEditorComponent));
+    const editorChild = editorDebug.componentInstance as CorridorRunnerRouteEditorComponent;
+    expect(editorChild.routeConfigText()).toBe(JSON.stringify(config, null, 2));
   });
 
   // --- 5. Config change -- emit configChanged on valid JSON ---
@@ -261,9 +266,9 @@ describe('CorridorRunnerRouteEditorComponent', () => {
   // --- Helper ---
 
   function simulateCodeChange(text: string): void {
-    const textarea = element.querySelector('textarea') as HTMLTextAreaElement;
-    textarea.value = text;
-    textarea.dispatchEvent(new Event('input'));
+    const editorDebug = fixture.debugElement.query(By.directive(CorridorRunnerRouteEditorComponent));
+    const editorChild = editorDebug.componentInstance as CorridorRunnerRouteEditorComponent;
+    editorChild.onCodeChange(text);
     fixture.detectChanges();
   }
 });

@@ -13,6 +13,7 @@
 
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { provideMonacoEditor } from 'ngx-monaco-editor-v2';
 import { CorridorRunnerComponent, CREW_STEP_MS } from './corridor-runner.component';
 import { CorridorRunnerEngine } from './corridor-runner.engine';
 import { CorridorRunnerMapComponent } from './map/map';
@@ -88,6 +89,7 @@ function setupFixture(levelData?: CorridorRunnerLevelData): {
   TestBed.configureTestingModule({
     imports: [CorridorRunnerComponent],
     providers: [
+      provideMonacoEditor(),
       { provide: MINIGAME_ENGINE, useValue: engine },
     ],
   });

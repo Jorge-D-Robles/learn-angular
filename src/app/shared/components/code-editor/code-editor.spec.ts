@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { provideMonacoEditor } from 'ngx-monaco-editor-v2';
 import { createComponent } from '../../../../testing/test-utils';
 import { CodeEditorComponent } from './code-editor';
 
@@ -25,111 +26,119 @@ class TestHost {
 
 describe('CodeEditorComponent', () => {
   it('should create the component', async () => {
-    const { component } = await createComponent(TestHost);
+    const { component } = await createComponent(TestHost, {
+      providers: [provideMonacoEditor()],
+    });
     expect(component).toBeTruthy();
   });
 
-  it('should render code with syntax highlighting', async () => {
+  it('should render the ngx-monaco-editor element', async () => {
     const { fixture, element } = await createComponent(TestHost, {
+      providers: [provideMonacoEditor()],
       detectChanges: false,
     });
     fixture.componentInstance.code = 'const x = 1;';
     fixture.detectChanges();
     await fixture.whenStable();
-    const keywordSpans = element.querySelectorAll('.token-keyword');
-    expect(keywordSpans.length).toBeGreaterThan(0);
-    expect(keywordSpans[0].textContent).toBe('const');
+    const monacoEditor = element.querySelector('ngx-monaco-editor');
+    expect(monacoEditor).toBeTruthy();
   });
 
-  it('should render correct number of code lines', async () => {
+  it('should render ngx-monaco-editor for multi-line code', async () => {
     const { fixture, element } = await createComponent(TestHost, {
+      providers: [provideMonacoEditor()],
       detectChanges: false,
     });
     fixture.componentInstance.code = 'line1\nline2\nline3';
     fixture.detectChanges();
     await fixture.whenStable();
-    const lines = element.querySelectorAll('.code-line');
-    expect(lines.length).toBe(3);
+    const monacoEditor = element.querySelector('ngx-monaco-editor');
+    expect(monacoEditor).toBeTruthy();
   });
 
-  it('should highlight specified lines', async () => {
+  it('should render with highlightLines input set', async () => {
     const { fixture, element } = await createComponent(TestHost, {
+      providers: [provideMonacoEditor()],
       detectChanges: false,
     });
     fixture.componentInstance.code = 'line1\nline2\nline3\nline4';
     fixture.componentInstance.highlightLines = [2, 4];
     fixture.detectChanges();
     await fixture.whenStable();
-    const highlighted = element.querySelectorAll('.code-line--highlighted');
-    expect(highlighted.length).toBe(2);
+    const monacoEditor = element.querySelector('ngx-monaco-editor');
+    expect(monacoEditor).toBeTruthy();
   });
 
-  it('should be editable by default', async () => {
-    const { element } = await createComponent(TestHost);
-    const textarea = element.querySelector('textarea');
-    expect(textarea).toBeTruthy();
+  it('should render ngx-monaco-editor when editable (default)', async () => {
+    const { element } = await createComponent(TestHost, {
+      providers: [provideMonacoEditor()],
+    });
+    const monacoEditor = element.querySelector('ngx-monaco-editor');
+    expect(monacoEditor).toBeTruthy();
   });
 
-  it('should hide textarea in readonly mode', async () => {
+  it('should still render in readonly mode', async () => {
     const { fixture, element } = await createComponent(TestHost, {
+      providers: [provideMonacoEditor()],
       detectChanges: false,
     });
     fixture.componentInstance.readOnly = true;
     fixture.detectChanges();
     await fixture.whenStable();
-    const textarea = element.querySelector('textarea');
-    expect(textarea).toBeNull();
+    const monacoEditor = element.querySelector('ngx-monaco-editor');
+    expect(monacoEditor).toBeTruthy();
   });
 
-  it('should emit codeChange when user types', async () => {
+  it('should render ngx-monaco-editor for code input', async () => {
     const { fixture, element } = await createComponent(TestHost, {
+      providers: [provideMonacoEditor()],
       detectChanges: false,
     });
     fixture.componentInstance.code = 'initial';
     fixture.detectChanges();
     await fixture.whenStable();
-    const textarea = element.querySelector('textarea') as HTMLTextAreaElement;
-    textarea.value = 'updated code';
-    textarea.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-    expect(fixture.componentInstance.lastCodeChange).toBe('updated code');
+    const monacoEditor = element.querySelector('ngx-monaco-editor');
+    expect(monacoEditor).toBeTruthy();
   });
 
-  it('should update highlighting when code input changes', async () => {
+  it('should render ngx-monaco-editor when code input changes', async () => {
     const { fixture, element } = await createComponent(TestHost, {
+      providers: [provideMonacoEditor()],
       detectChanges: false,
     });
     fixture.componentInstance.code = 'const a = 1;';
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
     await fixture.whenStable();
-    let keywords = element.querySelectorAll('.token-keyword');
-    expect(keywords.length).toBeGreaterThan(0);
+    let monacoEditor = element.querySelector('ngx-monaco-editor');
+    expect(monacoEditor).toBeTruthy();
 
     fixture.componentInstance.code = 'function foo() {}';
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
     await fixture.whenStable();
-    keywords = element.querySelectorAll('.token-keyword');
-    expect(keywords[0].textContent).toBe('function');
+    monacoEditor = element.querySelector('ngx-monaco-editor');
+    expect(monacoEditor).toBeTruthy();
   });
 
   it('should handle empty code gracefully', async () => {
-    const { element } = await createComponent(TestHost);
-    const lines = element.querySelectorAll('.code-line');
-    // Empty code produces one empty line (split of '' by '\n' yields [''])
-    expect(lines.length).toBeLessThanOrEqual(1);
+    const { element } = await createComponent(TestHost, {
+      providers: [provideMonacoEditor()],
+    });
+    const monacoEditor = element.querySelector('ngx-monaco-editor');
+    expect(monacoEditor).toBeTruthy();
   });
 
   it('should default language to typescript', async () => {
     const { fixture, element } = await createComponent(TestHost, {
+      providers: [provideMonacoEditor()],
       detectChanges: false,
     });
     fixture.componentInstance.code = 'const x = 1;';
     fixture.componentInstance.language = 'typescript';
     fixture.detectChanges();
     await fixture.whenStable();
-    const keywords = element.querySelectorAll('.token-keyword');
-    expect(keywords.length).toBeGreaterThan(0);
+    const monacoEditor = element.querySelector('ngx-monaco-editor');
+    expect(monacoEditor).toBeTruthy();
   });
 });

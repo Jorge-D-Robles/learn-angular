@@ -1,124 +1,20 @@
 :host {
   display: block;
-  position: relative;
-  background-color: var(--nx-color-code-bg);
+  height: 200px;
   border: 1px solid var(--nx-color-bulkhead);
   border-radius: var(--nx-radius-card);
-  overflow: hidden;
-  font-family: var(--nx-font-mono);
-  font-size: var(--nx-text-code-size);
-  line-height: 1.5;
-}
-
-.code-editor {
-  position: relative;
-  min-height: 12em;
   overflow: hidden;
   resize: vertical;
 }
 
-.code-display {
-  position: relative;
-  z-index: 0;
-  margin: 0;
-  padding: var(--nx-space-4);
-  overflow-x: auto;
-  overflow-y: hidden;
-  color: var(--nx-color-display);
-  counter-reset: line;
-  min-height: inherit;
-}
-
-.code-line {
+ngx-monaco-editor,
+::ng-deep .editor-container {
   display: block;
-  padding: 0 var(--nx-space-2);
-  counter-increment: line;
-  min-height: 1.5em;
-
-  &::before {
-    content: counter(line);
-    display: inline-block;
-    width: 2em;
-    margin-right: var(--nx-space-3);
-    text-align: right;
-    color: var(--nx-color-corridor);
-    user-select: none;
-  }
-
-  &--highlighted {
-    background-color: var(--nx-color-highlight-line, rgba(59, 130, 246, 0.15));
-    border-left: 2px solid var(--nx-color-reactor-blue);
-  }
-}
-
-// Token colors
-.token-keyword {
-  color: var(--nx-color-reactor-blue);
-}
-
-.token-string {
-  color: var(--nx-color-sensor-green);
-}
-
-.token-comment {
-  color: var(--nx-color-corridor);
-  font-style: italic;
-}
-
-.token-decorator {
-  color: var(--nx-color-comm-purple);
-}
-
-.token-number {
-  color: var(--nx-color-alert-orange);
-}
-
-.token-tag {
-  color: var(--nx-color-reactor-blue);
-}
-
-.token-attr {
-  color: var(--nx-color-alert-orange);
-}
-
-.token-punctuation {
-  color: var(--nx-color-corridor);
-}
-
-.token-text {
-  color: inherit;
-}
-
-// Textarea overlay for editing
-.code-textarea {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
   height: 100%;
-  margin: 0;
-  padding: var(--nx-space-4);
-  padding-left: calc(var(--nx-space-4) + var(--nx-space-2) + 2em + var(--nx-space-3));
-  border: none;
-  outline: none;
-  z-index: 1;
-  appearance: none;
-  background: transparent;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  caret-color: var(--nx-color-beacon);
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  resize: none;
-  overflow: auto;
-  white-space: pre;
-  tab-size: 2;
 }
 
 @media (max-width: 767px) {
-  .code-editor {
-    min-height: 10em;
-    font-size: 0.8125rem;
+  :host {
+    height: 180px;
   }
 }

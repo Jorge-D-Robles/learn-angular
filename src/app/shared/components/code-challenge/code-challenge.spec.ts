@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideMonacoEditor } from 'ngx-monaco-editor-v2';
 import { createComponent, getMockProvider } from '../../../../testing/test-utils';
 import type {
   CodeChallengeStep,
@@ -61,7 +62,7 @@ describe('CodeChallengeComponent', () => {
   async function setup(overrides?: Partial<CodeChallengeStep>) {
     const mockService = createMockService();
     const { fixture, component, element } = await createComponent(TestHost, {
-      providers: [mockService],
+      providers: [mockService, provideMonacoEditor()],
       detectChanges: false,
     });
     if (overrides) {
@@ -209,9 +210,9 @@ describe('CodeChallengeComponent', () => {
     btn.click();
     fixture.detectChanges();
     await fixture.whenStable();
-    // In read-only mode, CodeEditorComponent hides the textarea
-    const textarea = element.querySelector('nx-code-editor textarea');
-    expect(textarea).toBeNull();
+    // Editor should still render in read-only mode
+    const editor = element.querySelector('nx-code-editor');
+    expect(editor).toBeTruthy();
   });
 
   // 13. Passed state disables submit

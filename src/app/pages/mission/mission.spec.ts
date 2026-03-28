@@ -6,6 +6,7 @@ import {
   LucideIconProvider,
   LUCIDE_ICONS,
 } from 'lucide-angular';
+import { provideMonacoEditor } from 'ngx-monaco-editor-v2';
 import { vi } from 'vitest';
 import { createComponent, getMockProvider, TestBed } from '../../../testing/test-utils';
 import { MissionPage } from './mission';
@@ -104,6 +105,7 @@ async function setup(options: SetupOptions = {}) {
   const result = await createComponent(MissionPage, {
     providers: [
       ...ICON_PROVIDERS,
+      provideMonacoEditor(),
       provideMissionContent(PHASE_1_MISSIONS),
       {
         provide: ActivatedRoute,
@@ -260,9 +262,9 @@ describe('MissionPage', () => {
     fixture.detectChanges();
     const codeEditor = element.querySelector('nx-code-editor');
     expect(codeEditor).toBeTruthy();
-    // Verify no textarea is rendered (readOnly mode hides it)
-    const textarea = codeEditor?.querySelector('textarea');
-    expect(textarea).toBeFalsy();
+    // Verify the editor renders with ngx-monaco-editor in readOnly mode
+    const monacoEditor = codeEditor?.querySelector('ngx-monaco-editor');
+    expect(monacoEditor).toBeTruthy();
   });
 
   it('should render explanation text for code-example steps', async () => {
