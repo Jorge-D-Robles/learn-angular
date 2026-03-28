@@ -6,17 +6,17 @@ export const CHAPTER_22_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Built-in pipes handle standard formats, but the station uses custom units that Angular does not ' +
-        'know about — astronomical distances in light-years, station-specific status codes, and relative ' +
-        'timestamps. You need custom pipes: small, focused transformer classes that you build once and ' +
-        'reuse across the entire station.',
+        'Angular\'s built-in pipes cover common cases, but your app has its own vocabulary. Astronomical ' +
+        'distances in light-years, station-specific status codes, temperature conversions between Kelvin ' +
+        'and Celsius — none of these ship with Angular. Custom pipes let you build your own reusable ' +
+        'transformers that plug into templates with the same | syntax you already know.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Create a DistancePipe that converts raw meter values into human-readable distance strings ' +
-        'with appropriate units. The @Pipe decorator names the pipe for template use, and PipeTransform ' +
-        'enforces the transform() method contract.',
+        'A custom pipe is a class decorated with @Pipe that implements PipeTransform. The @Pipe decorator ' +
+        'gives it a name for template use. The transform() method does the actual work — value in, ' +
+        'formatted string out.',
       code: [
         "import { Pipe, PipeTransform } from '@angular/core';",
         '',
@@ -41,16 +41,17 @@ export const CHAPTER_22_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 3, 4, 5],
       explanation:
-        '@Pipe names the pipe for use in templates. PipeTransform is an interface requiring a ' +
-        'transform() method that receives the input value and returns the formatted output. ' +
-        'The standalone: true flag makes the pipe importable directly in components. Custom pipes ' +
-        'follow the same | syntax as built-in pipes.',
+        '@Pipe gives the class a name — that\'s what you write after | in templates. PipeTransform is ' +
+        'an interface with one required method: transform(). It receives the value from the left side of ' +
+        'the | and returns the formatted result. The standalone: true flag makes the pipe directly ' +
+        'importable in any component, just like standalone components.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Here is a StatusPipe that converts numeric status codes into display-friendly labels ' +
-        'with color hints for the crew dashboard.',
+        'Custom pipes can encapsulate any domain logic. This StatusPipe maps numeric codes to ' +
+        'human-readable labels — the kind of lookup that would otherwise clutter your template or ' +
+        'force you to add a helper method to every component that needs it.',
       code: [
         "import { Pipe, PipeTransform } from '@angular/core';",
         '',
@@ -80,33 +81,34 @@ export const CHAPTER_22_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 15, 16, 17, 18],
       explanation:
-        'Custom pipes can encapsulate any transformation logic — lookups, calculations, or ' +
-        'string formatting. The StatusPipe maps numeric codes to human-readable labels using a ' +
-        'simple record. Keep pipes pure (no side effects) for optimal performance, as Angular ' +
-        'can skip re-running pure pipes when inputs have not changed.',
+        'The StatusPipe hides a lookup table behind a clean template expression. Instead of writing ' +
+        'a switch statement or method in every component, you write {{ code | status }} and the pipe ' +
+        'handles the mapping. Keep pipes pure — no HTTP calls, no side effects — so Angular can skip ' +
+        're-running them when the input hasn\'t changed (reference equality check).',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Custom sensor transformers are deployed. Here is how to create your own pipes in Angular.',
-      conceptTitle: 'Custom Pipes with @Pipe and PipeTransform',
+        'Custom pipes give you domain-specific formatting that\'s reusable across the entire app. ' +
+        'Build once, use everywhere — same | syntax as the built-ins.',
+      conceptTitle: 'Custom Pipes — Your Own Template Transformers',
       conceptBody:
-        'Custom pipes extend Angular\'s transformation system with your own logic. Decorate a class ' +
-        'with @Pipe to name it, implement PipeTransform to define the transform() method, and use ' +
-        'it in templates with the same | syntax as built-in pipes. Keep pipes pure — no side effects, ' +
-        'no service calls — for the best performance.',
+        'When built-in pipes don\'t cover your needs, build a custom one. Decorate a class with @Pipe ' +
+        'to give it a template name, implement PipeTransform to define the transform() method, and ' +
+        'import it in any component that needs it. Keep the transform logic pure — no side effects, ' +
+        'no service dependencies — so Angular can optimize when to re-run it.',
       keyPoints: [
-        '@Pipe decorator names the pipe for template use',
-        'PipeTransform interface requires a transform() method',
-        'Pure pipes only re-run when their input value changes (reference check)',
-        'Custom pipes follow the same | syntax as built-in pipes',
+        '@Pipe({ name: \'myPipe\' }) registers the class as a pipe — the name is what you write after | in templates',
+        'PipeTransform enforces the transform() contract: value in, formatted result out',
+        'Pure pipes only re-execute when their input reference changes — Angular skips unnecessary work',
+        'Custom pipes use the exact same | syntax and chaining as built-in pipes, so they feel native',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'Build a custom temperature converter! Create a @Pipe class that converts Kelvin readings ' +
-        'to Celsius by subtracting 273.15 and formatting the result.',
+        'Build a temperature converter. Create a @Pipe named \'kelvinToCelsius\' that subtracts 273.15 ' +
+        'from the input and returns a formatted Celsius string.',
       starterCode: [
         "import { Pipe, PipeTransform } from '@angular/core';",
         '',
@@ -145,19 +147,21 @@ export const CHAPTER_22_CONTENT: StoryMissionContent = {
       ],
       hints: [
         "Add @Pipe({ name: 'kelvinToCelsius', standalone: true }) above the class declaration",
-        'Implement transform(kelvin: number): string that returns a formatted Celsius string',
+        'Write transform(kelvin: number): string and return something like `${(kelvin - 273.15).toFixed(1)} C`',
       ],
-      successMessage: 'Temperature converter deployed! The crew can now read Celsius on all displays.',
+      successMessage:
+        'Your first custom pipe. It\'s a standalone, reusable transformer that any component can import. ' +
+        'Now let\'s put it to work in a real template.',
       explanation:
-        '@Pipe registers a class as an Angular pipe with a template name. PipeTransform requires a ' +
-        'transform() method that takes the input value and returns the formatted output. Custom pipes ' +
-        'use the same | syntax as built-in pipes.',
+        '@Pipe gives Angular a name to match against | expressions in templates. PipeTransform requires ' +
+        'the transform() method — that\'s where your conversion logic lives. The return type is string ' +
+        'because pipes produce display-ready output. Build it once, import it anywhere.',
     } satisfies CodeChallengeStep,
     {
       stepType: 'code-challenge',
       prompt:
-        'Deploy the temperature converter! Import your KelvinToCelsiusPipe into a component and ' +
-        'use it in the template.',
+        'Deploy the converter. Import KelvinToCelsiusPipe into a component, add it to the imports array, ' +
+        'and apply it in the template so the engine temperature displays in Celsius.',
       starterCode: [
         "import { Component } from '@angular/core';",
         '',
@@ -203,11 +207,13 @@ export const CHAPTER_22_CONTENT: StoryMissionContent = {
         'Import KelvinToCelsiusPipe from its file and add it to the imports array',
         'Change {{ engineTemp }}K to {{ engineTemp | kelvinToCelsius }} in the template',
       ],
-      successMessage: 'Custom pipe deployed! Temperature readings now display in Celsius across the station.',
+      successMessage:
+        'Custom pipe deployed and working in a real component. You can pass parameters, chain it with ' +
+        'other pipes, and import it in any component across the station. That\'s the full pipe toolkit.',
       explanation:
-        'Custom pipes are used in templates with the same | syntax as built-in pipes. Import the pipe ' +
-        "class and add it to the component's imports array. You can pass parameters with colons, just " +
-        'like built-in pipes.',
+        'Custom pipes follow the same workflow as built-in pipes: import the class, add it to the ' +
+        'component\'s imports array, and apply it with | in the template. You can chain custom pipes ' +
+        'with built-in pipes and pass parameters with colons — they\'re first-class citizens.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

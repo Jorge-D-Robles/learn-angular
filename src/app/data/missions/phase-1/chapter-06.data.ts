@@ -6,14 +6,17 @@ export const CHAPTER_06_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'The crew can see data on their displays, but they cannot interact with anything. Buttons do nothing. ' +
-        'Input fields are dead. The station needs event handling — the ability for the UI to respond when ' +
-        'a crew member clicks a button, types a command, or hovers over a control.',
+        'So far, data has flowed one direction: from your component class into the template. Buttons render ' +
+        'but don\'t do anything. Inputs display but don\'t respond. That\'s about to change. Event handling ' +
+        'flips the arrow — now the template talks back to your code. When a crew member clicks a button ' +
+        'or types a command, your component can react.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use parentheses to listen to DOM events. When the event fires, Angular calls the method you specify.',
+        'Remember how square brackets push data INTO the template? Parentheses do the opposite — they listen ' +
+        'for something happening in the template and call your code in response. Think of it like a doorbell: ' +
+        'something happens in the world, and your component answers.',
       code: [
         '@Component({',
         "  selector: 'app-crew-controls',",
@@ -38,14 +41,16 @@ export const CHAPTER_06_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [4, 5],
       explanation:
-        'Parentheses bind to a DOM event. (click)="onActivate()" calls onActivate() when the button is clicked. ' +
-        '$event gives access to the native event object — here, a KeyboardEvent with the key property.',
+        'Notice the parentheses instead of square brackets — that\'s how Angular distinguishes "data going in" ' +
+        'from "events coming out." (click)="onActivate()" calls your method when the button is clicked. ' +
+        'The $event variable in the keyup binding is Angular handing you the raw keyboard event, ' +
+        'so you can check which key was pressed.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'You can listen to any DOM event — mouse events, keyboard events, input events. Use $event to access ' +
-        'the event details.',
+        'Clicks aren\'t the only thing you can listen to. Any DOM event works — mouse movements, focus changes, ' +
+        'text input. The pattern is always the same: wrap the event name in parentheses and point it at a method.',
       code: [
         '@Component({',
         "  selector: 'app-crew-controls',",
@@ -78,30 +83,31 @@ export const CHAPTER_06_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [5, 6, 11],
       explanation:
-        'Any DOM event can be bound: mouseenter, mouseleave, input, focus, blur, and more. The $event object ' +
-        'is the native DOM event. For input events, cast event.target to access the element\'s value.',
+        'mouseenter, mouseleave, input, focus, blur — they all follow the same (eventName)="handler()" pattern. ' +
+        'One thing that trips people up: $event gives you the native DOM event, which means for input events you ' +
+        'need to cast event.target to HTMLInputElement to access .value. A bit clunky, but it keeps the type system honest.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'The crew can now interact with station controls. Every button press, key stroke, and mouse movement ' +
-        'can trigger logic in your components.',
-      conceptTitle: 'Event Handling (event)',
+        'The crew can finally interact with station controls. Every button press, keystroke, and mouse movement ' +
+        'now has a direct line to your component logic.',
+      conceptTitle: 'Event Handling with (event)',
       conceptBody:
-        'Event binding uses parentheses to listen to DOM events and call component methods. The $event variable ' +
-        'gives you access to the native event object. This is the complement to property binding — data flows ' +
-        'from the template (user actions) back to the component class.',
+        'Event binding closes the loop. Property binding (square brackets) sends data from class to template. ' +
+        'Event binding (parentheses) sends user actions from template back to class. Together, they create ' +
+        'a two-way conversation between your TypeScript and your HTML.',
       keyPoints: [
-        'Any DOM event can be bound: click, keyup, input, mouseenter, submit, and more',
-        '$event provides the native event object with full type information',
-        'Keep event handlers simple — delegate complex logic to service methods',
+        'Parentheses for events, square brackets for data — Angular\'s syntax makes the direction of data flow visible at a glance',
+        '$event is Angular saying "here\'s what just happened" — it carries the native DOM event, so you get full type information',
+        'Keep handlers thin: do the simple stuff in the method, delegate heavy logic to services (you\'ll build those in Chapter 16)',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'The station control panel is unresponsive. Write event bindings so a button click activates ' +
-        'the module and a keyup handler captures crew commands.',
+        'The station control panel is unresponsive — buttons and inputs don\'t do anything yet. Wire up a click ' +
+        'handler on the button and a keyup handler on the input so the crew can actually interact with it.',
       starterCode: [
         '<!-- Available variables/methods: onActivate() (method), onCommand($event) (method) -->',
         '',
@@ -140,14 +146,16 @@ export const CHAPTER_06_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Wrap the event name in parentheses: (click)="methodName()"',
-        'Pass $event to handlers that need the native event object',
+        'Wrap the event name in parentheses: (click)="methodName()" — same syntax you saw in the examples above',
+        'For the keyup handler, pass $event so the method can see which key was pressed: (keyup)="onCommand($event)"',
       ],
       successMessage:
-        'Control panel is live! Buttons and inputs now respond to crew actions via Angular event bindings.',
+        'The control panel is live! You\'ve got two-way communication now — data flows out to the template, ' +
+        'and events flow back in. Next up: making components reusable by passing data into them with inputs.',
       explanation:
-        'Angular event binding uses parentheses to listen to DOM events. (click)="handler()" calls a method ' +
-        'on click. Pass $event to access the native event object for events like keyup.',
+        'Event binding with parentheses is the counterpart to property binding with square brackets. ' +
+        '(click)="handler()" calls your method on click. $event passes along the native DOM event ' +
+        'so your handler can inspect what happened — which key was pressed, what text was entered, where the mouse was.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

@@ -6,17 +6,18 @@ export const CHAPTER_32_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Before Nexus Station can be certified for extended deep space operations, every system must be ' +
-        'tested — components verified in isolation, services validated with mock dependencies, and ' +
-        'integrations confirmed end-to-end. Angular\'s testing utilities (TestBed, ComponentFixture) ' +
-        'provide a controlled environment to instantiate components, inject mock services, and assert ' +
-        'behavior without running the full application.',
+        'This is the chapter most people want to skip. Don\'t. You\'ve built components (back in Chapter 1), ' +
+        'services (Chapter 18), and forms (Chapters 14-17). How do you know they still work after you make ' +
+        'changes? Testing gives you a safety net. Think of it like a preflight checklist — pilots don\'t skip ' +
+        'it because "the plane flew fine yesterday." Angular\'s TestBed creates a miniature Angular ' +
+        'environment where you can test components in isolation, with fake services, and verify behavior ' +
+        'without booting the entire app.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use TestBed to configure a testing module and ComponentFixture to create and inspect a ' +
-        'component in a test environment.',
+        'The basic pattern: configure a tiny Angular module with just your component, create it, ' +
+        'and assert against its DOM output. Every Angular test follows this shape.',
       code: [
         "import { TestBed, ComponentFixture } from '@angular/core/testing';",
         "import { SensorDisplayComponent } from './sensor-display';",
@@ -44,15 +45,17 @@ export const CHAPTER_32_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 9, 13, 14, 15, 19],
       explanation:
-        'TestBed.configureTestingModule() creates an isolated Angular module for testing. ' +
-        'compileComponents() compiles any templates. createComponent() instantiates the component ' +
-        'and returns a ComponentFixture, which provides access to the component instance and its DOM. ' +
-        'detectChanges() triggers change detection to update the template bindings.',
+        'TestBed.configureTestingModule() spins up an isolated Angular environment — just enough ' +
+        'to compile and render your component. createComponent() gives you a ComponentFixture, which ' +
+        'is your handle to the component instance and its rendered DOM. The critical step people ' +
+        'forget: detectChanges(). Angular won\'t render anything until you tell it to run change ' +
+        'detection, so call it after setup and after any state change you want to verify.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Provide mock services in the testing module to isolate the component from real dependencies.',
+        'Real components depend on services. You don\'t want your tests hitting actual APIs, so you ' +
+        'replace the real service with a mock. This keeps tests fast, deterministic, and isolated.',
       code: [
         "import { TestBed } from '@angular/core/testing';",
         "import { PowerMonitorComponent } from './power-monitor';",
@@ -84,26 +87,29 @@ export const CHAPTER_32_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 6, 14, 15],
       explanation:
-        'The providers array in configureTestingModule lets you replace real services with mocks. ' +
-        '{ provide: PowerService, useValue: mockPowerService } tells Angular to inject the mock ' +
-        'whenever PowerService is requested. This isolates the component under test from real API calls, ' +
-        'databases, or other external dependencies.',
+        'The { provide, useValue } syntax tells Angular: "Whenever something asks for PowerService, ' +
+        'give it this fake object instead." Your component has no idea it is talking to a mock. ' +
+        'This is dependency injection doing exactly what it was designed for — you swap the real ' +
+        'implementation at the boundary so the component under test never touches a real API, ' +
+        'database, or anything slow and unpredictable.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'System certification complete. Here is how Angular testing tools verify your components.',
-      conceptTitle: 'Testing with TestBed and ComponentFixture',
+        'Every production Angular app has tests. Interviewers will ask about TestBed. More importantly, ' +
+        'tests catch bugs before your users do. This is a skill that pays for itself immediately.',
+      conceptTitle: 'TestBed: Angular\'s Testing Sandbox',
       conceptBody:
-        'TestBed creates a test module that mimics an Angular module. ComponentFixture wraps a ' +
-        'component instance and provides access to its DOM (nativeElement), component class ' +
-        '(componentInstance), and change detection (detectChanges). Mock services with ' +
-        '{ provide, useValue } to isolate units under test.',
+        'TestBed creates a disposable Angular environment per test. ComponentFixture gives you three ' +
+        'things: the component instance (componentInstance), its rendered DOM (nativeElement), and ' +
+        'manual change detection (detectChanges). Mock services with { provide, useValue } to isolate ' +
+        'the unit under test from the outside world. The pattern is always the same: configure, create, ' +
+        'detect changes, assert.',
       keyPoints: [
-        'TestBed.configureTestingModule() sets up an isolated Angular testing environment',
-        'ComponentFixture provides componentInstance, nativeElement, and detectChanges()',
-        '{ provide: Service, useValue: mock } replaces real services with test doubles',
-        'Call detectChanges() after setup to trigger initial rendering and binding updates',
+        'TestBed is a per-test Angular environment — it compiles components, resolves dependencies, and runs change detection on your terms',
+        'Mock services using { provide, useValue } so tests stay fast, isolated, and deterministic',
+        'detectChanges() is not automatic in tests — you control exactly when Angular re-renders, which makes assertions predictable',
+        'Test the component through its DOM (nativeElement) to verify what the user actually sees, not just internal state',
       ],
     },
   ],

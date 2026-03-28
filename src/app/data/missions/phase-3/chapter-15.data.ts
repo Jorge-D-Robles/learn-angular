@@ -6,16 +6,18 @@ export const CHAPTER_15_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Reports can be submitted, but crew want to see what they are typing before sending. A live preview ' +
-        "lets them verify their input in real time — no surprises after hitting submit. Angular's ngModel " +
-        'binding and value change events make this possible by keeping the component properties in sync ' +
-        'with the form inputs as the user types.',
+        'You can capture input now, but what if crew want to preview their report before sending it? ' +
+        'Right now they type into a void and hope for the best. A live preview shows exactly what ' +
+        'the submitted data will look like -- no surprises after hitting submit. Angular\'s two-way ' +
+        'binding already does most of the work. The twist is learning when to split it apart for ' +
+        'more control.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Build a real-time preview panel. Two-way binding with ngModel keeps the component property updated ' +
-        'on every keystroke, and interpolation renders the live values.',
+        'Because [(ngModel)] keeps the component property in sync on every keystroke, you can ' +
+        'display the current value anywhere in your template with interpolation. The preview ' +
+        'updates instantly -- no extra wiring needed.',
       code: [
         '@Component({',
         "  selector: 'app-report-preview',",
@@ -44,15 +46,16 @@ export const CHAPTER_15_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [6, 7, 15, 16],
       explanation:
-        'Two-way binding with ngModel keeps the component property in sync with the input. Any template ' +
-        'expression referencing that property — like {{ crewName }} — updates automatically as the user ' +
-        'types. No manual event handling required.',
+        'This is the payoff of two-way binding. crewName updates on every keystroke, and {{ crewName }} ' +
+        're-renders automatically. No event listeners, no manual DOM updates. The component property ' +
+        'is the single source of truth for both the input and the preview.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Sometimes you need more control over value changes — formatting input, counting characters, or ' +
-        'triggering side effects on each keystroke. Split the ngModel binding to intercept changes.',
+        'Sometimes you need to intercept the value before it reaches the property. Maybe you want to ' +
+        'force uppercase, count characters, or trigger a side effect. Split the "banana in a box" ' +
+        'into its two halves: [ngModel] pushes data in, (ngModelChange) catches data coming out.',
       code: [
         '@Component({',
         "  selector: 'app-report-preview',",
@@ -79,31 +82,34 @@ export const CHAPTER_15_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [6, 7, 17, 18, 19],
       explanation:
-        'Splitting [(ngModel)] into [ngModel] and (ngModelChange) gives you a hook to process the value ' +
-        'before updating the property. This is useful for formatting, validation, or side effects on each ' +
-        'keystroke. The $event parameter contains the new value from the input.',
+        'Splitting [(ngModel)] into [ngModel] and (ngModelChange) gives you a middleware hook. The ' +
+        'input sends the raw value to your handler via $event, and you decide what actually gets ' +
+        'stored. Here, the value gets uppercased and a character count is computed before anything ' +
+        'reaches the crewName property.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'The real-time preview is live. Here is how Angular keeps form values and the view in sync.',
-      conceptTitle: 'Reading Form Values — Two-Way Binding and Change Events',
+        'Two-way binding is convenient. Split binding is powerful. Knowing when to use which is the ' +
+        'real skill here.',
+      conceptTitle: 'Two-Way Binding vs Split Binding -- Choosing Your Level of Control',
       conceptBody:
-        "ngModel's two-way binding keeps template and component in sync. For finer control, split the " +
-        'binding into property binding [ngModel] and event binding (ngModelChange) to intercept and ' +
-        'process values before they reach the component property.',
+        'Use [(ngModel)] when you just need the value to stay in sync -- no processing, no side ' +
+        'effects. Split into [ngModel] + (ngModelChange) when you need to transform, validate, or ' +
+        'react to every change. Both produce the same result; the split version just gives you a ' +
+        'place to run code in between.',
       keyPoints: [
-        '[(ngModel)] is shorthand for [ngModel] + (ngModelChange)',
-        'Component properties update in real-time as the user types',
-        'Split binding allows value transformation before assignment',
-        'Template expressions referencing bound properties re-evaluate automatically',
+        '[(ngModel)] is syntactic sugar for [ngModel] + (ngModelChange) -- they\'re the same mechanism',
+        'Split binding gives you a hook to transform or validate values before they reach the property',
+        'The $event in (ngModelChange) is the new value, not a DOM event -- it\'s already unwrapped for you',
+        'Template expressions referencing bound properties re-render automatically on every change',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'Split the two-way binding! Replace the banana-in-a-box syntax with separate property ' +
-        'binding and event binding, then add a handler method that updates the character count.',
+        'Split the banana-in-a-box binding apart. Replace [(ngModel)] with separate [ngModel] ' +
+        'and (ngModelChange) bindings, then write a handler that updates both crewName and charCount.',
       starterCode: [
         '@Component({',
         "  selector: 'app-report-preview',",
@@ -147,15 +153,16 @@ export const CHAPTER_15_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Replace [(ngModel)]="crewName" with [ngModel]="crewName" and add (ngModelChange)="onNameChange($event)"',
-        'In the onNameChange method, assign the new value to crewName and set charCount to its length',
+        'Change [(ngModel)]="crewName" to [ngModel]="crewName" (ngModelChange)="onNameChange($event)"',
+        'In onNameChange(value: string), set this.crewName = value and this.charCount = value.length',
       ],
       successMessage:
-        'Split binding active! The handler intercepts every change and updates the character count.',
+        'Split binding mastered! You can now intercept and process form values on every keystroke. ' +
+        'Coming up: reactive forms for when you need even more control.',
       explanation:
-        'Splitting [(ngModel)] into [ngModel] and (ngModelChange) gives you a hook to process each ' +
-        'value change. The property binding pushes the current value to the input, and the event binding ' +
-        'fires your handler with the new value before it reaches the component property.',
+        'The split gives you a function that runs on every change. [ngModel] keeps the input ' +
+        'displaying the current value; (ngModelChange) hands you the new value before it\'s stored. ' +
+        'Your handler is the gatekeeper -- transform, validate, or enrich the data before it lands.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

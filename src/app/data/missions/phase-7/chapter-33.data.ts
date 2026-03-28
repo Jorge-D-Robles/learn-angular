@@ -6,17 +6,17 @@ export const CHAPTER_33_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Nexus Station\'s crew interfaces feel static — panels snap open and closed, alerts appear ' +
-        'without warning, and state changes happen instantly with no visual context. Deep space ' +
-        'operations demand smooth visual feedback so crew can track what changed and why. Angular ' +
-        'Animations provide a declarative API for defining transitions between states, giving the ' +
-        'crew clear visual cues during critical operations.',
+        'Your UI works, but state changes are instant and jarring. An alert appears out of nowhere. ' +
+        'A panel snaps open. The user has no visual context for what changed. Animations are like turn ' +
+        'signals on a car — the state change happens either way, but the animation tells the user WHAT ' +
+        'changed and WHERE to look. Angular provides a declarative animation API that ties directly ' +
+        'into component state, so transitions feel intentional rather than bolted on.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Define an animation trigger with states and a transition. The trigger attaches to a template ' +
-        'element and animates between named states.',
+        'Start with the core pattern: define named states with styles, then describe how to transition ' +
+        'between them. This blast door animates between "closed" (red, compact) and "open" (green, expanded).',
       code: [
         "import { Component } from '@angular/core';",
         "import { trigger, state, transition, style, animate } from '@angular/animations';",
@@ -49,15 +49,17 @@ export const CHAPTER_33_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [2, 7, 13, 14, 15, 16, 17],
       explanation:
-        'trigger() creates a named animation attached via [@triggerName]. state() defines style ' +
-        'snapshots for named states. transition() specifies how to animate between states — the ' +
-        '\'closed <=> open\' shorthand means "animate in both directions." animate() controls the ' +
-        'timing with duration and easing. Add the animations array to the @Component metadata.',
+        'trigger() names the animation — you bind it to a template element with [@doorState]. ' +
+        'state() captures what each state looks like (its CSS snapshot). transition() says when to ' +
+        'animate — the "closed <=> open" shorthand means both directions. animate() controls the ' +
+        'duration and easing. Notice that the animation lives in the component metadata, right next ' +
+        'to the template. The logic stays close to the view it affects.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use :enter and :leave aliases to animate elements as they are added to or removed from the DOM.',
+        'Sometimes elements appear and disappear entirely — an alert shows up, a toast fades out. ' +
+        'Angular provides :enter and :leave aliases for exactly this. No named states needed.',
       code: [
         "import { Component, signal } from '@angular/core';",
         "import { trigger, transition, style, animate } from '@angular/animations';",
@@ -91,26 +93,29 @@ export const CHAPTER_33_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [2, 8, 14, 15, 16, 20],
       explanation:
-        ':enter matches when an element is inserted into the DOM (e.g., via @if). :leave matches when ' +
-        'it is removed. The enter transition starts from an invisible, offset position and animates to ' +
-        'the final style. The leave transition animates out before Angular removes the element. These ' +
-        'aliases replace the need for named states when animating presence.',
+        ':enter fires when an element is inserted into the DOM (via @if, @for, etc.) and :leave ' +
+        'fires when it is removed. The enter transition starts from an invisible, offset state and ' +
+        'animates to the final position. The leave transition animates out before Angular actually ' +
+        'removes the element. Without this, the alert would just pop in and vanish — no visual cue ' +
+        'for the user about what happened or where to look.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Visual feedback systems are live. Here is how Angular Animations create smooth transitions.',
-      conceptTitle: 'Angular Animations — trigger, state, transition, animate',
+        'Animations are not decoration. They communicate state changes to the user — what appeared, ' +
+        'what disappeared, what moved. A well-animated UI feels responsive. A unanimated one feels broken.',
+      conceptTitle: 'Angular Animations: Making State Changes Visible',
       conceptBody:
-        'Angular Animations use a declarative API: trigger() names the animation, state() defines style ' +
-        'snapshots, transition() specifies when to animate, and animate() controls timing. Attach triggers ' +
-        'to elements with [@triggerName]. Use :enter and :leave for DOM insertion/removal animations. ' +
-        'Enable animations by adding provideAnimations() to your app config.',
+        'The animation API has four building blocks: trigger() names the animation and binds it to ' +
+        'the template, state() captures CSS snapshots, transition() defines when to animate, and ' +
+        'animate() controls timing and easing. Use :enter and :leave for elements that appear and ' +
+        'disappear. Enable the whole system with provideAnimations() in your app config — without it, ' +
+        'Angular silently ignores all animation metadata.',
       keyPoints: [
-        'trigger() creates a named animation bound to elements via [@name]',
-        'state() and style() define the visual snapshots for each state',
-        'transition() with animate() controls timing, easing, and direction',
-        ':enter and :leave animate elements being added to or removed from the DOM',
+        'Animations communicate state changes — they tell the user what appeared, disappeared, or moved, without requiring them to hunt for changes',
+        ':enter and :leave handle the most common case (conditional elements) without needing named states',
+        'The "closed <=> open" shorthand covers both directions in a single transition declaration',
+        'provideAnimations() in your app config activates the system — forget it and nothing animates, with no error',
       ],
     },
   ],

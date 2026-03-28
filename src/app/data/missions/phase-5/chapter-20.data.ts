@@ -6,16 +6,17 @@ export const CHAPTER_20_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'The station\'s sensors are streaming raw data — timestamps as Unix epochs, distances as raw ' +
-        'meters, temperatures as unformatted decimals. Crew members cannot read these values at a glance. ' +
-        'Angular pipes transform data directly in templates, converting raw values into human-readable ' +
-        'formats without modifying the underlying data.',
+        'Your components display raw data — Unix timestamps, unformatted decimals, bare strings. ' +
+        'Users don\'t want to see "1711612800000." They want "March 28, 2025." Pipes transform data ' +
+        'right in the template without touching the source value. Think of them like display formatters ' +
+        'on a calculator: the underlying number is always 1250.50, but the display shows "$1,250.50."',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Angular provides built-in pipes for common formatting needs. The DatePipe, DecimalPipe, and ' +
-        'CurrencyPipe handle the most frequent transformations.',
+        'Angular ships with built-in pipes for the most common formatting tasks. DatePipe, DecimalPipe, ' +
+        'and CurrencyPipe handle dates, numbers, and money. You apply them in templates with the | ' +
+        'operator — the value on the left flows through the pipe on the right.',
       code: [
         "import { Component } from '@angular/core';",
         "import { DatePipe, DecimalPipe, CurrencyPipe } from '@angular/common';",
@@ -38,15 +39,17 @@ export const CHAPTER_20_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [2, 6, 8, 9, 10],
       explanation:
-        'Pipes are applied in templates using the | operator. DatePipe formats Date objects, ' +
-        'DecimalPipe formats numbers with locale-aware grouping, and CurrencyPipe adds currency ' +
-        'symbols and formatting. Import each pipe in the component\'s imports array to use it.',
+        'The | operator sends a value through a pipe. DatePipe turns Date objects into readable strings, ' +
+        'DecimalPipe adds locale-aware digit grouping, and CurrencyPipe prefixes a currency symbol. ' +
+        'The original values — lastReading, temperature, repairCost — are never modified. Pipes produce ' +
+        'a new formatted string purely for display.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'More built-in pipes handle text transformations and percentage formatting for the crew ' +
-        'status displays.',
+        'Text and percentage formatting follow the same pattern. UpperCasePipe and LowerCasePipe ' +
+        'change casing, while PercentPipe converts a decimal to a percentage. Same | syntax, same ' +
+        'import-and-register flow.',
       code: [
         "import { Component } from '@angular/core';",
         "import { UpperCasePipe, LowerCasePipe, PercentPipe } from '@angular/common';",
@@ -69,32 +72,34 @@ export const CHAPTER_20_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [2, 6, 8, 9, 10],
       explanation:
-        'UpperCasePipe and LowerCasePipe transform text casing. PercentPipe multiplies a decimal ' +
-        'by 100 and appends a % symbol. These pipes never modify the original value — they create ' +
-        'a new formatted string for display only.',
+        'UpperCasePipe transforms "Alpha Sector" into "ALPHA SECTOR." LowerCasePipe does the reverse. ' +
+        'PercentPipe multiplies 0.87 by 100 and appends "%", giving you "87%." Notice that none of these ' +
+        'pipes change the component\'s actual data — sectorName is still "Alpha Sector" in the class. ' +
+        'The transformation only exists in the rendered template.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Sensor data is now readable. Here is how pipes work in Angular templates.',
-      conceptTitle: 'Using Pipes for Template Data Transformation',
+        'Sensor data is readable now. The key insight: pipes are a presentation-layer concern. They sit ' +
+        'between your data and the user\'s eyes.',
+      conceptTitle: 'Built-in Pipes — Formatting Without Mutating',
       conceptBody:
-        'Pipes are pure functions that transform values in templates without changing the source data. ' +
-        'Angular provides built-in pipes for dates, numbers, currency, percentages, and text casing. ' +
-        'Apply them with the | operator in template expressions. Import each pipe in the component\'s ' +
-        'imports array.',
+        'Pipes are pure functions applied in templates with the | operator. They take a raw value in and ' +
+        'return a formatted string out, leaving the source data untouched. Angular\'s built-in pipes cover ' +
+        'dates, numbers, currency, percentages, and text casing. To use one, import the pipe class and ' +
+        'add it to your component\'s imports array.',
       keyPoints: [
-        'DatePipe, DecimalPipe, CurrencyPipe format dates, numbers, and money',
-        'UpperCasePipe, LowerCasePipe, PercentPipe handle text and percentage formatting',
-        'Pipes do not mutate the original value — they return a new formatted string',
-        'Import pipes in the component imports array to use them in templates',
+        'Pipes transform display output only — the underlying data stays exactly as it is',
+        'DatePipe, DecimalPipe, CurrencyPipe handle the most common numeric formatting',
+        'UpperCasePipe, LowerCasePipe, and PercentPipe cover text and percentage display',
+        'Each pipe must be imported in the component\'s imports array before you can use it in a template',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'Format the station sensor readouts! Import and use built-in pipes to display the sector ' +
-        'name in uppercase, the timestamp as a date, and the repair budget as currency.',
+        'Format the sensor readouts. Import the right pipes from @angular/common and apply them: ' +
+        'sector name in uppercase, timestamp as a date, and budget as currency.',
       starterCode: [
         "import { Component } from '@angular/core';",
         '',
@@ -143,10 +148,13 @@ export const CHAPTER_20_CONTENT: StoryMissionContent = {
         "Import UpperCasePipe, DatePipe, CurrencyPipe from '@angular/common' and add them to imports",
         'Use {{ sectorName | uppercase }}, {{ timestamp | date }}, and {{ budget | currency }} in the template',
       ],
-      successMessage: 'Sensor display formatted! Built-in pipes transform raw data for the crew.',
+      successMessage:
+        'Raw data, meet readable display. You\'ve turned timestamps into dates and decimals into dollars. ' +
+        'Next up: pipe parameters for fine-grained control over formatting.',
       explanation:
-        'Built-in pipes like UpperCasePipe, DatePipe, and CurrencyPipe format values directly in ' +
-        'templates. Import each pipe in the component\'s imports array and apply them using the | operator.',
+        'Each pipe class needs two things: an import statement at the top of the file and an entry in the ' +
+        'component\'s imports array. Once registered, you apply pipes in the template with | followed by ' +
+        'the pipe name. The original values stay untouched in the component class.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

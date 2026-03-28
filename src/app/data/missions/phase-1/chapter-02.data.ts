@@ -7,14 +7,16 @@ export const CHAPTER_02_CONTENT: StoryMissionContent = {
       stepType: 'narrative',
       narrativeText:
         'The emergency shelter is holding, but the life support panel is blank — oxygen levels, temperature, ' +
-        'pressure — all invisible. The sensors are working, but nothing is wired to the display. You need ' +
-        'interpolation: the ability to take data from your component class and render it in the template.',
+        'pressure — all invisible. The sensors are working fine. The problem is that nothing is wired to the ' +
+        'display. In Chapter 1, you snuck in a status property with {{ status }}. That was interpolation — ' +
+        'Angular\'s way of pulling data from your class and showing it in the template. Now you will see why ' +
+        'it is one of the most-used features in Angular.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Wire the life support sensors to the display. Use double curly braces {{ }} to show component ' +
-        'data in the template.',
+        'Wire the life support sensors to the display. Double curly braces {{ }} are the interpolation syntax. ' +
+        'Whatever expression you put inside gets evaluated and turned into text on screen.',
       code: [
         "import { Component } from '@angular/core';",
         '',
@@ -34,14 +36,16 @@ export const CHAPTER_02_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [7, 8],
       explanation:
-        'The double curly braces {{ }} tell Angular to evaluate the expression inside and insert the result ' +
-        'as text. Here, oxygenLevel and temperature are class properties displayed in the template.',
+        'Angular sees {{ oxygenLevel }}, looks up the oxygenLevel property on the class, and inserts its ' +
+        'value as text. If oxygenLevel changes later, the display updates automatically. You do not need to ' +
+        'manually refresh anything — that is Angular\'s job.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Interpolation is not limited to simple variables. You can use expressions — math, string ' +
-        'concatenation, method calls — anything that produces a value.',
+        'You are not limited to simple variable names inside {{ }}. You can do math, call methods, ' +
+        'concatenate strings — anything that produces a value. Angular evaluates the expression every time ' +
+        'the data might have changed.',
       code: [
         "import { Component } from '@angular/core';",
         '',
@@ -62,29 +66,31 @@ export const CHAPTER_02_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [6, 7, 8],
       explanation:
-        'Expressions inside {{ }} are evaluated at render time. You can do math (temperature * 9/5 + 32), ' +
-        'concatenate strings, or reference any public property. Angular re-evaluates these whenever the data changes.',
+        'Inside {{ }}, you can write expressions: math like temperature * 9/5 + 32, string concatenation, ' +
+        'or just a property name. Angular re-evaluates these whenever the underlying data changes. Keep ' +
+        'expressions simple though — heavy logic belongs in the class, not the template.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Life support is displaying sensor data across the shelter. Here is what you need to remember about interpolation.',
+        'Life support data is flowing to the display. The core idea here is straightforward, but worth ' +
+        'naming properly.',
       conceptTitle: 'Interpolation {{ }}',
       conceptBody:
-        'Interpolation is one-way data binding from the component class to the template. Angular evaluates ' +
-        'the expression inside {{ }} and converts the result to a string. When the underlying data changes, ' +
-        'Angular automatically updates the display.',
+        'Interpolation is one-way data binding: data flows from the component class into the template, never ' +
+        'the other direction. Angular evaluates whatever is inside {{ }}, converts the result to a string, ' +
+        'and inserts it into the DOM. When the data changes? Angular handles the update for you.',
       keyPoints: [
-        'Use {{ expression }} to display dynamic values in the template',
-        'Expressions can include math, string operations, and method calls',
-        'Angular updates interpolated values automatically when data changes',
+        '{{ expression }} evaluates to text. It always converts to a string — even numbers and booleans become text. This matters more than you might think (Chapter 5 will show you why).',
+        'You can put expressions in there — math, method calls, ternaries — but keep them short. If it takes more than a glance to read, move the logic to the class.',
+        'Angular watches for changes and re-renders automatically. You never manually "refresh" an interpolation.',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'The sensor array is reading data but the display is blank. Write a component that declares ' +
-        'properties and displays them in the template using interpolation {{ }}.',
+        'The sensor array is reading data but the display is dark. Declare some properties on the class ' +
+        'and wire them to the template with {{ }}. Replace both TODO comments with real code.',
       starterCode: [
         "import { Component } from '@angular/core';",
         '',
@@ -133,14 +139,15 @@ export const CHAPTER_02_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Declare properties in the class body like: propertyName = value;',
-        'Use {{ propertyName }} in the template to display property values',
+        'In the class body, declare properties with values: sensorName = \'Thermal\'; reading = 42;',
+        'In the template, use {{ sensorName }} and {{ reading }} to display them.',
       ],
       successMessage:
-        'Sensor display is live! Data flows from class properties to the template via interpolation.',
+        'Sensor display is live. Data flows from class to template, and Angular keeps it in sync. ' +
+        'This one-way binding is the foundation for everything you will build.',
       explanation:
-        'Interpolation {{ }} is Angular\'s way of displaying component data in the view. Any public ' +
-        'property on the class can be rendered in the template using double curly braces.',
+        'Interpolation is how you get data from your component class onto the screen. Declare a property, ' +
+        'reference it with {{ }}, and Angular handles the rest. Simple — but you will use it constantly.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

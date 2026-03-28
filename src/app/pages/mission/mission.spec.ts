@@ -273,7 +273,7 @@ describe('MissionPage', () => {
     fixture.detectChanges();
     const explanation = element.querySelector('.mission__explanation');
     expect(explanation).toBeTruthy();
-    expect(explanation?.textContent).toContain('The @Component decorator marks');
+    expect(explanation?.textContent).toContain('@Component is a decorator');
   });
 
   // === Concept steps (4 tests) ===
@@ -286,7 +286,7 @@ describe('MissionPage', () => {
     fixture.detectChanges();
     const toggle = element.querySelector('.mission__concept-toggle');
     expect(toggle).toBeTruthy();
-    expect(toggle?.textContent?.trim()).toBe('What is a Component?');
+    expect(toggle?.textContent?.trim()).toBe('The Anatomy of a Component');
   });
 
   it('should show concept body when panel is expanded (default)', async () => {
@@ -296,7 +296,7 @@ describe('MissionPage', () => {
     fixture.detectChanges();
     const body = element.querySelector('.mission__concept-body');
     expect(body).toBeTruthy();
-    expect(body?.textContent).toContain('fundamental building blocks');
+    expect(body?.textContent).toContain('TypeScript class with a @Component decorator');
   });
 
   it('should hide concept body when panel is collapsed', async () => {

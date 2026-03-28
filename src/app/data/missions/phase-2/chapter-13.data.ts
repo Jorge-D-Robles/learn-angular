@@ -6,16 +6,17 @@ export const CHAPTER_13_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Routes are configured. The router knows where every corridor leads. But the crew needs a ' +
-        'navigation console — a UI with clickable links that trigger route changes. Typing URLs into a ' +
-        'console is not how a space station works. Angular\'s routerLink directive turns elements into ' +
-        'navigation triggers, and routerLinkActive highlights the current location.',
+        'Routes exist, but there\'s no UI to navigate them. Right now the only way to move between ' +
+        'views is typing URLs into the browser address bar -- not exactly a great user experience. ' +
+        'Angular provides routerLink to turn elements into navigation triggers and routerLinkActive ' +
+        'to highlight where the user currently is. Time to build a proper nav console.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Build the navigation console with routerLink directives. Each link triggers a route change, and ' +
-        'routerLinkActive highlights which module the crew is currently in.',
+        'routerLink replaces plain href attributes. Why not just use href? Because href triggers a ' +
+        'full page reload, destroying your app state. routerLink tells Angular to handle the navigation ' +
+        'internally, keeping everything intact.',
       code: [
         '@Component({',
         "  selector: 'app-nav-console',",
@@ -37,15 +38,17 @@ export const CHAPTER_13_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [3, 6, 7, 8],
       explanation:
-        'routerLink binds a navigation path to an element. The string form (routerLink="/bridge") handles ' +
-        'static paths, while the array form ([routerLink]="[segments]") handles dynamic segments. ' +
-        'routerLinkActive adds a CSS class when the link\'s route is active.',
+        'Two forms of routerLink: the string form (routerLink="/bridge") for static paths, and the ' +
+        'array form ([routerLink]="[\'/module\', moduleId]") when you need to build a path from ' +
+        'variables. routerLinkActive slaps a CSS class on the link when its route is active -- ' +
+        'perfect for highlighting the current page in a navbar.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Sometimes navigation happens in response to logic — an emergency evacuation, a completed repair, ' +
-        'or a diagnostic result. Router.navigate handles programmatic route changes.',
+        'Not all navigation comes from clicking links. Sometimes code needs to redirect the user -- ' +
+        'after saving a form, completing a workflow, or responding to an error. That\'s what ' +
+        'Router.navigate() is for.',
       code: [
         "import { Router } from '@angular/router';",
         '',
@@ -61,30 +64,32 @@ export const CHAPTER_13_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [5, 8],
       explanation:
-        'Use Router.navigate() for programmatic navigation — when a route change is triggered by logic ' +
-        'rather than a direct user click. Pass an array of path segments just like the array form of routerLink.',
+        'Inject the Router service and call navigate() with an array of path segments. It works ' +
+        'exactly like the array form of routerLink, but from TypeScript code instead of a template. ' +
+        'Use this whenever navigation is driven by logic rather than a direct user click.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'The navigation console is operational. Here is when to use each navigation approach.',
-      conceptTitle: 'Navigation — routerLink vs Router.navigate()',
+        'Two tools, one job. routerLink is for templates, Router.navigate is for code. Pick the ' +
+        'one that fits where the navigation decision happens.',
+      conceptTitle: 'routerLink vs Router.navigate() -- When to Use Which',
       conceptBody:
-        'Template-driven navigation uses routerLink for declarative links that the user clicks. ' +
-        'Programmatic navigation uses Router.navigate() for logic-driven route changes that happen in ' +
-        'component code. Both produce the same result — a route transition — but serve different use cases.',
+        'If the user is clicking a link, use routerLink -- it\'s declarative, accessible, and gives ' +
+        'you hover previews and right-click context menus for free. If navigation happens in response ' +
+        'to logic (form submission, timer, error handling), use Router.navigate() in your component code.',
       keyPoints: [
-        'routerLink is a directive that turns elements into clickable navigation triggers',
-        'routerLinkActive adds a CSS class when the link\'s route is active',
-        'Router.navigate([segments]) navigates programmatically from component code',
-        'Prefer routerLink for user-facing links and Router.navigate for logic-triggered navigation',
+        'routerLink avoids full-page reloads that href would cause -- Angular handles the transition internally',
+        'routerLinkActive provides visual feedback without manual CSS class toggling',
+        'Router.navigate() uses the same path-segment array syntax as routerLink\'s array form',
+        'Prefer routerLink for user-facing links -- it preserves browser behaviors like middle-click to open in new tab',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'Build the navigation console! Add Angular navigation directives to each link so crew can ' +
-        'move between station modules, and highlight which module they are currently in.',
+        'Replace these dead links with Angular navigation. Add routerLink to each anchor so ' +
+        'clicking actually navigates, and use routerLinkActive to highlight the current location.',
       starterCode: [
         '<nav class="station-nav">',
         '  <!-- TODO: Replace plain links with Angular navigation directives -->',
@@ -118,21 +123,22 @@ export const CHAPTER_13_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Replace href="#" with routerLink="/path" on each anchor tag',
-        'Add routerLinkActive="active" to highlight the link when its route is active',
+        'Replace href="#" with routerLink="/path" -- use a path that makes sense for each link',
+        'Add routerLinkActive="active" to each anchor so Angular applies the "active" class automatically',
       ],
       successMessage:
-        'Navigation console links are live! Crew can click to move between modules with active highlighting.',
+        'Navigation is live! Crew can click between modules and see where they are. ' +
+        'Next challenge: navigating from code when logic demands it.',
       explanation:
-        'routerLink turns an element into a navigation trigger that changes the route without reloading ' +
-        'the page. routerLinkActive adds a CSS class when the link\'s route matches the current URL, ' +
-        'providing visual feedback for the active location.',
+        'routerLink turns a regular anchor into a SPA navigation trigger -- no page reload, no lost ' +
+        'state. routerLinkActive watches the current URL and toggles a CSS class, giving you visual ' +
+        'feedback without writing any JavaScript.',
     } satisfies CodeChallengeStep,
     {
       stepType: 'code-challenge',
       prompt:
-        'Emergency override! Write a component that injects the navigation service and navigates ' +
-        'programmatically to the safe module when an evacuation is triggered.',
+        'Emergency override time. Import the Router service, inject it, and use it to navigate ' +
+        'programmatically when the evacuate method is called.',
       starterCode: [
         "import { Component } from '@angular/core';",
         "import { inject } from '@angular/core';",
@@ -174,15 +180,16 @@ export const CHAPTER_13_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Import and inject the routing service, then call its navigate method in the evacuate function',
-        'Pass an array of path segments like [\'/safe-zone\'] to the navigate method',
+        'Add Router to your import from \'@angular/router\', then store inject(Router) as a private field',
+        'In evacuate(), call this.router.navigate([\'/safe-zone\']) -- note the array wrapper',
       ],
       successMessage:
-        'Emergency navigation override active! The component can navigate programmatically to any module.',
+        'Emergency navigation is operational! You\'ve mastered both declarative and programmatic ' +
+        'navigation -- the two building blocks of Angular routing.',
       explanation:
-        'Router.navigate() is for programmatic navigation — when route changes happen in response to ' +
-        'logic rather than user clicks. Inject the Router with inject(Router) and pass an array of ' +
-        'path segments to navigate().',
+        'Router.navigate() is the programmatic counterpart to routerLink. Inject the Router service, ' +
+        'then call navigate() with an array of path segments. Same result, different trigger -- code ' +
+        'instead of a click.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

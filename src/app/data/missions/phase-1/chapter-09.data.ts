@@ -6,15 +6,17 @@ export const CHAPTER_09_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Nexus Station is running low on power. The Star Chart module, Crew Database, and Research Archive ' +
-        'are massive — loading them all at startup drains the power reserves. Deferrable views let you delay ' +
-        'rendering heavy components until they are actually needed, saving critical resources.',
+        'Every component you\'ve built so far loads immediately when the page loads. For a small app, that\'s ' +
+        'fine. But imagine Nexus Station with 50 modules — loading them all upfront would be like opening every ' +
+        'app on your phone at once. The Star Chart, Crew Database, and Research Archive are massive. Deferrable ' +
+        'views let you say "don\'t load this until it\'s actually needed."',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use @defer to delay rendering of a component until a trigger fires. The @placeholder shows ' +
-        'while waiting, @loading during load, and @error if something fails.',
+        '@defer is surprisingly simple for what it does. You wrap a component, pick a trigger (when should it ' +
+        'load?), and optionally define what to show while waiting. Angular handles the rest — code splitting, ' +
+        'lazy loading, the whole pipeline.',
       code: [
         '@Component({',
         "  selector: 'app-station-dashboard',",
@@ -50,30 +52,33 @@ export const CHAPTER_09_CONTENT: StoryMissionContent = {
       language: 'angular-template',
       highlightLines: [7, 9, 11, 13, 17, 23],
       explanation:
-        '@defer delays rendering until a trigger fires. Triggers include: on viewport (element scrolls into view), ' +
-        'on interaction (user clicks/hovers), on timer(Ns) (after a delay), on idle (browser is idle), and ' +
-        'when condition (expression becomes true). Each @defer block can have @placeholder, @loading, and @error states.',
+        'Each @defer block has a trigger that answers "when should this load?" on viewport means "when the ' +
+        'user scrolls it into view." on interaction means "when the user clicks or hovers." on timer(2s) means ' +
+        '"after 2 seconds." The companion blocks handle the in-between states: @placeholder shows before the ' +
+        'trigger fires, @loading shows while the code is being fetched, and @error catches failures.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Heavy modules now load on demand, keeping the station\'s power consumption lean until components are needed.',
-      conceptTitle: 'Deferrable Views -- @defer',
+        'Heavy modules now load on demand. The initial page load stays fast because the browser only downloads ' +
+        'what\'s immediately visible — everything else waits for its trigger.',
+      conceptTitle: 'Deferrable Views with @defer',
       conceptBody:
-        'Deferrable views let you lazy-render components and their dependencies. The @defer block delays ' +
-        'rendering until a trigger fires, reducing initial bundle size and render time. Four companion blocks ' +
-        'handle loading states: @placeholder (before trigger), @loading (during load), @error (on failure).',
+        'Here\'s the real win: @defer doesn\'t just delay rendering — it splits the deferred component into a ' +
+        'separate JavaScript chunk automatically. That means the browser doesn\'t even download the code until ' +
+        'the trigger fires. For large apps, this can cut your initial bundle size dramatically.',
       keyPoints: [
-        'Triggers: on viewport, on interaction, on idle, on timer(Ns), when expression',
-        '@placeholder, @loading, and @error provide UI for each loading state',
-        'Reduces initial bundle size — deferred components are lazy-loaded automatically',
+        'Five triggers: on viewport (scrolled into view), on interaction (click/hover), on idle (browser has nothing else to do), on timer(Ns) (after a delay), when expression (a condition becomes true)',
+        '@placeholder, @loading, and @error give you control over what the user sees during each phase — no blank gaps or mystery spinners',
+        'Angular handles the code splitting behind the scenes — you don\'t need to configure webpack or write dynamic imports yourself',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'The station dashboard is overloaded. Write deferrable views that delay rendering heavy modules ' +
-        'until they are needed, with placeholder and loading states.',
+        'The station dashboard is trying to load everything at once and it\'s choking. Wrap the star chart ' +
+        'in a @defer block so it loads lazily, and give it placeholder and loading states so the UI doesn\'t ' +
+        'just show a blank gap.',
       starterCode: [
         '<!-- Available components: <app-star-chart />, <app-spinner /> -->',
         '',
@@ -110,14 +115,17 @@ export const CHAPTER_09_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Wrap content in @defer (on viewport) { ... } to delay rendering until scrolled into view',
-        'Add @placeholder { ... } and @loading { ... } blocks after the main content',
+        '@defer (on viewport) { <app-star-chart /> } wraps the component — pick whichever trigger makes sense for your use case',
+        'Add @placeholder { ... } right after the closing brace to define what shows before the trigger fires, then @loading { ... } for the loading state',
       ],
       successMessage:
-        'Heavy modules now load on demand! The dashboard conserves power by deferring rendering.',
+        'The dashboard breathes easier now. Deferred views keep the initial load fast by only fetching ' +
+        'heavy components when they\'re actually needed. One more chapter in this phase — image optimization, ' +
+        'which is more practical than it sounds.',
       explanation:
-        '@defer delays rendering until a trigger fires (viewport, interaction, idle, timer). Companion ' +
-        'blocks @placeholder, @loading, and @error provide UI for each loading state.',
+        '@defer delays both rendering AND downloading. The component\'s code isn\'t even fetched until the ' +
+        'trigger fires. @placeholder shows before that happens, @loading shows during the download, and ' +
+        '@error catches anything that goes wrong. Pick the trigger that matches your UX intent.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

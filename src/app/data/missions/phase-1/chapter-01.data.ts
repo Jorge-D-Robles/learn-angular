@@ -6,16 +6,18 @@ export const CHAPTER_01_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Nexus Station has suffered critical damage. Hull breaches, failing life support, and scattered debris ' +
-        'fill the corridors. Before anything else, you need shelter — a self-contained emergency module that can ' +
-        'keep you alive while you rebuild. In Angular, every piece of the UI is a component: a self-contained ' +
-        'building block with its own template, logic, and style. Your first task is to build one.',
+        'Nexus Station has suffered critical damage. Hull breaches, failing life support, scattered debris. ' +
+        'Before anything else, you need shelter — a self-contained emergency module that can keep you alive ' +
+        'while you rebuild. In Angular, everything you see on screen is a component. A component is like a ' +
+        'LEGO brick: it contains everything it needs — its HTML, its logic, its style — and snaps together ' +
+        'with other bricks to form something bigger. Your first job is to build one.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Here is the blueprint for your emergency shelter module. The @Component decorator tells Angular this ' +
-        'class is a component. The selector gives it a tag name, and the template defines what it displays.',
+        'Here is the blueprint for your emergency shelter. That @Component thing on top might look weird if ' +
+        'you have never seen a decorator before. That is normal — decorators are just functions that attach ' +
+        'extra information to a class. This one tells Angular "hey, this is not just a class, it is a component."',
       code: [
         "import { Component } from '@angular/core';",
         '',
@@ -28,29 +30,34 @@ export const CHAPTER_01_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [3, 4, 5],
       explanation:
-        'The @Component decorator marks the class as an Angular component. The selector defines the HTML tag ' +
-        '(<app-emergency-shelter>), and the template contains the HTML that Angular renders.',
+        '@Component is a decorator — it marks this class as an Angular component. The selector gives it an ' +
+        'HTML tag name (<app-emergency-shelter>), and the template is the HTML Angular will render. The class ' +
+        'itself is just plain TypeScript. The decorator is what makes Angular pay attention to it.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'You have built your first station module. Let us break down what makes a component work.',
-      conceptTitle: 'What is a Component?',
+        'You just built your first station module. Before moving on, take a moment to understand the pattern ' +
+        'you are going to see everywhere in Angular.',
+      conceptTitle: 'The Anatomy of a Component',
       conceptBody:
-        'Components are the fundamental building blocks of Angular applications. Each component has a TypeScript ' +
-        'class for logic, an HTML template for the view, and optional CSS for styling. Think of them as ' +
-        'self-contained station modules — each one handles its own display and behavior.',
+        'Every Angular component is a TypeScript class with a @Component decorator on top. The class holds ' +
+        'your logic — properties, methods, state. The decorator holds the configuration — what HTML tag to ' +
+        'use, what template to render, what styles to apply. Think of the class as the brain and the ' +
+        'decorator as the badge that says "I am a component, here is how I work."',
       keyPoints: [
-        'Components are standalone by default in modern Angular — no NgModule needed',
-        'One component per file keeps code organized and testable',
-        'Use PascalCase for class names (EmergencyShelterComponent) and kebab-case for selectors (app-emergency-shelter)',
+        'Modern Angular components are standalone by default — no NgModule boilerplate needed. This was a big deal when it shipped.',
+        'One component per file. It keeps things testable and easy to find. You will thank yourself later.',
+        'Class names use PascalCase (EmergencyShelterComponent), selectors use kebab-case (app-emergency-shelter). This is a convention you will see in every Angular project.',
       ],
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Your shelter is online, but it needs a status display. Add a property to the component class and ' +
-        'reference it in the template. This is a preview of interpolation, which you will master in Chapter 2.',
+        'Your shelter is online, but the status display is blank. Add a property to the class and show it ' +
+        'in the template with {{ }}. This is called interpolation — think of it like a name tag where the ' +
+        'tag is always there, but the name written on it comes from somewhere else. You will dig into this ' +
+        'properly in Chapter 2.',
       code: [
         "import { Component } from '@angular/core';",
         '',
@@ -68,14 +75,16 @@ export const CHAPTER_01_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [7, 11],
       explanation:
-        'The class property "status" holds data, and {{ status }} in the template displays it. ' +
-        'This one-way data flow from class to template is called interpolation.',
+        'The status property lives in the class. {{ status }} in the template tells Angular "grab the value ' +
+        'of status and display it here as text." Data flows one way: from the class to the template. When ' +
+        'the property changes, the display updates automatically.',
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'Nexus Station\'s diagnostic systems are offline. Write a complete Angular component with a ' +
-        '@Component decorator, selector, template, and class to create a diagnostic scanner module.',
+        'The station\'s diagnostic systems are dark. Build a complete Angular component from scratch — ' +
+        'a diagnostic scanner with a @Component decorator, a selector, a template with an <h1>, and an ' +
+        'exported class. You have done this once already. Now do it on your own.',
       starterCode: [
         "import { Component } from '@angular/core';",
         '',
@@ -114,14 +123,16 @@ export const CHAPTER_01_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'The @Component decorator takes an object with selector, template properties',
-        "The selector should start with 'app-' and the class name should end with 'Component'",
+        'Start with @Component({ }) above your class. Inside, add selector and template properties.',
+        "Selectors start with 'app-'. Class names end with 'Component'. The decorator goes directly above the class.",
       ],
       successMessage:
-        'Diagnostic scanner module is online! You built a complete Angular component from scratch.',
+        'You just built your first Angular component from scratch. That decorator-plus-class pattern? ' +
+        'You will write it hundreds of times. It will feel like second nature soon.',
       explanation:
-        'Every Angular component follows this pattern: a @Component decorator configures how it appears ' +
-        'in HTML (selector) and what it displays (template), while the class contains the logic.',
+        'Every Angular component follows the same shape: a @Component decorator configures the HTML tag ' +
+        '(selector) and what gets rendered (template), while the class underneath holds the logic. This is ' +
+        'the pattern you will build on for everything that follows.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

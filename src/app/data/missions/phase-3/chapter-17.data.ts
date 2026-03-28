@@ -6,16 +6,18 @@ export const CHAPTER_17_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Diagnostic reports are reaching Mission Control, but corrupted data is causing system failures. ' +
-        'Every form submission needs validation — required fields, format checks, and custom rules. ' +
-        'Angular provides built-in validators and lets you create custom ones to enforce data integrity ' +
-        'before any report leaves the terminal.',
+        'Your forms accept anything right now. A crew member could submit an empty report, type ' +
+        '"asdfgh" as a system code, or leave critical fields blank. That\'s how corrupted data ' +
+        'reaches Mission Control and causes system failures. Validation is the bouncer at the door ' +
+        '-- checking every piece of data before it goes anywhere. Angular provides built-in ' +
+        'validators and a clean pattern for writing your own.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Add built-in validators to reactive form controls. Each validator is a function passed as the ' +
-        'second argument when creating a control.',
+        'Validators are just functions that Angular runs against a control\'s value. You pass them ' +
+        'as the second argument when creating a control. If the value is valid, the validator ' +
+        'returns null. If not, it returns an error object describing what went wrong.',
       code: [
         "import { Validators } from '@angular/forms';",
         '',
@@ -36,15 +38,17 @@ export const CHAPTER_17_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 4, 5, 6, 10, 13],
       explanation:
-        'Validators are functions that check form control values. Angular provides built-in validators ' +
-        '(required, minLength, maxLength, pattern, and more). Pass them as the second argument when ' +
-        'creating a control. Use hasError() in the template to show specific error messages.',
+        'Multiple validators compose as an array on a single control. Angular runs all of them and ' +
+        'collects the errors. In the template, hasError() lets you check for a specific failure by ' +
+        'name -- \'required\', \'minlength\', \'pattern\' -- so you can show targeted messages instead ' +
+        'of a generic "invalid field" warning.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Built-in validators cover common cases, but the station needs custom rules — like verifying ' +
-        'that system codes follow the station naming convention.',
+        'Built-in validators handle the common stuff. But what about station-specific rules, like ' +
+        'verifying a system code matches NX-XX-999 format? That\'s a custom validator -- a factory ' +
+        'function that returns a validator function.',
       code: [
         "import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';",
         '',
@@ -70,31 +74,34 @@ export const CHAPTER_17_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 3, 4, 9, 10],
       explanation:
-        'A custom validator is a function that receives an AbstractControl and returns a validation error ' +
-        'object or null. The error object key becomes the error name you check with hasError(). Wrap ' +
-        'validators in factory functions for reusability and parameterization.',
+        'The factory pattern (a function that returns a function) lets you parameterize validators ' +
+        'later -- imagine stationCodeValidator(\'NX\') vs stationCodeValidator(\'SX\') for different ' +
+        'station prefixes. The error object key (\'stationCode\') becomes the name you check with ' +
+        'hasError() in the template. Return null for valid, an object for invalid.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Data integrity is verified. Here is how Angular validation protects form submissions.',
-      conceptTitle: 'Forms Validation — Built-in and Custom Validators',
+        'Validation is composable by design. Stack as many validators as you need on a single ' +
+        'control, mix built-in with custom, and Angular runs them all.',
+      conceptTitle: 'Validation -- Guarding Your Forms',
       conceptBody:
-        'Validation ensures form data meets requirements before submission. Angular validators are ' +
-        'composable functions that return null for valid values or an error object for invalid ones. ' +
-        'Combine built-in validators with custom ones for comprehensive data integrity.',
+        'Every validator follows the same contract: take a control, return null or an error object. ' +
+        'This uniformity means built-in and custom validators are interchangeable. You can compose ' +
+        'them freely, test them in isolation (they\'re just functions), and reuse them across forms.',
       keyPoints: [
-        'Validators.required, minLength, maxLength, and pattern cover common cases',
-        'Custom validators return null (valid) or an error object (invalid)',
-        'hasError() checks for specific validation failures in the template',
-        'Multiple validators compose as an array on a single control',
+        'Built-in validators (required, minLength, maxLength, pattern) cover 80% of cases -- reach for custom only when you need domain-specific rules',
+        'Custom validators return null for valid, { errorName: details } for invalid -- the error key is what hasError() checks',
+        'The factory pattern makes validators reusable and parameterizable -- stationCodeValidator() today, configurable tomorrow',
+        'Validators run on every value change, so keep them lightweight -- no HTTP calls in synchronous validators',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'Protect the diagnostic form! Add built-in validators to enforce required fields, ' +
-        'minimum lengths, and format patterns, then show error messages in the template.',
+        'Lock down the diagnostic form. Add Validators.required, Validators.minLength, and ' +
+        'Validators.pattern to the controls, then add @if blocks in the template that show error ' +
+        'messages using hasError().',
       starterCode: [
         "import { Component, inject } from '@angular/core';",
         "import { FormBuilder, ReactiveFormsModule } from '@angular/forms';",
@@ -144,21 +151,22 @@ export const CHAPTER_17_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Import Validators from @angular/forms, then pass an array like [Validators.required, Validators.minLength(3)] as the second element',
-        'Use diagnosticForm.get(\'fieldName\')?.hasError(\'required\') in @if blocks to show error messages',
+        'Import Validators, then pass an array like [Validators.required, Validators.minLength(3)] as the second element in each control\'s array',
+        'In the template, use @if (diagnosticForm.get(\'systemId\')?.hasError(\'required\')) { <span>...</span> } for each rule',
       ],
       successMessage:
-        'Validation shields are up! Built-in validators enforce data integrity before submission.',
+        'Validation is enforced! Bad data gets rejected before it reaches Mission Control. ' +
+        'One more step: writing a custom validator for station-specific rules.',
       explanation:
-        'Validators are functions passed as the second argument when creating a control. Angular provides ' +
-        'built-in validators like required, minLength, and pattern. Use hasError() in the template to ' +
-        'check for specific validation failures and display targeted error messages.',
+        'Validators slot into the second position of a control\'s definition array. Angular ' +
+        'runs them on every change and updates the control\'s error state. hasError() in the ' +
+        'template lets you show the right message for the right failure.',
     } satisfies CodeChallengeStep,
     {
       stepType: 'code-challenge',
       prompt:
-        'Create a custom validator! Write a ValidatorFn factory that checks whether a value ' +
-        'matches the Nexus Station code format (NX-XX-999).',
+        'Write a custom validator from scratch. Create a ValidatorFn factory that checks whether ' +
+        'a value matches the Nexus Station code format: NX-XX-999 (two uppercase letters, three digits).',
       starterCode: [
         "import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';",
         '',
@@ -202,15 +210,16 @@ export const CHAPTER_17_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Access the value with control.value, then use a RegExp like /^NX-[A-Z]{2}-\\d{3}$/.test(value)',
-        'Return null for valid values and { stationCode: { value } } for invalid ones',
+        'Read the value with control.value, guard against empty strings by returning null early, then test with /^NX-[A-Z]{2}-\\d{3}$/.test(value)',
+        'Return null when the regex passes, and { stationCode: { value } } when it fails -- the key name is what you\'ll use with hasError()',
       ],
       successMessage:
-        'Custom validator deployed! The station code format is enforced by your ValidatorFn.',
+        'Custom validator deployed! You can now enforce any domain-specific rule on any form ' +
+        'control. Built-in and custom validators compose together seamlessly.',
       explanation:
-        'A custom ValidatorFn factory returns a function that receives an AbstractControl and returns ' +
-        'null for valid values or an error object for invalid ones. The error object key becomes the ' +
-        'name you check with hasError() in the template. Use RegExp.test() to validate format patterns.',
+        'A custom validator is a function that takes a control and returns null or an error object. ' +
+        'The factory wrapper lets you add parameters later. The error key you choose becomes ' +
+        'the string you pass to hasError() in the template -- that\'s the only contract.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

@@ -6,17 +6,19 @@ export const CHAPTER_25_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Some station sensor readings need a default that is derived from other signals, but crew members ' +
-        'must be able to override that default manually. A computed signal is read-only, and a plain signal ' +
-        'does not reset when its source changes. Angular\'s linkedSignal() bridges the gap — it creates a ' +
-        'writable signal whose default value is derived from a source, but can be manually overridden and ' +
-        'resets when the source changes.',
+        'Computed signals are read-only. That\'s great for values like "environment status" that should ' +
+        'always reflect their inputs. But what about a dropdown that defaults to the first item in a list, ' +
+        'yet lets the user pick something else? A computed signal won\'t let you override it. A plain ' +
+        'signal won\'t reset when the list changes. linkedSignal() is the bridge — think of it like a ' +
+        'thermostat default. It reads the outside temperature to pick a starting point, but you can crank ' +
+        'the dial manually. When the season changes, the default resets.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use the shorthand linkedSignal(() => ...) form to create a writable signal that resets its value ' +
-        'whenever the source signal changes.',
+        'The shorthand form is the one you\'ll reach for most often. Pass a function that returns the ' +
+        'default value, and Angular gives you back a writable signal. When the source signal changes, ' +
+        'the default resets — even if the user had overridden it.',
       code: [
         "import { Component, signal, linkedSignal } from '@angular/core';",
         '',
@@ -41,15 +43,19 @@ export const CHAPTER_25_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 14, 17],
       explanation:
-        'linkedSignal(() => this.sectors()[0]) creates a writable signal that defaults to the first sector. ' +
-        'You can call .set() to override the value. When sectors changes, the linkedSignal resets to the ' +
-        'computation result — the new first sector — ensuring it always holds a valid value.',
+        'selectedSector starts as "Alpha" — the first sector. Call .set(\'Delta\') and it becomes ' +
+        '"Delta". Now here\'s the key behavior: if sectors changes to a completely new list, ' +
+        'selectedSector snaps back to the first item of that new list. The override is gone. ' +
+        'This is exactly what you want for things like dropdown defaults, tab selections, or any ' +
+        'UI state that should reset when the underlying data changes.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use the source/computation object form to access the previous value and preserve user overrides ' +
-        'when the source changes.',
+        'Sometimes you want smarter reset logic. Maybe the user selected "Pressure" from a sensor list, ' +
+        'and when the list refreshes, "Pressure" is still in it. Wouldn\'t it be better to keep that ' +
+        'selection instead of resetting? The object form gives you access to the previous value so you ' +
+        'can make that call.',
       code: [
         "import { Component, signal, linkedSignal } from '@angular/core';",
         '',
@@ -84,33 +90,38 @@ export const CHAPTER_25_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 18, 19, 20, 21, 22],
       explanation:
-        'The object form separates source and computation. When availableSensors changes, the computation ' +
-        'receives the new sensor list and a previous object containing previous.value (the last linkedSignal ' +
-        'value) and previous.source (the old source value). This lets you preserve the user\'s selection if ' +
-        'it still exists in the new list, or fall back to a default.',
+        'The object form separates source and computation. When availableSensors changes, computation ' +
+        'receives the new list and a previous object with previous.value (the user\'s last selection) ' +
+        'and previous.source (the old list). Here, we check if the old selection still exists in the ' +
+        'new list. If it does, keep it. If not, fall back to the first sensor. This pattern is common ' +
+        'in real apps — pagination resets, filter preservation, tab re-selection.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Linked sensors are calibrated. Here is how linkedSignal bridges computed and writable signals.',
-      conceptTitle: 'Linked Signals — Writable Derived State',
+        'Linked sensors are calibrated. Let\'s clarify when you\'d pick linkedSignal over computed or ' +
+        'a plain signal.',
+      conceptTitle: 'Linked Signals — The "Smart Default" Primitive',
       conceptBody:
-        'linkedSignal() creates a writable signal whose default value is derived from a source signal. ' +
-        'It resets when the source changes, but can be manually overridden with .set() or .update(). ' +
-        'The shorthand form linkedSignal(() => expr) is concise for simple cases. The object form ' +
-        '{ source, computation } gives access to the previous value for advanced reset logic.',
+        'The difference between computed, linkedSignal, and effect can be confusing at first. Here\'s ' +
+        'the simple rule: if you\'re computing a VALUE that\'s always derived from its inputs, use ' +
+        'computed. If you\'re computing a value that users can override, use linkedSignal. If you\'re ' +
+        'DOING something (logging, API calls), use effect (next chapter). linkedSignal fills the gap ' +
+        'between "fully derived" and "fully manual" — it gives you a sensible default that resets ' +
+        'when the source changes, but stays writable for user interaction.',
       keyPoints: [
-        'linkedSignal() creates a writable signal with a derived default value',
-        'The shorthand form linkedSignal(() => expr) resets on any dependency change',
-        'The object form { source, computation } provides access to previous values',
-        'Use linkedSignal when you need a default from signals that users can override',
+        'linkedSignal answers a specific question: "What if I need a default that resets, but users can override it?"',
+        'The shorthand form linkedSignal(() => expr) covers most cases — dropdown defaults, tab selections, initial filter values',
+        'The object form { source, computation } with previous access is for smarter resets — keeping a selection alive if it still exists',
+        'If you never need .set(), you want computed. If you never need auto-reset, you want a plain signal.',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'The station\'s docking bay selector needs a default that updates when the available bays change. ' +
-        'Create a linked signal that defaults to the first available bay.',
+        'Docking control needs a bay selector that defaults to the first available bay. When the bay ' +
+        'list changes (ships arrive, bays go offline), the selection should snap back to the new first ' +
+        'option. But crew members can also pick a specific bay manually.',
       starterCode: [
         "import { Component, signal } from '@angular/core';",
         '',
@@ -158,13 +169,14 @@ export const CHAPTER_25_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        "Import linkedSignal from '@angular/core' alongside signal",
-        'Define selectedBay = linkedSignal(() => this.bays()[0]) to derive the default from the first bay',
+        'Add linkedSignal to your import from \'@angular/core\'',
+        'One line does it: selectedBay = linkedSignal(() => this.bays()[0]) — writable, auto-resetting, done',
       ],
-      successMessage: 'Bay selector linked! The default resets when available bays change.',
+      successMessage: 'Bay selector is wired up! Defaults reset automatically, overrides work when needed. One more piece to go: effects, for when you need to DO something rather than compute something.',
       explanation:
-        'linkedSignal(() => expr) creates a writable signal whose default is derived from source signals. ' +
-        'When the source changes, the linkedSignal resets. You can still override it with .set().',
+        'linkedSignal(() => this.bays()[0]) gives you a signal that starts as "Bay-A" and resets ' +
+        'whenever bays changes. But .set() still works, so selectBay() can override the default. ' +
+        'This is the pattern for any UI control that needs a sensible starting value tied to changing data.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

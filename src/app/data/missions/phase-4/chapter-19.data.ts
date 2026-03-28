@@ -6,17 +6,18 @@ export const CHAPTER_19_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'The core services exist, but wiring them into the station grid requires understanding ' +
-        'dependency injection — Angular\'s system for delivering service instances to the components ' +
-        'that need them. Some services should be station-wide singletons, while others need to be ' +
-        'scoped to specific module clusters. The inject() function and provider configuration give ' +
-        'you precise control over how services are shared.',
+        'You created services in Chapter 18. But how does Angular decide which instance to hand a ' +
+        'component? What if different parts of the app need different instances of the same service? ' +
+        'That\'s dependency injection — Angular\'s system for connecting consumers to providers. Think ' +
+        'of it like ordering food at a restaurant: you don\'t go to the kitchen yourself, you just tell ' +
+        'the waiter what you want, and the restaurant decides how to fulfill the order.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'The inject() function is the modern way to request dependencies. It works in constructors, ' +
-        'field initializers, and factory functions. Here is a component that injects multiple services.',
+        'The inject() function is the modern way to request dependencies. It works in field initializers, ' +
+        'constructors, and factory functions. Here a single component pulls in three different services — ' +
+        'each resolved from the same injector hierarchy.',
       code: [
         "import { Component, inject } from '@angular/core';",
         "import { PowerService } from './power.service';",
@@ -40,15 +41,17 @@ export const CHAPTER_19_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 15, 16, 17],
       explanation:
-        'inject() replaces constructor injection with a cleaner, more composable pattern. Each call ' +
-        'resolves the dependency from the nearest injector in the hierarchy. Since these services use ' +
-        'providedIn: \'root\', they resolve to the application-level singleton instances.',
+        'Each inject() call tells Angular "give me this service." Angular walks up the injector ' +
+        'hierarchy until it finds a provider that matches. Since all three services use ' +
+        'providedIn: \'root\', they resolve to application-level singletons. No constructor boilerplate, ' +
+        'no manual wiring — just declare what you need.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Not all services should be singletons. Some module clusters need their own isolated instance. ' +
-        'Use the component\'s providers array to create a scoped service instance.',
+        'Not every service should be a singleton. Sometimes a component needs its own isolated instance — ' +
+        'like a backup power grid that tracks power separately from the main grid. You do this by adding ' +
+        'the service to the component\'s providers array.',
       code: [
         "import { Component, inject } from '@angular/core';",
         "import { PowerService } from './power.service';",
@@ -81,33 +84,35 @@ export const CHAPTER_19_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [8, 14, 26],
       explanation:
-        'Adding a service to a component\'s providers array creates a new instance scoped to that ' +
-        'component and its children. BackupGridComponent gets its own PowerService, while ' +
-        'MainGridComponent uses the root singleton. This hierarchical injection lets you control ' +
-        'exactly which parts of the station share state.',
+        'Adding PowerService to the providers array creates a fresh instance scoped to BackupGridComponent ' +
+        'and its children. MainGridComponent still gets the root singleton. Both call inject(PowerService), ' +
+        'but Angular delivers different instances based on where each component sits in the injector ' +
+        'hierarchy. Scoped providers are for cases where you genuinely need isolated state.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'The power grid is fully wired. Here is how Dependency Injection scoping works in Angular.',
-      conceptTitle: 'Dependency Injection — inject() and Hierarchical Scoping',
+        'The injection system is wired. Honestly, for most apps you\'ll stick with providedIn: \'root\'. ' +
+        'Component-level providers are a specialized tool — but knowing they exist matters when you hit ' +
+        'that edge case.',
+      conceptTitle: 'Dependency Injection — Hierarchical Injectors and Scoping',
       conceptBody:
-        'Angular\'s DI system uses a hierarchy of injectors to resolve dependencies. The root injector ' +
-        'provides application-wide singletons. Component-level providers create new instances scoped ' +
-        'to that component subtree. The inject() function resolves from the nearest matching injector, ' +
-        'giving you fine-grained control over service sharing.',
+        'Angular maintains a tree of injectors that mirrors your component tree. When you call inject(), ' +
+        'Angular searches upward from the requesting component until it finds a matching provider. The ' +
+        'root injector holds your providedIn: \'root\' singletons. Component-level providers intercept ' +
+        'that search and supply a scoped instance instead.',
       keyPoints: [
-        'inject() resolves dependencies from the nearest injector in the hierarchy',
-        'providedIn: \'root\' registers a service at the application root (singleton)',
-        'Component-level providers create scoped instances for that subtree',
-        'Child components inherit parent injectors unless they override with their own providers',
+        'inject() searches up the injector tree — closest matching provider wins',
+        'providedIn: \'root\' registers at the top of the tree, giving you an app-wide singleton',
+        'Component providers create a new instance that\'s shared only within that component subtree',
+        'Child components inherit their parent\'s injector unless they override it with their own providers',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'Wire up the station dashboard! Inject PowerService, CrewService, and AlertService ' +
-        'into a single component using inject().',
+        'Wire up the station dashboard. Inject PowerService, CrewService, and AlertService into a single ' +
+        'component using inject(). Each service gets its own field.',
       starterCode: [
         "import { Component, inject } from '@angular/core';",
         "import { PowerService } from './power.service';",
@@ -153,20 +158,21 @@ export const CHAPTER_19_CONTENT: StoryMissionContent = {
       ],
       hints: [
         'Assign each service to a field: power = inject(PowerService)',
-        'Each inject() call resolves a different service from the same injector hierarchy',
+        'The pattern is the same for all three — each inject() call resolves independently',
       ],
       successMessage:
-        'Dashboard connected! Three services feed live data into a single component.',
+        'Three services, one component, zero manual wiring. That\'s dependency injection doing its job. ' +
+        'Next challenge: scoping a service to a single component.',
       explanation:
-        'A component can inject any number of services using inject(). Each call resolves ' +
-        'independently from the injector hierarchy. Since all three services use providedIn: \'root\', ' +
-        'the component receives singleton instances shared across the application.',
+        'A component can inject as many services as it needs. Each inject() call resolves independently ' +
+        'from the injector hierarchy. Since all three use providedIn: \'root\', the dashboard gets ' +
+        'singleton instances that are shared across the entire app.',
     } satisfies CodeChallengeStep,
     {
       stepType: 'code-challenge',
       prompt:
-        'Scope a service to a component! Remove the root-level registration from CrewRosterService ' +
-        'and add a providers array to the component so it gets its own instance.',
+        'Time to scope a service. Remove the root-level registration from CrewRosterService and ' +
+        'add it to the component\'s providers array instead, so this component gets its own isolated instance.',
       starterCode: [
         "import { Injectable } from '@angular/core';",
         "import { Component, inject } from '@angular/core';",
@@ -210,15 +216,17 @@ export const CHAPTER_19_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        "Remove { providedIn: 'root' } from @Injectable and use @Injectable() instead",
-        'Add providers: [CrewRosterService] to the @Component decorator to scope the service',
+        "Change @Injectable({ providedIn: 'root' }) to just @Injectable() — remove the root registration",
+        'Add providers: [CrewRosterService] inside the @Component decorator to scope the service to this component',
       ],
       successMessage:
-        'Service scoped! This component now gets its own CrewRosterService instance, separate from the root.',
+        'Service scoped. This component now gets its own private instance, completely independent from ' +
+        'any root singleton. You\'ve seen both ends of the spectrum — app-wide singletons and component-scoped instances.',
       explanation:
-        'Removing providedIn: \'root\' stops the service from being a global singleton. Adding it ' +
-        'to the component\'s providers array creates a new instance scoped to that component and its ' +
-        'children. This is hierarchical injection — child components inherit the scoped instance.',
+        'When you remove providedIn: \'root\', the service is no longer automatically registered anywhere. ' +
+        'Adding it to a component\'s providers array creates a new instance scoped to that component and ' +
+        'its children. The inject() call still works — it just resolves from the component\'s local injector ' +
+        'instead of the root.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

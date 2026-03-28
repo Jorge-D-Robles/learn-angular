@@ -6,16 +6,18 @@ export const CHAPTER_12_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'The station map shows module locations, but the corridors need paths — specific routes with ' +
-        'parameters so crew can navigate to individual modules by ID. Some corridors are blocked, requiring ' +
-        'redirects. And if a crew member wanders off the map, a "Hull Breach" warning must display. Angular ' +
-        'routes handle all of these: paths, parameters, redirects, and wildcards.',
+        'Chapter 11 set up static routes -- /bridge always shows the bridge, /engine-room always shows ' +
+        'the engine room. But what about a page that changes based on the URL? Think /module/alpha-7 ' +
+        'vs /module/beta-3 -- same layout, different data. That\'s what route parameters solve. And ' +
+        'while we\'re at it, what happens when someone visits a URL that doesn\'t exist? Redirects ' +
+        'and wildcard routes handle those edge cases.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Route parameters let crew navigate to a specific module by ID. The colon syntax defines a dynamic ' +
-        'segment, and withComponentInputBinding delivers it as a signal input.',
+        'A colon in a route path creates a dynamic segment. Instead of hardcoding /module/alpha-7 as ' +
+        'its own route, :id captures whatever value appears in that position. The component receives ' +
+        'it as a signal input -- no manual subscription needed.',
       code: [
         'export const routes: Routes = [',
         "  { path: 'module/:id', component: ModuleDetailComponent },",
@@ -32,14 +34,15 @@ export const CHAPTER_12_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [2, 6, 10],
       explanation:
-        'The :id segment in the path captures a dynamic value from the URL. withComponentInputBinding ' +
-        'lets Angular deliver route parameters directly to signal inputs on the component.',
+        ':id is a placeholder, not a literal string. When someone visits /module/alpha-7, Angular ' +
+        'captures "alpha-7" and delivers it to the component. withComponentInputBinding makes this ' +
+        'automatic -- the route param name matches the input name, and Angular wires them together.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Not every corridor leads somewhere. A redirect sends crew from one path to another, and the ' +
-        'wildcard route catches anyone who wanders off the map.',
+        'What should happen when someone visits the root URL with no path? Or types a URL that doesn\'t ' +
+        'match any route? Redirects handle the first case, and the wildcard route catches everything else.',
       code: [
         'export const routes: Routes = [',
         "  { path: '', redirectTo: 'bridge', pathMatch: 'full' },",
@@ -51,14 +54,16 @@ export const CHAPTER_12_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [2, 5],
       explanation:
-        'redirectTo sends users from one path to another. The wildcard ** matches any unrecognized URL — ' +
-        'place it last because Angular matches routes in order.',
+        'The empty-path redirect sends visitors to /bridge when they hit the root URL. The ** wildcard ' +
+        'at the bottom catches anything that didn\'t match above -- your 404 page. Order matters here: ' +
+        'Angular checks routes top to bottom and stops at the first match.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Some station sections have sub-areas. Child routes let you nest layouts — the engineering deck ' +
-        'has its own internal navigation within the main station layout.',
+        'Some sections of an app have their own internal navigation. The engineering deck might have ' +
+        'sub-pages for reactor controls and shield management. Child routes let you nest a second ' +
+        'router-outlet inside a parent layout.',
       code: [
         'export const routes: Routes = [',
         '  {',
@@ -74,30 +79,33 @@ export const CHAPTER_12_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [5, 6, 7],
       explanation:
-        'Child routes render inside the parent component\'s own router-outlet. This creates nested layouts — ' +
-        'the engineering section has its own navigation within the station\'s main layout.',
+        'Child routes render inside the parent component\'s own router-outlet, not the app-level one. ' +
+        'So /engineering/reactor shows EngineeringLayoutComponent with ReactorComponent nested inside ' +
+        'it. This is how you build sections with their own internal navigation.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'All corridor paths are configured. Here is the full picture of route configuration.',
-      conceptTitle: 'Route Configuration — paths, params, wildcards',
+        'Route configuration is really just an ordered list of "if the URL looks like X, show Y." ' +
+        'The subtlety is in the ordering and the special cases.',
+      conceptTitle: 'Route Configuration -- Params, Redirects, and Wildcards',
       conceptBody:
-        'Route configuration is an ordered array of path-to-component mappings. Angular matches the first ' +
-        'route whose path fits the URL. The order matters — more specific routes should come before ' +
-        'general ones, with the wildcard always last.',
+        'Angular checks routes from top to bottom, stopping at the first match. Specific routes go ' +
+        'first, the wildcard goes last. Getting this order wrong is one of the most common routing ' +
+        'bugs -- a wildcard placed too early swallows routes that should have matched.',
       keyPoints: [
-        'Route parameters (:param) capture URL segments as dynamic values',
-        'redirectTo navigates from one path to another (requires pathMatch)',
-        'The wildcard ** catches unmatched URLs — always place it last',
-        'Child routes create nested layouts with nested router-outlets',
+        ':param segments capture URL values dynamically -- one route handles infinite variations',
+        'redirectTo needs pathMatch to tell Angular whether to match the full URL or just a prefix',
+        'The ** wildcard is your safety net for typos and broken links -- always the last route in the array',
+        'Child routes create nested layouts, each with their own router-outlet scope',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'Configure the corridor paths! Write a Routes array with a parameter route for module details, ' +
-        'a redirect from the empty path, and a wildcard catch-all for unknown paths.',
+        'Wire up the corridor paths. You need three things in your Routes array: a redirect from the ' +
+        'empty path so the app has a landing page, a parameterized route for module details, and a ' +
+        'wildcard to catch bad URLs.',
       starterCode: [
         "import { Routes } from '@angular/router';",
         "import { BridgeComponent } from './bridge';",
@@ -140,14 +148,15 @@ export const CHAPTER_12_CONTENT: StoryMissionContent = {
       ],
       hints: [
         'Use :id in the path string to define a dynamic segment, e.g., \'module/:id\'',
-        'The wildcard path \'**\' must be the last route since Angular matches in order',
+        'The wildcard path \'**\' must be the last route since Angular matches top to bottom',
       ],
       successMessage:
-        'All corridor paths configured! Parameters, redirects, and wildcards are in place.',
+        'All corridor paths configured! Your routes handle dynamic parameters, redirects, and ' +
+        'graceful 404s. Next: building a proper navigation UI so nobody has to type URLs by hand.',
       explanation:
-        'Route configuration is an ordered array. Parameters like :id capture dynamic URL segments. ' +
-        'redirectTo sends users from one path to another. The wildcard ** catches everything else ' +
-        'and must come last because Angular matches routes in order.',
+        'Order is the key insight. Angular scans routes top to bottom and takes the first match. ' +
+        'The redirect handles the "no path" case, :id captures dynamic segments, and ** at the bottom ' +
+        'catches everything that slipped through.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

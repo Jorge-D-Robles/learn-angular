@@ -6,18 +6,20 @@ export const CHAPTER_23_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Nexus Station\'s environmental sensors have relied on periodic polling — fetching data on a fixed ' +
-        'interval and manually refreshing every display. As the station expands into deep space operations, ' +
-        'this approach cannot keep up with the volume of telemetry data. Angular Signals provide a reactive ' +
-        'primitive: a value wrapper that automatically notifies consumers when the value changes, replacing ' +
-        'polling with push-based reactivity.',
+        'Up to now, your components have used plain TypeScript properties — temperature = 294. That works, ' +
+        'but Angular has no way to know when you change it. Every change detection cycle, it has to check ' +
+        'EVERYTHING, even values that haven\'t moved. As Nexus Station scales into deep-space ops with ' +
+        'hundreds of sensors streaming telemetry, that brute-force approach falls apart. Signals fix this. ' +
+        'They wrap a value in a reactive container that tells Angular exactly when something changed — no ' +
+        'polling, no guessing, no wasted checks.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Create a writable signal with signal() to hold a sensor reading. Read the signal by calling it ' +
-        'as a getter function. Use .set() to replace the value and .update() to compute a new value from ' +
-        'the previous one.',
+        'Think of a signal like a spreadsheet cell. When you update cell A1, every formula referencing A1 ' +
+        'recalculates automatically. That\'s what signal() gives you — a reactive value that Angular can ' +
+        'track. You read it by calling it like a function, replace it with .set(), or derive a new value ' +
+        'from the old one with .update().',
       code: [
         "import { Component, signal } from '@angular/core';",
         '',
@@ -44,16 +46,19 @@ export const CHAPTER_23_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 12, 15, 19],
       explanation:
-        'signal() creates a writable signal with an initial value. Call the signal as a function — ' +
-        'temperature() — to read its current value. The .set() method replaces the value entirely, ' +
-        'while .update() receives the current value and returns a new one. Angular automatically ' +
-        're-renders any template binding that reads the signal when its value changes.',
+        'signal(294.15) creates a reactive container holding that initial value. To read it, you call ' +
+        'temperature() — note the parentheses. That\'s how Angular knows your template depends on this ' +
+        'value. .set() swaps in a completely new value, while .update() hands you the current value and ' +
+        'lets you compute the next one. When the signal changes, Angular updates only the templates that ' +
+        'actually read it. Nothing else gets touched.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Expose read-only signals from a service using .asReadonly(). This prevents components from ' +
-        'accidentally modifying the canonical sensor data — only the service controls writes.',
+        'Here\'s a common pattern you\'ll use constantly: a service owns the writable signal, but exposes ' +
+        'only a read-only view to the rest of the app. Why? Because if any component could call .set() on ' +
+        'your pressure data, you\'d have no idea where state changes are coming from. .asReadonly() draws ' +
+        'a clear line — the service writes, everyone else reads.',
       code: [
         "import { Injectable, signal } from '@angular/core';",
         '',
@@ -75,32 +80,35 @@ export const CHAPTER_23_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 5, 7],
       explanation:
-        '.asReadonly() returns a read-only view of a writable signal. Consumers can call pressure() ' +
-        'to read the value but cannot call .set() or .update() on it. This enforces a clear ownership ' +
-        'boundary — the service owns the state, and components only observe it.',
+        '.asReadonly() returns a version of the signal that can be read but not written to. Components ' +
+        'can call pressure() to get the value, but .set() and .update() are gone. This is the same ' +
+        'ownership pattern you see in well-designed APIs everywhere: one place writes, many places read. ' +
+        'It makes debugging vastly easier because state changes only happen in one spot.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'The sensor network is online. Here is how signals work as Angular\'s reactive primitive.',
-      conceptTitle: 'Creating Signals with signal(), .set(), .update(), and .asReadonly()',
+        'The sensor network is online. Before moving on, let\'s lock in what makes signals different from ' +
+        'plain properties.',
+      conceptTitle: 'Why Signals Matter — Fine-Grained Reactivity',
       conceptBody:
-        'Signals are reactive value wrappers that notify consumers when their value changes. Create a ' +
-        'writable signal with signal(initialValue), read it by calling the getter function, replace ' +
-        'the value with .set(), compute a new value with .update(), and expose a read-only view with ' +
-        '.asReadonly(). Signals replace manual polling with automatic push-based updates.',
+        'Plain properties work, but Angular can\'t tell when they change. It has to re-check every binding ' +
+        'on every change detection cycle — that\'s called "dirty checking" and it doesn\'t scale. Signals ' +
+        'flip the model: instead of Angular asking "did anything change?", the signal announces "I changed." ' +
+        'This is fine-grained reactivity, and it\'s the foundation Angular is building its future on. ' +
+        'You actually saw a hint of this back in Chapter 7 — signal-based inputs use the same underlying mechanism.',
       keyPoints: [
-        'signal() creates a writable signal that holds a value and notifies on change',
-        '.set() replaces the value; .update() computes a new value from the current one',
-        'Read a signal by calling it as a function — e.g., temperature()',
-        '.asReadonly() exposes a read-only view to enforce ownership boundaries',
+        'Signals notify Angular exactly which values changed, so it can skip everything else — that\'s a huge performance win',
+        '.set() replaces the value outright; .update() gives you the previous value to compute the next one — pick whichever fits',
+        'The parentheses in temperature() aren\'t just syntax — they\'re how Angular registers the dependency between your template and the signal',
+        '.asReadonly() enforces single-owner state management: one service writes, everyone else observes',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'The station\'s oxygen sensors are offline. Create a writable signal to hold the oxygen level ' +
-        'and bind it in the template.',
+        'The station\'s oxygen sensors went dark during the last power surge. Your job: bring them back ' +
+        'online by replacing the plain property with a signal, and wiring up the template to read it reactively.',
       starterCode: [
         "import { Component } from '@angular/core';",
         '',
@@ -140,19 +148,20 @@ export const CHAPTER_23_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        "Import signal from '@angular/core' and declare oxygenLevel = signal(21)",
-        'Update the template to call the signal as a function: {{ oxygenLevel() }}',
+        'Two things need to change: import signal from \'@angular/core\', then declare oxygenLevel = signal(21)',
+        'The template still reads oxygenLevel without parentheses — that won\'t work for a signal. Change it to {{ oxygenLevel() }}',
       ],
-      successMessage: 'Oxygen sensor online! The signal updates the display reactively.',
+      successMessage: 'Oxygen sensor is back online and streaming reactively. In the next chapter, you\'ll learn to derive new values from signals like this one.',
       explanation:
-        'signal() creates a writable signal with an initial value. Read it by calling it as a function — ' +
-        'oxygenLevel() — in the template. Angular automatically re-renders when the signal changes.',
+        'signal(21) wraps the value 21 in a reactive container. The parentheses in oxygenLevel() are ' +
+        'critical — they tell Angular "this template depends on this signal." Without them, Angular sees ' +
+        'a function reference instead of a value, and nothing updates. It\'s a small syntax change with big consequences.',
     } satisfies CodeChallengeStep,
     {
       stepType: 'code-challenge',
       prompt:
-        'Protect the station\'s pressure data. Create a writable signal in the service and expose a ' +
-        'read-only view that components can observe but not modify.',
+        'Now lock down the pressure data. The service should own a private writable signal, but expose ' +
+        'only a read-only view. Components can observe the pressure, but they can\'t tamper with it.',
       starterCode: [
         "import { Injectable, signal } from '@angular/core';",
         '',
@@ -191,13 +200,14 @@ export const CHAPTER_23_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Change _pressure to: private _pressure = signal(101.3)',
-        'Change pressure to: pressure = this._pressure.asReadonly() and use this._pressure.set(value) in recordReading',
+        'Make _pressure private and a signal: private _pressure = signal(101.3)',
+        'Expose the public version as pressure = this._pressure.asReadonly(), and write to it with this._pressure.set(value) inside recordReading',
       ],
-      successMessage: 'Pressure data secured! Components can read but not modify the signal.',
+      successMessage: 'Pressure data is locked down — one writer, many readers. This ownership pattern will serve you well in every Angular app you build.',
       explanation:
-        '.asReadonly() returns a read-only view of a writable signal. Consumers call pressure() to read ' +
-        'the value but cannot call .set() or .update(). This enforces a clear ownership boundary.',
+        'The private signal _pressure is the single source of truth. .asReadonly() strips away .set() ' +
+        'and .update(), so consumers can only read. This isn\'t just a convenience — it\'s a design ' +
+        'decision that makes state changes predictable and debuggable.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

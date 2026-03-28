@@ -6,15 +6,17 @@ export const CHAPTER_07_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Every module on Nexus Station needs a status card, but each card shows different data — power output, ' +
-        'crew count, oxygen levels. Building a separate card component for each module would be wasteful. ' +
-        'Instead, build one reusable card that accepts data from its parent via input properties.',
+        'You\'ve been hardcoding data inside each component. That works for demos, but think about Nexus Station — ' +
+        'every module needs a status card, and each card shows different data: power output, crew count, oxygen ' +
+        'levels. Building a separate component for each one would be absurd. What you want is one reusable card ' +
+        'that accepts different data from whoever uses it. That\'s what inputs are — parameters for your components.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use the input() function to declare properties that a parent component can set. Use input.required() ' +
-        'when the value must be provided.',
+        'Inputs work like function parameters. When you call a function, you pass arguments in. When you use a ' +
+        'component, you pass data in through inputs. The input() function declares what data a component expects ' +
+        'to receive.',
       code: [
         "import { Component, input } from '@angular/core';",
         '',
@@ -38,14 +40,17 @@ export const CHAPTER_07_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 13, 14],
       explanation:
-        'input.required<string>() declares a required input property. The parent passes data via property binding: ' +
-        '[name]="\'Power Core\'". In the template, call the input as a function — name() — because inputs are signals.',
+        'input.required<string>() says: "this component needs a string, and the parent must provide it." ' +
+        'The parent passes data in using the square brackets you already know from property binding: ' +
+        '[name]="\'Power Core\'". One thing that might look odd — you read the value with name() instead of ' +
+        'just name. That\'s because inputs are signals under the hood, and you\'ll see why that matters when ' +
+        'you reach the Signals chapter.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Inputs can have default values. Use input(defaultValue) for optional inputs that fall back to a ' +
-        'sensible default when the parent does not provide a value.',
+        'Not every input needs to come from the parent. Some have sensible defaults — a power level might ' +
+        'default to 100%, a status to "online." For those, pass the default value directly to input().',
       code: [
         "import { Component, input } from '@angular/core';",
         '',
@@ -66,30 +71,32 @@ export const CHAPTER_07_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [13, 14],
       explanation:
-        'input(100) creates an optional input with a default of 100. If the parent does not bind [power], the ' +
-        'component uses 100. input.required() has no default — Angular throws an error if the parent omits it.',
+        'input(100) creates an optional input. If the parent doesn\'t bind [power], the component quietly ' +
+        'uses 100. input.required() is the strict version — Angular throws an error if the parent forgets it. ' +
+        'Use required for data the component can\'t function without, and defaults for everything else.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Standardized module cards are now receiving data from their parent modules. This is how Angular ' +
-        'components become truly reusable.',
-      conceptTitle: 'Input Properties -- input()',
+        'Module cards are now receiving data from their parents. A single component definition, many different ' +
+        'uses. This is how real Angular apps stay manageable as they grow.',
+      conceptTitle: 'Input Properties with input()',
       conceptBody:
-        'Signal-based inputs are the modern Angular way to accept data from parent components. The input() ' +
-        'function creates a read-only signal that the parent sets via property binding. Use input.required() ' +
-        'for mandatory values and input(default) for optional ones.',
+        'Angular uses signal-based inputs (not plain properties) because signals let the framework know exactly ' +
+        'when data changes, so it can skip unnecessary re-renders. The input() function creates a read-only ' +
+        'signal that only the parent can set. You read it by calling it as a function.',
       keyPoints: [
-        'Inputs are read-only signals — call with () to read the current value',
-        'input.required<T>() for mandatory props, input(default) for optional props with defaults',
-        'Replaces the older @Input() decorator — signal-based inputs are the recommended approach',
+        'input.required<T>() means the parent must provide this value; input(default) means it\'s optional with a fallback',
+        'Inputs are signals — you read them with () in templates and in code. This pattern will click fully in Chapter 23 (Signals)',
+        'The older @Input() decorator still works but signal-based inputs are the modern approach — they\'re what Angular recommends going forward',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'Station modules need standardized status displays. Write a component that accepts data from its ' +
-        'parent using input() for optional props and input.required() for mandatory ones.',
+        'Station modules need standardized status displays, and you don\'t want to build a separate component ' +
+        'for each one. Declare a required title input and an optional level input (defaulting to 100) so ' +
+        'a single component can serve any module.',
       starterCode: [
         "import { Component, input } from '@angular/core';",
         '',
@@ -135,14 +142,16 @@ export const CHAPTER_07_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'input.required<string>() declares a mandatory input that parents must provide',
-        'input(100) declares an optional input that defaults to 100 when the parent omits it',
+        'For the title: title = input.required<string>() — the parent must always provide this',
+        'For the level: level = input(100) — Angular infers the type from the default value, so you don\'t need the <number> generic',
       ],
       successMessage:
-        'Status display is accepting data from parent modules! Signal-based inputs make components reusable.',
+        'Your component accepts data from any parent now. One definition, endless reuse. ' +
+        'Next up: what happens when the child needs to talk back? That\'s outputs, and they\'re coming in Chapter 8.',
       explanation:
-        'Signal-based inputs use input.required<T>() for mandatory props and input(default) for optional ' +
-        'ones. Both are read-only signals — call with () in the template to read the value.',
+        'input.required<T>() for data the component can\'t work without. input(default) for optional data ' +
+        'with a fallback. Both return signals — you call them with () to read the value. The parent sets them ' +
+        'using property binding: [title]="\'Reactor\'" or [level]="reactorLevel".',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

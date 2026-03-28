@@ -6,11 +6,11 @@ export const CHAPTER_28_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Station modules need controlled startup and shutdown sequences — sensors must be calibrated on ' +
-        'initialization, subscriptions opened when modules come online, and resources released when modules ' +
-        'power down. Angular lifecycle hooks let components run code at specific moments: after creation, ' +
-        'when inputs change, and before destruction. Mastering these hooks ensures modules boot cleanly ' +
-        'and shut down without leaking resources.',
+        'Angular creates and destroys your components as the user navigates around. Until now, you ' +
+        'haven\'t had any control over WHEN things happen during that process. What if you need to ' +
+        'start a timer when a component appears, fetch data once inputs are ready, or clean up a ' +
+        'subscription when the component is removed? Lifecycle hooks give you those control points — ' +
+        'callbacks at key moments in a component\'s life: birth, change, and death.',
     },
     {
       stepType: 'code-example',
@@ -47,16 +47,17 @@ export const CHAPTER_28_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 7, 12, 19],
       explanation:
-        'ngOnInit runs once after Angular initializes all input properties — use it for setup logic ' +
-        'that depends on inputs. ngOnDestroy runs just before Angular removes the component — use it ' +
-        'to clear timers, unsubscribe from observables, and release resources. Implementing the OnInit ' +
-        'and OnDestroy interfaces is optional but recommended for type safety.',
+        'ngOnInit fires once after Angular has set all inputs — it\'s the right place for setup that ' +
+        'depends on input values (the constructor runs too early for that). ngOnDestroy fires right ' +
+        'before Angular removes the component, so you clear timers, close connections, and release ' +
+        'anything that would otherwise leak. The OnInit and OnDestroy interfaces are optional but ' +
+        'catch typos at compile time.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Implement OnChanges to react whenever an input property changes. The SimpleChanges object ' +
-        'provides both the previous and current values.',
+        'What if you need to react every time an input changes, not just on the first render? ' +
+        'ngOnChanges gives you both the previous and current values.',
       code: [
         "import { Component, OnChanges, SimpleChanges, input } from '@angular/core';",
         '',
@@ -83,26 +84,28 @@ export const CHAPTER_28_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 10, 14, 15],
       explanation:
-        'ngOnChanges fires before ngOnInit and again whenever any input property changes. The ' +
-        'SimpleChanges parameter is a map keyed by input property name. Each entry has previousValue, ' +
-        'currentValue, and firstChange (a boolean). Use this hook to respond to input changes that ' +
-        'require recalculation or side effects.',
+        'ngOnChanges fires before ngOnInit on the first render, then again whenever any input changes. ' +
+        'The SimpleChanges parameter gives you previousValue, currentValue, and firstChange for each ' +
+        'input that changed. It\'s useful for recalculations that depend on comparing old and new values.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Startup and shutdown sequences are calibrated. Here is the Angular component lifecycle.',
+        'A word of honesty: lifecycle hooks were more important before signals existed. Today, effects ' +
+        '(Chapter 26) handle many cases that used to require ngOnInit and ngOnDestroy. But hooks are ' +
+        'still essential for non-signal work, and you\'ll encounter them in every Angular codebase.',
       conceptTitle: 'Lifecycle Hooks — ngOnInit, ngOnChanges, ngOnDestroy',
       conceptBody:
-        'Angular components have a lifecycle managed by the framework. ngOnChanges fires when input ' +
-        'properties change (before ngOnInit on first run). ngOnInit fires once after the first ' +
-        'ngOnChanges — use it for initialization logic. ngOnDestroy fires before the component is ' +
-        'removed — use it for cleanup. These three hooks cover the vast majority of lifecycle needs.',
+        'These three hooks cover the vast majority of lifecycle needs. ngOnChanges fires whenever inputs ' +
+        'change (including before ngOnInit on first render). ngOnInit fires once after inputs are ready — ' +
+        'use it for setup that the constructor is too early for. ngOnDestroy fires before removal — use ' +
+        'it to prevent memory leaks. The full order is: constructor, ngOnChanges, ngOnInit, then ' +
+        'eventually ngOnDestroy.',
       keyPoints: [
-        'ngOnInit runs once after inputs are set — ideal for initialization that depends on inputs',
-        'ngOnDestroy runs before removal — clear timers, unsubscribe, release resources',
-        'ngOnChanges fires on every input change with previous and current values',
-        'Lifecycle order: constructor -> ngOnChanges -> ngOnInit -> ... -> ngOnDestroy',
+        'ngOnInit is for setup that depends on inputs — the constructor runs before inputs are set',
+        'ngOnDestroy prevents leaks — clear timers, unsubscribe, close connections here',
+        'ngOnChanges gives you previous and current values for every input change',
+        'Signals and effects (Ch 26) now handle many cases that used to need lifecycle hooks',
       ],
     },
   ],

@@ -6,16 +6,18 @@ export const CHAPTER_14_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'The crew terminals are offline. Without input systems, crew cannot file reports, submit diagnostics, ' +
-        'or log entries. To restore basic communication, you need forms — a way to capture structured input ' +
-        "from crew members. Angular's template-driven forms provide a quick way to build simple input forms " +
-        'using directives directly in the template.',
+        'You can display data, handle clicks, and navigate between views. The missing piece? Capturing ' +
+        'input from users. Without forms, your app is read-only -- crew can\'t file reports, submit ' +
+        'diagnostics, or log entries. Angular\'s template-driven forms are the fastest way to get a ' +
+        'simple form working. You write the form in HTML, sprinkle in some directives, and Angular ' +
+        'handles the rest.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Here is a basic crew report form using template-driven forms. FormsModule enables ngModel for ' +
-        'two-way data binding, and ngForm tracks the overall form state.',
+        'A template-driven form is basically HTML with superpowers. FormsModule unlocks the ngModel ' +
+        'directive, which creates a live two-way connection between an input and a component property. ' +
+        'Type in the input, the property updates. Change the property, the input updates.',
       code: [
         "import { Component } from '@angular/core';",
         "import { FormsModule } from '@angular/forms';",
@@ -44,15 +46,17 @@ export const CHAPTER_14_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [2, 6, 8, 11, 15],
       explanation:
-        'FormsModule enables template-driven forms. ngModel creates two-way data binding between form ' +
-        'controls and component properties. The name attribute is required for each ngModel control so ' +
-        'Angular can register it with the form. The #reportForm template variable exposes the NgForm instance.',
+        'The [(ngModel)] syntax looks strange -- Angular devs call it "banana in a box" because of ' +
+        'the bracket-parenthesis shape. It\'s shorthand for combining [ngModel] (push data in) and ' +
+        '(ngModelChange) (push data out). Each ngModel control needs a name attribute so Angular can ' +
+        'track it within the form.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'The form captures input, but crew need to submit their reports. ngSubmit fires when the form is ' +
-        'submitted, and the NgForm instance provides validation state.',
+        'Capturing input is only half the job. Crew need to actually submit their reports. The ' +
+        'ngSubmit event fires when the form is submitted, and the NgForm reference gives you access ' +
+        'to the form\'s overall state -- is it valid? Has anything been touched?',
       code: [
         '@Component({',
         "  selector: 'app-crew-report',",
@@ -79,31 +83,34 @@ export const CHAPTER_14_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [5, 16, 17],
       explanation:
-        'ngSubmit fires when the form is submitted. The template reference variable gives access to the ' +
-        'NgForm instance with validation state — valid, invalid, dirty, and touched. Check form.valid ' +
-        'before processing the submission to ensure all fields pass validation.',
+        '(ngSubmit) replaces the native HTML submit event and prevents the default page reload. ' +
+        'The #reportForm template variable is your handle to the NgForm instance -- it tracks ' +
+        'whether the form is valid, dirty (changed), or touched (interacted with). Always check ' +
+        'form.valid before processing.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'The first crew report is ready to file. Here is how template-driven forms work in Angular.',
-      conceptTitle: 'Template-Driven Forms — FormsModule and ngModel',
+        'Template-driven forms are like filling out a paper form. You lay out the fields in HTML, ' +
+        'and Angular keeps track of the state behind the scenes.',
+      conceptTitle: 'Template-Driven Forms -- FormsModule, ngModel, ngSubmit',
       conceptBody:
-        'Template-driven forms use directives (ngModel, ngForm) to create and manage form controls directly ' +
-        'in the template. Angular tracks form state automatically — whether fields have been touched, ' +
-        'changed, or validated — without requiring any setup in the component class.',
+        'With template-driven forms, the template is the source of truth. Angular reads your ngModel ' +
+        'directives and automatically builds an internal model that tracks each field\'s value, ' +
+        'validity, and interaction state. You don\'t write any form management code in the component ' +
+        'class -- just properties to bind to.',
       keyPoints: [
-        'FormsModule is required for template-driven forms',
-        'ngModel provides two-way binding between inputs and component properties',
-        'The name attribute is required for each ngModel control',
-        'ngForm tracks aggregate form state (valid, invalid, dirty, touched)',
+        'FormsModule must be imported before any template-driven form directives work',
+        '[(ngModel)] is "banana in a box" -- two-way binding that keeps inputs and properties in sync',
+        'Every ngModel control needs a name attribute, or Angular can\'t register it with the form',
+        'NgForm tracks aggregate state: valid/invalid, dirty/pristine, touched/untouched',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'Build a crew report form! Add Angular template-driven form directives to capture ' +
-        'crew member names and messages, then wire up the form submission.',
+        'Turn this plain HTML form into an Angular template-driven form. Add ngModel bindings to ' +
+        'each input, give them name attributes, and wire up form submission with ngSubmit.',
       starterCode: [
         '<form onsubmit="return false">',
         '  <!-- TODO: Add Angular form directive and binding to each input -->',
@@ -142,15 +149,16 @@ export const CHAPTER_14_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Add [(ngModel)]="propertyName" and a name attribute to each input and textarea',
-        'Replace onsubmit on the form tag with (ngSubmit)="yourMethod()"',
+        'Add [(ngModel)]="propertyName" and name="propertyName" to both the input and the textarea',
+        'Replace onsubmit="return false" on the form tag with (ngSubmit)="yourSubmitMethod()"',
       ],
       successMessage:
-        'Crew report form is live! Angular template-driven directives capture input and handle submission.',
+        'First crew report form is online! You\'ve connected HTML inputs to Angular\'s form system. ' +
+        'Next: reading form values in real time so crew can preview what they\'re typing.',
       explanation:
-        'ngModel creates two-way binding between form inputs and component properties. Each ngModel ' +
-        'control requires a name attribute so Angular can register it with the form. (ngSubmit) replaces ' +
-        'the plain HTML onsubmit to handle form submission the Angular way.',
+        'Three changes turned plain HTML into an Angular form: [(ngModel)] for two-way binding, ' +
+        'name attributes for form registration, and (ngSubmit) to handle submission without a page ' +
+        'reload. That\'s the template-driven forms pattern in a nutshell.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

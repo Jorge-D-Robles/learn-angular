@@ -6,17 +6,17 @@ export const CHAPTER_34_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Nexus Station is fully operational, but deep space conditions push systems to their limits. ' +
-        'Modules re-render too often, large subsystems load upfront slowing the initial boot, and ' +
-        'long lists of sensor readings cause scroll lag. Station hardening means optimizing performance — ' +
-        'reducing unnecessary change detection cycles, lazy loading module bundles, and efficiently ' +
-        'tracking list items to minimize DOM churn.',
+        'This is the capstone chapter. Everything works. Now make it fast. Performance optimization is ' +
+        'like tuning a car engine after you have built the whole car — you don\'t start here, you end here. ' +
+        'You\'ll revisit concepts from earlier: @for loops need track (Chapter 4), components can opt into ' +
+        'OnPush change detection, and routes can lazy-load (Chapter 11). It all comes together in this chapter.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use ChangeDetectionStrategy.OnPush to skip change detection for a component unless its ' +
-        'inputs change or a signal it reads updates.',
+        'By default, Angular checks every component in the tree whenever anything changes — a click, ' +
+        'a timer, an HTTP response. OnPush tells Angular: "Only check this component when its inputs ' +
+        'change or a signal it reads updates." For display-only components, this is a massive win.',
       code: [
         "import { Component, ChangeDetectionStrategy, input } from '@angular/core';",
         '',
@@ -39,16 +39,18 @@ export const CHAPTER_34_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 11],
       explanation:
-        'ChangeDetectionStrategy.OnPush tells Angular to skip change detection for this component ' +
-        'unless one of its input references changes, a signal it reads updates, or an event handler ' +
-        'fires within the component. This dramatically reduces unnecessary re-renders in large ' +
-        'component trees — especially for display-only components like cards and list items.',
+        'OnPush changes the deal: Angular only re-checks this component when an input reference changes, ' +
+        'a signal it reads emits a new value, or an event fires within the component itself. Everything ' +
+        'else — timers in parent components, unrelated HTTP calls — gets ignored. For a card component ' +
+        'like this one that just displays data, OnPush eliminates dozens of unnecessary checks per cycle.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use track in @for loops to help Angular identify which items changed, and lazy load routes ' +
-        'to defer loading large module bundles until they are navigated to.',
+        'Two more techniques that compound with OnPush. Track expressions in @for loops tell Angular ' +
+        'how to identify items so it can reuse DOM nodes instead of destroying and recreating them. ' +
+        'Lazy loading defers entire route bundles until the user actually navigates there, shrinking ' +
+        'your initial load.',
       code: [
         "import { Component, signal } from '@angular/core';",
         "import { Routes } from '@angular/router';",
@@ -86,27 +88,28 @@ export const CHAPTER_34_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [8, 23, 25, 30],
       explanation:
-        'The track expression in @for tells Angular how to identify each item across re-renders. ' +
-        'Tracking by a unique ID (sensor.id) lets Angular reuse DOM nodes instead of recreating them. ' +
-        'Lazy loading with loadComponent defers the JavaScript bundle until the route is visited, ' +
-        'reducing the initial boot time. Together, these techniques keep the station responsive ' +
-        'under load.',
+        'Without track, Angular has to destroy and recreate every DOM node when the list changes. ' +
+        'With track sensor.id, it matches items across renders by their ID and only updates ' +
+        'what actually changed. Lazy loading with loadComponent works the same way as lazy routes ' +
+        'from Chapter 11 — the JavaScript for /reactor doesn\'t load until someone navigates there. ' +
+        'Your initial bundle stays small, and users only download what they use.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Station hardened for deep space. Here are the key Angular performance optimization techniques.',
-      conceptTitle: 'Performance — OnPush, track, and Lazy Loading',
+        'You have built the whole station and hardened it for production. OnPush, track, and lazy loading ' +
+        'are the three performance tools you will reach for most often in real Angular apps.',
+      conceptTitle: 'Performance: OnPush, Track, and Lazy Loading',
       conceptBody:
-        'OnPush change detection skips unnecessary re-renders by only checking components when inputs ' +
-        'change or signals update. The track expression in @for helps Angular efficiently reuse DOM ' +
-        'elements during list updates. Lazy loading with loadComponent defers route bundles until ' +
-        'navigation, reducing initial load time. Combine all three for optimal performance.',
+        'These three techniques target different bottlenecks. OnPush reduces change detection work by ' +
+        'skipping components whose inputs haven\'t changed. Track in @for reduces DOM work by reusing ' +
+        'nodes across list updates. Lazy loading reduces network work by splitting your app into ' +
+        'chunks loaded on demand. Each one is simple on its own. Combined, they keep large apps snappy.',
       keyPoints: [
-        'ChangeDetectionStrategy.OnPush reduces unnecessary change detection cycles',
-        'track in @for identifies items for efficient DOM reuse across re-renders',
-        'loadComponent lazy loads route components to reduce initial bundle size',
-        'Combine OnPush, track, and lazy loading for maximum performance',
+        'OnPush is the single biggest performance win for component-heavy apps — it turns O(n) change detection into O(changed)',
+        'Track expressions prevent DOM thrashing: Angular reuses existing elements instead of recreating the entire list',
+        'Lazy loading is free performance — routes the user hasn\'t visited don\'t cost anything until they navigate there',
+        'Profile first, optimize second. These techniques matter most in apps with large component trees, long lists, or heavy initial bundles',
       ],
     },
   ],

@@ -6,15 +6,16 @@ export const CHAPTER_03_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Individual modules work, but Nexus Station is more than isolated rooms. The Power Core needs a ' +
-        'Communications Hub inside it, and the main station hull holds them all. In Angular, you build complex ' +
-        'UIs by nesting components inside each other — just like assembling station modules into larger structures.',
+        'You have built standalone components. You have wired data to templates. But a real app is not one big ' +
+        'component — it is dozens of small ones working together. The Power Core needs a Communications Hub ' +
+        'inside it, and the station hull holds them all. This is how Angular apps are actually structured: ' +
+        'small, focused components nested inside each other, like rooms inside a building.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'The Comms Hub is a standalone component. To place it inside the Power Core, import it and use its ' +
-        'selector tag in the parent template.',
+        'To place one component inside another, you do two things: import the child into the parent\'s ' +
+        'imports array, then drop its selector tag into the parent\'s template. That is it.',
       code: [
         "import { Component } from '@angular/core';",
         "import { CommsHubComponent } from './comms-hub';",
@@ -35,30 +36,34 @@ export const CHAPTER_03_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [2, 6, 10],
       explanation:
-        'To use a child component, import its class into the parent component\'s imports array. Then use the ' +
-        'child\'s selector (<app-comms-hub />) in the parent\'s template. The child renders wherever its tag appears.',
+        'Line 2 imports the class. Line 6 tells Angular "this component depends on CommsHubComponent." ' +
+        'Line 10 is where the child actually renders. Wherever you put <app-comms-hub />, the Comms Hub\'s ' +
+        'template appears. The parent does not need to know anything about the child\'s internals — just its ' +
+        'selector.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'You have assembled two modules into a parent-child structure. This is how real Angular apps are built — ' +
-        'small, focused components composed into larger views.',
+        'Two modules, one inside the other. This pattern scales to entire applications — every Angular app ' +
+        'is a tree of nested components, from the root all the way down to individual buttons.',
       conceptTitle: 'Component Composition',
       conceptBody:
-        'Component composition is the practice of building complex UIs from simpler, reusable components. ' +
-        'A parent component imports child components and places them in its template using their selector tags. ' +
-        'This creates a tree structure — just like Nexus Station is a tree of nested modules.',
+        'Component composition means building complex UIs from smaller, reusable pieces. Instead of one ' +
+        'massive template with everything in it, you break the UI into focused components and snap them ' +
+        'together. A navigation bar, a sidebar, a card — each is its own component. The parent just imports ' +
+        'what it needs and places it in the template.',
       keyPoints: [
-        'Import a child component before using it in the template',
-        'Standalone components declare their own dependencies in the imports array',
-        'Component trees can be nested as deep as needed — each level is a self-contained module',
+        'A component must be in the parent\'s imports array before you can use its selector in the template. Angular will throw an error otherwise.',
+        'Standalone components declare their own dependencies. Each component is self-contained — it lists exactly what it needs, no more.',
+        'Nesting can go as deep as you need. But if your component tree gets more than a few levels deep, that is a signal to step back and rethink the structure.',
       ],
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Let us go deeper. The station hull contains the Power Core, which contains the Comms Hub — three ' +
-        'levels of nesting. Each component only knows about its direct children.',
+        'Here is a three-level nesting example: the station hull contains the Power Core, which contains the ' +
+        'Comms Hub. Notice that each component only imports its direct children. StationHullComponent has no ' +
+        'idea CommsHubComponent exists — and that is by design.',
       code: [
         '// comms-hub.ts',
         '@Component({',
@@ -94,14 +99,15 @@ export const CHAPTER_03_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [13, 24],
       explanation:
-        'Each component imports only its direct children. StationHullComponent imports PowerCoreComponent, ' +
-        'which imports CommsHubComponent. This keeps dependencies explicit and each component self-contained.',
+        'Each component imports only what it directly uses. The station hull imports PowerCoreComponent but ' +
+        'not CommsHubComponent — it does not need to. This keeps dependencies explicit and prevents components ' +
+        'from reaching into each other\'s internals. Clean boundaries make code easier to maintain and test.',
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'The navigation array needs a radar subsystem mounted inside it. Write a parent component ' +
-        'that imports a child component (RadarComponent) and renders it in the template.',
+        'The navigation array needs a radar subsystem mounted inside it. Import RadarComponent and render ' +
+        'it in the template. You have already seen how — import, add to imports array, drop the selector tag.',
       starterCode: [
         "import { Component } from '@angular/core';",
         "import { RadarComponent } from './radar';",
@@ -145,14 +151,17 @@ export const CHAPTER_03_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Add RadarComponent to the imports array in the @Component decorator',
-        'Use <app-radar /> in the template to render the child component',
+        'Add imports: [RadarComponent] inside the @Component decorator, right above or below the selector.',
+        'In the template, use <app-radar /> — that is the child\'s selector tag.',
       ],
       successMessage:
-        'Navigation array assembled! The radar subsystem is mounted and rendering inside the parent module.',
+        'Radar is mounted inside the navigation array. You just composed two components together — ' +
+        'the same pattern Angular apps use all the way up to the root component. Next up: controlling ' +
+        'what shows up on screen and when.',
       explanation:
-        'Component composition is how Angular apps are built. Import a child into the parent\'s imports ' +
-        'array, then use its selector tag in the template. The child renders wherever its tag appears.',
+        'This is the core of how Angular apps are built: small components composed into bigger ones. ' +
+        'Import the child, add it to imports, use its selector. The child renders wherever the tag ' +
+        'appears, and the parent never needs to know what is happening inside.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

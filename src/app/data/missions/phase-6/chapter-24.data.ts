@@ -6,17 +6,19 @@ export const CHAPTER_24_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Raw sensor signals are streaming in, but the crew needs derived readings — averages, threshold ' +
-        'alerts, and status summaries that combine multiple data sources. Recomputing these manually every ' +
-        'time a source signal changes would be error-prone and wasteful. Angular\'s computed() function ' +
-        'creates read-only signals that automatically derive their value from other signals, recalculating ' +
-        'only when dependencies actually change.',
+        'You have writable signals from Chapter 23. But what about values that DEPEND on other values? ' +
+        'If temperature and pressure are signals, you might want a "status" that automatically says CRITICAL ' +
+        'when either is out of range. You could wire that up manually — listen for changes, recompute, ' +
+        'update a separate signal — but that\'s fragile and easy to get wrong. Computed signals handle ' +
+        'this for you. Think of them like Excel formulas: =A1+B1 automatically updates when either input ' +
+        'changes. You never manually recalculate.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use computed() to derive a single value from one signal source. The computed signal recalculates ' +
-        'only when the source signal changes, and the result is memoized until then.',
+        'computed() takes a function that reads one or more signals and returns a derived value. Angular ' +
+        'figures out the dependencies automatically — you don\'t declare them anywhere. And the result is ' +
+        'cached. If pressure hasn\'t changed, reading pressureStatus() a hundred times costs basically nothing.',
       code: [
         "import { Component, signal, computed } from '@angular/core';",
         '',
@@ -41,16 +43,17 @@ export const CHAPTER_24_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 13, 14],
       explanation:
-        'computed() accepts a derivation function that reads one or more signals. Angular tracks which ' +
-        'signals are read during the derivation and re-evaluates the computed signal only when those ' +
-        'dependencies change. The result is cached (memoized) — reading pressureStatus() multiple times ' +
-        'without a pressure change returns the cached value without re-running the derivation.',
+        'When you call computed(() => ...), Angular watches which signals get read inside the function. ' +
+        'Here, it sees this.pressure() was called, so it knows pressureStatus depends on pressure. ' +
+        'The derivation only re-runs when pressure actually changes. Between changes, pressureStatus() ' +
+        'returns a cached value — no recomputation, no waste.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Computed signals can depend on multiple source signals. Dependencies are tracked dynamically — ' +
-        'only signals actually read during the most recent evaluation are tracked.',
+        'Here\'s where it gets interesting: dependencies are tracked dynamically, not statically. Angular ' +
+        'doesn\'t scan your code — it watches what actually gets called at runtime. That means conditional ' +
+        'branches can change which signals are dependencies.',
       code: [
         "import { Component, signal, computed } from '@angular/core';",
         '',
@@ -78,33 +81,38 @@ export const CHAPTER_24_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 14, 15, 16, 17],
       explanation:
-        'This computed signal reads temperature, humidity, and showDetailed. When showDetailed is false, ' +
-        'the derivation takes the branch that only uses humidity — so changes to temperature alone do ' +
-        'not trigger a recomputation. Angular tracks dependencies dynamically based on which signals were ' +
-        'actually read in the most recent execution.',
+        'This computed reads temperature, humidity, and showDetailed on every evaluation. But here\'s the ' +
+        'subtle part: when showDetailed is false, the returned value only depends on humidity. So if ' +
+        'temperature changes but showDetailed is still false, does the computed re-run? Actually yes, ' +
+        'because temperature() was still called. Angular tracks every signal that was read, regardless ' +
+        'of which branch produced the return value. Keep that in mind when designing your derivations.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Derived readings are online. Here is how computed signals create efficient derived state.',
-      conceptTitle: 'Computed Signals — Derived, Lazy, and Memoized',
+        'Derived readings are online. Here\'s the mental model that will keep computed signals from ' +
+        'ever confusing you.',
+      conceptTitle: 'Computed Signals — Your Reactive Formulas',
       conceptBody:
-        'computed() creates a read-only signal whose value is derived from other signals. The derivation ' +
-        'function runs lazily (only when the computed signal is read) and is memoized (cached until a ' +
-        'dependency changes). Dependencies are tracked dynamically — only signals read during the most ' +
-        'recent evaluation are considered dependencies.',
+        'computed() is the read-only counterpart to signal(). Where signal() holds state you set manually, ' +
+        'computed() holds state that\'s calculated from other signals. It runs lazily — the derivation ' +
+        'doesn\'t execute until someone actually reads the computed signal. And it\'s memoized — once ' +
+        'computed, the result is cached until a dependency changes. You can\'t .set() a computed signal, ' +
+        'and that\'s by design. If you need a derived value you can override, that\'s what linkedSignal ' +
+        'is for (next chapter).',
       keyPoints: [
-        'computed() derives a read-only signal from one or more source signals',
-        'Values are lazily evaluated — the derivation runs only when the signal is read',
-        'Results are memoized — repeated reads return the cached value without re-running',
-        'Dependencies are dynamic — only signals actually read in the latest run are tracked',
+        'computed() is read-only on purpose — it represents a value that\'s always derivable from its inputs, never set manually',
+        'Memoization means you can read a computed signal in ten different templates without running the derivation ten times',
+        'Dependencies are tracked at runtime, so conditional logic can change which signals trigger re-evaluation',
+        'If you find yourself calling .set() on something that should be derived, you probably want computed() instead',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'The crew needs a combined environment status. Create a computed signal that derives a status ' +
-        'label from temperature and pressure readings.',
+        'The crew needs a combined environment status on the main dashboard. Wire up a computed signal ' +
+        'that reads both temperature and pressure and returns CRITICAL if either is out of safe range, ' +
+        'or NOMINAL if everything checks out.',
       starterCode: [
         "import { Component, signal } from '@angular/core';",
         '',
@@ -150,13 +158,14 @@ export const CHAPTER_24_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        "Import computed from '@angular/core' alongside signal",
-        "Define status = computed(() => { ... }) and return 'CRITICAL' if this.temperature() > 350 or this.pressure() < 90, else 'NOMINAL'",
+        'Add computed to your import: import { Component, signal, computed } from \'@angular/core\'',
+        'Define status = computed(() => { ... }) — read this.temperature() and this.pressure() inside, and return \'CRITICAL\' or \'NOMINAL\' based on the thresholds',
       ],
-      successMessage: 'Environment status derived! The computed signal updates automatically.',
+      successMessage: 'Environment dashboard is live! The status updates the instant either signal moves. Next up: what if you need a derived value that users can override?',
       explanation:
-        'computed() creates a read-only signal whose value is derived from other signals. Angular tracks ' +
-        'which signals are read during the derivation and re-evaluates only when those dependencies change.',
+        'computed() watches which signals you read inside the derivation function and automatically ' +
+        're-evaluates when any of them change. You don\'t subscribe, you don\'t manage listeners — ' +
+        'Angular handles the wiring. The result is always consistent with the current signal values.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

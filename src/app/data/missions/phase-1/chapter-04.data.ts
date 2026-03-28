@@ -6,15 +6,16 @@ export const CHAPTER_04_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'The station needs an alert system. Sensor anomalies, hull breaches, crew emergencies — each requires ' +
-        'a different response. Some alerts should only display when conditions are met. Others repeat for each ' +
-        'crew member. And severity determines the display style. Angular\'s built-in control flow lets you ' +
-        'render content conditionally, loop over collections, and switch between templates.',
+        'You can display data with interpolation. But what if you only want to show something when a condition ' +
+        'is true? Or repeat it for every item in a list? The station needs an alert system — sensor anomalies, ' +
+        'hull breaches, crew emergencies — and each one requires different handling. Angular\'s built-in control ' +
+        'flow gives you @if, @for, and @switch, right inside the template. No imports, no setup.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use @if to show an alert panel only when there is an active alert. The @else block provides a fallback.',
+        'Show an alert only when there is one. @if works exactly like you would expect from JavaScript — ' +
+        'if the condition is true, the block renders. If not, it does not. The @else block is your fallback.',
       code: [
         '@Component({',
         "  selector: 'app-alert-panel',",
@@ -36,15 +37,17 @@ export const CHAPTER_04_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [4, 8],
       explanation:
-        '@if evaluates a condition and renders the block only when true. The @else block renders when the ' +
-        'condition is false. Unlike older Angular syntax (*ngIf), this is built into the template language — ' +
-        'no imports needed.',
+        'When hasAlert is true, Angular renders the alert div. When it is false, you get "All systems nominal." ' +
+        'The element is not hidden with CSS — it literally does not exist in the DOM until the condition is met. ' +
+        'This is the modern syntax. Older Angular used *ngIf, which required importing a directive. The @if ' +
+        'syntax is built into the template language.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use @for to repeat a block for each item in a collection. The track expression helps Angular ' +
-        'efficiently update the DOM when the list changes.',
+        'What about lists? @for repeats a block for every item in an array. The catch: you must provide ' +
+        'a track expression. Why? Because when items change, Angular needs a way to tell which DOM elements ' +
+        'to update instead of rebuilding the entire list. Track gives it that identity.',
       code: [
         '@Component({',
         "  selector: 'app-crew-alerts',",
@@ -69,14 +72,17 @@ export const CHAPTER_04_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [5, 9],
       explanation:
-        '@for iterates over an array. The track expression (track alert.id) tells Angular how to identify each ' +
-        'item for efficient DOM updates. The @empty block renders when the array is empty.',
+        '@for loops over the alerts array and renders a div for each one. track alert.id tells Angular ' +
+        '"use the id field to identify each item" — this is how Angular avoids throwing away and rebuilding ' +
+        'DOM nodes unnecessarily. The @empty block renders when the array has zero items, which is a nice ' +
+        'touch for UX.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use @switch when you need to pick one of several templates based on a value — like displaying ' +
-        'different alert styles by severity level.',
+        'Sometimes you need more than if/else. When a single value determines which of several templates ' +
+        'to show, @switch is cleaner than a chain of @if/@else blocks. Think of it like a JavaScript switch ' +
+        'statement, but for templates.',
       code: [
         '@Component({',
         "  selector: 'app-severity-display',",
@@ -101,30 +107,32 @@ export const CHAPTER_04_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [4, 5, 8, 11],
       explanation:
-        '@switch evaluates an expression and renders the matching @case block. The @default block handles ' +
-        'any unmatched values. This is cleaner than chaining multiple @if/@else blocks.',
+        'Angular evaluates severity, then renders whichever @case matches. If nothing matches, @default ' +
+        'kicks in. This is much easier to read than nesting three @if/@else blocks, and it makes the intent ' +
+        'obvious: "pick one of these based on this value."',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Alert systems are online and routing through conditional logic. Here is the full picture of built-in control flow.',
+        'The alert system is routing through conditional logic. These three constructs cover the vast majority ' +
+        'of template control flow you will ever need.',
       conceptTitle: 'Built-in Control Flow',
       conceptBody:
-        'Angular provides three control flow constructs built directly into the template language: @if for ' +
-        'conditional rendering, @for for iterating over collections, and @switch for multi-branch selection. ' +
-        'These replace the older structural directives (*ngIf, *ngFor, *ngSwitch) with a cleaner, more ' +
-        'readable syntax.',
+        '@if, @for, and @switch are built directly into Angular\'s template language. They replaced the older ' +
+        '*ngIf, *ngFor, and *ngSwitch directives, which required imports and had a less readable syntax. The ' +
+        'new syntax looks like the JavaScript you already know, which was the whole point of the redesign.',
       keyPoints: [
-        'track is required for @for — it tells Angular how to identify items for efficient updates',
-        'No imports needed — control flow is built into the template language',
-        '@if/@for/@switch replace *ngIf/*ngFor/*ngSwitch from older Angular versions',
+        'track is required on every @for loop. It is not optional. Angular uses it to efficiently update the DOM when list items change — without it, Angular would have to destroy and recreate every element.',
+        'No imports needed. Unlike the old *ngIf/*ngFor directives, the new control flow is part of the template language itself.',
+        '@empty on @for and @else on @if are small touches that save you from writing extra @if checks. Use them.',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'The triage system needs conditional rendering. Write a template that uses @if to show an ' +
-        'emergency alert when active, and @for to list crew members needing attention.',
+        'The triage system needs two things: an emergency alert that only shows when isEmergency is true, ' +
+        'and a list of crew members. Use @if for the conditional and @for for the list. Remember — track ' +
+        'is required.',
       starterCode: [
         '<!-- Available variables: isEmergency (boolean), crewMembers (array with id, name) -->',
         '',
@@ -161,21 +169,22 @@ export const CHAPTER_04_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        '@if (condition) { ... } renders the block only when the condition is true',
-        '@for (item of items; track item.id) { ... } repeats for each item -- track is required',
+        '@if (isEmergency) { ... } renders the block only when the condition is true.',
+        '@for (member of crewMembers; track member.id) { ... } loops over the array. The track part is mandatory.',
       ],
       successMessage:
-        'Triage display is routing crew through conditional logic! The @if and @for blocks respond to live data.',
+        'Triage display is live. @if and @for are the two control flow constructs you will reach for ' +
+        'most often — they handle probably 90% of conditional and list rendering in real apps.',
       explanation:
-        'Angular\'s built-in control flow (@if, @for) replaces the older *ngIf and *ngFor directives. ' +
-        '@if conditionally renders blocks, @for iterates over collections. The track expression in ' +
-        '@for is mandatory -- it tells Angular how to efficiently update the DOM.',
+        '@if renders content conditionally. @for iterates over arrays. Both are part of the template ' +
+        'language — no imports needed. The track expression on @for is mandatory because it is how ' +
+        'Angular knows which DOM elements to reuse when data changes.',
     } satisfies CodeChallengeStep,
     {
       stepType: 'code-challenge',
       prompt:
-        'Alerts need severity-based display. Write a template using @switch to render different ' +
-        'alert styles based on a severity value.',
+        'Alerts need severity-based display. Write a template that uses @switch to show different content ' +
+        'based on a severity value. Handle \'critical\', \'warning\', and include a @default for anything else.',
       starterCode: [
         "<!-- Available variable: severity ('critical' | 'warning' | 'info') -->",
         '',
@@ -207,14 +216,15 @@ export const CHAPTER_04_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        '@switch (expression) { @case (value) { ... } } selects which block to render',
-        'Always include @default { ... } to handle unexpected values',
+        'Start with @switch (severity) { }, then add @case (\'critical\') { } blocks inside.',
+        'Always include @default { } as a catch-all. It handles values you did not explicitly match.',
       ],
       successMessage:
-        'Severity classification online! Alerts now route to the correct display based on their level.',
+        'Severity routing is online. @switch is the clearest way to handle multi-branch template logic. ' +
+        'You now have all three control flow constructs — @if, @for, @switch — in your toolkit.',
       explanation:
-        '@switch is ideal when you need to choose between multiple templates based on a single value. ' +
-        'It is cleaner than chaining @if/@else blocks and always include @default for safety.',
+        '@switch picks one block to render based on a value. It is the template equivalent of a JavaScript ' +
+        'switch statement. Always include @default as a safety net for values you did not anticipate.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

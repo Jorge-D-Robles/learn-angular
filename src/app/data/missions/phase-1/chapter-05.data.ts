@@ -6,16 +6,17 @@ export const CHAPTER_05_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Station modules need configuration panels — interfaces where settings flow from data into the UI. ' +
-        'Buttons that disable when systems are offline. Images that change based on module state. CSS classes ' +
-        'that toggle with conditions. Property binding connects your component data directly to DOM element ' +
-        'properties.',
+        'Interpolation converts everything to text. That works great for displaying values, but what about ' +
+        'setting a button\'s disabled state? Or toggling a CSS class? Or pointing an image at a dynamic URL? ' +
+        'You cannot do that with {{ }}. Property binding is how you connect component data directly to DOM ' +
+        'properties — and unlike interpolation, it preserves the original data type.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use square brackets to bind component data to element properties. When the data changes, the ' +
-        'property updates automatically.',
+        'Square brackets are the property binding syntax. [disabled]="!isOnline" does not insert a string — ' +
+        'it passes a boolean directly to the DOM property. When isOnline changes, the button\'s disabled ' +
+        'state updates automatically.',
       code: [
         '@Component({',
         "  selector: 'app-config-panel',",
@@ -35,15 +36,17 @@ export const CHAPTER_05_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [4, 5, 6],
       explanation:
-        'Square brackets bind a DOM property to a component expression. [disabled]="!isOnline" disables the ' +
-        'button when isOnline is false. [src]="moduleImage" sets the image source dynamically. ' +
-        '[class.active]="isActive" toggles the CSS class.',
+        'Each square bracket binding connects a DOM property to a component expression. [disabled] receives ' +
+        'a boolean. [src] receives a string URL. [class.active] adds or removes the "active" CSS class based ' +
+        'on a boolean. The brackets are doing something fundamentally different from interpolation — they are ' +
+        'setting properties on the DOM element, not inserting text.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Property binding and interpolation look similar but serve different purposes. Interpolation converts ' +
-        'to a string; property binding passes the raw value — booleans, objects, numbers.',
+        'Here is the difference side by side. Interpolation always produces a string. Property binding passes ' +
+        'the actual value — a number stays a number, a boolean stays a boolean. This distinction matters when ' +
+        'the DOM property expects a specific type.',
       code: [
         '@Component({',
         "  selector: 'app-config-panel',",
@@ -71,30 +74,34 @@ export const CHAPTER_05_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [5, 8, 11, 14],
       explanation:
-        'Use interpolation {{ }} for displaying text content. Use property binding [prop] when you need to ' +
-        'pass non-string values (booleans, numbers, objects) or bind to element properties that are not text content.',
+        '{{ powerLevel }} on line 5 becomes the string "75" in the DOM. [value]="powerLevel" on line 8 ' +
+        'passes the number 75. For display text, it does not matter. But try disabling a button with ' +
+        'disabled="{{ isLocked }}" — it will not work correctly because the string "false" is truthy. ' +
+        'When the property expects a non-string type, use property binding.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Configuration panels are now bound to live module data. Property binding gives you precise control over ' +
-        'every DOM property.',
+        'You now have two ways to get data from your class into the template. Knowing when to use which one ' +
+        'is a skill you will use on every component you build.',
       conceptTitle: 'Property Binding [property]',
       conceptBody:
-        'Property binding uses square brackets to set an element\'s DOM property to a component expression. ' +
-        'It is one-way: data flows from the component class to the template. Unlike interpolation (which ' +
-        'always converts to a string), property binding preserves the original data type.',
+        'Property binding sets a DOM element\'s property to the result of a component expression. It is ' +
+        'one-way, just like interpolation — data flows from class to template. The key difference: ' +
+        'interpolation converts to a string, property binding preserves the type. Use interpolation for ' +
+        'text content. Use property binding for everything else.',
       keyPoints: [
-        'Use [property] for non-string values like booleans, numbers, and objects',
-        '[class.name] toggles a CSS class, [style.prop] sets a style property',
-        'Property binding is one-way: class to template — changes in the DOM do not flow back',
+        'Use [property] when the value needs to stay its original type — booleans for disabled, numbers for value, strings for src. If you are setting text content, {{ }} is fine.',
+        '[class.name] toggles a CSS class on or off. [style.prop] sets an inline style. These are shortcuts Angular provides for two of the most common DOM operations.',
+        'Data flows one direction: class to template. If a user types in an input with [value], the class property does not update. You need event binding for that (coming later).',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'The configuration panel needs dynamic property bindings. Write a template that binds a ' +
-        'button\'s disabled state, an image\'s src, and a div\'s CSS class to component data.',
+        'The configuration panel needs three property bindings: disable a button based on isOffline, set ' +
+        'an image source from imageSrc, and toggle a CSS class using isActive. Replace the static HTML ' +
+        'with dynamic bindings.',
       starterCode: [
         '<!-- Available variables: isOffline (boolean), imageSrc (string), isActive (boolean) -->',
         '',
@@ -136,15 +143,17 @@ export const CHAPTER_05_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Use [disabled]="expression" to bind the button\'s disabled property to a component value',
-        '[class.active]="isActive" toggles the \'active\' CSS class based on the expression',
+        'Add [disabled]="isOffline" to the button. The brackets tell Angular this is a binding, not a static attribute.',
+        '[class.active]="isActive" adds the "active" class when isActive is true and removes it when false.',
       ],
       successMessage:
-        'Configuration panel is bound to live module data! Every property updates when the data changes.',
+        'Configuration panel is wired up. You now have two tools for getting data into the template: ' +
+        '{{ }} for text, [property] for everything else. Together they cover most of what you need for ' +
+        'one-way data flow.',
       explanation:
-        'Property binding [property]="expression" connects DOM properties to component data. Unlike ' +
-        'interpolation which always produces strings, property binding preserves the data type -- ' +
-        'booleans for disabled, strings for src, booleans for class toggles.',
+        'Property binding connects DOM properties to component data while preserving types. [disabled] ' +
+        'gets a boolean, [src] gets a string, [class.active] gets a boolean. Interpolation would turn ' +
+        'all of these into strings, which breaks things like disabled (the string "false" is truthy).',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

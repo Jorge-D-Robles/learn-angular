@@ -6,17 +6,17 @@ export const CHAPTER_21_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Basic formatting is working, but the station\'s sensor arrays produce data in many different ' +
-        'units and precisions. Some readings need long date formats, others need exactly two decimal ' +
-        'places, and real-time telemetry streams arrive as Observables that update continuously. ' +
-        'Advanced pipe techniques — parameters, chaining, and AsyncPipe — give you full control over ' +
-        'how data is displayed.',
+        'Chapter 20 covered the basics: apply a pipe, get a formatted string. But what if you need a ' +
+        'specific date format? Or exactly two decimal places? Or you need to display a value that arrives ' +
+        'as an Observable stream, updating in real time? Pipe parameters, chaining, and AsyncPipe give you ' +
+        'that control.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Pipes accept parameters separated by colons. You can also chain multiple pipes together, ' +
-        'applying transformations in sequence from left to right.',
+        'Pipes accept arguments after a colon. You can also chain pipes together — the output of one ' +
+        'becomes the input of the next, reading left to right. Want a long date? Pass \'long\'. Need ' +
+        'exactly two decimal places? Use the digit format string.',
       code: [
         "import { Component } from '@angular/core';",
         "import { DatePipe, DecimalPipe, UpperCasePipe } from '@angular/common';",
@@ -40,16 +40,17 @@ export const CHAPTER_21_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [8, 9, 10],
       explanation:
-        'Pipe parameters follow the pipe name after a colon. DatePipe accepts format strings like ' +
-        '\'long\', \'short\', or custom patterns. DecimalPipe\'s \'1.2-2\' means at least 1 integer digit, ' +
-        'minimum 2 and maximum 2 fraction digits. Chain pipes with additional | operators — each pipe ' +
-        'receives the output of the previous one.',
+        'The colon after a pipe name introduces a parameter. date:\'long\' produces a verbose format like ' +
+        '"March 28, 2025 at 10:30:00 AM." DecimalPipe\'s \'1.2-2\' means: at least 1 integer digit, ' +
+        'minimum 2 and maximum 2 fraction digits — so 101.325 becomes 101.33. When you chain pipes with ' +
+        'additional | operators, each one receives the previous pipe\'s output.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Real-time sensor telemetry arrives as Observable streams. AsyncPipe subscribes to an Observable ' +
-        'in the template and automatically updates the display when new values arrive.',
+        'Real-time data arrives as Observable streams — values that update over time. Without AsyncPipe, ' +
+        'you\'d need to manually subscribe, store the value, and remember to unsubscribe when the component ' +
+        'is destroyed. AsyncPipe handles all of that in a single template expression.',
       code: [
         "import { Component } from '@angular/core';",
         "import { AsyncPipe, DecimalPipe } from '@angular/common';",
@@ -78,33 +79,34 @@ export const CHAPTER_21_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [2, 7, 9, 10, 16],
       explanation:
-        'AsyncPipe subscribes to an Observable and renders the latest emitted value. It also ' +
-        'automatically unsubscribes when the component is destroyed, preventing memory leaks. ' +
-        'You can chain AsyncPipe with other pipes and use it with @if to conditionally render ' +
-        'based on the emitted value.',
+        'AsyncPipe subscribes to an Observable and renders whatever value it most recently emitted. ' +
+        'When the component is destroyed, AsyncPipe unsubscribes automatically — no memory leaks, no ' +
+        'cleanup code. You can chain it with other pipes (like number) and use it inside @if to ' +
+        'conditionally render based on the stream\'s current value.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Advanced formatting is operational. Here is how pipe parameters, chaining, and AsyncPipe work.',
-      conceptTitle: 'Advanced Pipe Patterns — Parameters, Chaining, and AsyncPipe',
+        'Parameters, chaining, and AsyncPipe round out the pipe toolkit. These three patterns cover ' +
+        'the vast majority of template formatting needs.',
+      conceptTitle: 'Pipe Parameters, Chaining, and AsyncPipe',
       conceptBody:
-        'Pipes become powerful when combined. Parameters customize formatting (date:\'long\', ' +
-        'number:\'1.2-2\'), chaining applies multiple transformations in sequence, and AsyncPipe ' +
-        'bridges reactive Observable streams into the template. AsyncPipe handles subscription ' +
-        'lifecycle automatically.',
+        'Parameters let you customize pipe behavior — pass a format string after a colon. Chaining ' +
+        'feeds one pipe\'s output into the next, so you can stack transformations. AsyncPipe bridges ' +
+        'the gap between reactive Observable streams and the template, handling subscribe/unsubscribe ' +
+        'lifecycle so you don\'t have to.',
       keyPoints: [
-        'Pipe parameters follow the pipe name after a colon (e.g., date:\'long\')',
-        'Chain multiple pipes with | to apply transformations in sequence',
-        'AsyncPipe subscribes to Observables and renders the latest value',
-        'AsyncPipe automatically unsubscribes on component destruction',
+        'Colon syntax passes arguments: date:\'long\', number:\'1.2-2\' — each pipe defines its own parameter format',
+        'Chaining with multiple | operators applies transformations left-to-right in sequence',
+        'AsyncPipe subscribes to an Observable, renders the latest value, and auto-unsubscribes on destroy',
+        'Combine AsyncPipe with other pipes: {{ stream$ | async | number:\'1.0-2\' }} works seamlessly',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'Fine-tune the sensor formats! Use pipe parameters to display the mission date in ' +
-        "'fullDate' format and the hull pressure with exactly two decimal places.",
+        'Calibrate the sensor formats. The mission date should display in \'fullDate\' format and the ' +
+        'hull pressure needs exactly two decimal places. Add the right parameters to each pipe.',
       starterCode: [
         "import { Component } from '@angular/core';",
         "import { DatePipe, DecimalPipe } from '@angular/common';",
@@ -148,20 +150,22 @@ export const CHAPTER_21_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        "Add a colon after the pipe name followed by the format string: | date:'fullDate'",
-        "For DecimalPipe, use | number:'1.2-2' where 1 = min integer digits, 2-2 = min/max fraction digits",
+        "Add a colon and format string after the pipe name: | date:'fullDate'",
+        "For DecimalPipe, use | number:'1.2-2' — that means 1 integer digit minimum, exactly 2 fraction digits",
       ],
-      successMessage: 'Readouts calibrated! Pipe parameters give you precise control over formatting.',
+      successMessage:
+        'Precise formatting, no guesswork. Pipe parameters give you exact control over how every ' +
+        'value appears. Next: wiring up live Observable streams with AsyncPipe.',
       explanation:
-        "Pipe parameters follow the pipe name after a colon. DatePipe accepts format strings like " +
-        "'fullDate', 'short', or custom patterns. DecimalPipe's format string controls integer and " +
-        "fraction digit counts (e.g., '1.2-2' means at least 1 integer digit, exactly 2 fraction digits).",
+        "Parameters follow the pipe name after a colon. DatePipe accepts named formats like 'fullDate' " +
+        "and 'short', or custom pattern strings. DecimalPipe uses a digit info string where '1.2-2' means " +
+        'at least 1 integer digit and exactly 2 fraction digits. The pipe handles the rest.',
     } satisfies CodeChallengeStep,
     {
       stepType: 'code-challenge',
       prompt:
-        'Wire up the real-time telemetry feed! Use AsyncPipe to subscribe to an Observable ' +
-        'temperature stream and display the latest reading in the template.',
+        'Wire up the telemetry feed. Import AsyncPipe, register it in the component, and apply it to ' +
+        'the Observable so Angular subscribes for you and displays the latest value.',
       starterCode: [
         "import { Component } from '@angular/core';",
         "import { Observable, of } from 'rxjs';",
@@ -206,13 +210,15 @@ export const CHAPTER_21_CONTENT: StoryMissionContent = {
       ],
       hints: [
         "Import AsyncPipe from '@angular/common' and add it to the imports array",
-        'Change {{ temperature$ }} to {{ temperature$ | async }} so Angular subscribes for you',
+        'Change {{ temperature$ }} to {{ temperature$ | async }} — Angular subscribes and renders the latest value',
       ],
-      successMessage: 'Telemetry feed is live! AsyncPipe handles Observable subscriptions automatically.',
+      successMessage:
+        'Live data, zero manual subscriptions. AsyncPipe subscribes, renders, and cleans up after itself. ' +
+        'You\'re ready to build your own custom pipes in Chapter 22.',
       explanation:
-        'AsyncPipe subscribes to an Observable and renders the latest emitted value. It automatically ' +
-        'unsubscribes when the component is destroyed, preventing memory leaks. Import it and add it ' +
-        "to the component's imports array.",
+        'Without AsyncPipe, you\'d write subscribe(), store the value in a field, and implement ngOnDestroy ' +
+        'to unsubscribe. AsyncPipe collapses all that into one template expression. Import it from ' +
+        '@angular/common and add it to your component\'s imports array — same workflow as any other pipe.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

@@ -6,16 +6,20 @@ export const CHAPTER_26_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'The station needs automated responses — when a signal crosses a threshold, external systems ' +
-        'must react: alarms sound, logs are written, hardware actuators engage. These are side effects ' +
-        'that cannot be expressed as derived values. Angular\'s effect() function runs imperative code ' +
-        'whenever one or more signal dependencies change, bridging reactive signals with external APIs.',
+        'Signals and computed handle state. But what about side effects — logging, API calls, ' +
+        'starting timers, sending notifications? You can\'t model "write a log entry" as a derived ' +
+        'value. There\'s no formula for it. Effects are like an alarm system wired to a sensor: the ' +
+        'sensor detects a change, and the alarm responds by DOING something — ringing a bell, ' +
+        'writing a record, triggering hardware. That\'s what effect() is for. It\'s the place where ' +
+        'reactive state meets the outside world.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Create an effect inside a component constructor. The effect runs once initially and again ' +
-        'whenever any signal it reads changes.',
+        'effect() registers a callback that Angular runs whenever the signals inside it change. ' +
+        'It runs once immediately (to establish dependencies), then re-runs each time those signals ' +
+        'update. One important constraint: it must be created in an injection context, which usually ' +
+        'means the constructor.',
       code: [
         "import { Component, signal, effect } from '@angular/core';",
         '',
@@ -46,16 +50,19 @@ export const CHAPTER_26_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 14, 15, 16],
       explanation:
-        'effect() registers a callback that Angular runs whenever its signal dependencies change. ' +
-        'It must be created in an injection context — typically a constructor. The effect tracks which ' +
-        'signals are read during execution and re-runs when any of them change. Use effects for side ' +
-        'effects like logging, analytics, or interacting with browser APIs.',
+        'When the component is created, the effect runs once and reads this.temperature(). Angular ' +
+        'now knows: "this effect depends on temperature." Every time temperature changes, the ' +
+        'effect re-runs. Notice this is fundamentally different from computed — there\'s no return ' +
+        'value. The effect doesn\'t produce state. It performs an action. Logging, analytics, DOM ' +
+        'manipulation, API calls — that\'s effect territory.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Use the onCleanup parameter to cancel long-running operations when the effect re-runs or ' +
-        'is destroyed. This prevents stale timers and leaked resources.',
+        'What happens when an effect sets up a timer, and then the signal changes? The old timer ' +
+        'is still running. Now you have two timers. Then three. That\'s a resource leak. ' +
+        'onCleanup solves this — it lets you tear down the previous run\'s work before the next ' +
+        'run starts.',
       code: [
         "import { Component, signal, effect } from '@angular/core';",
         '',
@@ -85,33 +92,36 @@ export const CHAPTER_26_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 13, 19, 20],
       explanation:
-        'The onCleanup function is passed as the first parameter to the effect callback. Register a ' +
-        'cleanup callback to cancel timers, abort fetch requests, or release resources. Angular calls ' +
-        'the cleanup function before the next effect execution and when the effect is destroyed — ' +
-        'ensuring no stale side effects linger.',
+        'onCleanup is the first parameter of the effect callback. Register a teardown function ' +
+        'inside it, and Angular will call it before the next effect execution AND when the ' +
+        'component is destroyed. Without this, changing intervalMs would stack up timers ' +
+        'indefinitely. This pattern applies to anything that allocates resources: timers, ' +
+        'WebSocket connections, event listeners, fetch AbortControllers.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'Automated responses are active. Here is how effects bridge signals with imperative side effects.',
-      conceptTitle: 'Signal Effects — Reactive Side Effects with effect()',
+        'Automated responses are active. Let\'s pin down exactly when to use effect versus ' +
+        'the other signal primitives.',
+      conceptTitle: 'When to Use effect() — and When Not To',
       conceptBody:
-        'effect() runs imperative code whenever its signal dependencies change. Effects are the escape ' +
-        'hatch for side effects that cannot be modeled as derived state — logging, DOM manipulation, ' +
-        'browser API calls. Create effects in an injection context (constructor or with an injector). ' +
-        'Use onCleanup to cancel pending work when the effect re-runs or is destroyed.',
+        'effect() is Angular\'s escape hatch for imperative code in a reactive world. The rule of thumb: ' +
+        'if you\'re producing a value, use computed() or linkedSignal(). If you\'re producing a side ' +
+        'effect — writing a log, calling an API, manipulating the DOM, starting a timer — use effect(). ' +
+        'Overusing effects is one of the most common signal mistakes. If you catch yourself writing an ' +
+        'effect that .set()s another signal, stop and ask: "Could this be a computed?" Usually the answer is yes.',
       keyPoints: [
-        'effect() runs a callback when signal dependencies change — ideal for side effects',
-        'Effects must be created in an injection context (constructor or via injector option)',
-        'onCleanup registers teardown logic to cancel timers, subscriptions, or requests',
-        'Prefer computed() or linkedSignal() for derived state — use effect() only for side effects',
+        'effect() is for actions, not values — if your callback returns something meaningful, you probably want computed()',
+        'onCleanup prevents resource leaks by tearing down the previous run before the next one starts',
+        'Effects must live in an injection context (constructor) because Angular needs the injector to manage their lifecycle',
+        'A signal set inside an effect is a code smell — rethink it as a computed or linkedSignal first',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'The station needs automated logging when radiation levels change. Create an effect that logs ' +
-        'a warning when the radiation signal exceeds a threshold.',
+        'Radiation levels are spiking and nobody\'s watching the console. Wire up an effect that ' +
+        'monitors the radiation signal and fires console.warn when levels exceed 500 mSv.',
       starterCode: [
         "import { Component, signal } from '@angular/core';",
         '',
@@ -161,19 +171,21 @@ export const CHAPTER_26_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        "Import effect from '@angular/core' and call effect(() => { ... }) in the constructor",
-        'Inside the effect, read this.radiation() and use console.warn() when the value exceeds 500',
+        'Import effect from \'@angular/core\' and call effect(() => { ... }) inside the constructor',
+        'Read this.radiation() inside the effect to create the dependency, then conditionally call console.warn() when it exceeds 500',
       ],
-      successMessage: 'Radiation monitor active! The effect logs warnings when levels spike.',
+      successMessage: 'Radiation monitor is live. The crew will never miss a spike again. One more challenge — let\'s handle cleanup.',
       explanation:
-        'effect() registers a callback that runs whenever its signal dependencies change. It must be ' +
-        'created in an injection context like a constructor. Use effects for side effects like logging.',
+        'effect() watches which signals you read inside it, just like computed(). The difference: ' +
+        'there\'s no return value. The effect exists purely to DO something — in this case, log a ' +
+        'warning. Every time radiation changes, Angular re-runs the callback.',
     } satisfies CodeChallengeStep,
     {
       stepType: 'code-challenge',
       prompt:
-        'The station beacon needs a timer that adjusts when the broadcast interval changes. Create an ' +
-        'effect that sets up a timer and cleans it up when the interval signal changes.',
+        'The station beacon broadcasts on a timer, but the interval can change. The effect is already ' +
+        'set up, but it\'s leaking timers — every time intervalMs changes, a new setInterval stacks ' +
+        'on top of the old one. Add cleanup to fix it.',
       starterCode: [
         "import { Component, signal, effect } from '@angular/core';",
         '',
@@ -223,13 +235,15 @@ export const CHAPTER_26_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Change effect(() => { to effect((onCleanup) => { to receive the cleanup function',
-        'Call onCleanup(() => { clearInterval(timer); }) to register teardown logic',
+        'Add onCleanup to the effect signature: effect((onCleanup) => { ... })',
+        'Before the closing brace, call onCleanup(() => { clearInterval(timer); }) — Angular runs this before the next execution and on destroy',
       ],
-      successMessage: 'Beacon timer managed! The cleanup prevents stale timers on re-run.',
+      successMessage: 'No more leaked timers! You\'ve mastered all four signal primitives: signal, computed, linkedSignal, and effect. That\'s the reactive foundation for everything Angular builds going forward.',
       explanation:
-        'The onCleanup function is passed as the first parameter to the effect callback. Register a ' +
-        'cleanup function to cancel timers or release resources before the next execution.',
+        'Without onCleanup, every re-run would start a new setInterval while the old one kept ' +
+        'firing. onCleanup tells Angular: "run this teardown before you execute the effect again, ' +
+        'and when the component is destroyed." It\'s the same idea as returning a cleanup function ' +
+        'from React\'s useEffect, if that helps.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

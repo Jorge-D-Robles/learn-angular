@@ -6,16 +6,18 @@ export const CHAPTER_11_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'The corridors between station modules have collapsed. Crew members are trapped in isolated sections ' +
-        'with no way to move between them. To reconnect Nexus Station, you need a routing system — a way to ' +
-        'navigate between module views without rebuilding the entire station each time. Angular\'s router maps ' +
-        'URL paths to components and renders them in a designated outlet.',
+        'Everything you\'ve built so far lives on a single page. But real web apps have multiple views ' +
+        '-- a dashboard, a settings page, a detail screen. Ever noticed how Gmail doesn\'t reload the ' +
+        'whole page when you click an email? That\'s routing. Angular\'s router maps URL paths to ' +
+        'components and swaps them in without a full page refresh. The station corridors have collapsed, ' +
+        'and routing is how we reconnect them.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Here is the blueprint for the station routing system. provideRouter registers routes with the ' +
-        'application, and each route maps a URL path to a component.',
+        'Routing starts with two things: a list of paths and a way to register them. Each route maps a ' +
+        'URL like /bridge to the component Angular should display. provideRouter hands that list to ' +
+        'the framework so it knows where everything lives.',
       code: [
         "import { Routes } from '@angular/router';",
         "import { provideRouter } from '@angular/router';",
@@ -33,14 +35,16 @@ export const CHAPTER_11_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [4, 5, 6, 11],
       explanation:
-        'provideRouter registers the router with the application. Each route object maps a URL path ' +
-        'to a component that Angular will render when the user navigates to that path.',
+        'The Routes array is a lookup table -- each entry says "when the URL matches this path, render ' +
+        'this component." provideRouter registers that table with Angular at startup. Without it, the ' +
+        'router wouldn\'t know any of your paths exist.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Routes are registered, but the station needs a viewport — a place where Angular renders the active ' +
-        'route\'s component. That is what router-outlet provides.',
+        'Routes are registered, but Angular still needs to know where on the page to display the ' +
+        'matched component. Think of router-outlet as a viewport -- a designated spot in your layout ' +
+        'where routed content appears.',
       code: [
         '@Component({',
         "  selector: 'app-root',",
@@ -57,29 +61,31 @@ export const CHAPTER_11_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [3, 7],
       explanation:
-        'router-outlet is a placeholder that Angular replaces with the component matching the current URL. ' +
-        'Place it where you want routed content to appear.',
+        'router-outlet is Angular\'s placeholder. When the URL changes, Angular looks up the matching ' +
+        'component and drops it right where router-outlet sits. The header stays put; only the content ' +
+        'inside <main> swaps. That\'s the single-page app magic.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'The station corridors are reconnecting. Here is how Angular routing works at a high level.',
-      conceptTitle: 'Routing Basics — provideRouter and router-outlet',
+        'Think of routing like a building\'s floor directory. The URL is the floor number, and ' +
+        'router-outlet is the elevator that takes you there.',
+      conceptTitle: 'Routing Basics -- How Angular Navigates Without Reloading',
       conceptBody:
-        'Angular\'s router intercepts URL changes and renders the matching component inside router-outlet. ' +
-        'The browser does not reload the page — Angular swaps components in place, creating a single-page ' +
-        'application (SPA) experience.',
+        'Angular\'s router intercepts browser URL changes and swaps the matching component into ' +
+        'router-outlet -- all without reloading the page. The browser address bar updates, the back ' +
+        'button works, but the page never blinks. That\'s what makes it a single-page application.',
       keyPoints: [
-        'provideRouter() registers routes at the application level',
-        'router-outlet marks where routed components render',
-        'The browser URL updates without a full page reload',
+        'provideRouter() is a one-time setup that tells Angular about all your routes',
+        'router-outlet is the "screen" where matched components appear -- put it wherever you want routed content',
+        'No page reload means faster transitions and preserved application state',
       ],
     },
     {
       stepType: 'code-challenge',
       prompt:
-        'Reconnect the station corridors! Define a Routes array mapping paths to components, ' +
-        'then wire it into the app config with the routing provider.',
+        'Time to reconnect those station corridors. Define a Routes array that maps URL paths to ' +
+        'components, then register it with the routing provider so Angular knows how to navigate.',
       starterCode: [
         "import { Routes } from '@angular/router';",
         "import { BridgeComponent } from './bridge';",
@@ -121,14 +127,16 @@ export const CHAPTER_11_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'Define a const with type Routes containing objects like { path: \'bridge\', component: BridgeComponent }',
-        'Call the routing provider function inside the providers array, passing your routes',
+        'Create a const typed as Routes with objects like { path: \'bridge\', component: BridgeComponent }',
+        'Import provideRouter and call it inside the providers array, passing your routes as the argument',
       ],
       successMessage:
-        'Station corridors reconnected! Routes are defined and the router provider is wired into the app.',
+        'Corridors reconnected! Angular now knows which component to show for each URL. ' +
+        'Next up: dynamic route parameters so you can navigate to specific modules by ID.',
       explanation:
-        'A Routes array maps URL paths to components. The routing provider function registers ' +
-        'these routes with Angular so the router can match URLs to components and render them.',
+        'The Routes array is the map; provideRouter is the registration. Without both, Angular has no ' +
+        'idea which component belongs at which URL. Once registered, the router handles all navigation ' +
+        'automatically.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
