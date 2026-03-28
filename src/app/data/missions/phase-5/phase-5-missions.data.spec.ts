@@ -91,7 +91,9 @@ describe('PHASE_5_MISSIONS structure', () => {
   it('should have a non-empty narrativeText for every step', () => {
     for (const mission of PHASE_5_MISSIONS) {
       for (const step of mission.steps) {
-        expect(step.narrativeText.length).toBeGreaterThan(0);
+        if ('narrativeText' in step) {
+          expect(step.narrativeText.length).toBeGreaterThan(0);
+        }
       }
     }
   });

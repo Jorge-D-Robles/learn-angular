@@ -1,9 +1,9 @@
 # Current Sprint
 
-Sprint: S30-p2-wiring
-Milestone: P2
-Goal: Wire remaining P2 components, pages, and integration tests
-Started: 2026-03-25
+Sprint: S31-code-challenges
+Milestone: P1
+Goal: Add code challenge infrastructure and content for all 26 written chapters
+Started: 2026-03-27
 
 <!-- Velocity: (recorded at sprint close) -->
 
@@ -11,35 +11,23 @@ Started: 2026-03-25
 
 ## Active
 
+- T-2026-558: Add CodeChallengeStep type and CodeChallengeValidationService
 
 ---
 
 ## Queue
 
-- T-2026-552: Integrate MinigameEngine rendering into EndlessModePage for actual gameplay [L, high]
-- T-2026-553: Integrate MinigameEngine rendering into SpeedRunPage for timed gameplay [L, high]
-- T-2026-554: Integrate MinigameEngine rendering into DailyChallengePage for challenge gameplay [L, high]
-- T-2026-541: Implement CosmeticGalleryComponent for cosmetic browsing and equipping [M, medium]
-- T-2026-544: Create OnboardingOverlayComponent for first-time user guidance [M, medium]
-- T-2026-555: Integrate MinigameEngine rendering into RefresherChallengePage [M, medium]
-- T-2026-542: Wire CosmeticGalleryComponent into ProfilePage cosmetics section [S, medium, depends T-2026-541]
-- T-2026-545: Wire OnboardingOverlayComponent into DashboardPage [S, medium, depends T-2026-544]
-- T-2026-556: Create E2E smoke test for replay mode gameplay rendering [S, medium, depends T-2026-552,553,554]
-- T-2026-546: Wire EmptyStateComponent into DashboardPage [S, low]
-- T-2026-547: Wire LoadingSpinnerComponent into DashboardPage [S, low]
-- T-2026-548: Wire QuickPlayService into DashboardPage [S, low]
-- T-2026-549: Wire LeaderboardComponent into SpeedRunPage [S, low]
-- T-2026-550: Fix SCSS budget warning for MinigameShell stylesheet [S, low]
-- T-2026-551: Fix SCSS budget warning for FlowCommander stylesheet [S, low]
-- T-2026-543: Wire CosmeticService unlocked themes into SettingsPage [S, low, depends T-2026-541]
-- T-2026-557: Update architecture.md with P8 replay mode patterns [S, low, depends T-2026-552,553,554]
+- T-2026-558: Add CodeChallengeStep type and CodeChallengeValidationService
+- T-2026-559: Create CodeChallengeComponent with editor, prompt, and feedback
+- T-2026-560: Integrate code-challenge step into MissionPage
+- T-2026-561: Code challenges for Phase 1 chapters 1-5
+- T-2026-562: Code challenges for Phase 1 chapters 6-10
+- T-2026-563: Code challenges for Phase 2 chapters 11-13
+- T-2026-564: Code challenges for Phase 3 chapters 14-17
+- T-2026-565: Code challenges for Phase 4 chapters 18-19
+- T-2026-566: Code challenges for Phase 5 chapters 20-22
+- T-2026-567: Code challenges for Phase 6 chapters 23-26
 
 ---
 
 ## Done This Sprint
-
-- T-2026-339: Wire MinigameCardComponent into MinigameHubPage grid layout
-- T-2026-340: Wire LevelCardComponent into LevelSelectPage level list
-- T-2026-341: Wire StepProgressComponent into StoryMissionPage for step indicator
-- T-2026-343: Wire MasteryTableComponent into ProfilePage mastery section
-- T-2026-540: Commit untracked integration test files

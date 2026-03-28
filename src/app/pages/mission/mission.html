@@ -21,7 +21,9 @@
 
   <main class="mission__content">
     @if (currentStepData(); as step) {
-      <div class="mission__narrative">{{ step.narrativeText }}</div>
+      @if (step.stepType !== 'code-challenge') {
+        <div class="mission__narrative">{{ step.narrativeText }}</div>
+      }
 
       @if (codeExample(); as ex) {
         @if (codeBlocks(); as blocks) {

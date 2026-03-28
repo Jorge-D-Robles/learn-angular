@@ -14,7 +14,7 @@ import { CurriculumService } from '../../core/curriculum/curriculum.service';
 import { StoryMissionCompletionService, type MissionCompletionSummary } from '../../core/curriculum/story-mission-completion.service';
 import { StoryMissionContentService } from '../../core/curriculum/story-mission-content.service';
 import type { ChapterId, StoryMission } from '../../core/curriculum/curriculum.types';
-import type { StoryMissionContent } from '../../core/curriculum/story-mission-content.types';
+import type { NarrativeStep, StoryMissionContent } from '../../core/curriculum/story-mission-content.types';
 import { CHAPTER_01_CONTENT, PHASE_1_MISSIONS } from '../../data/missions/phase-1';
 import { provideMissionContent } from '../../data/missions';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
@@ -159,7 +159,7 @@ describe('MissionPage', () => {
   it('should render narrative text for the current step', async () => {
     const { element } = await setup();
     const narrative = element.querySelector('.mission__narrative');
-    expect(narrative?.textContent).toContain(CHAPTER_01_CONTENT.steps[0].narrativeText);
+    expect(narrative?.textContent).toContain((CHAPTER_01_CONTENT.steps[0] as NarrativeStep).narrativeText);
   });
 
   it('should render StepProgressComponent in the header', async () => {
