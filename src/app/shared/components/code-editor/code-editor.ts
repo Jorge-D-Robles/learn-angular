@@ -47,11 +47,19 @@ export class CodeEditorComponent {
     return lineCount <= AUTO_HEIGHT_LINE_LIMIT;
   });
 
+  /** Map standard language IDs to Angular-aware variants. */
+  private readonly resolvedLanguage = computed(() => {
+    const lang = this.language();
+    if (lang === 'typescript') return 'angular-typescript';
+    if (lang === 'html') return 'angular-html';
+    return lang;
+  });
+
   readonly editorOptions = computed(() => {
     const auto = this.autoHeight();
     return {
-      theme: 'vs-dark',
-      language: this.language(),
+      theme: 'vs-dark-angular',
+      language: this.resolvedLanguage(),
       readOnly: this.readOnly(),
       automaticLayout: true,
       minimap: { enabled: false },
