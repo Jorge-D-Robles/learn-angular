@@ -3,6 +3,7 @@ import {
   computed,
   ElementRef,
   input,
+  linkedSignal,
   output,
   viewChild,
 } from '@angular/core';
@@ -23,7 +24,7 @@ interface CodeLine {
       @if (!readOnly()) {
         <textarea
           class="code-textarea"
-          [value]="code()"
+          [value]="editableCode()"
           (input)="onInput($event)"
           (scroll)="onScroll($event)"
           spellcheck="false"
@@ -44,8 +45,11 @@ export class CodeEditorComponent {
 
   readonly preRef = viewChild<ElementRef>('codeDisplay');
 
+  /** Internal editable code — syncs from input, updated locally on typing. */
+  readonly editableCode = linkedSignal(() => this.code());
+
   readonly lines = computed<CodeLine[]>(() => {
-    const allTokens = tokenize(this.code(), this.language());
+    const allTokens = tokenize(this.editableCode(), this.language());
     const highlightSet = new Set(this.highlightLines());
 
     // Split tokens into lines by splitting on '\n' within token text
@@ -80,6 +84,7 @@ export class CodeEditorComponent {
 
   onInput(event: Event): void {
     const textarea = event.target as HTMLTextAreaElement;
+    this.editableCode.set(textarea.value);
     this.codeChange.emit(textarea.value);
   }
 
