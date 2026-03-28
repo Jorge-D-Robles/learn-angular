@@ -2,6 +2,7 @@ export { AchievementBadgeComponent } from './achievement-badge/achievement-badge
 export { AchievementNotificationComponent } from './achievement-notification/achievement-notification';
 export { AchievementGridComponent } from './achievement-grid/achievement-grid';
 export { ActiveMissionCardComponent } from './active-mission-card/active-mission-card';
+export { CodeChallengeComponent } from './code-challenge/code-challenge';
 export { CodeEditorComponent } from './code-editor/code-editor';
 export { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog';
 export { CosmeticGalleryComponent } from './cosmetic-gallery/cosmetic-gallery';
