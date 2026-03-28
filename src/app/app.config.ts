@@ -100,7 +100,7 @@ export const appConfig: ApplicationConfig = {
     provideMinigame('blast-doors', BlastDoorsComponent, () => new BlastDoorsEngine()),
     provideMonacoEditor({
       onMonacoLoad: () => {
-        registerAngularLanguages((window as any).monaco);
+        registerAngularLanguages((window as unknown as { monaco: unknown }).monaco);
       },
     }),
   ],

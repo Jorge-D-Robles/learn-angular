@@ -390,6 +390,6 @@ describe('SettingsService', () => {
   // --- Read-only enforcement ---
 
   it('should expose settings as read-only signal', () => {
-    expect(() => (service.settings as any).set({})).toThrow();
+    expect(() => (service.settings as unknown as { set: (v: object) => void }).set({})).toThrow();
   });
 });

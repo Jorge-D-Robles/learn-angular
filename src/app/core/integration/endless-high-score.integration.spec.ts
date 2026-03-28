@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { EndlessModeService } from '../minigame/endless-mode.service';
-import { StatePersistenceService } from '../persistence/state-persistence.service';
+
 import type { MinigameId } from '../minigame/minigame.types';
 
 // --- Fake localStorage ---

@@ -174,11 +174,11 @@ describe('GameStateService', () => {
   // --- Read-only enforcement ---
 
   it('should throw when attempting to set playerName directly', () => {
-    expect(() => (service.playerName as any).set('x')).toThrow();
+    expect(() => (service.playerName as unknown as { set: (v: string) => void }).set('x')).toThrow();
   });
 
   it('should throw when attempting to set totalXp directly', () => {
-    expect(() => (service.totalXp as any).set(999)).toThrow();
+    expect(() => (service.totalXp as unknown as { set: (v: number) => void }).set(999)).toThrow();
   });
 
   // --- Persistence integration ---

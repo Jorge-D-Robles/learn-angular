@@ -4,7 +4,7 @@ import type { MinigameEngine } from './minigame-engine';
 
 interface RegistryEntry {
   readonly config: MinigameConfig;
-  readonly componentType: Type<any> | null;
+  readonly componentType: Type<unknown> | null;
   readonly engineFactory: (() => MinigameEngine<unknown>) | null;
 }
 
@@ -138,7 +138,7 @@ export class MinigameRegistryService {
   /** Registers (or re-registers) a minigame with its config, component type, and optional engine factory. */
   register(
     config: MinigameConfig,
-    componentType: Type<any> | null,
+    componentType: Type<unknown> | null,
     engineFactory?: (() => MinigameEngine<unknown>) | null,
   ): void {
     this.registry.set(config.id, { config, componentType, engineFactory: engineFactory ?? null });
@@ -154,7 +154,7 @@ export class MinigameRegistryService {
    * - `null` = game is registered but has no component yet
    * - `undefined` = game ID is not in the registry
    */
-  getComponent(gameId: MinigameId): Type<any> | null | undefined {
+  getComponent(gameId: MinigameId): Type<unknown> | null | undefined {
     const entry = this.registry.get(gameId);
     if (entry === undefined) {
       return undefined;

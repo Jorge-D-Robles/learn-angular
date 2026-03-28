@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 /**
  * Custom Monaco Monarch grammars for Angular-aware syntax highlighting.
  *

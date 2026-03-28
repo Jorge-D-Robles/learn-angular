@@ -16,13 +16,12 @@ import {
 import { LevelProgressionService, type LevelDefinition } from '../levels';
 import {
   XpService,
-  MasteryService,
 } from '../progression';
 import {
   XpDiminishingReturnsService,
   REPLAY_MULTIPLIERS,
 } from '../progression/xp-diminishing-returns.service';
-import { SettingsService } from '../settings/settings.service';
+
 
 // --- MockAudio ---
 
@@ -93,6 +92,7 @@ describe('Replay XP diminishing returns integration', () => {
   let levelCompletion: LevelCompletionService;
   let levelProgression: LevelProgressionService;
   let xpService: XpService;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let diminishingReturns: XpDiminishingReturnsService;
   let fakeStorage: Storage;
   let originalLocalStorage: Storage;

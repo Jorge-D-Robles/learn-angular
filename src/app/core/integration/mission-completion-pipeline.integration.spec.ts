@@ -80,6 +80,7 @@ describe('StoryMissionCompletionService full XP-mastery-unlock pipeline', () => 
   let xpService: XpService;
   let masteryService: MasteryService;
   let gameProgression: GameProgressionService;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let curriculum: CurriculumService;
   let originalLocalStorage: Storage;
   let originalMatchMedia: typeof window.matchMedia;

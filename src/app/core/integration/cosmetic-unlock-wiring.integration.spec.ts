@@ -29,7 +29,7 @@ describe('CosmeticService unlock wiring to progression events', () => {
     originalLocalStorage = window.localStorage;
     originalMatchMedia = window.matchMedia;
     Object.defineProperty(window, 'localStorage', { value: createFakeStorage(), writable: true, configurable: true });
-    Object.defineProperty(window, 'matchMedia', { value: () => ({ matches: false, addEventListener: () => {}, removeEventListener: () => {} }), writable: true, configurable: true });
+    Object.defineProperty(window, 'matchMedia', { value: () => ({ matches: false, addEventListener: () => { /* noop */ }, removeEventListener: () => { /* noop */ } }), writable: true, configurable: true });
     vi.stubGlobal('Audio', MockAudio);
     TestBed.configureTestingModule({});
     cosmeticService = TestBed.inject(CosmeticService);
