@@ -70,6 +70,15 @@
           }
         </div>
       }
+
+      @if (codeChallenge(); as ch) {
+        <div class="mission__challenge">
+          <nx-code-challenge
+            [challenge]="ch"
+            [challengeIndex]="currentStep()"
+            (challengeCompleted)="onChallengeCompleted()" />
+        </div>
+      }
     }
   </main>
 

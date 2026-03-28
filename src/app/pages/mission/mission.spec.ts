@@ -668,6 +668,118 @@ describe('MissionPage', () => {
     expect(launchBtn.textContent?.trim()).toBe('Launch Module Assembly');
   });
 
+  // === Code challenge steps (5 tests) ===
+
+  const CHALLENGE_MISSION: StoryMissionContent = {
+    chapterId: 97 as ChapterId,
+    steps: [
+      {
+        stepType: 'narrative',
+        narrativeText: 'Prepare to write code.',
+      },
+      {
+        stepType: 'code-challenge',
+        prompt: 'Write a component decorator.',
+        starterCode: '@Component({})',
+        language: 'typescript' as const,
+        validationRules: [
+          { type: 'contains', value: 'selector', errorMessage: 'Need selector' },
+        ],
+        hints: ['Use selector property'],
+        successMessage: 'Great job!',
+        explanation: 'The selector defines the tag.',
+      },
+      {
+        stepType: 'narrative',
+        narrativeText: 'Mission complete narrative.',
+      },
+    ],
+    completionCriteria: { description: 'Complete challenge', minStepsViewed: 3 },
+  };
+
+  const CHALLENGE_CHAPTER_META: StoryMission = {
+    chapterId: 97,
+    title: 'Code Challenge Test Mission',
+    angularTopic: 'Components',
+    narrative: 'A test mission with a code challenge',
+    unlocksMinigame: null,
+    deps: [],
+    phase: 1,
+  };
+
+  it('should render nx-code-challenge for code-challenge steps', async () => {
+    const { element, fixture, component } = await setup({
+      chapterId: '97',
+      chapterMeta: CHALLENGE_CHAPTER_META,
+      extraMissionContent: [CHALLENGE_MISSION],
+    });
+    component.nextStep();
+    fixture.detectChanges();
+    const codeChallenge = element.querySelector('nx-code-challenge');
+    expect(codeChallenge).toBeTruthy();
+  });
+
+  it('should not render narrative text for code-challenge steps', async () => {
+    const { element, fixture, component } = await setup({
+      chapterId: '97',
+      chapterMeta: CHALLENGE_CHAPTER_META,
+      extraMissionContent: [CHALLENGE_MISSION],
+    });
+    component.nextStep();
+    fixture.detectChanges();
+    const narrative = element.querySelector('.mission__narrative');
+    expect(narrative).toBeFalsy();
+  });
+
+  it('should not allow mission completion when challenge is unsolved', async () => {
+    const { component, fixture } = await setup({
+      chapterId: '97',
+      chapterMeta: CHALLENGE_CHAPTER_META,
+      extraMissionContent: [CHALLENGE_MISSION],
+    });
+    // Navigate through all 3 steps: step 0 -> 1 -> 2
+    component.nextStep();
+    component.nextStep();
+    fixture.detectChanges();
+    // stepsViewed is 3 (meets minStepsViewed), isLastStep is true,
+    // but allChallengesSolved is false
+    expect(component.currentStep()).toBe(2);
+    expect(component.isLastStep()).toBe(true);
+    expect(component.stepsViewed()).toBe(3);
+    expect(component.canComplete()).toBe(false);
+  });
+
+  it('should allow mission completion when challenge is solved', async () => {
+    const { component, fixture } = await setup({
+      chapterId: '97',
+      chapterMeta: CHALLENGE_CHAPTER_META,
+      extraMissionContent: [CHALLENGE_MISSION],
+    });
+    // Navigate to challenge step (step 1)
+    component.nextStep();
+    fixture.detectChanges();
+    // Solve the challenge
+    component.onChallengeCompleted();
+    // Navigate to last step (step 2)
+    component.nextStep();
+    fixture.detectChanges();
+    expect(component.canComplete()).toBe(true);
+  });
+
+  it('should add current step index to solvedChallenges on challengeCompleted', async () => {
+    const { component, fixture } = await setup({
+      chapterId: '97',
+      chapterMeta: CHALLENGE_CHAPTER_META,
+      extraMissionContent: [CHALLENGE_MISSION],
+    });
+    // Navigate to challenge step (step 1)
+    component.nextStep();
+    fixture.detectChanges();
+    // Solve the challenge
+    component.onChallengeCompleted();
+    expect(component.solvedChallenges().has(1)).toBe(true);
+  });
+
   it('should fall back to "Launch Minigame" if registry lookup returns undefined', async () => {
     const { element, fixture, component } = await setup({
       minigameRegistryOverrides: {

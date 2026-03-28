@@ -7,14 +7,14 @@ import { CurriculumService } from '../../core/curriculum/curriculum.service';
 import { StoryMissionCompletionService, type MissionCompletionSummary } from '../../core/curriculum/story-mission-completion.service';
 import type { ChapterId } from '../../core/curriculum/curriculum.types';
 import { StoryMissionContentService } from '../../core/curriculum/story-mission-content.service';
-import type { CodeExampleStep, ConceptStep } from '../../core/curriculum/story-mission-content.types';
+import type { CodeChallengeStep, CodeExampleStep, ConceptStep } from '../../core/curriculum/story-mission-content.types';
 import { MinigameRegistryService } from '../../core/minigame/minigame-registry.service';
 import type { MinigameId } from '../../core/minigame/minigame.types';
-import { CodeEditorComponent, LockedContentComponent, StepProgressComponent } from '../../shared/components';
+import { CodeChallengeComponent, CodeEditorComponent, LockedContentComponent, StepProgressComponent } from '../../shared/components';
 
 @Component({
   selector: 'app-mission',
-  imports: [CodeEditorComponent, LockedContentComponent, StepProgressComponent],
+  imports: [CodeChallengeComponent, CodeEditorComponent, LockedContentComponent, StepProgressComponent],
   templateUrl: './mission.html',
   styleUrl: './mission.scss',
 })
@@ -77,7 +77,8 @@ export class MissionPage {
   readonly canComplete = computed(
     () =>
       this.isLastStep() &&
-      this.stepsViewed() >= (this.missionContent()?.completionCriteria.minStepsViewed ?? Infinity),
+      this.stepsViewed() >= (this.missionContent()?.completionCriteria.minStepsViewed ?? Infinity) &&
+      this.allChallengesSolved(),
   );
 
   readonly missionCompleted = signal(false);
@@ -121,6 +122,22 @@ export class MissionPage {
     return step?.stepType === 'concept' ? (step as ConceptStep) : null;
   });
 
+  readonly codeChallenge = computed(() => {
+    const step = this.currentStepData();
+    return step?.stepType === 'code-challenge' ? (step as CodeChallengeStep) : null;
+  });
+
+  readonly solvedChallenges = signal<ReadonlySet<number>>(new Set());
+
+  readonly allChallengesSolved = computed(() => {
+    const content = this.missionContent();
+    if (!content) return true;
+    const solved = this.solvedChallenges();
+    return content.steps.every(
+      (step, i) => step.stepType !== 'code-challenge' || solved.has(i),
+    );
+  });
+
   nextStep(): void {
     if (!this.isLastStep()) {
       this.currentStep.update((s) => s + 1);
@@ -157,5 +174,14 @@ export class MissionPage {
 
   toggleConceptPanel(): void {
     this.collapsedConcept.update((c) => !c);
+  }
+
+  onChallengeCompleted(): void {
+    const idx = this.currentStep();
+    this.solvedChallenges.update((s) => {
+      const next = new Set(s);
+      next.add(idx);
+      return next;
+    });
   }
 }
