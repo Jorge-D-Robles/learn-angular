@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_25_CONTENT: StoryMissionContent = {
   chapterId: 25,
@@ -106,9 +106,69 @@ export const CHAPTER_25_CONTENT: StoryMissionContent = {
         'Use linkedSignal when you need a default from signals that users can override',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'The station\'s docking bay selector needs a default that updates when the available bays change. ' +
+        'Create a linked signal that defaults to the first available bay.',
+      starterCode: [
+        "import { Component, signal } from '@angular/core';",
+        '',
+        '// TODO: Import the linked reactive wrapper from Angular core',
+        '',
+        '@Component({',
+        "  selector: 'app-bay-selector',",
+        '  template: `',
+        "    <p>Bays: {{ bays().join(', ') }}</p>",
+        '    <p>Selected: {{ selectedBay() }}</p>',
+        '  `,',
+        '})',
+        'export class BaySelectorComponent {',
+        "  bays = signal(['Bay-A', 'Bay-B', 'Bay-C']);",
+        '',
+        '  // TODO: Create a writable derived value that defaults to the first bay',
+        '  // It should reset when bays changes',
+        '',
+        '  selectBay(bay: string) {',
+        '    this.selectedBay.set(bay);',
+        '  }',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: 'linkedSignal(',
+          errorMessage: 'Use linkedSignal() to create a writable signal with a derived default',
+        },
+        {
+          type: 'pattern',
+          pattern: 'linkedSignal\\(\\(\\)\\s*=>',
+          errorMessage: 'Use the shorthand arrow-function form of linkedSignal',
+        },
+        {
+          type: 'contains',
+          value: 'this.bays()',
+          errorMessage: 'Read the bays signal inside the linkedSignal derivation',
+        },
+        {
+          type: 'pattern',
+          pattern: 'this\\.bays\\(\\)\\[0\\]',
+          errorMessage: 'Default to the first bay by accessing index [0]',
+        },
+      ],
+      hints: [
+        "Import linkedSignal from '@angular/core' alongside signal",
+        'Define selectedBay = linkedSignal(() => this.bays()[0]) to derive the default from the first bay',
+      ],
+      successMessage: 'Bay selector linked! The default resets when available bays change.',
+      explanation:
+        'linkedSignal(() => expr) creates a writable signal whose default is derived from source signals. ' +
+        'When the source changes, the linkedSignal resets. You can still override it with .set().',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Linked sensors calibrated!',
-    minStepsViewed: 4,
+    minStepsViewed: 5,
   },
 };

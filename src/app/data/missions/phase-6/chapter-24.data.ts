@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_24_CONTENT: StoryMissionContent = {
   chapterId: 24,
@@ -100,9 +100,67 @@ export const CHAPTER_24_CONTENT: StoryMissionContent = {
         'Dependencies are dynamic — only signals actually read in the latest run are tracked',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'The crew needs a combined environment status. Create a computed signal that derives a status ' +
+        'label from temperature and pressure readings.',
+      starterCode: [
+        "import { Component, signal } from '@angular/core';",
+        '',
+        '// TODO: Import the derivation function from Angular core',
+        '',
+        '@Component({',
+        "  selector: 'app-environment-status',",
+        '  template: `',
+        '    <p>Temp: {{ temperature() }}K</p>',
+        '    <p>Pressure: {{ pressure() }} kPa</p>',
+        '    <p>Status: {{ status() }}</p>',
+        '  `,',
+        '})',
+        'export class EnvironmentStatusComponent {',
+        '  temperature = signal(294);',
+        '  pressure = signal(101.3);',
+        '',
+        '  // TODO: Derive a read-only label from temperature and pressure',
+        "  // Return 'CRITICAL' if temp > 350 or pressure < 90, else 'NOMINAL'",
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: 'computed(',
+          errorMessage: 'Use computed() to create a derived read-only signal',
+        },
+        {
+          type: 'pattern',
+          pattern: 'computed\\(\\(\\)\\s*=>',
+          errorMessage: 'Pass an arrow function to computed() to define the derivation',
+        },
+        {
+          type: 'contains',
+          value: 'this.temperature()',
+          errorMessage: 'Read the temperature signal inside the derivation function',
+        },
+        {
+          type: 'contains',
+          value: "'CRITICAL'",
+          errorMessage: 'Return \'CRITICAL\' when thresholds are exceeded',
+        },
+      ],
+      hints: [
+        "Import computed from '@angular/core' alongside signal",
+        "Define status = computed(() => { ... }) and return 'CRITICAL' if this.temperature() > 350 or this.pressure() < 90, else 'NOMINAL'",
+      ],
+      successMessage: 'Environment status derived! The computed signal updates automatically.',
+      explanation:
+        'computed() creates a read-only signal whose value is derived from other signals. Angular tracks ' +
+        'which signals are read during the derivation and re-evaluates only when those dependencies change.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Computed readings operational!',
-    minStepsViewed: 4,
+    minStepsViewed: 5,
   },
 };

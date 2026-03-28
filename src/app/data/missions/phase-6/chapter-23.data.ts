@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_23_CONTENT: StoryMissionContent = {
   chapterId: 23,
@@ -96,9 +96,112 @@ export const CHAPTER_23_CONTENT: StoryMissionContent = {
         '.asReadonly() exposes a read-only view to enforce ownership boundaries',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'The station\'s oxygen sensors are offline. Create a writable signal to hold the oxygen level ' +
+        'and bind it in the template.',
+      starterCode: [
+        "import { Component } from '@angular/core';",
+        '',
+        '// TODO: Import the reactive value wrapper from Angular core',
+        '',
+        '@Component({',
+        "  selector: 'app-oxygen-sensor',",
+        '  template: `',
+        '    <p>O2 Level: {{ oxygenLevel }}%</p>',
+        '  `,',
+        '})',
+        'export class OxygenSensorComponent {',
+        '  // TODO: Declare a reactive value wrapper initialized to 21',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: 'signal(',
+          errorMessage: 'Use signal() to create a reactive value wrapper',
+        },
+        {
+          type: 'pattern',
+          pattern: 'signal\\(21\\)',
+          errorMessage: 'Initialize the signal with the value 21',
+        },
+        {
+          type: 'pattern',
+          pattern: 'oxygenLevel\\(\\)',
+          errorMessage: 'Call oxygenLevel as a getter function in the template to read its value',
+        },
+        {
+          type: 'notContains',
+          value: '{{ oxygenLevel }}%',
+          errorMessage: 'Read the signal by calling it as a function: {{ oxygenLevel() }}',
+        },
+      ],
+      hints: [
+        "Import signal from '@angular/core' and declare oxygenLevel = signal(21)",
+        'Update the template to call the signal as a function: {{ oxygenLevel() }}',
+      ],
+      successMessage: 'Oxygen sensor online! The signal updates the display reactively.',
+      explanation:
+        'signal() creates a writable signal with an initial value. Read it by calling it as a function — ' +
+        'oxygenLevel() — in the template. Angular automatically re-renders when the signal changes.',
+    } satisfies CodeChallengeStep,
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Protect the station\'s pressure data. Create a writable signal in the service and expose a ' +
+        'read-only view that components can observe but not modify.',
+      starterCode: [
+        "import { Injectable, signal } from '@angular/core';",
+        '',
+        "@Injectable({ providedIn: 'root' })",
+        'export class PressureService {',
+        '  _pressure = 0; // placeholder — not yet a signal',
+        '  // TODO: Declare _pressure as a private writable reactive value starting at 101.3',
+        '  pressure = this._pressure;',
+        '',
+        '  recordReading(value: number) {',
+        '    // TODO: Replace the current pressure value',
+        '  }',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'pattern',
+          pattern: 'private.*_pressure.*=.*signal\\(',
+          errorMessage: 'Declare a private writable signal named _pressure',
+        },
+        {
+          type: 'contains',
+          value: '.asReadonly()',
+          errorMessage: 'Expose a read-only view with .asReadonly()',
+        },
+        {
+          type: 'contains',
+          value: '.set(',
+          errorMessage: 'Use .set() to replace the pressure value in recordReading',
+        },
+        {
+          type: 'pattern',
+          pattern: 'this\\._pressure\\.set\\(value\\)',
+          errorMessage: 'Call this._pressure.set(value) to record the new reading',
+        },
+      ],
+      hints: [
+        'Change _pressure to: private _pressure = signal(101.3)',
+        'Change pressure to: pressure = this._pressure.asReadonly() and use this._pressure.set(value) in recordReading',
+      ],
+      successMessage: 'Pressure data secured! Components can read but not modify the signal.',
+      explanation:
+        '.asReadonly() returns a read-only view of a writable signal. Consumers call pressure() to read ' +
+        'the value but cannot call .set() or .update(). This enforces a clear ownership boundary.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Sensor network activated!',
-    minStepsViewed: 4,
+    minStepsViewed: 6,
   },
 };

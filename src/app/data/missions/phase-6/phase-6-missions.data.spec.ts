@@ -5,8 +5,10 @@ import type {
   NarrativeStep,
   CodeExampleStep,
   ConceptStep,
+  CodeChallengeStep,
   CompletionCriteria,
 } from '../../../core/curriculum';
+import { CodeChallengeValidationService } from '../../../core/curriculum';
 import { PHASE_6_MISSIONS } from './index';
 
 // --- Compile-time type checks ---
@@ -81,10 +83,10 @@ describe('PHASE_6_MISSIONS structure', () => {
     }
   });
 
-  it('should have 3-5 steps per mission', () => {
+  it('should have 3-7 steps per mission', () => {
     for (const mission of PHASE_6_MISSIONS) {
       expect(mission.steps.length).toBeGreaterThanOrEqual(3);
-      expect(mission.steps.length).toBeLessThanOrEqual(5);
+      expect(mission.steps.length).toBeLessThanOrEqual(7);
     }
   });
 
@@ -99,7 +101,7 @@ describe('PHASE_6_MISSIONS structure', () => {
   });
 
   it('should have a valid stepType for every step', () => {
-    const validTypes = new Set(['narrative', 'code-example', 'concept']);
+    const validTypes = new Set(['narrative', 'code-example', 'concept', 'code-challenge']);
     for (const mission of PHASE_6_MISSIONS) {
       for (const step of mission.steps) {
         expect(validTypes.has(step.stepType)).toBe(true);
@@ -166,10 +168,134 @@ describe('Cross-reference validation', () => {
     expect(missionIds).toEqual(phase6Ids);
   });
 
-  it('should have total step count between 12 and 20', () => {
+  it('should have total step count between 20 and 24', () => {
     const totalSteps = PHASE_6_MISSIONS.reduce((sum, m) => sum + m.steps.length, 0);
-    expect(totalSteps).toBeGreaterThanOrEqual(12);
-    expect(totalSteps).toBeLessThanOrEqual(20);
+    expect(totalSteps).toBeGreaterThanOrEqual(20);
+    expect(totalSteps).toBeLessThanOrEqual(24);
+  });
+});
+
+describe('Code-challenge validation', () => {
+  const challengeSteps: { chapterId: number; step: CodeChallengeStep }[] = [];
+
+  beforeAll(() => {
+    for (const mission of PHASE_6_MISSIONS) {
+      for (const step of mission.steps) {
+        if (step.stepType === 'code-challenge') {
+          challengeSteps.push({ chapterId: mission.chapterId, step });
+        }
+      }
+    }
+  });
+
+  it('should have code-challenge steps for chapters 23-26', () => {
+    for (let ch = 23; ch <= 26; ch++) {
+      const hasCh = challengeSteps.some(c => c.chapterId === ch);
+      expect(hasCh, `Chapter ${ch} should have a code-challenge step`).toBe(true);
+    }
+  });
+
+  it('should have valid code-challenge fields for all code-challenge steps', () => {
+    expect(challengeSteps.length).toBeGreaterThan(0);
+    for (const { step } of challengeSteps) {
+      expect(step.prompt.length).toBeGreaterThan(0);
+      expect(step.starterCode.length).toBeGreaterThan(0);
+      expect(['typescript', 'html']).toContain(step.language);
+      expect(step.validationRules.length).toBeGreaterThanOrEqual(3);
+      expect(step.validationRules.length).toBeLessThanOrEqual(6);
+      expect(step.successMessage.length).toBeGreaterThan(0);
+      expect(step.explanation.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('should have hints for all code-challenge steps', () => {
+    for (const { step } of challengeSteps) {
+      expect(step.hints).toBeDefined();
+      expect(step.hints!.length).toBeGreaterThanOrEqual(1);
+      expect(step.hints!.length).toBeLessThanOrEqual(2);
+      for (const hint of step.hints!) {
+        expect(hint.length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('should have starterCode that contains TODO markers', () => {
+    for (const { step } of challengeSteps) {
+      expect(step.starterCode).toContain('TODO');
+    }
+  });
+
+  it('should have validation rules with non-empty errorMessage', () => {
+    for (const { step } of challengeSteps) {
+      for (const rule of step.validationRules) {
+        expect(rule.errorMessage.length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('should have Ch 23 with a challenge that validates signal(', () => {
+    const ch23Challenges = challengeSteps.filter(c => c.chapterId === 23);
+    const hasSignalRule = ch23Challenges.some(c =>
+      c.step.validationRules.some(
+        r => (r.type === 'contains' && r.value.includes('signal(')) ||
+             (r.type === 'pattern' && r.pattern.includes('signal(')),
+      ),
+    );
+    expect(hasSignalRule).toBe(true);
+  });
+
+  it('should have Ch 24 with a challenge that validates computed(', () => {
+    const ch24Challenges = challengeSteps.filter(c => c.chapterId === 24);
+    const hasComputedRule = ch24Challenges.some(c =>
+      c.step.validationRules.some(
+        r => (r.type === 'contains' && r.value.includes('computed(')) ||
+             (r.type === 'pattern' && r.pattern.includes('computed(')),
+      ),
+    );
+    expect(hasComputedRule).toBe(true);
+  });
+
+  it('should have Ch 25 with a challenge that validates linkedSignal(', () => {
+    const ch25Challenges = challengeSteps.filter(c => c.chapterId === 25);
+    const hasLinkedSignalRule = ch25Challenges.some(c =>
+      c.step.validationRules.some(
+        r => (r.type === 'contains' && r.value.includes('linkedSignal(')) ||
+             (r.type === 'pattern' && r.pattern.includes('linkedSignal(')),
+      ),
+    );
+    expect(hasLinkedSignalRule).toBe(true);
+  });
+
+  it('should have Ch 26 with a challenge that validates onCleanup', () => {
+    const ch26Challenges = challengeSteps.filter(c => c.chapterId === 26);
+    const hasOnCleanupRule = ch26Challenges.some(c =>
+      c.step.validationRules.some(
+        r => (r.type === 'contains' && r.value.includes('onCleanup')) ||
+             (r.type === 'pattern' && r.pattern.includes('onCleanup')),
+      ),
+    );
+    expect(hasOnCleanupRule).toBe(true);
+  });
+
+  it('should have starterCode that does NOT pass its own validationRules', () => {
+    const service = new CodeChallengeValidationService();
+    for (const { chapterId, step } of challengeSteps) {
+      const result = service.validateCode(step.starterCode, step.validationRules);
+      expect(result.valid, `Ch ${chapterId} starter code should NOT pass validation`).toBe(false);
+    }
+  });
+
+  it('should have notContains rules whose banned string appears in starterCode', () => {
+    for (const { chapterId, step } of challengeSteps) {
+      for (const rule of step.validationRules) {
+        if (rule.type === 'notContains') {
+          expect(
+            step.starterCode.includes(rule.value),
+            `Ch ${chapterId}: notContains rule value "${rule.value}" must appear in starterCode`,
+          ).toBe(true);
+        }
+      }
+    }
   });
 });
 
