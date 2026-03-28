@@ -92,7 +92,7 @@ export class CodeEditorComponent {
 
   /** Resize the host element to match Monaco's content height. */
   private fitToContent(editor: import('monaco-editor').editor.IStandaloneCodeEditor): void {
-    const contentHeight = editor.getContentHeight();
+    const contentHeight = editor.getContentHeight() + 19;
     this.hostEl.style.height = `${contentHeight}px`;
     editor.layout();
   }
