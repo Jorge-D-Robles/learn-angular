@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_19_CONTENT: StoryMissionContent = {
   chapterId: 19,
@@ -103,9 +103,126 @@ export const CHAPTER_19_CONTENT: StoryMissionContent = {
         'Child components inherit parent injectors unless they override with their own providers',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Wire up the station dashboard! Inject PowerService, CrewService, and AlertService ' +
+        'into a single component using inject().',
+      starterCode: [
+        "import { Component, inject } from '@angular/core';",
+        "import { PowerService } from './power.service';",
+        "import { CrewService } from './crew.service';",
+        "import { AlertService } from './alert.service';",
+        '',
+        '@Component({',
+        "  selector: 'app-station-dashboard',",
+        '  template: `',
+        '    <p>Power: {{ power.getPowerLevel() }}%</p>',
+        '    <p>Crew: {{ crew.getCrewCount() }} active</p>',
+        '    <p>Alerts: {{ alerts.getPendingCount() }} pending</p>',
+        '  `,',
+        '})',
+        'export class StationDashboardComponent {',
+        '  // TODO: Inject PowerService and assign to a field called power',
+        '  // TODO: Inject CrewService and assign to a field called crew',
+        '  // TODO: Inject AlertService and assign to a field called alerts',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'pattern',
+          pattern: 'inject\\(PowerService\\)',
+          errorMessage: 'Inject PowerService using inject(PowerService)',
+        },
+        {
+          type: 'pattern',
+          pattern: 'inject\\(CrewService\\)',
+          errorMessage: 'Inject CrewService using inject(CrewService)',
+        },
+        {
+          type: 'pattern',
+          pattern: 'inject\\(AlertService\\)',
+          errorMessage: 'Inject AlertService using inject(AlertService)',
+        },
+        {
+          type: 'contains',
+          value: 'inject(',
+          errorMessage: 'Use the inject() function to request services from the injector',
+        },
+      ],
+      hints: [
+        'Assign each service to a field: power = inject(PowerService)',
+        'Each inject() call resolves a different service from the same injector hierarchy',
+      ],
+      successMessage:
+        'Dashboard connected! Three services feed live data into a single component.',
+      explanation:
+        'A component can inject any number of services using inject(). Each call resolves ' +
+        'independently from the injector hierarchy. Since all three services use providedIn: \'root\', ' +
+        'the component receives singleton instances shared across the application.',
+    } satisfies CodeChallengeStep,
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Scope a service to a component! Remove the root-level registration from CrewRosterService ' +
+        'and add a providers array to the component so it gets its own instance.',
+      starterCode: [
+        "import { Injectable } from '@angular/core';",
+        "import { Component, inject } from '@angular/core';",
+        '',
+        "@Injectable({ providedIn: 'root' })",
+        'export class CrewRosterService {',
+        '  private crew: string[] = [];',
+        '  getCrewCount(): number { return this.crew.length; }',
+        '}',
+        '',
+        '// TODO: Add a providers array to scope CrewRosterService to this component',
+        '@Component({',
+        "  selector: 'app-crew-module',",
+        '  template: `<p>Module Crew: {{ roster.getCrewCount() }}</p>`,',
+        '})',
+        'export class CrewModuleComponent {',
+        '  roster = inject(CrewRosterService);',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: 'providers:',
+          errorMessage: 'Add a providers array to the @Component decorator',
+        },
+        {
+          type: 'pattern',
+          pattern: 'providers:\\s*\\[',
+          errorMessage: 'The providers property should be an array — use providers: [ServiceName]',
+        },
+        {
+          type: 'notContains',
+          value: "providedIn: 'root'",
+          errorMessage: "Remove providedIn: 'root' from the service — it should be component-scoped now",
+        },
+        {
+          type: 'contains',
+          value: 'inject(',
+          errorMessage: 'Keep the inject() call to request the service from the component injector',
+        },
+      ],
+      hints: [
+        "Remove { providedIn: 'root' } from @Injectable and use @Injectable() instead",
+        'Add providers: [CrewRosterService] to the @Component decorator to scope the service',
+      ],
+      successMessage:
+        'Service scoped! This component now gets its own CrewRosterService instance, separate from the root.',
+      explanation:
+        'Removing providedIn: \'root\' stops the service from being a global singleton. Adding it ' +
+        'to the component\'s providers array creates a new instance scoped to that component and its ' +
+        'children. This is hierarchical injection — child components inherit the scoped instance.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'The power grid is wired!',
-    minStepsViewed: 4,
+    minStepsViewed: 6,
   },
 };

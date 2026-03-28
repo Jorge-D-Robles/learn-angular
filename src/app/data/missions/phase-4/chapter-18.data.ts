@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_18_CONTENT: StoryMissionContent = {
   chapterId: 18,
@@ -98,9 +98,116 @@ export const CHAPTER_18_CONTENT: StoryMissionContent = {
         'Services encapsulate shared logic and state that multiple components need',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Build a crew roster service! Create an @Injectable service with providedIn: \'root\' ' +
+        'that tracks crew members and exposes a getCrewCount method.',
+      starterCode: [
+        "import { Injectable } from '@angular/core';",
+        '',
+        '// TODO: Add the decorator to make this class injectable station-wide',
+        '// TODO: Export the class with a Service suffix',
+        'class CrewRosterService {',
+        '  private crew: string[] = [];',
+        '',
+        '  // TODO: Add a method that returns the number of crew members',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: '@Injectable',
+          errorMessage: 'Add the @Injectable decorator to mark this class for dependency injection',
+        },
+        {
+          type: 'pattern',
+          pattern: 'providedIn.*root',
+          errorMessage: "Set providedIn: 'root' so the service is available application-wide",
+        },
+        {
+          type: 'pattern',
+          pattern: 'export\\s+class\\s+\\w+Service',
+          errorMessage: 'Export the class so other modules can import it',
+        },
+        {
+          type: 'contains',
+          value: 'getCrewCount',
+          errorMessage: 'Add a getCrewCount method to expose the crew count',
+        },
+      ],
+      hints: [
+        "Add @Injectable({ providedIn: 'root' }) above the class declaration",
+        'Add the export keyword before class and define getCrewCount() to return this.crew.length',
+      ],
+      successMessage:
+        'Crew roster service deployed! The station now has a shared singleton to track crew members.',
+      explanation:
+        '@Injectable marks a class for Angular dependency injection. Setting providedIn: \'root\' ' +
+        'registers the service as a singleton at the application level — every component that ' +
+        'injects it receives the same instance. Exporting the class makes it importable by other files.',
+    } satisfies CodeChallengeStep,
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Wire up the crew roster! Inject CrewRosterService into a component using the inject() ' +
+        'function and display the crew count.',
+      starterCode: [
+        "import { Component, inject } from '@angular/core';",
+        '',
+        '// TODO: Import the CrewRosterService',
+        '',
+        '@Component({',
+        "  selector: 'app-crew-panel',",
+        '  template: `<p>Crew: {{ crewCount() }}</p>`,',
+        '})',
+        'export class CrewPanelComponent {',
+        '  // TODO: Use the service injection function to get CrewRosterService',
+        '',
+        '  crewCount(): number {',
+        '    // TODO: Return the crew count from the service',
+        '    return 0;',
+        '  }',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: 'inject(',
+          errorMessage: 'Use the inject() function to request the service from the injector',
+        },
+        {
+          type: 'pattern',
+          pattern: 'inject\\(CrewRosterService\\)',
+          errorMessage: 'Pass CrewRosterService as the argument to inject()',
+        },
+        {
+          type: 'contains',
+          value: 'CrewRosterService',
+          errorMessage: 'Reference CrewRosterService in the component',
+        },
+        {
+          type: 'pattern',
+          pattern: 'import.*CrewRosterService',
+          errorMessage: 'Add an import statement for CrewRosterService at the top of the file',
+        },
+      ],
+      hints: [
+        "Add import { CrewRosterService } from './crew-roster.service' at the top",
+        'Assign a field like rosterService = inject(CrewRosterService) and call its methods',
+      ],
+      successMessage:
+        'Crew panel connected! The component now reads live data from the shared roster service.',
+      explanation:
+        'inject() retrieves a service instance from the Angular injector. Because CrewRosterService ' +
+        'uses providedIn: \'root\', every component that calls inject(CrewRosterService) gets the ' +
+        'same singleton. You must import the service class so TypeScript can resolve the reference.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Core services are online!',
-    minStepsViewed: 4,
+    minStepsViewed: 6,
   },
 };
