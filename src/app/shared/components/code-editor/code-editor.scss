@@ -12,16 +12,21 @@
 
 .code-editor {
   position: relative;
-  max-height: 400px;
+  min-height: 12em;
+  overflow: hidden;
+  resize: vertical;
 }
 
 .code-display {
+  position: relative;
+  z-index: 0;
   margin: 0;
   padding: var(--nx-space-4);
   overflow-x: auto;
   overflow-y: hidden;
   color: var(--nx-color-display);
   counter-reset: line;
+  min-height: inherit;
 }
 
 .code-line {
@@ -96,8 +101,11 @@
   padding-left: calc(var(--nx-space-4) + var(--nx-space-2) + 2em + var(--nx-space-3));
   border: none;
   outline: none;
+  z-index: 1;
+  appearance: none;
   background: transparent;
   color: transparent;
+  -webkit-text-fill-color: transparent;
   caret-color: var(--nx-color-beacon);
   font-family: inherit;
   font-size: inherit;
@@ -110,7 +118,7 @@
 
 @media (max-width: 767px) {
   .code-editor {
-    max-height: 300px;
+    min-height: 10em;
     font-size: 0.8125rem;
   }
 }
