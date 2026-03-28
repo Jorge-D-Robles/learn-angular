@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_17_CONTENT: StoryMissionContent = {
   chapterId: 17,
@@ -90,9 +90,131 @@ export const CHAPTER_17_CONTENT: StoryMissionContent = {
         'Multiple validators compose as an array on a single control',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Protect the diagnostic form! Add built-in validators to enforce required fields, ' +
+        'minimum lengths, and format patterns, then show error messages in the template.',
+      starterCode: [
+        "import { Component, inject } from '@angular/core';",
+        "import { FormBuilder, ReactiveFormsModule } from '@angular/forms';",
+        '',
+        '@Component({',
+        "  selector: 'app-diagnostic',",
+        '  imports: [ReactiveFormsModule],',
+        '  template: `',
+        '    <form [formGroup]="diagnosticForm">',
+        '      <input formControlName="systemId" placeholder="System ID" />',
+        '      <input formControlName="code" placeholder="Code (SYS-XXXX)" />',
+        '      <!-- TODO: Add validation error messages for each field -->',
+        '    </form>',
+        '  `,',
+        '})',
+        'export class DiagnosticComponent {',
+        '  private fb = inject(FormBuilder);',
+        '',
+        "  diagnosticForm = this.fb.group({",
+        "    systemId: [''],",
+        "    code: [''],",
+        '    // TODO: Add validators to each control',
+        '  });',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: 'Validators.required',
+          errorMessage: 'Add Validators.required to enforce mandatory fields',
+        },
+        {
+          type: 'pattern',
+          pattern: 'Validators\\.pattern',
+          errorMessage: 'Add Validators.pattern to enforce a format rule',
+        },
+        {
+          type: 'pattern',
+          pattern: 'hasError\\(',
+          errorMessage: 'Use hasError() in the template to show specific validation messages',
+        },
+        {
+          type: 'contains',
+          value: 'Validators.minLength',
+          errorMessage: 'Add Validators.minLength to enforce a minimum length',
+        },
+      ],
+      hints: [
+        'Import Validators from @angular/forms, then pass an array like [Validators.required, Validators.minLength(3)] as the second element',
+        'Use diagnosticForm.get(\'fieldName\')?.hasError(\'required\') in @if blocks to show error messages',
+      ],
+      successMessage:
+        'Validation shields are up! Built-in validators enforce data integrity before submission.',
+      explanation:
+        'Validators are functions passed as the second argument when creating a control. Angular provides ' +
+        'built-in validators like required, minLength, and pattern. Use hasError() in the template to ' +
+        'check for specific validation failures and display targeted error messages.',
+    } satisfies CodeChallengeStep,
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Create a custom validator! Write a ValidatorFn factory that checks whether a value ' +
+        'matches the Nexus Station code format (NX-XX-999).',
+      starterCode: [
+        "import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';",
+        '',
+        '// TODO: Implement the validator — check that the value matches NX-XX-999 format',
+        'export function stationCodeValidator(): ValidatorFn {',
+        '  return (control) => {',
+        '    // TODO: Get the control value',
+        '    // TODO: Return null if empty (let required handle it)',
+        '    // TODO: Test the value against the pattern /^NX-[A-Z]{2}-\\d{3}$/',
+        '    // TODO: Return null if valid, or an error object with key \'stationCode\' if invalid',
+        '  };',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: ': ValidatorFn',
+          errorMessage: 'Annotate the return type as ValidatorFn for type safety',
+        },
+        {
+          type: 'pattern',
+          pattern: 'control\\.value',
+          errorMessage: 'Read the control\'s value using control.value',
+        },
+        {
+          type: 'pattern',
+          pattern: 'return\\s+null',
+          errorMessage: 'Return null when the value passes validation',
+        },
+        {
+          type: 'pattern',
+          pattern: 'return.*\\{.*stationCode',
+          flags: 's',
+          errorMessage: 'Return an error object with the key \'stationCode\' when validation fails',
+        },
+        {
+          type: 'pattern',
+          pattern: '\\.test\\(',
+          errorMessage: 'Use a RegExp test to validate the value format',
+        },
+      ],
+      hints: [
+        'Access the value with control.value, then use a RegExp like /^NX-[A-Z]{2}-\\d{3}$/.test(value)',
+        'Return null for valid values and { stationCode: { value } } for invalid ones',
+      ],
+      successMessage:
+        'Custom validator deployed! The station code format is enforced by your ValidatorFn.',
+      explanation:
+        'A custom ValidatorFn factory returns a function that receives an AbstractControl and returns ' +
+        'null for valid values or an error object for invalid ones. The error object key becomes the ' +
+        'name you check with hasError() in the template. Use RegExp.test() to validate format patterns.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Data integrity verified!',
-    minStepsViewed: 4,
+    minStepsViewed: 6,
   },
 };

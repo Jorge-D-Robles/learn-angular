@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_14_CONTENT: StoryMissionContent = {
   chapterId: 14,
@@ -99,9 +99,62 @@ export const CHAPTER_14_CONTENT: StoryMissionContent = {
         'ngForm tracks aggregate form state (valid, invalid, dirty, touched)',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Build a crew report form! Add Angular template-driven form directives to capture ' +
+        'crew member names and messages, then wire up the form submission.',
+      starterCode: [
+        '<form onsubmit="return false">',
+        '  <!-- TODO: Add Angular form directive and binding to each input -->',
+        '  <label>',
+        '    Crew Member',
+        '    <input type="text" />',
+        '  </label>',
+        '  <label>',
+        '    Message',
+        '    <textarea></textarea>',
+        '  </label>',
+        '  <button type="submit">File Report</button>',
+        '</form>',
+      ].join('\n'),
+      language: 'html',
+      validationRules: [
+        {
+          type: 'contains',
+          value: 'ngModel',
+          errorMessage: 'Use the ngModel directive to bind form inputs to component properties',
+        },
+        {
+          type: 'pattern',
+          pattern: 'name="\\w+"',
+          errorMessage: 'Add a name attribute to each ngModel control — Angular requires it for registration',
+        },
+        {
+          type: 'pattern',
+          pattern: '\\(ngSubmit\\)',
+          errorMessage: 'Add the (ngSubmit) event binding to handle form submission',
+        },
+        {
+          type: 'notContains',
+          value: 'onsubmit',
+          errorMessage: 'Remove the plain HTML onsubmit — use Angular (ngSubmit) instead',
+        },
+      ],
+      hints: [
+        'Add [(ngModel)]="propertyName" and a name attribute to each input and textarea',
+        'Replace onsubmit on the form tag with (ngSubmit)="yourMethod()"',
+      ],
+      successMessage:
+        'Crew report form is live! Angular template-driven directives capture input and handle submission.',
+      explanation:
+        'ngModel creates two-way binding between form inputs and component properties. Each ngModel ' +
+        'control requires a name attribute so Angular can register it with the form. (ngSubmit) replaces ' +
+        'the plain HTML onsubmit to handle form submission the Angular way.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'You filed your first crew report!',
-    minStepsViewed: 4,
+    minStepsViewed: 5,
   },
 };

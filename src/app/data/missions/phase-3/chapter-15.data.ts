@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_15_CONTENT: StoryMissionContent = {
   chapterId: 15,
@@ -99,9 +99,67 @@ export const CHAPTER_15_CONTENT: StoryMissionContent = {
         'Template expressions referencing bound properties re-evaluate automatically',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Split the two-way binding! Replace the banana-in-a-box syntax with separate property ' +
+        'binding and event binding, then add a handler method that updates the character count.',
+      starterCode: [
+        '@Component({',
+        "  selector: 'app-report-preview',",
+        '  imports: [FormsModule],',
+        '  template: `',
+        '    <input',
+        '      [(ngModel)]="crewName"',
+        '      name="crewName"',
+        '    />',
+        '    <p>Characters: {{ charCount }}</p>',
+        '  `,',
+        '})',
+        'export class ReportPreviewComponent {',
+        "  crewName = '';",
+        '  charCount = 0;',
+        '',
+        '  // TODO: Add a method that receives the new value and updates both properties',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: '[ngModel]="',
+          errorMessage: 'Use one-way property binding [ngModel] for the input value',
+        },
+        {
+          type: 'contains',
+          value: '(ngModelChange)',
+          errorMessage: 'Use the (ngModelChange) event binding to intercept value changes',
+        },
+        {
+          type: 'pattern',
+          pattern: 'this\\.charCount\\s*=',
+          errorMessage: 'Write a handler method that updates the charCount property',
+        },
+        {
+          type: 'notContains',
+          value: '[(ngModel)]',
+          errorMessage: 'Split the [(ngModel)] banana-in-a-box into separate [ngModel] and (ngModelChange)',
+        },
+      ],
+      hints: [
+        'Replace [(ngModel)]="crewName" with [ngModel]="crewName" and add (ngModelChange)="onNameChange($event)"',
+        'In the onNameChange method, assign the new value to crewName and set charCount to its length',
+      ],
+      successMessage:
+        'Split binding active! The handler intercepts every change and updates the character count.',
+      explanation:
+        'Splitting [(ngModel)] into [ngModel] and (ngModelChange) gives you a hook to process each ' +
+        'value change. The property binding pushes the current value to the input, and the event binding ' +
+        'fires your handler with the new value before it reaches the component property.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Real-time preview is live!',
-    minStepsViewed: 4,
+    minStepsViewed: 5,
   },
 };
