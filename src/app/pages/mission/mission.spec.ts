@@ -36,8 +36,8 @@ const ICON_PROVIDERS = [
   },
 ];
 
-// Chapter 1 has 4 steps: narrative, code-example, concept, code-example
-// completionCriteria.minStepsViewed = 4
+// Chapter 1 has 5 steps: narrative, code-example, concept, code-example, code-challenge
+// completionCriteria.minStepsViewed = 5
 
 const TEST_CHAPTER_META: StoryMission = {
   chapterId: 1,
@@ -211,14 +211,17 @@ describe('MissionPage', () => {
 
   it('should show Complete Mission button on last step when stepsViewed meets criteria', async () => {
     const { element, fixture, component } = await setup();
-    // Navigate through all 4 steps (step 0 -> 1 -> 2 -> 3)
+    // Navigate through all 5 steps (step 0 -> 1 -> 2 -> 3 -> 4)
     component.nextStep();
     component.nextStep();
     component.nextStep();
+    component.nextStep();
+    // Step 4 is a code-challenge; mark it solved so canComplete is true
+    component.onChallengeCompleted();
     fixture.detectChanges();
-    expect(component.currentStep()).toBe(3);
+    expect(component.currentStep()).toBe(4);
     expect(component.isLastStep()).toBe(true);
-    expect(component.stepsViewed()).toBe(4);
+    expect(component.stepsViewed()).toBe(5);
 
     const buttons = Array.from(element.querySelectorAll('footer button'));
     const complete = buttons.find(
@@ -322,10 +325,13 @@ describe('MissionPage', () => {
   it('should call StoryMissionCompletionService.completeMission on Complete button click', async () => {
     const completeMissionFn = vi.fn();
     const { element, fixture, component } = await setup({ completeMissionFn });
-    // Navigate to last step
+    // Navigate to last step (step 4 of 5)
     component.nextStep();
     component.nextStep();
     component.nextStep();
+    component.nextStep();
+    // Step 4 is a code-challenge; mark it solved so Complete button appears
+    component.onChallengeCompleted();
     fixture.detectChanges();
     const buttons = Array.from(element.querySelectorAll('footer button'));
     const complete = buttons.find(
@@ -805,8 +811,8 @@ describe('MissionPage', () => {
     const { element } = await setup();
     const stepProgress = element.querySelector('nx-step-progress');
     expect(stepProgress).toBeTruthy();
-    // Chapter 1 has 4 steps; aria-valuemax reflects totalSteps
-    expect(stepProgress?.getAttribute('aria-valuemax')).toBe('4');
+    // Chapter 1 has 5 steps; aria-valuemax reflects totalSteps
+    expect(stepProgress?.getAttribute('aria-valuemax')).toBe('5');
   });
 
   it('should bind currentStep as 1-based index', async () => {
@@ -815,7 +821,7 @@ describe('MissionPage', () => {
     expect(stepProgress).toBeTruthy();
     // On initial render (step 0 internally), the first dot should be active
     const dots = stepProgress!.querySelectorAll('.step-progress__dot');
-    expect(dots.length).toBe(4);
+    expect(dots.length).toBe(5);
     expect(dots[0].classList.contains('step-progress__dot--active')).toBe(true);
     expect(dots[1].classList.contains('step-progress__dot--future')).toBe(true);
   });
@@ -883,6 +889,6 @@ describe('MissionPage', () => {
     expect(stepProgress!.classList.contains('step-progress--full')).toBe(true);
     // Full variant shows step number labels
     const labels = stepProgress!.querySelectorAll('.step-progress__label');
-    expect(labels.length).toBe(4);
+    expect(labels.length).toBe(5);
   });
 });

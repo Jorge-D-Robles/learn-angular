@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_05_CONTENT: StoryMissionContent = {
   chapterId: 5,
@@ -90,9 +90,65 @@ export const CHAPTER_05_CONTENT: StoryMissionContent = {
         'Property binding is one-way: class to template — changes in the DOM do not flow back',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'The configuration panel needs dynamic property bindings. Write a template that binds a ' +
+        'button\'s disabled state, an image\'s src, and a div\'s CSS class to component data.',
+      starterCode: [
+        '<!-- Available variables: isOffline (boolean), imageSrc (string), isActive (boolean) -->',
+        '',
+        '<!-- TODO: Bind the button\'s disabled property to isOffline -->',
+        '<button>Activate Module</button>',
+        '',
+        '<!-- TODO: Bind the image\'s src property to imageSrc -->',
+        '<img alt="Module" />',
+        '',
+        '<!-- TODO: Bind a CSS class (e.g., class.active) to isActive -->',
+        '<div>Module Status</div>',
+      ].join('\n'),
+      language: 'html',
+      validationRules: [
+        {
+          type: 'pattern',
+          pattern: '\\[disabled\\]\\s*=',
+          errorMessage: 'Use [disabled]="expression" property binding on the button',
+        },
+        {
+          type: 'pattern',
+          pattern: '\\[src\\]\\s*=',
+          errorMessage: 'Use [src]="expression" property binding on the image',
+        },
+        {
+          type: 'pattern',
+          pattern: '\\[class\\.\\w+\\]\\s*=',
+          errorMessage: 'Use [class.name]="expression" to toggle a CSS class on the div',
+        },
+        {
+          type: 'notContains',
+          value: ' disabled="',
+          errorMessage: 'Use [disabled]="expression" property binding instead of the plain HTML disabled attribute',
+        },
+        {
+          type: 'pattern',
+          pattern: '\\[.*\\]\\s*=\\s*"',
+          errorMessage: 'Property bindings should use the [prop]="expression" syntax',
+        },
+      ],
+      hints: [
+        'Use [disabled]="expression" to bind the button\'s disabled property to a component value',
+        '[class.active]="isActive" toggles the \'active\' CSS class based on the expression',
+      ],
+      successMessage:
+        'Configuration panel is bound to live module data! Every property updates when the data changes.',
+      explanation:
+        'Property binding [property]="expression" connects DOM properties to component data. Unlike ' +
+        'interpolation which always produces strings, property binding preserves the data type -- ' +
+        'booleans for disabled, strings for src, booleans for class toggles.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Configuration panels are bound to module data!',
-    minStepsViewed: 4,
+    minStepsViewed: 5,
   },
 };

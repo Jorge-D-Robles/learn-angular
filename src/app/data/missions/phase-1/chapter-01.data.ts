@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_01_CONTENT: StoryMissionContent = {
   chapterId: 1,
@@ -71,9 +71,61 @@ export const CHAPTER_01_CONTENT: StoryMissionContent = {
         'The class property "status" holds data, and {{ status }} in the template displays it. ' +
         'This one-way data flow from class to template is called interpolation.',
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Nexus Station\'s diagnostic systems are offline. Write a complete Angular component with a ' +
+        '@Component decorator, selector, template, and class to create a diagnostic scanner module.',
+      starterCode: [
+        "import { Component } from '@angular/core';",
+        '',
+        '// TODO: Add @Component decorator with:',
+        "//   - selector: 'app-diagnostic-scanner'",
+        '//   - template with an <h1> displaying the scanner name',
+        '',
+        '// TODO: Export the component class',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: '@Component',
+          errorMessage: 'Add the @Component decorator to your class',
+        },
+        {
+          type: 'pattern',
+          pattern: "selector:\\s*'app-",
+          errorMessage: 'Add a selector starting with \'app-\' in the @Component decorator',
+        },
+        {
+          type: 'pattern',
+          pattern: 'template:\\s*`',
+          errorMessage: 'Add a template using a backtick string in the @Component decorator',
+        },
+        {
+          type: 'pattern',
+          pattern: 'export\\s+class\\s+\\w+Component',
+          errorMessage: 'Export a class with a name ending in Component',
+        },
+        {
+          type: 'order',
+          patterns: ['@Component', 'export class'],
+          errorMessage: 'The @Component decorator must appear before the export class declaration',
+        },
+      ],
+      hints: [
+        'The @Component decorator takes an object with selector, template properties',
+        "The selector should start with 'app-' and the class name should end with 'Component'",
+      ],
+      successMessage:
+        'Diagnostic scanner module is online! You built a complete Angular component from scratch.',
+      explanation:
+        'Every Angular component follows this pattern: a @Component decorator configures how it appears ' +
+        'in HTML (selector) and what it displays (template), while the class contains the logic.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'You built your first station module!',
-    minStepsViewed: 4,
+    minStepsViewed: 5,
   },
 };

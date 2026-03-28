@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_02_CONTENT: StoryMissionContent = {
   chapterId: 2,
@@ -80,9 +80,71 @@ export const CHAPTER_02_CONTENT: StoryMissionContent = {
         'Angular updates interpolated values automatically when data changes',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'The sensor array is reading data but the display is blank. Write a component that declares ' +
+        'properties and displays them in the template using interpolation {{ }}.',
+      starterCode: [
+        "import { Component } from '@angular/core';",
+        '',
+        '@Component({',
+        "  selector: 'app-sensor-display',",
+        '  template: `',
+        '    <h2>Sensor Display</h2>',
+        '    <!-- TODO: Display sensorName and reading using {{ }} interpolation -->',
+        '  `,',
+        '})',
+        'export class SensorDisplayComponent {',
+        '  // TODO: Add sensorName (string) and reading (number) properties',
+        '}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'pattern',
+          pattern: '\\w+\\s*=\\s*.+;',
+          errorMessage: 'Declare at least one class property with an assigned value',
+        },
+        {
+          type: 'pattern',
+          pattern: '\\{\\{\\s*\\w+',
+          errorMessage: 'Use {{ propertyName }} interpolation syntax in the template',
+        },
+        {
+          type: 'contains',
+          value: '@Component',
+          errorMessage: 'Keep the @Component decorator on the class',
+        },
+        {
+          type: 'pattern',
+          pattern: 'template:\\s*`',
+          errorMessage: 'Keep the template using a backtick string',
+        },
+        {
+          type: 'notContains',
+          value: '// TODO',
+          errorMessage: 'Complete all TypeScript TODO comments',
+        },
+        {
+          type: 'notContains',
+          value: '<!-- TODO',
+          errorMessage: 'Complete all HTML template TODO comments',
+        },
+      ],
+      hints: [
+        'Declare properties in the class body like: propertyName = value;',
+        'Use {{ propertyName }} in the template to display property values',
+      ],
+      successMessage:
+        'Sensor display is live! Data flows from class properties to the template via interpolation.',
+      explanation:
+        'Interpolation {{ }} is Angular\'s way of displaying component data in the view. Any public ' +
+        'property on the class can be rendered in the template using double curly braces.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Life support is displaying sensor data!',
-    minStepsViewed: 4,
+    minStepsViewed: 5,
   },
 };

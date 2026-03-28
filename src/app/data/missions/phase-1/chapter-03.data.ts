@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_03_CONTENT: StoryMissionContent = {
   chapterId: 3,
@@ -97,9 +97,66 @@ export const CHAPTER_03_CONTENT: StoryMissionContent = {
         'Each component imports only its direct children. StationHullComponent imports PowerCoreComponent, ' +
         'which imports CommsHubComponent. This keeps dependencies explicit and each component self-contained.',
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'The navigation array needs a radar subsystem mounted inside it. Write a parent component ' +
+        'that imports a child component (RadarComponent) and renders it in the template.',
+      starterCode: [
+        "import { Component } from '@angular/core';",
+        "import { RadarComponent } from './radar';",
+        '',
+        '@Component({',
+        "  selector: 'app-nav-array',",
+        '  // TODO: Add imports array with RadarComponent',
+        '  template: `',
+        '    <h2>Navigation Array</h2>',
+        '    <!-- TODO: Render the RadarComponent using its selector tag -->',
+        '  `,',
+        '})',
+        'export class NavArrayComponent {}',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'pattern',
+          pattern: 'imports:\\s*\\[.*Radar',
+          errorMessage: 'Add RadarComponent to the imports array in the @Component decorator',
+        },
+        {
+          type: 'pattern',
+          pattern: '<app-radar\\s*/?>',
+          errorMessage: 'Use <app-radar /> in the template to render the child component',
+        },
+        {
+          type: 'contains',
+          value: '@Component',
+          errorMessage: 'Keep the @Component decorator on the class',
+        },
+        {
+          type: 'pattern',
+          pattern: 'export\\s+class\\s+\\w+Component',
+          errorMessage: 'Export a class with a name ending in Component',
+        },
+        {
+          type: 'notContains',
+          value: '<!-- TODO',
+          errorMessage: 'Complete all HTML template TODO comments',
+        },
+      ],
+      hints: [
+        'Add RadarComponent to the imports array in the @Component decorator',
+        'Use <app-radar /> in the template to render the child component',
+      ],
+      successMessage:
+        'Navigation array assembled! The radar subsystem is mounted and rendering inside the parent module.',
+      explanation:
+        'Component composition is how Angular apps are built. Import a child into the parent\'s imports ' +
+        'array, then use its selector tag in the template. The child renders wherever its tag appears.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'Power Core and Comms Hub are assembled!',
-    minStepsViewed: 4,
+    minStepsViewed: 5,
   },
 };
