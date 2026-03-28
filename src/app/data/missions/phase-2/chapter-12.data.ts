@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_12_CONTENT: StoryMissionContent = {
   chapterId: 12,
@@ -93,9 +93,65 @@ export const CHAPTER_12_CONTENT: StoryMissionContent = {
         'Child routes create nested layouts with nested router-outlets',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Configure the corridor paths! Write a Routes array with a parameter route for module details, ' +
+        'a redirect from the empty path, and a wildcard catch-all for unknown paths.',
+      starterCode: [
+        "import { Routes } from '@angular/router';",
+        "import { BridgeComponent } from './bridge';",
+        "import { ModuleDetailComponent } from './module-detail';",
+        "import { HullBreachComponent } from './hull-breach';",
+        '',
+        'export const routes: Routes = [',
+        '  // TODO: Add a redirect from the empty path to the bridge',
+        '  // TODO: Add a route with a dynamic segment for module details',
+        '  // TODO: Add a catch-all route for unknown paths',
+        '];',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'pattern',
+          pattern: "path:\\s*'[^']*:[^']*'",
+          errorMessage: 'Add a route with a dynamic parameter segment (e.g., :id)',
+        },
+        {
+          type: 'contains',
+          value: 'redirectTo',
+          errorMessage: 'Add a redirect route from the empty path',
+        },
+        {
+          type: 'contains',
+          value: 'pathMatch',
+          errorMessage: 'Specify pathMatch on the redirect route',
+        },
+        {
+          type: 'contains',
+          value: '**',
+          errorMessage: 'Add a wildcard route to catch unknown paths',
+        },
+        {
+          type: 'order',
+          patterns: ['redirectTo', '**'],
+          errorMessage: 'Place the wildcard route after the redirect — route order matters',
+        },
+      ],
+      hints: [
+        'Use :id in the path string to define a dynamic segment, e.g., \'module/:id\'',
+        'The wildcard path \'**\' must be the last route since Angular matches in order',
+      ],
+      successMessage:
+        'All corridor paths configured! Parameters, redirects, and wildcards are in place.',
+      explanation:
+        'Route configuration is an ordered array. Parameters like :id capture dynamic URL segments. ' +
+        'redirectTo sends users from one path to another. The wildcard ** catches everything else ' +
+        'and must come last because Angular matches routes in order.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'All corridor paths are configured!',
-    minStepsViewed: 5,
+    minStepsViewed: 6,
   },
 };

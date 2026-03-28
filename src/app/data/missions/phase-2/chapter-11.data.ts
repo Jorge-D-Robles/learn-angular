@@ -1,4 +1,4 @@
-import type { StoryMissionContent } from '../../../core/curriculum';
+import type { StoryMissionContent, CodeChallengeStep } from '../../../core/curriculum';
 
 export const CHAPTER_11_CONTENT: StoryMissionContent = {
   chapterId: 11,
@@ -75,9 +75,64 @@ export const CHAPTER_11_CONTENT: StoryMissionContent = {
         'The browser URL updates without a full page reload',
       ],
     },
+    {
+      stepType: 'code-challenge',
+      prompt:
+        'Reconnect the station corridors! Define a Routes array mapping paths to components, ' +
+        'then wire it into the app config with the routing provider.',
+      starterCode: [
+        "import { Routes } from '@angular/router';",
+        "import { BridgeComponent } from './bridge';",
+        "import { EngineRoomComponent } from './engine-room';",
+        '',
+        '// TODO: Define an array of route objects that map URL paths to components',
+        '',
+        '// TODO: Configure the app with the routing provider',
+        'export const appConfig = {',
+        '  providers: [],',
+        '};',
+      ].join('\n'),
+      language: 'typescript',
+      validationRules: [
+        {
+          type: 'contains',
+          value: 'Routes',
+          errorMessage: 'Declare a Routes-typed array for your route definitions',
+        },
+        {
+          type: 'pattern',
+          pattern: "path:\\s*'",
+          errorMessage: 'Add at least one route with a path property',
+        },
+        {
+          type: 'pattern',
+          pattern: 'component:\\s*\\w+',
+          errorMessage: 'Map each route to a component',
+        },
+        {
+          type: 'contains',
+          value: 'provideRouter',
+          errorMessage: 'Use the routing provider function to register routes with the app',
+        },
+        {
+          type: 'order',
+          patterns: ['Routes', 'provideRouter'],
+          errorMessage: 'Define the Routes array before passing it to the routing provider',
+        },
+      ],
+      hints: [
+        'Define a const with type Routes containing objects like { path: \'bridge\', component: BridgeComponent }',
+        'Call the routing provider function inside the providers array, passing your routes',
+      ],
+      successMessage:
+        'Station corridors reconnected! Routes are defined and the router provider is wired into the app.',
+      explanation:
+        'A Routes array maps URL paths to components. The routing provider function registers ' +
+        'these routes with Angular so the router can match URLs to components and render them.',
+    } satisfies CodeChallengeStep,
   ],
   completionCriteria: {
     description: 'You restored routing to Nexus Station!',
-    minStepsViewed: 4,
+    minStepsViewed: 5,
   },
 };
