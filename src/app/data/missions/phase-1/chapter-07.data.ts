@@ -6,10 +6,10 @@ export const CHAPTER_07_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'You\'ve been hardcoding data inside each component. That works for demos, but think about Nexus Station — ' +
+        'You\'ve been hardcoding data inside each component. That works for demos, but think about Nexus Station. ' +
         'every module needs a status card, and each card shows different data: power output, crew count, oxygen ' +
         'levels. Building a separate component for each one would be absurd. What you want is one reusable card ' +
-        'that accepts different data from whoever uses it. That\'s what inputs are — parameters for your components.',
+        'that accepts different data from whoever uses it. That\'s what inputs are: parameters for your components.',
     },
     {
       stepType: 'code-example',
@@ -42,14 +42,14 @@ export const CHAPTER_07_CONTENT: StoryMissionContent = {
       explanation:
         'input.required<string>() says: "this component needs a string, and the parent must provide it." ' +
         'The parent passes data in using the square brackets you already know from property binding: ' +
-        '[name]="\'Power Core\'". One thing that might look odd — you read the value with name() instead of ' +
+        '[name]="\'Power Core\'". One thing that might look odd: you read the value with name() instead of ' +
         'just name. That\'s because inputs are signals under the hood, and you\'ll see why that matters when ' +
         'you reach the Signals chapter.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Not every input needs to come from the parent. Some have sensible defaults — a power level might ' +
+        'Not every input needs to come from the parent. Some have sensible defaults. A power level might ' +
         'default to 100%, a status to "online." For those, pass the default value directly to input().',
       code: [
         "import { Component, input } from '@angular/core';",
@@ -72,7 +72,7 @@ export const CHAPTER_07_CONTENT: StoryMissionContent = {
       highlightLines: [13, 14],
       explanation:
         'input(100) creates an optional input. If the parent doesn\'t bind [power], the component quietly ' +
-        'uses 100. input.required() is the strict version — Angular throws an error if the parent forgets it. ' +
+        'uses 100. input.required() is the strict version. Angular throws an error if the parent forgets it. ' +
         'Use required for data the component can\'t function without, and defaults for everything else.',
     },
     {
@@ -87,8 +87,8 @@ export const CHAPTER_07_CONTENT: StoryMissionContent = {
         'signal that only the parent can set. You read it by calling it as a function.',
       keyPoints: [
         'input.required<T>() means the parent must provide this value; input(default) means it\'s optional with a fallback',
-        'Inputs are signals — you read them with () in templates and in code. This pattern will click fully in Chapter 23 (Signals)',
-        'The older @Input() decorator still works but signal-based inputs are the modern approach — they\'re what Angular recommends going forward',
+        'Inputs are signals, so you read them with () in templates and in code. This pattern will click fully in Chapter 23 (Signals)',
+        'The older @Input() decorator still works but signal-based inputs are the modern approach and what Angular recommends going forward',
       ],
     },
     {
@@ -142,15 +142,15 @@ export const CHAPTER_07_CONTENT: StoryMissionContent = {
         },
       ],
       hints: [
-        'For the title: title = input.required<string>() — the parent must always provide this',
-        'For the level: level = input(100) — Angular infers the type from the default value, so you don\'t need the <number> generic',
+        'For the title: title = input.required<string>(), because the parent must always provide this',
+        'For the level: level = input(100). Angular infers the type from the default value, so you don\'t need the <number> generic',
       ],
       successMessage:
         'Your component accepts data from any parent now. One definition, endless reuse. ' +
         'Next up: what happens when the child needs to talk back? That\'s outputs, and they\'re coming in Chapter 8.',
       explanation:
         'input.required<T>() for data the component can\'t work without. input(default) for optional data ' +
-        'with a fallback. Both return signals — you call them with () to read the value. The parent sets them ' +
+        'with a fallback. Both return signals. You call them with () to read the value. The parent sets them ' +
         'using property binding: [title]="\'Reactor\'" or [level]="reactorLevel".',
     } satisfies CodeChallengeStep,
   ],

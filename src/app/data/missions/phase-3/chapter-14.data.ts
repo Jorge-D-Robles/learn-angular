@@ -135,7 +135,7 @@ export const CHAPTER_14_CONTENT: StoryMissionContent = {
         {
           type: 'pattern',
           pattern: 'name="\\w+"',
-          errorMessage: 'Add a name attribute to each ngModel control — Angular requires it for registration',
+          errorMessage: 'Add a name attribute to each ngModel control. Angular requires it for registration',
         },
         {
           type: 'pattern',
@@ -145,7 +145,7 @@ export const CHAPTER_14_CONTENT: StoryMissionContent = {
         {
           type: 'notContains',
           value: 'onsubmit',
-          errorMessage: 'Remove the plain HTML onsubmit — use Angular (ngSubmit) instead',
+          errorMessage: 'Remove the plain HTML onsubmit. Use Angular (ngSubmit) instead',
         },
       ],
       hints: [

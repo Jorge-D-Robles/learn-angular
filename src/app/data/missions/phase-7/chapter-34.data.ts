@@ -7,14 +7,14 @@ export const CHAPTER_34_CONTENT: StoryMissionContent = {
       stepType: 'narrative',
       narrativeText:
         'This is the capstone chapter. Everything works. Now make it fast. Performance optimization is ' +
-        'like tuning a car engine after you have built the whole car — you don\'t start here, you end here. ' +
+        'like tuning a car engine after you have built the whole car. You don\'t start here, you end here. ' +
         'You\'ll revisit concepts from earlier: @for loops need track (Chapter 4), components can opt into ' +
         'OnPush change detection, and routes can lazy-load (Chapter 11). It all comes together in this chapter.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'By default, Angular checks every component in the tree whenever anything changes — a click, ' +
+        'By default, Angular checks every component in the tree whenever anything changes: a click, ' +
         'a timer, an HTTP response. OnPush tells Angular: "Only check this component when its inputs ' +
         'change or a signal it reads updates." For display-only components, this is a massive win.',
       code: [
@@ -41,7 +41,7 @@ export const CHAPTER_34_CONTENT: StoryMissionContent = {
       explanation:
         'OnPush changes the deal: Angular only re-checks this component when an input reference changes, ' +
         'a signal it reads emits a new value, or an event fires within the component itself. Everything ' +
-        'else — timers in parent components, unrelated HTTP calls — gets ignored. For a card component ' +
+        'else (timers in parent components, unrelated HTTP calls) gets ignored. For a card component ' +
         'like this one that just displays data, OnPush eliminates dozens of unnecessary checks per cycle.',
     },
     {
@@ -91,7 +91,7 @@ export const CHAPTER_34_CONTENT: StoryMissionContent = {
         'Without track, Angular has to destroy and recreate every DOM node when the list changes. ' +
         'With track sensor.id, it matches items across renders by their ID and only updates ' +
         'what actually changed. Lazy loading with loadComponent works the same way as lazy routes ' +
-        'from Chapter 11 — the JavaScript for /reactor doesn\'t load until someone navigates there. ' +
+        'from Chapter 11, so the JavaScript for /reactor doesn\'t load until someone navigates there. ' +
         'Your initial bundle stays small, and users only download what they use.',
     },
     {
@@ -106,9 +106,9 @@ export const CHAPTER_34_CONTENT: StoryMissionContent = {
         'nodes across list updates. Lazy loading reduces network work by splitting your app into ' +
         'chunks loaded on demand. Each one is simple on its own. Combined, they keep large apps snappy.',
       keyPoints: [
-        'OnPush is the single biggest performance win for component-heavy apps — it turns O(n) change detection into O(changed)',
+        'OnPush is the single biggest performance win for component-heavy apps because it turns O(n) change detection into O(changed)',
         'Track expressions prevent DOM thrashing: Angular reuses existing elements instead of recreating the entire list',
-        'Lazy loading is free performance — routes the user hasn\'t visited don\'t cost anything until they navigate there',
+        'Lazy loading is free performance. Routes the user hasn\'t visited don\'t cost anything until they navigate there',
         'Profile first, optimize second. These techniques matter most in apps with large component trees, long lists, or heavy initial bundles',
       ],
     },

@@ -7,7 +7,7 @@ export const CHAPTER_10_CONTENT: StoryMissionContent = {
       stepType: 'narrative',
       narrativeText:
         'This one\'s practical. Images are usually the heaviest thing on a web page, and they\'re responsible for ' +
-        'most of the annoying layout shifts you see — that thing where the page jumps around as images load in. ' +
+        'most of the annoying layout shifts you see, that thing where the page jumps around as images load in. ' +
         'Angular has a built-in directive called NgOptimizedImage that handles the common gotchas: layout shifts, ' +
         'lazy loading, responsive sizing. You swap one attribute and get all of it for free.',
     },
@@ -41,7 +41,7 @@ export const CHAPTER_10_CONTENT: StoryMissionContent = {
       explanation:
         'Two ways to size an image: explicit width/height (the browser reserves that exact space, so nothing ' +
         'jumps when the image loads), or fill (the image stretches to fit its CSS-positioned container). ' +
-        'The priority attribute tells Angular "this image is visible immediately — don\'t lazy-load it." ' +
+        'The priority attribute tells Angular "this image is visible immediately, don\'t lazy-load it." ' +
         'Everything without priority gets lazy-loaded automatically, which means images below the fold ' +
         'don\'t waste bandwidth until the user scrolls to them.',
     },
@@ -49,7 +49,7 @@ export const CHAPTER_10_CONTENT: StoryMissionContent = {
       stepType: 'concept',
       narrativeText:
         'Star chart images are optimized. Every image on the station benefits from automatic lazy loading, ' +
-        'layout shift prevention, and responsive sizing — just from changing one attribute.',
+        'layout shift prevention, and responsive sizing, all from changing one attribute.',
       conceptTitle: 'Image Optimization with NgOptimizedImage',
       conceptBody:
         'NgOptimizedImage is doing several things behind the scenes: it enforces dimensions to prevent layout ' +
@@ -57,9 +57,9 @@ export const CHAPTER_10_CONTENT: StoryMissionContent = {
         'and warns you in development if something is misconfigured. It also integrates with CDN image loaders ' +
         'if you use one.',
       keyPoints: [
-        'ngSrc replaces src — Angular will warn you in dev mode if you forget width/height or use src by accident on an optimized image',
+        'ngSrc replaces src. Angular will warn you in dev mode if you forget width/height or use src by accident on an optimized image',
         'Images are lazy-loaded by default; add priority only to images the user sees immediately (hero banners, above-the-fold content)',
-        'Import NgOptimizedImage from @angular/common and add it to your component\'s imports array — it\'s not available globally',
+        'Import NgOptimizedImage from @angular/common and add it to your component\'s imports array, since it\'s not available globally',
       ],
     },
     {
@@ -110,7 +110,7 @@ export const CHAPTER_10_CONTENT: StoryMissionContent = {
         'The hero image needs the priority attribute (just the word, no value): <img ngSrc="nebula-hero.png" width="..." height="..." priority />',
       ],
       successMessage:
-        'Images are optimized — no more layout shifts, and offscreen images lazy-load automatically. ' +
+        'Images are optimized. No more layout shifts, and offscreen images lazy-load automatically. ' +
         'That wraps up Phase 1. You\'ve got components, templates, control flow, events, inputs, outputs, ' +
         'deferred loading, and image optimization. Phase 2 digs into how Angular apps are structured at scale.',
       explanation:

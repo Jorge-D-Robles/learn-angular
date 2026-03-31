@@ -170,7 +170,7 @@ export const CHAPTER_17_CONTENT: StoryMissionContent = {
       starterCode: [
         "import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';",
         '',
-        '// TODO: Implement the validator — check that the value matches NX-XX-999 format',
+        '// TODO: Implement the validator. Check that the value matches NX-XX-999 format',
         'export function stationCodeValidator(): ValidatorFn {',
         '  return (control) => {',
         '    // TODO: Get the control value',

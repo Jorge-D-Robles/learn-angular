@@ -6,18 +6,18 @@ export const CHAPTER_23_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Up to now, your components have used plain TypeScript properties — temperature = 294. That works, ' +
+        'Up to now, your components have used plain TypeScript properties like temperature = 294. That works, ' +
         'but Angular has no way to know when you change it. Every change detection cycle, it has to check ' +
         'EVERYTHING, even values that haven\'t moved. As Nexus Station scales into deep-space ops with ' +
         'hundreds of sensors streaming telemetry, that brute-force approach falls apart. Signals fix this. ' +
-        'They wrap a value in a reactive container that tells Angular exactly when something changed — no ' +
+        'They wrap a value in a reactive container that tells Angular exactly when something changed. No ' +
         'polling, no guessing, no wasted checks.',
     },
     {
       stepType: 'code-example',
       narrativeText:
         'Think of a signal like a spreadsheet cell. When you update cell A1, every formula referencing A1 ' +
-        'recalculates automatically. That\'s what signal() gives you — a reactive value that Angular can ' +
+        'recalculates automatically. That\'s what signal() gives you: a reactive value that Angular can ' +
         'track. You read it by calling it like a function, replace it with .set(), or derive a new value ' +
         'from the old one with .update().',
       code: [
@@ -47,7 +47,7 @@ export const CHAPTER_23_CONTENT: StoryMissionContent = {
       highlightLines: [1, 12, 15, 19],
       explanation:
         'signal(294.15) creates a reactive container holding that initial value. To read it, you call ' +
-        'temperature() — note the parentheses. That\'s how Angular knows your template depends on this ' +
+        'temperature(), and the parentheses matter. That\'s how Angular knows your template depends on this ' +
         'value. .set() swaps in a completely new value, while .update() hands you the current value and ' +
         'lets you compute the next one. When the signal changes, Angular updates only the templates that ' +
         'actually read it. Nothing else gets touched.',
@@ -58,7 +58,7 @@ export const CHAPTER_23_CONTENT: StoryMissionContent = {
         'Here\'s a common pattern you\'ll use constantly: a service owns the writable signal, but exposes ' +
         'only a read-only view to the rest of the app. Why? Because if any component could call .set() on ' +
         'your pressure data, you\'d have no idea where state changes are coming from. .asReadonly() draws ' +
-        'a clear line — the service writes, everyone else reads.',
+        'a clear line: the service writes, everyone else reads.',
       code: [
         "import { Injectable, signal } from '@angular/core';",
         '',
@@ -90,17 +90,17 @@ export const CHAPTER_23_CONTENT: StoryMissionContent = {
       narrativeText:
         'The sensor network is online. Before moving on, let\'s lock in what makes signals different from ' +
         'plain properties.',
-      conceptTitle: 'Why Signals Matter — Fine-Grained Reactivity',
+      conceptTitle: 'Why Signals Matter: Fine-Grained Reactivity',
       conceptBody:
         'Plain properties work, but Angular can\'t tell when they change. It has to re-check every binding ' +
-        'on every change detection cycle — that\'s called "dirty checking" and it doesn\'t scale. Signals ' +
+        'on every change detection cycle, and that\'s called "dirty checking" and it doesn\'t scale. Signals ' +
         'flip the model: instead of Angular asking "did anything change?", the signal announces "I changed." ' +
         'This is fine-grained reactivity, and it\'s the foundation Angular is building its future on. ' +
-        'You actually saw a hint of this back in Chapter 7 — signal-based inputs use the same underlying mechanism.',
+        'You actually saw a hint of this back in Chapter 7. Signal-based inputs use the same underlying mechanism.',
       keyPoints: [
-        'Signals notify Angular exactly which values changed, so it can skip everything else — that\'s a huge performance win',
-        '.set() replaces the value outright; .update() gives you the previous value to compute the next one — pick whichever fits',
-        'The parentheses in temperature() aren\'t just syntax — they\'re how Angular registers the dependency between your template and the signal',
+        'Signals notify Angular exactly which values changed, so it can skip everything else, and that\'s a huge performance win',
+        '.set() replaces the value outright; .update() gives you the previous value to compute the next one, so pick whichever fits',
+        'The parentheses in temperature() aren\'t just syntax. They\'re how Angular registers the dependency between your template and the signal',
         '.asReadonly() enforces single-owner state management: one service writes, everyone else observes',
       ],
     },
@@ -149,12 +149,12 @@ export const CHAPTER_23_CONTENT: StoryMissionContent = {
       ],
       hints: [
         'Two things need to change: import signal from \'@angular/core\', then declare oxygenLevel = signal(21)',
-        'The template still reads oxygenLevel without parentheses — that won\'t work for a signal. Change it to {{ oxygenLevel() }}',
+        'The template still reads oxygenLevel without parentheses, and that won\'t work for a signal. Change it to {{ oxygenLevel() }}',
       ],
       successMessage: 'Oxygen sensor is back online and streaming reactively. In the next chapter, you\'ll learn to derive new values from signals like this one.',
       explanation:
         'signal(21) wraps the value 21 in a reactive container. The parentheses in oxygenLevel() are ' +
-        'critical — they tell Angular "this template depends on this signal." Without them, Angular sees ' +
+        'critical because they tell Angular "this template depends on this signal." Without them, Angular sees ' +
         'a function reference instead of a value, and nothing updates. It\'s a small syntax change with big consequences.',
     } satisfies CodeChallengeStep,
     {
@@ -167,7 +167,7 @@ export const CHAPTER_23_CONTENT: StoryMissionContent = {
         '',
         "@Injectable({ providedIn: 'root' })",
         'export class PressureService {',
-        '  _pressure = 0; // placeholder — not yet a signal',
+        '  _pressure = 0; // placeholder, not yet a signal',
         '  // TODO: Declare _pressure as a private writable reactive value starting at 101.3',
         '  pressure = this._pressure;',
         '',
@@ -203,10 +203,10 @@ export const CHAPTER_23_CONTENT: StoryMissionContent = {
         'Make _pressure private and a signal: private _pressure = signal(101.3)',
         'Expose the public version as pressure = this._pressure.asReadonly(), and write to it with this._pressure.set(value) inside recordReading',
       ],
-      successMessage: 'Pressure data is locked down — one writer, many readers. This ownership pattern will serve you well in every Angular app you build.',
+      successMessage: 'Pressure data is locked down with one writer and many readers. This ownership pattern will serve you well in every Angular app you build.',
       explanation:
         'The private signal _pressure is the single source of truth. .asReadonly() strips away .set() ' +
-        'and .update(), so consumers can only read. This isn\'t just a convenience — it\'s a design ' +
+        'and .update(), so consumers can only read. This isn\'t just a convenience. It\'s a design ' +
         'decision that makes state changes predictable and debuggable.',
     } satisfies CodeChallengeStep,
   ],

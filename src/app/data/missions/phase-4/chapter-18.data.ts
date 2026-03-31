@@ -8,7 +8,7 @@ export const CHAPTER_18_CONTENT: StoryMissionContent = {
       narrativeText:
         'Up to now, your components have been self-contained islands. Each one manages its own data ' +
         'with no way to share state across the app. If two components both need the same crew roster, ' +
-        'they\'d each maintain their own copy — and those copies would inevitably drift out of sync. ' +
+        'they\'d each maintain their own copy, and those copies would inevitably drift out of sync. ' +
         'Services fix this. Think of a service as a shared whiteboard in an office: anyone can read ' +
         'from it or write to it, and everyone sees the same data.',
     },
@@ -16,7 +16,7 @@ export const CHAPTER_18_CONTENT: StoryMissionContent = {
       stepType: 'code-example',
       narrativeText:
         'A service is just a class with the @Injectable decorator. Adding providedIn: \'root\' tells ' +
-        'Angular to create one instance for the entire app — a singleton. Why a singleton? Because you ' +
+        'Angular to create one instance for the entire app: a singleton. Why a singleton? Because you ' +
         'want ONE source of truth for your data. Angular creates it lazily, only when something first ' +
         'asks for it, so unused services cost nothing.',
       code: [
@@ -43,7 +43,7 @@ export const CHAPTER_18_CONTENT: StoryMissionContent = {
       highlightLines: [1, 3, 4, 7, 11],
       explanation:
         '@Injectable marks this class as something Angular can deliver to other parts of the app. ' +
-        'The providedIn: \'root\' setting registers it at the application root — every component that ' +
+        'The providedIn: \'root\' setting registers it at the application root, so every component that ' +
         'asks for PowerService gets the exact same instance. One whiteboard, many readers. Angular ' +
         'won\'t even create the service until someone actually injects it.',
     },
@@ -80,7 +80,7 @@ export const CHAPTER_18_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 2, 13, 16, 20],
       explanation:
-        'inject() is like ordering at a restaurant — you tell Angular what you need, and it brings ' +
+        'inject() is like ordering at a restaurant. You tell Angular what you need, and it brings ' +
         'the right instance to you. Because PowerService uses providedIn: \'root\', every component that ' +
         'calls inject(PowerService) receives the same object. Change the power level in one component, ' +
         'and every other component sees the update immediately.',
@@ -89,7 +89,7 @@ export const CHAPTER_18_CONTENT: StoryMissionContent = {
       stepType: 'concept',
       narrativeText:
         'The station\'s shared power service is online. Before you move on, let\'s make sure the core ideas are solid.',
-      conceptTitle: 'Injectable Services — Shared State Without Tight Coupling',
+      conceptTitle: 'Injectable Services: Shared State Without Tight Coupling',
       conceptBody:
         'Services solve the "isolated islands" problem. Instead of each component maintaining its own ' +
         'copy of shared data, you put that data in a service and inject it wherever it\'s needed. ' +
@@ -97,7 +97,7 @@ export const CHAPTER_18_CONTENT: StoryMissionContent = {
         'makes it a singleton that lives for the entire app lifetime.',
       keyPoints: [
         '@Injectable tells Angular this class can be delivered to components on request',
-        'providedIn: \'root\' means one instance for the whole app — created only when first needed',
+        'providedIn: \'root\' means one instance for the whole app, created only when first needed',
         'inject() retrieves the singleton without any manual wiring or construction',
         'Multiple components sharing the same service see the same data, so state stays in sync',
       ],
@@ -151,7 +151,7 @@ export const CHAPTER_18_CONTENT: StoryMissionContent = {
         'Next up: connecting a component to this service with inject().',
       explanation:
         '@Injectable flags the class for Angular\'s dependency injection system. providedIn: \'root\' ' +
-        'registers it as a singleton at the application level — every component that asks for it gets the ' +
+        'registers it as a singleton at the application level, so every component that asks for it gets the ' +
         'same instance, sharing the same crew array. Exporting the class makes it importable by other files.',
     } satisfies CodeChallengeStep,
     {
@@ -209,7 +209,7 @@ export const CHAPTER_18_CONTENT: StoryMissionContent = {
         'service will see identical data. That\'s the power of singletons.',
       explanation:
         'inject() asks Angular\'s injector for the service instance. Because CrewRosterService uses ' +
-        'providedIn: \'root\', every component that injects it gets the same singleton — one shared ' +
+        'providedIn: \'root\', every component that injects it gets the same singleton, one shared ' +
         'whiteboard. The import statement is needed so TypeScript knows which class you\'re referring to.',
     } satisfies CodeChallengeStep,
   ],

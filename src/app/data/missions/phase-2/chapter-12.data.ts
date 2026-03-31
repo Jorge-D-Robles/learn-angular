@@ -143,7 +143,7 @@ export const CHAPTER_12_CONTENT: StoryMissionContent = {
         {
           type: 'order',
           patterns: ['redirectTo', '**'],
-          errorMessage: 'Place the wildcard route after the redirect — route order matters',
+          errorMessage: 'Place the wildcard route after the redirect, because route order matters',
         },
       ],
       hints: [

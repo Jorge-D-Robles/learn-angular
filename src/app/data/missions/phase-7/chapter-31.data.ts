@@ -9,7 +9,7 @@ export const CHAPTER_31_CONTENT: StoryMissionContent = {
         'Chapter 30 showed you how to make HTTP requests. But think about what every request needs: ' +
         'an auth token. And every response might be a 401 or a 500. And maybe failed requests should ' +
         'retry automatically. Are you going to copy-paste that logic into every single service method? ' +
-        'Interceptors solve this. They sit in the HTTP pipeline like airport security checkpoints — ' +
+        'Interceptors solve this. They sit in the HTTP pipeline like airport security checkpoints. ' +
         'every request passes through them, and each one can inspect, modify, or reject what it sees.',
     },
     {
@@ -37,10 +37,10 @@ export const CHAPTER_31_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 3, 5, 10, 14],
       explanation:
-        'A functional interceptor is just a function — it receives the request and a next handler. ' +
+        'A functional interceptor is just a function. It receives the request and a next handler. ' +
         'You clone the request (never mutate the original), add your headers, and pass the clone along. ' +
         'Why functional instead of class-based? Because a function is simpler. The old class-based ' +
-        'interceptors required implementing an interface and registering providers — more ceremony ' +
+        'interceptors required implementing an interface and registering providers, which was more ceremony ' +
         'for the same result. Register interceptors with withInterceptors() inside provideHttpClient(), ' +
         'and they run in the order you list them.',
     },
@@ -49,7 +49,7 @@ export const CHAPTER_31_CONTENT: StoryMissionContent = {
       narrativeText:
         'Interceptors are not just for headers. The logging interceptor below stamps every request ' +
         'with a timestamp (like stamping a boarding pass). The retry interceptor automatically ' +
-        'resends failed requests — no try/catch in your service code.',
+        'resends failed requests with no try/catch needed in your service code.',
       code: [
         "import { HttpInterceptorFn } from '@angular/common/http';",
         "import { tap, retry } from 'rxjs';",
@@ -80,12 +80,12 @@ export const CHAPTER_31_CONTENT: StoryMissionContent = {
         'The logging interceptor uses tap() to record timing without touching the response data. ' +
         'The retry interceptor uses retry() to automatically resend up to twice with a 1-second delay. ' +
         'Order matters: auth runs first (outermost), then logging, then retry (innermost). ' +
-        'For responses, the order reverses — retry handles errors first, then logging records the timing.',
+        'For responses, the order reverses, so retry handles errors first, then logging records the timing.',
     },
     {
       stepType: 'concept',
       narrativeText:
-        'You now have a complete HTTP pipeline — auth, logging, and retry — without touching a single ' +
+        'You now have a complete HTTP pipeline (auth, logging, and retry) without touching a single ' +
         'service method. That is the power of interceptors: cross-cutting concerns, handled once.',
       conceptTitle: 'Interceptors: Write It Once, Apply It Everywhere',
       conceptBody:
@@ -95,10 +95,10 @@ export const CHAPTER_31_CONTENT: StoryMissionContent = {
         'Register them in order with provideHttpClient(withInterceptors([...])), and every HTTP call ' +
         'in your app passes through the chain automatically.',
       keyPoints: [
-        'Interceptors eliminate copy-paste — auth tokens, error handling, and retries get written once and apply to all HTTP calls',
+        'Interceptors eliminate copy-paste. Auth tokens, error handling, and retries get written once and apply to all HTTP calls',
         'Always clone the request rather than mutating it, because other interceptors and the runtime may still reference the original',
         'Array order determines execution: first interceptor runs first on requests, last on responses',
-        'Functional interceptors replaced class-based ones — same power, less boilerplate',
+        'Functional interceptors replaced class-based ones with the same power and less boilerplate',
       ],
     },
   ],

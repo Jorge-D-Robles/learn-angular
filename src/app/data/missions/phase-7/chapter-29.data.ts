@@ -6,7 +6,7 @@ export const CHAPTER_29_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Components handle UI. But what about reusable behavior — highlighting on hover, restricting ' +
+        'Components handle UI. But what about reusable behavior like highlighting on hover, restricting ' +
         'access based on roles, auto-resizing elements? You could copy-paste that logic into every ' +
         'component that needs it, but that\'s a maintenance nightmare. Directives are like browser ' +
         'extensions for your elements: they attach extra behavior without changing what the element is. ' +
@@ -16,7 +16,7 @@ export const CHAPTER_29_CONTENT: StoryMissionContent = {
       stepType: 'code-example',
       narrativeText:
         'Create an attribute directive that highlights an element on hover. This is the simplest kind of ' +
-        'directive — it modifies appearance without touching the DOM structure.',
+        'directive, and it modifies appearance without touching the DOM structure.',
       code: [
         "import { Directive, ElementRef, HostListener } from '@angular/core';",
         '',
@@ -44,13 +44,13 @@ export const CHAPTER_29_CONTENT: StoryMissionContent = {
       explanation:
         'The bracket selector [appHighlight] means "match any element with this attribute." ' +
         '@HostListener hooks into DOM events on that element. ElementRef gives you direct access to the ' +
-        'underlying DOM node. This is an attribute directive — it changes how an element looks or ' +
+        'underlying DOM node. This is an attribute directive. It changes how an element looks or ' +
         'behaves, without adding or removing elements from the page.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Attribute directives change existing elements. Structural directives go further — they add or ' +
+        'Attribute directives change existing elements. Structural directives go further and add or ' +
         'remove elements from the DOM entirely. Here\'s a custom one that conditionally renders content ' +
         'based on a clearance level, similar to @if but with domain-specific logic.',
       code: [
@@ -87,7 +87,7 @@ export const CHAPTER_29_CONTENT: StoryMissionContent = {
         'Structural directives work with two pieces: TemplateRef holds the template that might be ' +
         'rendered, and ViewContainerRef controls the spot in the DOM where it appears. The @Input ' +
         'setter fires whenever the bound value changes, so the directive can dynamically add or remove ' +
-        'content. The asterisk (*) in the usage is syntactic sugar — Angular rewraps the element in ' +
+        'content. The asterisk (*) in the usage is syntactic sugar, and Angular rewraps the element in ' +
         'an ng-template behind the scenes.',
     },
     {
@@ -95,16 +95,16 @@ export const CHAPTER_29_CONTENT: StoryMissionContent = {
       narrativeText:
         'Directives give you a clean way to share behavior across components without inheritance or ' +
         'copy-pasting. One attribute, one behavior, applied anywhere.',
-      conceptTitle: 'Custom Directives — Reusable Behavior, Extracted',
+      conceptTitle: 'Custom Directives: Reusable Behavior, Extracted',
       conceptBody:
-        'There are two kinds. Attribute directives modify how an existing element looks or behaves — ' +
-        'think hover effects, auto-focus, tooltip logic. Structural directives add or remove elements ' +
-        'from the DOM — think access control, feature flags, conditional rendering. Both use @Directive ' +
+        'There are two kinds. Attribute directives modify how an existing element looks or behaves, like ' +
+        'hover effects, auto-focus, tooltip logic. Structural directives add or remove elements ' +
+        'from the DOM, like access control, feature flags, conditional rendering. Both use @Directive ' +
         'with an attribute selector. The key difference: structural directives inject TemplateRef and ' +
         'ViewContainerRef to manipulate DOM structure.',
       keyPoints: [
-        'Attribute directives change behavior/appearance — @HostListener for events, ElementRef for DOM access',
-        'Structural directives add/remove elements — TemplateRef + ViewContainerRef do the heavy lifting',
+        'Attribute directives change behavior/appearance using @HostListener for events and ElementRef for DOM access',
+        'Structural directives add/remove elements, and TemplateRef + ViewContainerRef do the heavy lifting',
         'Both use @Directive with a bracket selector like [appHighlight]',
         'Directives keep components focused on their own job by extracting cross-cutting concerns',
       ],

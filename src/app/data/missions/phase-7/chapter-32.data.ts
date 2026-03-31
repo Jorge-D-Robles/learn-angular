@@ -8,7 +8,7 @@ export const CHAPTER_32_CONTENT: StoryMissionContent = {
       narrativeText:
         'This is the chapter most people want to skip. Don\'t. You\'ve built components (back in Chapter 1), ' +
         'services (Chapter 18), and forms (Chapters 14-17). How do you know they still work after you make ' +
-        'changes? Testing gives you a safety net. Think of it like a preflight checklist — pilots don\'t skip ' +
+        'changes? Testing gives you a safety net. Think of it like a preflight checklist. Pilots don\'t skip ' +
         'it because "the plane flew fine yesterday." Angular\'s TestBed creates a miniature Angular ' +
         'environment where you can test components in isolation, with fake services, and verify behavior ' +
         'without booting the entire app.',
@@ -45,7 +45,7 @@ export const CHAPTER_32_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 9, 13, 14, 15, 19],
       explanation:
-        'TestBed.configureTestingModule() spins up an isolated Angular environment — just enough ' +
+        'TestBed.configureTestingModule() spins up an isolated Angular environment, just enough ' +
         'to compile and render your component. createComponent() gives you a ComponentFixture, which ' +
         'is your handle to the component instance and its rendered DOM. The critical step people ' +
         'forget: detectChanges(). Angular won\'t render anything until you tell it to run change ' +
@@ -89,7 +89,7 @@ export const CHAPTER_32_CONTENT: StoryMissionContent = {
       explanation:
         'The { provide, useValue } syntax tells Angular: "Whenever something asks for PowerService, ' +
         'give it this fake object instead." Your component has no idea it is talking to a mock. ' +
-        'This is dependency injection doing exactly what it was designed for — you swap the real ' +
+        'This is dependency injection doing exactly what it was designed for. You swap the real ' +
         'implementation at the boundary so the component under test never touches a real API, ' +
         'database, or anything slow and unpredictable.',
     },
@@ -106,9 +106,9 @@ export const CHAPTER_32_CONTENT: StoryMissionContent = {
         'the unit under test from the outside world. The pattern is always the same: configure, create, ' +
         'detect changes, assert.',
       keyPoints: [
-        'TestBed is a per-test Angular environment — it compiles components, resolves dependencies, and runs change detection on your terms',
+        'TestBed is a per-test Angular environment that compiles components, resolves dependencies, and runs change detection on your terms',
         'Mock services using { provide, useValue } so tests stay fast, isolated, and deterministic',
-        'detectChanges() is not automatic in tests — you control exactly when Angular re-renders, which makes assertions predictable',
+        'detectChanges() is not automatic in tests, so you control exactly when Angular re-renders, which makes assertions predictable',
         'Test the component through its DOM (nativeElement) to verify what the user actually sees, not just internal state',
       ],
     },

@@ -6,9 +6,9 @@ export const CHAPTER_02_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'The emergency shelter is holding, but the life support panel is blank — oxygen levels, temperature, ' +
-        'pressure — all invisible. The sensors are working fine. The problem is that nothing is wired to the ' +
-        'display. In Chapter 1, you snuck in a status property with {{ status }}. That was interpolation — ' +
+        'The emergency shelter is holding, but the life support panel is blank. Oxygen levels, temperature, ' +
+        'pressure, all invisible. The sensors are working fine. The problem is that nothing is wired to the ' +
+        'display. In Chapter 1, you snuck in a status property with {{ status }}. That was interpolation, ' +
         'Angular\'s way of pulling data from your class and showing it in the template. Now you will see why ' +
         'it is one of the most-used features in Angular.',
     },
@@ -38,13 +38,13 @@ export const CHAPTER_02_CONTENT: StoryMissionContent = {
       explanation:
         'Angular sees {{ oxygenLevel }}, looks up the oxygenLevel property on the class, and inserts its ' +
         'value as text. If oxygenLevel changes later, the display updates automatically. You do not need to ' +
-        'manually refresh anything — that is Angular\'s job.',
+        'manually refresh anything. That is Angular\'s job.',
     },
     {
       stepType: 'code-example',
       narrativeText:
         'You are not limited to simple variable names inside {{ }}. You can do math, call methods, ' +
-        'concatenate strings — anything that produces a value. Angular evaluates the expression every time ' +
+        'concatenate strings, anything that produces a value. Angular evaluates the expression every time ' +
         'the data might have changed.',
       code: [
         "import { Component } from '@angular/core';",
@@ -68,7 +68,7 @@ export const CHAPTER_02_CONTENT: StoryMissionContent = {
       explanation:
         'Inside {{ }}, you can write expressions: math like temperature * 9/5 + 32, string concatenation, ' +
         'or just a property name. Angular re-evaluates these whenever the underlying data changes. Keep ' +
-        'expressions simple though — heavy logic belongs in the class, not the template.',
+        'expressions simple though. Heavy logic belongs in the class, not the template.',
     },
     {
       stepType: 'concept',
@@ -81,8 +81,8 @@ export const CHAPTER_02_CONTENT: StoryMissionContent = {
         'the other direction. Angular evaluates whatever is inside {{ }}, converts the result to a string, ' +
         'and inserts it into the DOM. When the data changes? Angular handles the update for you.',
       keyPoints: [
-        '{{ expression }} evaluates to text. It always converts to a string — even numbers and booleans become text. This matters more than you might think (Chapter 5 will show you why).',
-        'You can put expressions in there — math, method calls, ternaries — but keep them short. If it takes more than a glance to read, move the logic to the class.',
+        '{{ expression }} evaluates to text. It always converts to a string, even numbers and booleans become text. This matters more than you might think (Chapter 5 will show you why).',
+        'You can put expressions in there (math, method calls, ternaries) but keep them short. If it takes more than a glance to read, move the logic to the class.',
         'Angular watches for changes and re-renders automatically. You never manually "refresh" an interpolation.',
       ],
     },
@@ -147,7 +147,7 @@ export const CHAPTER_02_CONTENT: StoryMissionContent = {
         'This one-way binding is the foundation for everything you will build.',
       explanation:
         'Interpolation is how you get data from your component class onto the screen. Declare a property, ' +
-        'reference it with {{ }}, and Angular handles the rest. Simple — but you will use it constantly.',
+        'reference it with {{ }}, and Angular handles the rest. Simple, but you will use it constantly.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

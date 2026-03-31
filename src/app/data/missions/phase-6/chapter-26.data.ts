@@ -6,10 +6,10 @@ export const CHAPTER_26_CONTENT: StoryMissionContent = {
     {
       stepType: 'narrative',
       narrativeText:
-        'Signals and computed handle state. But what about side effects — logging, API calls, ' +
+        'Signals and computed handle state. But what about side effects like logging, API calls, ' +
         'starting timers, sending notifications? You can\'t model "write a log entry" as a derived ' +
         'value. There\'s no formula for it. Effects are like an alarm system wired to a sensor: the ' +
-        'sensor detects a change, and the alarm responds by DOING something — ringing a bell, ' +
+        'sensor detects a change, and the alarm responds by DOING something: ringing a bell, ' +
         'writing a record, triggering hardware. That\'s what effect() is for. It\'s the place where ' +
         'reactive state meets the outside world.',
     },
@@ -52,16 +52,16 @@ export const CHAPTER_26_CONTENT: StoryMissionContent = {
       explanation:
         'When the component is created, the effect runs once and reads this.temperature(). Angular ' +
         'now knows: "this effect depends on temperature." Every time temperature changes, the ' +
-        'effect re-runs. Notice this is fundamentally different from computed — there\'s no return ' +
+        'effect re-runs. Notice this is fundamentally different from computed. There\'s no return ' +
         'value. The effect doesn\'t produce state. It performs an action. Logging, analytics, DOM ' +
-        'manipulation, API calls — that\'s effect territory.',
+        'manipulation, API calls, that\'s effect territory.',
     },
     {
       stepType: 'code-example',
       narrativeText:
         'What happens when an effect sets up a timer, and then the signal changes? The old timer ' +
         'is still running. Now you have two timers. Then three. That\'s a resource leak. ' +
-        'onCleanup solves this — it lets you tear down the previous run\'s work before the next ' +
+        'onCleanup solves this. It lets you tear down the previous run\'s work before the next ' +
         'run starts.',
       code: [
         "import { Component, signal, effect } from '@angular/core';",
@@ -103,18 +103,18 @@ export const CHAPTER_26_CONTENT: StoryMissionContent = {
       narrativeText:
         'Automated responses are active. Let\'s pin down exactly when to use effect versus ' +
         'the other signal primitives.',
-      conceptTitle: 'When to Use effect() — and When Not To',
+      conceptTitle: 'When to Use effect(), and When Not To',
       conceptBody:
         'effect() is Angular\'s escape hatch for imperative code in a reactive world. The rule of thumb: ' +
         'if you\'re producing a value, use computed() or linkedSignal(). If you\'re producing a side ' +
-        'effect — writing a log, calling an API, manipulating the DOM, starting a timer — use effect(). ' +
+        'effect (writing a log, calling an API, manipulating the DOM, starting a timer), use effect(). ' +
         'Overusing effects is one of the most common signal mistakes. If you catch yourself writing an ' +
         'effect that .set()s another signal, stop and ask: "Could this be a computed?" Usually the answer is yes.',
       keyPoints: [
-        'effect() is for actions, not values — if your callback returns something meaningful, you probably want computed()',
+        'effect() is for actions, not values, so if your callback returns something meaningful, you probably want computed()',
         'onCleanup prevents resource leaks by tearing down the previous run before the next one starts',
         'Effects must live in an injection context (constructor) because Angular needs the injector to manage their lifecycle',
-        'A signal set inside an effect is a code smell — rethink it as a computed or linkedSignal first',
+        'A signal set inside an effect is a code smell, so rethink it as a computed or linkedSignal first',
       ],
     },
     {
@@ -174,17 +174,17 @@ export const CHAPTER_26_CONTENT: StoryMissionContent = {
         'Import effect from \'@angular/core\' and call effect(() => { ... }) inside the constructor',
         'Read this.radiation() inside the effect to create the dependency, then conditionally call console.warn() when it exceeds 500',
       ],
-      successMessage: 'Radiation monitor is live. The crew will never miss a spike again. One more challenge — let\'s handle cleanup.',
+      successMessage: 'Radiation monitor is live. The crew will never miss a spike again. One more challenge: let\'s handle cleanup.',
       explanation:
         'effect() watches which signals you read inside it, just like computed(). The difference: ' +
-        'there\'s no return value. The effect exists purely to DO something — in this case, log a ' +
+        'there\'s no return value. The effect exists purely to DO something, in this case logging a ' +
         'warning. Every time radiation changes, Angular re-runs the callback.',
     } satisfies CodeChallengeStep,
     {
       stepType: 'code-challenge',
       prompt:
         'The station beacon broadcasts on a timer, but the interval can change. The effect is already ' +
-        'set up, but it\'s leaking timers — every time intervalMs changes, a new setInterval stacks ' +
+        'set up, but it\'s leaking timers. Every time intervalMs changes, a new setInterval stacks ' +
         'on top of the old one. Add cleanup to fix it.',
       starterCode: [
         "import { Component, signal, effect } from '@angular/core';",
@@ -236,7 +236,7 @@ export const CHAPTER_26_CONTENT: StoryMissionContent = {
       ],
       hints: [
         'Add onCleanup to the effect signature: effect((onCleanup) => { ... })',
-        'Before the closing brace, call onCleanup(() => { clearInterval(timer); }) — Angular runs this before the next execution and on destroy',
+        'Before the closing brace, call onCleanup(() => { clearInterval(timer); }), and Angular runs this before the next execution and on destroy',
       ],
       successMessage: 'No more leaked timers! You\'ve mastered all four signal primitives: signal, computed, linkedSignal, and effect. That\'s the reactive foundation for everything Angular builds going forward.',
       explanation:

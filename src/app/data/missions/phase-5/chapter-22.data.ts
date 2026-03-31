@@ -8,14 +8,14 @@ export const CHAPTER_22_CONTENT: StoryMissionContent = {
       narrativeText:
         'Angular\'s built-in pipes cover common cases, but your app has its own vocabulary. Astronomical ' +
         'distances in light-years, station-specific status codes, temperature conversions between Kelvin ' +
-        'and Celsius — none of these ship with Angular. Custom pipes let you build your own reusable ' +
+        'and Celsius. None of these ship with Angular. Custom pipes let you build your own reusable ' +
         'transformers that plug into templates with the same | syntax you already know.',
     },
     {
       stepType: 'code-example',
       narrativeText:
         'A custom pipe is a class decorated with @Pipe that implements PipeTransform. The @Pipe decorator ' +
-        'gives it a name for template use. The transform() method does the actual work — value in, ' +
+        'gives it a name for template use. The transform() method does the actual work: value in, ' +
         'formatted string out.',
       code: [
         "import { Pipe, PipeTransform } from '@angular/core';",
@@ -41,7 +41,7 @@ export const CHAPTER_22_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 3, 4, 5],
       explanation:
-        '@Pipe gives the class a name — that\'s what you write after | in templates. PipeTransform is ' +
+        '@Pipe gives the class a name, and that\'s what you write after | in templates. PipeTransform is ' +
         'an interface with one required method: transform(). It receives the value from the left side of ' +
         'the | and returns the formatted result. The standalone: true flag makes the pipe directly ' +
         'importable in any component, just like standalone components.',
@@ -50,7 +50,7 @@ export const CHAPTER_22_CONTENT: StoryMissionContent = {
       stepType: 'code-example',
       narrativeText:
         'Custom pipes can encapsulate any domain logic. This StatusPipe maps numeric codes to ' +
-        'human-readable labels — the kind of lookup that would otherwise clutter your template or ' +
+        'human-readable labels, the kind of lookup that would otherwise clutter your template or ' +
         'force you to add a helper method to every component that needs it.',
       code: [
         "import { Pipe, PipeTransform } from '@angular/core';",
@@ -83,24 +83,24 @@ export const CHAPTER_22_CONTENT: StoryMissionContent = {
       explanation:
         'The StatusPipe hides a lookup table behind a clean template expression. Instead of writing ' +
         'a switch statement or method in every component, you write {{ code | status }} and the pipe ' +
-        'handles the mapping. Keep pipes pure — no HTTP calls, no side effects — so Angular can skip ' +
+        'handles the mapping. Keep pipes pure, with no HTTP calls and no side effects, so Angular can skip ' +
         're-running them when the input hasn\'t changed (reference equality check).',
     },
     {
       stepType: 'concept',
       narrativeText:
         'Custom pipes give you domain-specific formatting that\'s reusable across the entire app. ' +
-        'Build once, use everywhere — same | syntax as the built-ins.',
-      conceptTitle: 'Custom Pipes — Your Own Template Transformers',
+        'Build once, use everywhere, with the same | syntax as the built-ins.',
+      conceptTitle: 'Custom Pipes: Your Own Template Transformers',
       conceptBody:
         'When built-in pipes don\'t cover your needs, build a custom one. Decorate a class with @Pipe ' +
         'to give it a template name, implement PipeTransform to define the transform() method, and ' +
-        'import it in any component that needs it. Keep the transform logic pure — no side effects, ' +
-        'no service dependencies — so Angular can optimize when to re-run it.',
+        'import it in any component that needs it. Keep the transform logic pure, with no side effects ' +
+        'and no service dependencies, so Angular can optimize when to re-run it.',
       keyPoints: [
-        '@Pipe({ name: \'myPipe\' }) registers the class as a pipe — the name is what you write after | in templates',
+        '@Pipe({ name: \'myPipe\' }) registers the class as a pipe, and the name is what you write after | in templates',
         'PipeTransform enforces the transform() contract: value in, formatted result out',
-        'Pure pipes only re-execute when their input reference changes — Angular skips unnecessary work',
+        'Pure pipes only re-execute when their input reference changes, so Angular skips unnecessary work',
         'Custom pipes use the exact same | syntax and chaining as built-in pipes, so they feel native',
       ],
     },
@@ -154,7 +154,7 @@ export const CHAPTER_22_CONTENT: StoryMissionContent = {
         'Now let\'s put it to work in a real template.',
       explanation:
         '@Pipe gives Angular a name to match against | expressions in templates. PipeTransform requires ' +
-        'the transform() method — that\'s where your conversion logic lives. The return type is string ' +
+        'the transform() method, and that\'s where your conversion logic lives. The return type is string ' +
         'because pipes produce display-ready output. Build it once, import it anywhere.',
     } satisfies CodeChallengeStep,
     {
@@ -213,7 +213,7 @@ export const CHAPTER_22_CONTENT: StoryMissionContent = {
       explanation:
         'Custom pipes follow the same workflow as built-in pipes: import the class, add it to the ' +
         'component\'s imports array, and apply it with | in the template. You can chain custom pipes ' +
-        'with built-in pipes and pass parameters with colons — they\'re first-class citizens.',
+        'with built-in pipes and pass parameters with colons. They\'re first-class citizens.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

@@ -14,7 +14,7 @@ export const CHAPTER_21_CONTENT: StoryMissionContent = {
     {
       stepType: 'code-example',
       narrativeText:
-        'Pipes accept arguments after a colon. You can also chain pipes together — the output of one ' +
+        'Pipes accept arguments after a colon. You can also chain pipes together, where the output of one ' +
         'becomes the input of the next, reading left to right. Want a long date? Pass \'long\'. Need ' +
         'exactly two decimal places? Use the digit format string.',
       code: [
@@ -42,13 +42,13 @@ export const CHAPTER_21_CONTENT: StoryMissionContent = {
       explanation:
         'The colon after a pipe name introduces a parameter. date:\'long\' produces a verbose format like ' +
         '"March 28, 2025 at 10:30:00 AM." DecimalPipe\'s \'1.2-2\' means: at least 1 integer digit, ' +
-        'minimum 2 and maximum 2 fraction digits — so 101.325 becomes 101.33. When you chain pipes with ' +
+        'minimum 2 and maximum 2 fraction digits, so 101.325 becomes 101.33. When you chain pipes with ' +
         'additional | operators, each one receives the previous pipe\'s output.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Real-time data arrives as Observable streams — values that update over time. Without AsyncPipe, ' +
+        'Real-time data arrives as Observable streams, values that update over time. Without AsyncPipe, ' +
         'you\'d need to manually subscribe, store the value, and remember to unsubscribe when the component ' +
         'is destroyed. AsyncPipe handles all of that in a single template expression.',
       code: [
@@ -80,7 +80,7 @@ export const CHAPTER_21_CONTENT: StoryMissionContent = {
       highlightLines: [2, 7, 9, 10, 16],
       explanation:
         'AsyncPipe subscribes to an Observable and renders whatever value it most recently emitted. ' +
-        'When the component is destroyed, AsyncPipe unsubscribes automatically — no memory leaks, no ' +
+        'When the component is destroyed, AsyncPipe unsubscribes automatically. No memory leaks, no ' +
         'cleanup code. You can chain it with other pipes (like number) and use it inside @if to ' +
         'conditionally render based on the stream\'s current value.',
     },
@@ -91,12 +91,12 @@ export const CHAPTER_21_CONTENT: StoryMissionContent = {
         'the vast majority of template formatting needs.',
       conceptTitle: 'Pipe Parameters, Chaining, and AsyncPipe',
       conceptBody:
-        'Parameters let you customize pipe behavior — pass a format string after a colon. Chaining ' +
+        'Parameters let you customize pipe behavior by passing a format string after a colon. Chaining ' +
         'feeds one pipe\'s output into the next, so you can stack transformations. AsyncPipe bridges ' +
         'the gap between reactive Observable streams and the template, handling subscribe/unsubscribe ' +
         'lifecycle so you don\'t have to.',
       keyPoints: [
-        'Colon syntax passes arguments: date:\'long\', number:\'1.2-2\' — each pipe defines its own parameter format',
+        'Colon syntax passes arguments: date:\'long\', number:\'1.2-2\'. Each pipe defines its own parameter format',
         'Chaining with multiple | operators applies transformations left-to-right in sequence',
         'AsyncPipe subscribes to an Observable, renders the latest value, and auto-unsubscribes on destroy',
         'Combine AsyncPipe with other pipes: {{ stream$ | async | number:\'1.0-2\' }} works seamlessly',
@@ -151,7 +151,7 @@ export const CHAPTER_21_CONTENT: StoryMissionContent = {
       ],
       hints: [
         "Add a colon and format string after the pipe name: | date:'fullDate'",
-        "For DecimalPipe, use | number:'1.2-2' — that means 1 integer digit minimum, exactly 2 fraction digits",
+        "For DecimalPipe, use | number:'1.2-2', which means 1 integer digit minimum, exactly 2 fraction digits",
       ],
       successMessage:
         'Precise formatting, no guesswork. Pipe parameters give you exact control over how every ' +
@@ -210,7 +210,7 @@ export const CHAPTER_21_CONTENT: StoryMissionContent = {
       ],
       hints: [
         "Import AsyncPipe from '@angular/common' and add it to the imports array",
-        'Change {{ temperature$ }} to {{ temperature$ | async }} — Angular subscribes and renders the latest value',
+        'Change {{ temperature$ }} to {{ temperature$ | async }}. Angular subscribes and renders the latest value',
       ],
       successMessage:
         'Live data, zero manual subscriptions. AsyncPipe subscribes, renders, and cleans up after itself. ' +
@@ -218,7 +218,7 @@ export const CHAPTER_21_CONTENT: StoryMissionContent = {
       explanation:
         'Without AsyncPipe, you\'d write subscribe(), store the value in a field, and implement ngOnDestroy ' +
         'to unsubscribe. AsyncPipe collapses all that into one template expression. Import it from ' +
-        '@angular/common and add it to your component\'s imports array — same workflow as any other pipe.',
+        '@angular/common and add it to your component\'s imports array, the same workflow as any other pipe.',
     } satisfies CodeChallengeStep,
   ],
   completionCriteria: {

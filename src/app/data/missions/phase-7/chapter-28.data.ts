@@ -9,7 +9,7 @@ export const CHAPTER_28_CONTENT: StoryMissionContent = {
         'Angular creates and destroys your components as the user navigates around. Until now, you ' +
         'haven\'t had any control over WHEN things happen during that process. What if you need to ' +
         'start a timer when a component appears, fetch data once inputs are ready, or clean up a ' +
-        'subscription when the component is removed? Lifecycle hooks give you those control points — ' +
+        'subscription when the component is removed? Lifecycle hooks give you those control points: ' +
         'callbacks at key moments in a component\'s life: birth, change, and death.',
     },
     {
@@ -47,7 +47,7 @@ export const CHAPTER_28_CONTENT: StoryMissionContent = {
       language: 'typescript',
       highlightLines: [1, 7, 12, 19],
       explanation:
-        'ngOnInit fires once after Angular has set all inputs — it\'s the right place for setup that ' +
+        'ngOnInit fires once after Angular has set all inputs, and it\'s the right place for setup that ' +
         'depends on input values (the constructor runs too early for that). ngOnDestroy fires right ' +
         'before Angular removes the component, so you clear timers, close connections, and release ' +
         'anything that would otherwise leak. The OnInit and OnDestroy interfaces are optional but ' +
@@ -94,16 +94,16 @@ export const CHAPTER_28_CONTENT: StoryMissionContent = {
         'A word of honesty: lifecycle hooks were more important before signals existed. Today, effects ' +
         '(Chapter 26) handle many cases that used to require ngOnInit and ngOnDestroy. But hooks are ' +
         'still essential for non-signal work, and you\'ll encounter them in every Angular codebase.',
-      conceptTitle: 'Lifecycle Hooks — ngOnInit, ngOnChanges, ngOnDestroy',
+      conceptTitle: 'Lifecycle Hooks: ngOnInit, ngOnChanges, ngOnDestroy',
       conceptBody:
         'These three hooks cover the vast majority of lifecycle needs. ngOnChanges fires whenever inputs ' +
-        'change (including before ngOnInit on first render). ngOnInit fires once after inputs are ready — ' +
-        'use it for setup that the constructor is too early for. ngOnDestroy fires before removal — use ' +
+        'change (including before ngOnInit on first render). ngOnInit fires once after inputs are ready, so ' +
+        'use it for setup that the constructor is too early for. ngOnDestroy fires before removal, so use ' +
         'it to prevent memory leaks. The full order is: constructor, ngOnChanges, ngOnInit, then ' +
         'eventually ngOnDestroy.',
       keyPoints: [
-        'ngOnInit is for setup that depends on inputs — the constructor runs before inputs are set',
-        'ngOnDestroy prevents leaks — clear timers, unsubscribe, close connections here',
+        'ngOnInit is for setup that depends on inputs because the constructor runs before inputs are set',
+        'ngOnDestroy prevents leaks, so clear timers, unsubscribe, close connections here',
         'ngOnChanges gives you previous and current values for every input change',
         'Signals and effects (Ch 26) now handle many cases that used to need lifecycle hooks',
       ],

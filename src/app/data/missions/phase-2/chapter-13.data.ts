@@ -119,7 +119,7 @@ export const CHAPTER_13_CONTENT: StoryMissionContent = {
         {
           type: 'notContains',
           value: 'href=',
-          errorMessage: 'Remove plain href attributes — use Angular navigation instead of page reloads',
+          errorMessage: 'Remove plain href attributes. Use Angular navigation instead of page reloads',
         },
       ],
       hints: [

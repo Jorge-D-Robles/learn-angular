@@ -7,14 +7,14 @@ export const CHAPTER_04_CONTENT: StoryMissionContent = {
       stepType: 'narrative',
       narrativeText:
         'You can display data with interpolation. But what if you only want to show something when a condition ' +
-        'is true? Or repeat it for every item in a list? The station needs an alert system — sensor anomalies, ' +
-        'hull breaches, crew emergencies — and each one requires different handling. Angular\'s built-in control ' +
+        'is true? Or repeat it for every item in a list? The station needs an alert system for sensor anomalies, ' +
+        'hull breaches, and crew emergencies, each requiring different handling. Angular\'s built-in control ' +
         'flow gives you @if, @for, and @switch, right inside the template. No imports, no setup.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Show an alert only when there is one. @if works exactly like you would expect from JavaScript — ' +
+        'Show an alert only when there is one. @if works exactly like you would expect from JavaScript. ' +
         'if the condition is true, the block renders. If not, it does not. The @else block is your fallback.',
       code: [
         '@Component({',
@@ -38,7 +38,7 @@ export const CHAPTER_04_CONTENT: StoryMissionContent = {
       highlightLines: [4, 8],
       explanation:
         'When hasAlert is true, Angular renders the alert div. When it is false, you get "All systems nominal." ' +
-        'The element is not hidden with CSS — it literally does not exist in the DOM until the condition is met. ' +
+        'The element is not hidden with CSS. It literally does not exist in the DOM until the condition is met. ' +
         'This is the modern syntax. Older Angular used *ngIf, which required importing a directive. The @if ' +
         'syntax is built into the template language.',
     },
@@ -73,7 +73,7 @@ export const CHAPTER_04_CONTENT: StoryMissionContent = {
       highlightLines: [5, 9],
       explanation:
         '@for loops over the alerts array and renders a div for each one. track alert.id tells Angular ' +
-        '"use the id field to identify each item" — this is how Angular avoids throwing away and rebuilding ' +
+        '"use the id field to identify each item." This is how Angular avoids throwing away and rebuilding ' +
         'DOM nodes unnecessarily. The @empty block renders when the array has zero items, which is a nice ' +
         'touch for UX.',
     },
@@ -122,7 +122,7 @@ export const CHAPTER_04_CONTENT: StoryMissionContent = {
         '*ngIf, *ngFor, and *ngSwitch directives, which required imports and had a less readable syntax. The ' +
         'new syntax looks like the JavaScript you already know, which was the whole point of the redesign.',
       keyPoints: [
-        'track is required on every @for loop. It is not optional. Angular uses it to efficiently update the DOM when list items change — without it, Angular would have to destroy and recreate every element.',
+        'track is required on every @for loop. It is not optional. Angular uses it to efficiently update the DOM when list items change. Without it, Angular would have to destroy and recreate every element.',
         'No imports needed. Unlike the old *ngIf/*ngFor directives, the new control flow is part of the template language itself.',
         '@empty on @for and @else on @if are small touches that save you from writing extra @if checks. Use them.',
       ],
@@ -131,7 +131,7 @@ export const CHAPTER_04_CONTENT: StoryMissionContent = {
       stepType: 'code-challenge',
       prompt:
         'The triage system needs two things: an emergency alert that only shows when isEmergency is true, ' +
-        'and a list of crew members. Use @if for the conditional and @for for the list. Remember — track ' +
+        'and a list of crew members. Use @if for the conditional and @for for the list. Remember, track ' +
         'is required.',
       starterCode: [
         '<!-- Available variables: isEmergency (boolean), crewMembers (array with id, name) -->',
@@ -174,10 +174,10 @@ export const CHAPTER_04_CONTENT: StoryMissionContent = {
       ],
       successMessage:
         'Triage display is live. @if and @for are the two control flow constructs you will reach for ' +
-        'most often — they handle probably 90% of conditional and list rendering in real apps.',
+        'most often. They handle probably 90% of conditional and list rendering in real apps.',
       explanation:
         '@if renders content conditionally. @for iterates over arrays. Both are part of the template ' +
-        'language — no imports needed. The track expression on @for is mandatory because it is how ' +
+        'language, so no imports are needed. The track expression on @for is mandatory because it is how ' +
         'Angular knows which DOM elements to reuse when data changes.',
     } satisfies CodeChallengeStep,
     {
@@ -221,7 +221,7 @@ export const CHAPTER_04_CONTENT: StoryMissionContent = {
       ],
       successMessage:
         'Severity routing is online. @switch is the clearest way to handle multi-branch template logic. ' +
-        'You now have all three control flow constructs — @if, @for, @switch — in your toolkit.',
+        'You now have all three control flow constructs (@if, @for, @switch) in your toolkit.',
       explanation:
         '@switch picks one block to render based on a value. It is the template equivalent of a JavaScript ' +
         'switch statement. Always include @default as a safety net for values you did not anticipate.',

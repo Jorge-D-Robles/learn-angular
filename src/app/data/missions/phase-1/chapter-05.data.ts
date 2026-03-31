@@ -9,12 +9,12 @@ export const CHAPTER_05_CONTENT: StoryMissionContent = {
         'Interpolation converts everything to text. That works great for displaying values, but what about ' +
         'setting a button\'s disabled state? Or toggling a CSS class? Or pointing an image at a dynamic URL? ' +
         'You cannot do that with {{ }}. Property binding is how you connect component data directly to DOM ' +
-        'properties — and unlike interpolation, it preserves the original data type.',
+        'properties, and unlike interpolation, it preserves the original data type.',
     },
     {
       stepType: 'code-example',
       narrativeText:
-        'Square brackets are the property binding syntax. [disabled]="!isOnline" does not insert a string — ' +
+        'Square brackets are the property binding syntax. [disabled]="!isOnline" does not insert a string. ' +
         'it passes a boolean directly to the DOM property. When isOnline changes, the button\'s disabled ' +
         'state updates automatically.',
       code: [
@@ -38,14 +38,14 @@ export const CHAPTER_05_CONTENT: StoryMissionContent = {
       explanation:
         'Each square bracket binding connects a DOM property to a component expression. [disabled] receives ' +
         'a boolean. [src] receives a string URL. [class.active] adds or removes the "active" CSS class based ' +
-        'on a boolean. The brackets are doing something fundamentally different from interpolation — they are ' +
+        'on a boolean. The brackets are doing something fundamentally different from interpolation. They are ' +
         'setting properties on the DOM element, not inserting text.',
     },
     {
       stepType: 'code-example',
       narrativeText:
         'Here is the difference side by side. Interpolation always produces a string. Property binding passes ' +
-        'the actual value — a number stays a number, a boolean stays a boolean. This distinction matters when ' +
+        'the actual value. A number stays a number, a boolean stays a boolean. This distinction matters when ' +
         'the DOM property expects a specific type.',
       code: [
         '@Component({',
@@ -76,7 +76,7 @@ export const CHAPTER_05_CONTENT: StoryMissionContent = {
       explanation:
         '{{ powerLevel }} on line 5 becomes the string "75" in the DOM. [value]="powerLevel" on line 8 ' +
         'passes the number 75. For display text, it does not matter. But try disabling a button with ' +
-        'disabled="{{ isLocked }}" — it will not work correctly because the string "false" is truthy. ' +
+        'disabled="{{ isLocked }}", it will not work correctly because the string "false" is truthy. ' +
         'When the property expects a non-string type, use property binding.',
     },
     {
@@ -87,11 +87,11 @@ export const CHAPTER_05_CONTENT: StoryMissionContent = {
       conceptTitle: 'Property Binding [property]',
       conceptBody:
         'Property binding sets a DOM element\'s property to the result of a component expression. It is ' +
-        'one-way, just like interpolation — data flows from class to template. The key difference: ' +
+        'one-way, just like interpolation: data flows from class to template. The key difference: ' +
         'interpolation converts to a string, property binding preserves the type. Use interpolation for ' +
         'text content. Use property binding for everything else.',
       keyPoints: [
-        'Use [property] when the value needs to stay its original type — booleans for disabled, numbers for value, strings for src. If you are setting text content, {{ }} is fine.',
+        'Use [property] when the value needs to stay its original type (booleans for disabled, numbers for value, strings for src). If you are setting text content, {{ }} is fine.',
         '[class.name] toggles a CSS class on or off. [style.prop] sets an inline style. These are shortcuts Angular provides for two of the most common DOM operations.',
         'Data flows one direction: class to template. If a user types in an input with [value], the class property does not update. You need event binding for that (coming later).',
       ],
